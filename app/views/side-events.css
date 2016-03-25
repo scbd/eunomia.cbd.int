@@ -1,0 +1,24 @@
+/*panel heck too much margin at buttom*/
+.se-panel{margin:5% 5% 5% 5%;
+width:90%;
+}
+
+
+/* dragula-specific example page styles */
+.wrapper {
+  display:inline-table;
+}
+.se-cont {
+  display: table-cell;
+  overflow-x:hidden;
+}
+.se-cont .title{
+  display: table-cell;
+
+  width: 100%;
+}
+.se-cont:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+
