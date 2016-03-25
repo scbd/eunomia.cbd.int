@@ -1,12 +1,59 @@
-<div>
+<div ng-controller="home" class="relative">
 
-    <h1>SEED</h1>
-    
-    <p class="lead">This project is an application skeleton for typical SCBD AngularJS/RequireJS/Bootstrap web apps.</p>
 
-	<p>Iis igitur est difficilius satis facere, qui se Latina scripta dicunt contemnere. in quibus hoc primum est in quo admirer, cur in gravissimis rebus non delectet eos sermo patrius, cum idem fabellas Latinas ad verbum e Graecis expressas non inviti legant. quis enim tam inimicus paene nomini Romano est, qui Ennii Medeam aut Antiopam Pacuvii spernat aut reiciat, quod se isdem Euripidis fabulis delectari dicat, Latinas litteras oderit?</p>
+  <div id="main">
+    <div class="view-header text-center">
+      <span class="pull-left">Dashboard</span>
+      <span>
+        < 22.03.2016>
+      </span>
+      <span>
+        <div class="input-group input-group-sm search-bs pull-right" style="width:200px;">
+          <input type="test" class="form-control " ng-model="search">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" ng-click="search='';"><i class="fa fa-search" ng-if="!search"></i><i class="fa fa-times" ng-if="search"></i></button>
+          </span>
+        </div>
+      </span>
+    </div>
 
-	<p>Tantum autem cuique tribuendum, primum quantum ipse efficere possis, deinde etiam quantum ille quem diligas atque adiuves, sustinere. Non enim neque tu possis, quamvis excellas, omnes tuos ad honores amplissimos perducere, ut Scipio P. Rupilium potuit consulem efficere, fratrem eius L. non potuit. Quod si etiam possis quidvis deferre ad alterum, videndum est tamen, quid ille possit sustinere.</p>
 
-	<p>Tempore quo primis auspiciis in mundanum fulgorem surgeret victura dum erunt homines Roma, ut augeretur sublimibus incrementis, foedere pacis aeternae Virtus convenit atque Fortuna plerumque dissidentes, quarum si altera defuisset, ad perfectam non venerat summitatem.</p>
+    <div class="row" style="padding-top:20px;">
+      <div class="col-lg-offset-2 col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel" ng-class="{ 'panel-primary' : m.primary, 'panel-info' : !m.primary }">
+          <div class="panel-heading  text-center">
+            <h2 style="color:inherit">Schedule</h2>
+          </div>
+          <div class="panel-body text-center" style="min-height:110px">
+            <!-- <div class="btn-group-vertical">
+                <button class="btn btn-sm btn-default" scroll-to="schedule{{$index}}" duration="1000"> Schedule</button>
+                <button class="btn btn-sm btn-info" ng-click="goTo(con._id);">Register a Side Event</button>
+              </div> -->
+          </div>
+          <div class="panel-footer text-right">
+            <!-- <div class="text-center" >{{con.start * 1000 | date:'yyyy-MM-dd' }}
+                  <span style=""> to </span> {{con.end * 1000 | date:'yyyy-MM-dd'}}</div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel" ng-class="{ 'panel-primary' : m.primary, 'panel-info' : !m.primary }">
+          <div class="panel-heading  text-center">
+            <h2 style="color:inherit">Side Events</h2>
+          </div>
+          <div class="panel-body text-center" style="min-height:110px">
+            <!-- <div class="btn-group-vertical">
+                <button class="btn btn-sm btn-default" scroll-to="schedule{{$index}}" duration="1000"> Schedule</button>
+                <button class="btn btn-sm btn-info" ng-click="goTo(con._id);">Register a Side Event</button>
+              </div> -->
+          </div>
+          <div class="panel-footer text-right">
+            <!-- <div class="text-center" >{{con.start * 1000 | date:'yyyy-MM-dd' }}
+                  <span style=""> to </span> {{con.end * 1000 | date:'yyyy-MM-dd'}}</div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
