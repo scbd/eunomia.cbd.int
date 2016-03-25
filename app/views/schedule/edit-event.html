@@ -1,0 +1,34 @@
+<div ng-controller="edit-event" >
+
+  <section class="row relative">
+    <!-- ng-if="isLocked" -->
+    <scbd-side-menu overlay id="dashboard" sections="sections">
+      <div class="portal-branding dash-nav-header" layout-align="center center">
+        <h1>MANAGEMENT Center</h1>
+      </div>
+    </scbd-side-menu>
+    <scbd-side-menu right-side overlay id="editEventOptions" sections="sectionsOptions">
+      <div class="portal-branding dash-nav-header" layout-align="center center">
+        <h1>Options</h1>
+      </div>
+    </scbd-side-menu>
+    <div class="container-header-name hidden-lg hidden-xl">Register a Side Event</div>
+    <div class="list-container" >
+      <div class="container-header" >
+        <div class="pull-left ">
+          <!-- <button type="button" class="btn btn-default btn-sm"  ng-click="toggle('dashboard')"><i class="fa fa-bars" ng-if="!mOpen"></i></button> -->
+
+        </div>
+        <span class="container-header-name hidden-md hidden-sm hidden-xs" ><h1 style="display:inline;"> <span ng-if="!isNew">Edit a</span><span ng-if="isNew">Register a</span> Side Event </h1></span>
+        <div class="pull-right" >
+          <!-- <button class="btn btn-default btn-sm" ng-click="toggle('editEventOptions')"><i class="fa fa-ellipsis-h"></i></button> -->
+          <button class="btn btn-default btn-sm" ng-click="close()" ng-if="prev"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+     <edit-side-event ng-if="isAuthenticated"></edit-side-event>
+    </div>
+
+  </section>
+
+</div>
