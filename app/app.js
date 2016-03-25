@@ -1,6 +1,6 @@
-define(['angular'], function(angular) { 'use strict';
+define(['angular','dragula'], function(angular,angularDragula) { 'use strict';
 
-    var deps = ['ngRoute'];
+    var deps = ['ngRoute',angularDragula(angular)];
 
     angular.defineModules(deps);
 

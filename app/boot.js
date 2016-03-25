@@ -1,38 +1,82 @@
 require.config({
     waitSeconds: 120,
     baseUrl : 'app/',
+    IESelectorLimit: true,
     paths: {
-        'authentication'   : 'factories/authentication',
-        'angular'          : 'libs/angular-flex/angular-flex',
-        'angular-route'    : 'libs/angular-route/angular-route',
-        'text'             : 'libs/requirejs-text/text',
-        'bootstrap'        : 'libs/bootstrap/dist/js/bootstrap',
-        'lodash'           : 'libs/lodash/lodash',
-        'jquery'           : 'libs/jquery/dist/jquery',
-        'URIjs'               : 'libs/uri.js/src',
-        'linqjs'              : 'libs/linqjs/linq.min',
-        'guid'                : 'libs/ui-guid-generator/dist/ui-guid-generator.min',
-        'moment'              : 'libs/moment/moment',
-        'css'                 : 'libs/require-css/css.min',
-        'shim'                : 'libs/require-shim/src/shim'
+        'angular'                  : 'libs/angular-flex/angular-flex',
+        'angular-animate'          : 'libs/angular-animate/angular-animate.min',
+        'angular-loading-bar'      : 'libs/angular-loading-bar/src/loading-bar',
+        'angular-route'            : 'libs/angular-route/angular-route',
+        'angular-sanitize'         : 'libs/angular-sanitize/angular-sanitize.min',
+        'angular-storage'          : 'libs/angular-local-storage/dist/angular-local-storage.min',
+        'angular-messages'         : 'libs/angular-messages/angular-messages.min',
+        'app-css'                  : 'css/main',
+        'css'                      : 'libs/require-css/css.min',
+        'bootstrap'                : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min',
+        'bm'       :'libs/bootstrap-material-design/dist/js/material.min',
+        'bm-rip'       : 'libs/bootstrap-material-design/dist/js/ripples.min',
+        'dragula':'libs/angular-dragula/dist/angular-dragula.min',
+        'flag-icon-css'            : 'libs/flag-icon-css/css/flag-icon.min',
+        'font-awsome-css'          : 'libs/font-awesome/css/font-awesome.min',
+        'iconate'                  : 'libs/iconate/dist/iconate',
+        'iconateCSS'               : 'libs/iconate/dist/iconate.min',
+        'ionsound'                 : 'libs/ionsound/js/ion.sound.min',
+        'jquery'                   : 'libs/jquery/dist/jquery',
+        'linqjs'                   : 'libs/linqjs/linq.min',
+        'lodash'                   : 'libs/lodash/lodash',
+        'moment'                   : 'libs/moment/moment',
+        'ng-file-upload'           :'libs/ng-file-upload/ng-file-upload.min',
+        'ng-file-upload-shim'      :'libs/ng-file-upload/ng-file-upload.shim.min',
+        'ngDialog'                 :'libs/ng-dialog/js/ngDialog.min',
+        'ngSmoothScroll'           : 'libs/ngSmoothScroll/lib/angular-smooth-scroll',
+        'outdated-browser-css'     : 'libs/outdated-browser/outdatedbrowser/outdatedbrowser.min',
+        'scroll-directive'         :'libs/scroll-animate-directive/src/scroll-animate-directive',
+        'shim'                     : 'libs/require-shim/src/shim',
+        'teather'                  :'libs/tether/dist/js/tether',
+        'text'                     : 'libs/requirejs-text/text',
+        'BM-date-picker' :          'libs/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker',
+
+        // 'text-angular'          : 'libs/textAngular/dist/textAngular.min',
+        'socket.io'             : 'libs/socket.io-1.4.5/index'
+//        'URIjs'                    : 'libs/uri.js/src',
     },
     shim: {
-        'libs/angular/angular'     : { deps: ['jquery'] },
-        'angular'                  : { deps: ['libs/angular/angular'] },
-        'angular-route'            : { deps: ['angular'] },
-        'bootstrap'                : { deps: ['jquery'] },
-        'guid'                     : { exports: 'ui_guid_generator' },
+        'libs/angular/angular'      : { deps: ['jquery'] },
+        'angular'                   : { deps: ['libs/angular/angular'] },
+        'angular-route'             : { deps: ['angular'] },
+        'angular-sanitize'          : { deps: ['angular'] },
+        'guid'                      : { exports: 'ui_guid_generator' },
+        'angular-animate'           : { deps: ['angular']},
+        'angular-loading-bar'       : { deps: ['angular'] },
+        'bootstrap'                 : { deps:[ 'jquery','teather']},
+        'ng-file-upload'            : { deps:[ 'angular']},
+        'ngSmoothScroll'            : { deps:[ 'angular']},
+        'scroll-directive'          : { deps:[ 'angular']},
+        'moment' : { deps:[ 'jquery']},
+        'BM-date-picker'            : { deps:[ 'jquery','moment']},
+        'dragula': { deps: ['jquery','angular'] },
+        // 'text-angular'                  : { 'deps': ['text-angular-sanitize', 'angular'] },
+        // 'text-angular-sanitize'         : { 'deps': ['angular', 'angular-sanitize']},
     },
+    packages: [
+      { name: 'scbd-angularjs-services', location : 'libs/scbd-angularjs-services/services' },
+      { name: 'scbd-branding', location : 'libs/scbd-branding/directives' },
+      { name: 'scbd-filters',  location : 'libs/scbd-filters/filters' },
+      { name: 'scbd-angularjs-filters',  location : 'libs/scbd-angularjs-services/filters' },
+      { name: 'scbd-angularjs-controls', location : 'libs/scbd-angularjs-controls/form-control-directives' },
 
+    ]
 });
 
 // BOOT
 
-require(['angular', 'app', 'bootstrap', 'authentication', 'routes', 'template'], function(ng, app) {
+require(['angular', 'app','moment', 'text', 'routes', 'template','bootstrap'], function(ng, app, moment) {
 
     ng.element(document).ready(function () {
          ng.bootstrap(document, [app.name]);
+window.moment = require('moment');
     });
+
 });
 
 // Fix IE Console
