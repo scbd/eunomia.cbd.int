@@ -15,7 +15,7 @@ require.config({
         'bootstrap'                : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min',
         'bm'       :'libs/bootstrap-material-design/dist/js/material.min',
         'bm-rip'       : 'libs/bootstrap-material-design/dist/js/ripples.min',
-        'dragula':'libs/angular-dragula/dist/angular-dragula.min',
+        'dragula':'libs/angular-dragula/dist/angular-dragula',
         'flag-icon-css'            : 'libs/flag-icon-css/css/flag-icon.min',
         'font-awsome-css'          : 'libs/font-awesome/css/font-awesome.min',
         'iconate'                  : 'libs/iconate/dist/iconate',

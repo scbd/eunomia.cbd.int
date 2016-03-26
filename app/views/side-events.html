@@ -1,81 +1,62 @@
 <div ng-controller="events" >
   <div class="view-header text-center"><span class="view-title pull-left" >Side Event Scheduling</span>
   <span > <input id="start-filter" ></input> to <input id="end-filter" ></input></span>
-  <span class="pull-right">         <select><option>ICAO</option></select></span>
+
   </div>
   <div class="" style="width:100%; height:600px;position:relative;">
-
-<div class="" style="width:150px;height:100%;display:inline-block;float:left;">
+<div class="" style="min-width:100px;height:100%;display:inline-block;float:left;">
   <div>
-  <div style="border-bottom-width:.5px;border-bottom-style:solid;height:50px;">Days/Tier</div>
-
+    <div class="relative" style="height:40px;">
+      <div class="form-group " style="margin-top:0px;">
+        <select id="conf-select" class="form-control" ng-model="meeting">
+          <option ng-repeat="docObj in options.confrences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+        </select>
+        <span class="material-input"></span>
+    </div>
+    </div>
   </div>
-<div>
-<div style="border-bottom-width:.5px;border-bottom-style:solid;">22</div>
-<div style="border-bottom-width:.5px;border-bottom-style:solid;padding-left:15px;">tier1</div>
-<div style="border-bottom-width:.5px;border-bottom-style:solid;padding-left:15px;">tier2</div>
+
+    <div class="day-label-y" ng-repeat="day in days" >
+
+      <div class="day">
+        <div >{{day.month}}</div>
+        <div>{{day.day}}</div>
+      </div>
+      <div class="tiers">
+          <div >Lunch</div>
+          <div >Afternoon</div>
+      </div>
+    </div>
 </div>
 
-</div>
+
+<div  class="wrapper" style="height:100%;float:left;">
+      <div class='room-cont' dragula='"venue-bag"' dragula-model='options.rooms'>
+
+          <div  ng-repeat='room in options.rooms' class="wrapper room-x">
+
+              <div class="grabbible room-title">{{room.name.en}}</div>
+              <div >
+                  <div class="intersect-containers" ng-repeat='slot in days'>
+                    <div class="tiers">
+                        <div  style="width:100%;min-height: 1.4em;" dragula='"se-bag"' dragula-model='room.bookings[$index].lunch'><span class="grabbible">s{{$index}}</span></div>
+                        <div  style="width:100%;min-height: 1.4em;" dragula='"se-bag"' dragula-model='room.bookings[$index].afternoon'><span>w{{room.bookings[$index].afternoon}}</span></div>
+                    </div>
+                  </div>
+              </div>
+
+          </div>
 
 
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
-</div>
-<div  style="height:100%;float:left;">
-<div style="width:40px;height:100%; border-width:1px;border-style:solid;">
-room
-</div>
+      </div>
 </div>
 
-<div class="wrapper" style="height:100%;float:right;width:200px;">
+<div class="wrapper"   style="height:100%;float:right;width:200px;">
 
-    <div class='se-cont' dragula='"se-bag"' dragula-model='many'>
+    <div class='se-cont' id="tester" dragula='"se-bag"' dragula-model='many2'>
       <div class="title"> Unscheduled Side Events
       </div>
-      <div class="panel panel-default se-panel grabbible" ng-repeat='text in many2'  >
+      <div class="panel panel-default se-panel grabbible" dragula-model="text" ng-repeat='text in many2'  >
         <div class="panel-heading">
           <h3 class="panel-title">text</h3>
         </div>

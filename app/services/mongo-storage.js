@@ -299,8 +299,45 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
 
         }//getStatusFacits
 
+        //============================================================
+        //
+        //============================================================
+        function loadConfrences (){
 
+            var params={};
 
+            if(!status){
+              params = {
+                          q:{'meta.status':{$nin:['archived','deleted']},
+                              'meta.v':{$ne:0}
+                            },
+                          s:{'start':-1}
+
+                        };
+              return $http.get('/api/v2015/confrences',{'params':params});
+            }
+
+        }
+
+        //============================================================
+        //
+        //============================================================
+        function loadRooms (venId){
+
+            var params={};
+
+            if(!status){
+              params = {
+                q:{'_id':{$oid:venId},
+                    'meta.v':{$ne:0}
+                  },
+                          f:{'rooms':1}
+
+                        };
+              return $http.get('/api/v2015/venues/',{'params':params}).then(function(data){if( data.data[0]) return data.data[0].rooms});
+            }
+
+        }
         //=======================================================================
         //
         //=======================================================================
@@ -362,6 +399,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
         } // touch
 
         return{
+          loadRooms:loadRooms,
           getOwnerFacits:getOwnerFacits,
           requestDoc:requestDoc,
           rejectDoc:rejectDoc,
@@ -378,6 +416,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
           archiveDoc:archiveDoc,
           loadArchives:loadArchives,
           loadDocs:loadDocs,
+          loadConfrences :loadConfrences ,
           unArchiveDoc:unArchiveDoc
         };
 }]);

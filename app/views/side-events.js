@@ -1,13 +1,14 @@
 
-define(['app', 'lodash', 'BM-date-picker',
+define(['app', 'lodash','moment', 'BM-date-picker',
 'css!libs/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css',
-'css!libs/angular-dragula/dist/dragula.css','css!./side-events.css'
+'css!libs/angular-dragula/dist/dragula.css','css!./side-events.css',
+'../services/mongo-storage'
 
 
-], function(app, _) {
+], function(app, _,moment) {
 
-  app.controller("events", ['$scope','$element','$document','dragulaService',
-    function($scope,$element,$document,dragulaService) {
+  app.controller("events", ['$scope','$element','$document','dragulaService','mongoStorage',
+    function($scope,$element,$document,dragulaService,mongoStorage) {
 
 $scope.many2=['ssssss','aaaaaaa','bbbbbbbbb','ccccccc','dddddddddd','eeeeeeee'];
 // $scope.startFilter=0;
@@ -15,20 +16,91 @@ $scope.many2=['ssssss','aaaaaaa','bbbbbbbbb','ccccccc','dddddddddd','eeeeeeee'];
 
 $scope.rooms=[];
 $scope.days=[];
+$scope.meeting=0;
+init();
+
+//============================================================
+//
+//============================================================
+function init(){
+    $scope.options={};
+    initMeeting().then(function(){generateDays();}).then(function(){loadRooms();});
+}//init
+
+//============================================================
+//
+//============================================================
+function initMeeting(){
+    return mongoStorage.loadConfrences ().then(function(confs){
+      $scope.options.confrences=confs.data;
+      var lowestEnd = Math.round(new Date().getTime()/1000);
+      var chosenEnd = 0;
+      var selectedKey=0;
+      _.each($scope.options.confrences, function(meet,key){
+            var date = moment.unix(meet.end);
+            if(!chosenEnd)chosenEnd=meet.end;
+            if(meet.end > lowestEnd && meet.end <= chosenEnd){
+                chosenEnd = meet.end;
+                selectedKey=key;
+            }
+      });
+      $scope.options.confrences[selectedKey].selected=true;
+      $scope.meeting=$scope.options.confrences[selectedKey]._id;
+    });
+}//generateDays
+
+//============================================================
+//
+//============================================================
+function generateDays(){
+  var meeting = _.findWhere($scope.options.confrences,{_id:$scope.meeting});
+  var numDays = Math.round((Number(meeting.end)-Number(meeting.start))/(24*60*60));
+  var seconds = Number(meeting.start);
+  var date =moment.unix(seconds);
+
+  for (var i = 1; i <= numDays+1; i++) {
+        $scope.days.push({'date':seconds,'month':date.format("MMM").toUpperCase(),'day':date.format("DD"),'lunch':['0'],'afternoon':['0']});
+        seconds = seconds + (24*60*60);
+        date = moment.unix(seconds);
+  }
+}//generateDays
+
+//============================================================
+//
+//============================================================
+function loadRooms(){
+  var meeting = _.findWhere($scope.options.confrences,{_id:$scope.meeting});
+  return mongoStorage.loadRooms(meeting.venue).then(function(rooms){
+    $scope.options.rooms=rooms;
+    _.each($scope.options.rooms,function(room){
+      room.bookings=_.cloneDeep($scope.days);
+    });
+  });
+
+}//generateDays
+
+$scope.initSingleBage = function (el){
 
 
-
+}
 
 
 //dragula test code
 //$('#test').bootstrapMaterialDatePicker('setDate', moment());
-$scope.$on('third-bag.drag', function (e, el) {
-  el.removeClass('ex-moved');
-
+dragulaService.options($scope, 'venue-bag', {
+  moves: function (el, container, handle) {
+    return handle.className === 'grabbible room-title ng-binding';
+  }
+});
+$scope.$on('se-bag.drag', function (e, el,container) {
+  //container.removeClass('grabbible');
+  //el.addClass('gu-mirror');
+console.log(container);
 });
 
-$scope.$on('third-bag.drop', function (e, el) {
+$scope.$on('se-bag.drop', function (e, el,container) {
   el.addClass('ex-moved');
+  console.log(container);
 });
 
 $scope.$on('third-bag.over', function (e, el, container) {

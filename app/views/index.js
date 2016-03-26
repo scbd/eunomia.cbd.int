@@ -1,6 +1,6 @@
 define(['app', 'lodash','jquery',
   'css!./index', '../services/mongo-storage',
-        'services/filters',
+
         './menu'
 ], function(app,_,$) {
 

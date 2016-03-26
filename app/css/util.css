@@ -67,7 +67,9 @@ sub {
 .debug-border{    border-style: solid;
     border-width: 3px;
   border-color: red;}
-
+  .debug-border-thin{    border-style: solid;
+      border-width: .5px;
+    border-color: red;}
   .nowarp{ white-space: nowrap;}
 
   .valign-wrapper {
