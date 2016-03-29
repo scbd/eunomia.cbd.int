@@ -1,13 +1,36 @@
-define(['angular','dragula'], function(angular,angularDragula) { 'use strict';
+define(['angular','dragula','toastr'], function(angular,angularDragula) { 'use strict';
 
-    var deps = ['ngRoute',angularDragula(angular)];
+    var deps = ['ngRoute',angularDragula(angular),'toastr'];
 
     angular.defineModules(deps);
 
     var app = angular.module('app', deps);
-//change me
-    app.value('realm', 'APPREALM');
 
+    app.config(function(toastrConfig) {
+        angular.extend(toastrConfig, {
+            autoDismiss: true,
+            containerId: 'toast-container',
+  //          maxOpened: 1,
+            newestOnTop: true,
+            closeButton: true,
+            positionClass: 'toast-top-right',
+  //          preventDuplicates: true,
+  //          preventOpenDuplicates:false,
+              iconClasses: {
+              error: 'alert-danger',
+              info: 't-info',
+              success: 'alert-success',
+              warning: 'alert-warning'
+            },
+            target: 'body',
+            timeOut: 5000,
+            progressBar:true,
+
+            });
+        });
+
+
+    app.value('realm', 'EUNO');
     app.config(['$httpProvider', function($httpProvider){
 
         $httpProvider.useApplyAsync(true);
