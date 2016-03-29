@@ -18,6 +18,36 @@
 }
 
 .view-header{
-height:40px;
-line-height: 25px;
+  height:40px;
+  line-height: 25px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #eee;
+  margin-bottom:5px;
+}
+.t-info{
+  background-color: rgba(34,34,34,.9);
+}
+#toast-container>:hover {
+  -moz-box-shadow: 0 0 9pt #000;
+  -webkit-box-shadow: 0 0 9pt #000;
+  box-shadow: 0 0 9pt #000;
+  opacity: 1;
+  cursor: pointer;
+}
+#toast-container > div {  padding: 15px 15px 15px 15px }
+.toast.ng-enter {
+
+}
+.toast.ng-enter.ng-enter-active {
+
+}
+.toast.ng-leave {
+
+}
+.toast.ng-leave.ng-leave-active {
+
+}
+.view-title{
+  position:absolute;
+  left:5px;
 }
