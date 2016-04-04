@@ -1,4 +1,8 @@
-/*panel heck too much margin at buttom*/
+.x-container{
+  width:100%;
+  overflow:auto;
+  display:table-cell;
+}
 
 .se-panel {
   margin: 5% 5% 5% 5%;
@@ -6,18 +10,24 @@
 }
 
 /* dragula-specific example page styles */
-
+.se-in-grid{
+  background-color: yellow;
+}
+.empty-bag{
+  font-size: 14px;
+}
 .wrapper {
   display: inline-table;
-  border-spacing:7px 0px;
+  border-spacing:3px 0px;
 }
-.x-container{
-  max-width:700px;overflow:auto;float:left;
+.se-cont-header {
+height:40px;
+  background-color: #a7a7a7;
 }
 .se-cont {
   display: table-cell;
   overflow-x: hidden;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: #d7d7d7;
 }
 .se-cont .title {
   display: table-cell;
@@ -35,7 +45,8 @@
 }
 .day-label-y {
   margin-top: 3px;
-  width:120px;
+  width:100%;
+
 
   border-bottom-color: #ccc;
   border-bottom-width: .5px;
@@ -44,6 +55,8 @@
   border-top-width: .5px;
   border-top-style: solid;
     background-color: rgba(0, 0, 0, 0.1);
+  max-height: 100%;
+  overflow:hidden;
 }
 .day-label-y .day {
   display: inline-block;
@@ -53,10 +66,11 @@
   border-right-color: #ccc;
   border-right-width: .5px;
   border-right-style: solid;
+
 }
 .day-label-y .day div {
   width: 98%;
-  margin: 0 auto;
+
 }
 .day-label-y .tiers {
   display: inline-block;
@@ -65,11 +79,13 @@
 }
 .day-label-y .tiers div {
   /*border-bottom-color:#ccc;border-bottom-width:.5px;border-bottom-style:solid;*/
-}
-.day-label-y .tiers div:last-child {
   border-top-color: #ccc;
   border-top-width: .5px;
   border-top-style: solid;
+}
+.day-label-y .tiers div:first-child {
+
+  border-top-style: none;
 }
 .day-label-y .tiers-in-room {
   display: block;
@@ -91,18 +107,26 @@
 .intersect-containers {
 background-color: #fff;
     margin-top: 3px;
-  height:42px;
+
     border-top-color: #ccc;
     border-top-width: .5px;
     border-top-style: solid;
   border-bottom-color: #ccc;
   border-bottom-width: .5px;
   border-bottom-style: solid;
+  max-height: 100%;
+  min-height: 42px;
+  overflow:hidden;
 }
-.intersect-containers .tiers div:last-child {
+.intersect-containers .tiers div {
+
   border-top-color: #ccc;
   border-top-width: .5px;
   border-top-style: solid;
+}
+.intersect-containers .tiers div:first-child {
+
+  border-top-style: none;
 }
 /*.intersect-containers .tiers {
     display: inline-table;

@@ -11,21 +11,65 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
 
         var statuses=['draft','published','request','deleted','archived','canceled','rejected'];
 
+        //============================================================
+        //
+        //============================================================
+        function saveRes (res){
+               var url        = '/api/v2016/reservations';
+               var doc = _.cloneDeep(res);
+               delete(doc.sideEvent);
+               var params     = {};
+                if(!doc.clientOrg)doc.clientOrg=clientOrg;
+                if(doc._id){
+                    params.id = doc._id;
+                    url=url+'/'+doc._id;
+
+                    return $http.patch(url,doc,{'params':params});
+                }
+                else{
+                    return $http.post(url,doc,params);
+                }  //create
+        }
+
+        //============================================================
+        //
+        //============================================================
+        function save (schema,doc){
+               var url        = '/api/v2016/'+schema;
+
+               var params     = {};
+                if(!doc.clientOrg)doc.clientOrg=clientOrg;
+                if(doc._id){
+                    params.id = doc._id;
+                    url=url+'/'+doc._id;
+
+                    return $http.put(url,doc,params);
+                }
+                else{
+                    return $http.post(url,doc,params);
+                }  //create
+        }
 
         //============================================================
         //
         //============================================================
         function loadDoc (schema,_id){
           //+'?q={"_id":{"$oid":"'+_id+'"},"clientOrganization":'+clientOrg+'}&f={"document":1}'
+  console.log(schema);
             if(!schema) throw "Error: failed to indicate schema mongoStorageService.loadDocument";
+            if(!_id) throw "Error: failed to indicate _id mongoStorageService.loadDocument"
             var params = {
-                          q:{_id:{$oid:_id}}
+                          'f':{'document':1}
                         };
-            return $q.when( $http.get('/api/v2015/'+schema,{'params':params}))//}&f={"document":1}'))
+            return $q.when( $http.get('/api/v2015/'+schema+'/'+_id))//}&f={"document":1}'))
                    .then(
+
                         function(response){
-                            if(response.data.length)
-                                return  response.data[0];
+                            if(!_.isEmpty(response.data)){
+                                response.data.initialState=_.cloneDeep(response.data);
+                                delete(response.data.initialState.history);
+                                return  response.data;
+                            }
                             else
                               return false;
                         }
@@ -35,42 +79,84 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
         //============================================================
         //
         //============================================================
+        function  loadReservations(start,end,venue,type){
+
+          var params={};
+
+            params = {
+                        q:{'location.venue':venue,
+                           'start':{'$gt':start},
+                           'end':{'$lt':end},
+                           'type':type
+                         }
+                      };
+            return $http.get('/api/v2015/reservations',{'params':params});
+
+
+        }// loadDocs
+
+
+
+
+        //============================================================
+        //
+        //============================================================
         function loadDocs (schema,status){
-          //+'?q={"_id":{"$oid":"'+_id+'"},"clientOrganization":'+clientOrg+'}&f={"document":1}'
 
             var params={};
             if(!schema) throw "Error: failed to indicate schema loadOwnerDocs";
             if(!status){
               params = {
-                          q:{'meta.status':{$nin:['archived','deleted']},
-                              'meta.v':{$ne:0}
+                          q:{'meta.status':{$nin:['archived','deleted']}
                             },
 
                         };
-              return $http.get('/api/v2015/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params});
             }
             if(!_.isArray(status)){
               params = {
-                          q:{'meta.status':status,
-                          'meta.v':{$ne:0}
-                            },
-
+                          q:{'meta.status':status}
                         };
-              return $http.get('/api/v2015/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params});
             }
             else {
                 params = {
-                            q:{'meta.status':{$in:status},
-                            'meta.v':{$ne:0}
-                              },
-
+                            q:{'meta.status':{$in:status}}
                           };
-              return $http.get('/api/v2015/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params});
             }
+        }// loadDocs
+        //============================================================
+        //
+        //============================================================
+        function loadOrgs (){
 
 
-        }
 
+              var params = {
+                          q:{'meta.status':'published'}
+
+
+                        };
+
+
+              return $http.get('/api/v2015/inde-orgs',{'params':params});
+
+        }// loadDocs
+        // //============================================================
+        // //
+        // //============================================================
+        // function loadRoomsByVenue(venue){
+        //
+        //     var params={};
+        //     params = {
+        //                 q:{'meta.status':{$nin:['archived','deleted']},
+        //                    'meta.v':{$ne:0},
+        //                    'venue':{$ne:0},
+        //                   },
+        //               };
+        //     return $http.get('/api/v2015/rooms',{'params':params});
+        // }
 
         //=======================================================================
         //
@@ -78,38 +164,6 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
         function archiveDoc(schema,docObj,_id){
 
               docObj.meta.status='archived';
-              return save(schema,docObj,_id);
-        }
-        //=======================================================================
-        //
-        //=======================================================================
-        function requestDoc(schema,docObj,_id){
-
-              docObj.meta.status='request';
-              return save(schema,docObj,_id);
-        }
-        //=======================================================================
-        //
-        //=======================================================================
-        function approveDoc(schema,docObj,_id){
-
-              docObj.meta.status='published';
-              return save(schema,docObj,_id);
-        }
-        //=======================================================================
-        //
-        //=======================================================================
-        function cancelDoc(schema,docObj,_id){
-
-              docObj.meta.status='canceled';
-              return save(schema,docObj,_id);
-        }
-        //=======================================================================
-        //
-        //=======================================================================
-        function rejectDoc(schema,docObj,_id){
-
-              docObj.meta.status='rejected';
               return save(schema,docObj,_id);
         }
         //=======================================================================
@@ -129,53 +183,27 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
               docObj.meta.status='draft';
               return save(schema,docObj,_id);
         }
-
-        //=======================================================================
+        //============================================================
         //
-        //=======================================================================
-        function getStatusFacits(schema,statusFacits,statArry,stat){
-              statusFacits.all=0;
-              if(!statArry)
-                statArry=statuses;
-              if(stat){
-                $http.get('/api/v2015/'+schema+'?c=1&q={"meta.status":"'+stat+'","meta.v":{"$ne":0}}').then(
-                  function(res){
+        //============================================================
+        function loadConferenceRooms(id){
 
-                    statusFacits[stat]=res.data.count;
-                    statusFacits['all']+=res.data.count;
-                  }
-                );
-              }
-              else
-              _.each(statArry,function(status){
-
-                    $http.get('/api/v2015/'+schema+'?c=1&q={"meta.status":"'+status+'","meta.v":{"$ne":0}}').then(
-                      function(res){
-                        statusFacits[status]=res.data.count;
-                        statusFacits['all']+=res.data.count;
-                      }
-                    );
-
-              });
-        }//getStatusFacits
-
+              return $http.get('/api/v2016/conferences/'+id+'/rooms',{});
+        }// loadConferenceRooms
 
         //============================================================
         //
         //============================================================
-        function loadConfrences (){
+        function loadconferences (){
 
             var params={};
 
             if(!status){
               params = {
-                          q:{'meta.status':{$nin:['archived','deleted']},
-                              'meta.v':{$ne:0}
-                            },
+                          q:{'meta.status':{$nin:['archived','deleted']}},
                           s:{'start':-1}
-
                         };
-              return $http.get('/api/v2015/confrences',{'params':params});
+              return $http.get('/api/v2016/conferences',{'params':params});
             }
 
         }
@@ -198,46 +226,55 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
 
 
         }
+
         //============================================================
         //
         //============================================================
-        function loadRooms (venId){
-
-            var params={};
-
-            if(!status){
-              params = {
-                q:{'_id':{$oid:venId},
-                    'meta.v':{$ne:0}
-                  },
-                          f:{'rooms':1}
-
-                        };
-              return $http.get('/api/v2015/venues/',{'params':params}).then(function(data){if( data.data[0]) return data.data[0].rooms});
-            }
-
+        function syncSideEvents (){
+              return $http.get('/api/v2016/reservations/sync/side-events');
         }
 
+
+        //=======================================================================
+        //
+        //=======================================================================
+        function touch(doc){
+          return authentication.getUser().then(function(u){
+            user=u;
+
+              if(!user.userID) throw "Error no userID to touch record";
+              if(!doc.meta) throw "Error mongo document contains no meta data";
+              if(!doc.clinetOrg)doc.clientOrg=clientOrg;
+              if(!doc.meta.status) doc.meta.status='draft';
+
+              if(!doc.meta.createdBy && !doc.meta.createdOn){
+                doc.meta.createdBy = doc.meta.modifiedBy = user.userID;
+                doc.meta.createdOn  = doc.meta.modifiedOn = Date.now();
+              }else if (doc.meta.createdBy && doc.meta.createdOn){
+                doc.meta.modifiedBy = user.userID;
+                doc.meta.modifiedOn = Date.now();
+              }
+              doc.meta.v=Number(doc.meta.v)+1;
+
+              doc.meta.hash=sha256(JSON.stringify(doc));  //jshint ignore:line
+          });
+        } // touch
 
 
 
         return{
-          loadRooms:loadRooms,
-
-          requestDoc:requestDoc,
-          rejectDoc:rejectDoc,
-          approveDoc:approveDoc,
-          cancelDoc:cancelDoc,
-
-          getStatusFacits:getStatusFacits,
+loadOrgs:loadOrgs,
+saveRes:saveRes ,
+syncSideEvents:syncSideEvents,
           deleteDoc:deleteDoc,
           loadDoc:loadDoc,
-
+save:save,
+loadConferenceRooms:loadConferenceRooms,
 loadUnscheduledSideEvents:loadUnscheduledSideEvents,
           archiveDoc:archiveDoc,
-
+loadReservations:loadReservations,
           loadDocs:loadDocs,
-          loadConfrences :loadConfrences ,
+          loadconferences :loadconferences ,
           unArchiveDoc:unArchiveDoc
         };
 }]);

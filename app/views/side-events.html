@@ -1,138 +1,144 @@
-<div ng-controller="events" >
+<div ng-controller="events" class="container-fluid debug-border">
 
   <div class="row  view-header text-center">
-    <span class="view-title pull-left" >Side Event Scheduling</span>
-<div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
-  <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
-   <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;">
- </div>
-<span  style="position:absolute;right:48%;top:25%;font-size:16px;">to</span>
- <div class="form-group" style="position:absolute;right:1px;margin-top:0px;width:85px;">
-  <input id="end-filter" class="form-control" type="text" ng-model="endDate" ng-change="dateChange('end-filter')" style="color:#eee;">
-</div>
-</div>
- <!-- <span > <input id="start-filter" ></input> to <input id="end-filter" ></input></span> -->
-
-  </div>
-  <div class="" style="width:100%; height:600px;position:relative;">
-<div class="" style="min-width:100px;height:100%;display:inline-block;float:left;">
-  <div>
-    <div class="relative" style="height:40px;">
-      <div class="form-group " style="margin-top:0px;">
-        <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
-          <option ng-repeat="docObj in options.confrences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
-        </select>
-        <span class="material-input"></span>
-    </div>
+    <span class="view-title pull-left">Side Event Scheduling</span>
+    <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
+      <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
+        <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;">
+      </div>
+      <span style="position:absolute;right:48%;top:25%;font-size:16px;">to</span>
+      <div class="form-group" style="position:absolute;right:1px;margin-top:0px;width:85px;">
+        <input id="end-filter" class="form-control" type="text" ng-model="endDate" ng-change="dateChange('end-filter')" style="color:#eee;">
+      </div>
     </div>
   </div>
 
-    <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected">
+  <!-- style="width:100%; min-height:600px;position:relative;" -->
+  <div class="row wrapper" style="width:100%;height:100%;position:relative;" >
+    <div class="x-container pull-left">
 
-      <div class="day">
-        <div >{{day.month}}</div>
-        <div>{{day.day}}</div>
-      </div>
-      <div class="tiers">
-          <div >Lunch</div>
-          <div >Afternoon</div>
-      </div>
-    </div>
-</div>
-
-<div class="x-container">
-      <div  class="wrapper" >
-            <div class='room-cont' dragula='"venue-bag"' dragula-model='options.rooms'>
-                <div  ng-repeat='room in options.rooms' class="room-x" >
-                    <div class="grabbible room-title">{{room.acronym}}</div>
-                    <div >
-                        <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
-                          <div class="tiers">
-                            <div style="width:100%;min-height: 1.4em;" dragula='"se-bag"' dragula-model='slot.lunch'>
-                                  <span class="grabbible" ng-repeat="s in slot.lunch"> {{s.title}}</span>
-                            </div>
-                            <div style="width:100%;min-height: 1.4em;" dragula='"se-bag"' dragula-model='slot.afternoon' >
-                                  <span class="grabbible" ng-repeat="s in slot.afternoon"> {{s.title}}</span>
-
-                            </div>
+      <div class="wrapper">
+        <!-- side event container -->
+      <div class="se-cont debug-border-thin" style="vertical-align:top;">
+        <div class="se-cont-header">test</div>
+        <div style=" height:100vh;overflow:auto;">
+          <div class="wrapper" style="width:260px;height:100%;">
+            <!-- dragu;ar containers -->
+            <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
+                  <div class="se-dragable-wrapper grabbible" se-res-index="{{$index}}" ng-repeat='se in sideEvents' >
+                    <div class="panel panel-default se-panel  ">
+                      <div class="panel-heading relative">
+                        <h2 class="panel-title text-center">{{se.title}} </h2>
+                        <span ng-repeat="org in se.sideEvent.orgs">
+                          <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} | </span>
+                        <div style="position:absolute;bottom:3px;right:3px;">
+                          <span  style="font-size:10px;"><i class="fa fa-users"></i> {{se.sideEvent.expNumPart}}</span>
                         </div>
+                      </div>
+                      <div class="panel-body relative">
+                        <div style="position:absolute;bottom:3px;right:47%;cursor:pointer;" ng-click="se.sideEvent.show=!se.sideEvent.show;"><i class="fa fa-times" ng-show="se.sideEvent.show"></i><i class="fa fa-plus" ng-show="!se.sideEvent.show"></i></div>
+                        <table class="table table-striped table-hover ">
+
+                          <tbody>
+                            <tr>
+                              <td>1st:</td>
+                              <td>{{se.sideEvent.prefDate.one}}
+                              </td>
+                              <td>
+                                {{se.sideEvent.prefDateTime.one}}
+                              </td>
+                            </tr>
+                            <tr ng-show="se.sideEvent.show">
+                              <td>2nd:</td>
+                              <td>{{se.sideEvent.prefDate.two}}</td>
+                              <td>{{se.sideEvent.prefDateTime.two}}</td>
+                            </tr>
+                            <tr ng-show="se.sideEvent.show">
+                              <td>3rd:</td>
+                              <td>{{se.sideEvent.prefDate.three}}</td>
+                              <td>{{se.sideEvent.prefDateTime.three}}</td>
+                            </tr>
+                            <tr ng-show="se.sideEvent.show">
+                              <td>Req.:</td>
+                              <td colspan="2">
+                                <p ng-show="se.sideEvent.requirements.overhead">Overhead</p>
+                                <p ng-show="se.sideEvent.requirements.pc">PC</p>
+                                <p ng-show="se.sideEvent.requirements.overhead">Sound</p>
+                                <p ng-show="se.sideEvent.requirements.lcd">LCD</p>
+                                <p ng-show="se.sideEvent.requirements.interpretation">Interpretation</p>
+                                <p ng-show="se.sideEvent.requirements.catering">Catering</p>
+                                <p ng-show="se.sideEvent.requirements.other">{{se.sideEvent.requirements.other}}</p>
+                              </td>
+                            </tr>
+                            <tr class="active" ng-show="se.sideEvent.show">
+                              <td><i class="fa fa-user"></i></td>
+                              <td>{{se.sideEvent.contact.firstName}} </td>
+                              <td>{{se.sideEvent.contact.lastName}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
+                    <div class="drag-view text-center text-nowrap" style="display:none;">
+                      <span  class="drag-view text-center text-nowrap"><i class="fa fa-calendar-o"></i> {{se.title}}</span>
+                    </div>
+                  </div>
+
+            </div>
+            <!-- endn of container -->
+          </div>
+        </div>
+      </div>
+
+        <!-- y labels -->
+        <div class='room-cont'>
+          <div class="" style="min-width:100px;height:100%;display:table-cell;">
+            <div>
+              <div class="relative" style="height:49px;">
+                <div class="form-group " style="margin-top:0px;">
+                  <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
+                    <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+                  </select>
+                  <span class="material-input"></span>
                 </div>
+              </div>
             </div>
           </div>
-      </div>
-</div>
+          <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected">
+            <div class="day">
+              <div>{{day.month}}</div>
+              <div>{{day.day}}</div>
+            </div>
+            <div class="tiers">
+              <div ng-repeat="tier in day.tiers track by $index">{{tier.title}}</div>
+            </div>
+          </div>
+        </div>
 
-<div class="wrapper" style="height:100%;float:right;width:260px;">
-
-  <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' >
-    <!-- <div class="title"> Unscheduled Side Events
-    </div> -->
-
-              <div class="se-dragable-wrapper grabbible"  ng-repeat='se in sideEvents'>
-                      <div class="panel panel-default se-panel  " >
-                        <div class="panel-heading relative">
-                          <h2 class="panel-title text-center">{{se.title}} </h2>
-                          <h6 ng-repeat="org in se.sideEvent.orgs">
-                            <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}}</h6>
-                          <div style="position:absolute;bottom:3px;right:3px;">
-                            <span class="badge" style="font-size:10px;"><i class="fa fa-users"></i> {{se.sideEvent.expNumPart}}</span>
-                          </div>
-                        </div>
-                        <div class="panel-body relative">
-                          <div style="position:absolute;bottom:3px;right:47%;cursor:pointer;" ng-click="se.sideEvent.show=!se.sideEvent.show;"><i class="fa fa-times" ng-show="se.sideEvent.show"></i><i class="fa fa-plus" ng-show="!se.sideEvent.show"></i></div>
-                          <table class="table table-striped table-hover ">
-
-                            <tbody>
-                              <tr>
-                                <td>1st:</td>
-                                <td>{{se.sideEvent.prefDate.one}}
-                                </td>
-                                <td>
-                                  {{se.sideEvent.prefDateTime.one}}
-                                </td>
-                              </tr>
-                              <tr ng-show="se.sideEvent.show">
-                                <td>2nd:</td>
-                                <td>{{se.sideEvent.prefDate.two}}</td>
-                                <td>{{se.sideEvent.prefDateTime.two}}</td>
-                              </tr>
-                              <tr ng-show="se.sideEvent.show">
-                                <td>3rd:</td>
-                                <td>{{se.sideEvent.prefDate.three}}</td>
-                                <td>{{se.sideEvent.prefDateTime.three}}</td>
-                              </tr>
-                              <tr ng-show="se.sideEvent.show">
-                                <td>Req.:</td>
-                                <td colspan="2">
-                                  <p ng-show="se.sideEvent.requirements.overhead">Overhead</p>
-                                  <p ng-show="se.sideEvent.requirements.pc">PC</p>
-                                  <p ng-show="se.sideEvent.requirements.overhead">Sound</p>
-                                  <p ng-show="se.sideEvent.requirements.lcd">LCD</p>
-                                  <p ng-show="se.sideEvent.requirements.interpretation">Interpretation</p>
-                                  <p ng-show="se.sideEvent.requirements.catering">Catering</p>
-                                  <p ng-show="se.sideEvent.requirements.other">{{se.sideEvent.requirements.other}}</p>
-                                </td>
-                              </tr>
-                              <tr class="active" ng-show="se.sideEvent.show">
-                                <td><i class="fa fa-user"></i></td>
-                                <td>{{se.sideEvent.contact.firstName}} </td>
-                                <td>{{se.sideEvent.contact.lastName}}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <div class="drag-view text-center" style="display:none;">
-                        <span ><i class="fa fa-calendar-o"></i>  {{se.title}}</span>
-                      </div>
+        <!-- room rows -->
+        <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
+          <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room-x" id="{{room._id}}">
+            <div class="grabbible room-title" ng-click="roomDialog(room);" style="background-color:{{room.color}}">{{room.acronym}}<br>{{room.sort}}</div>
+              <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
+                <div class="tiers">
+                <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:20px;">
+                  <!-- dragula-model='tier.bag' -->
+                  <div  room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.name}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
+                     <span ng-repeat="b in tier.bag track by $index" class="se-in-grid"> {{b.title}} </span>
+                    <span class="empty-bag" >&nbsp;</span>
+                  <!-- <span class="material-input"></span> -->
+                  </div>
                 </div>
+                </div>
+              </div>
+          </div>
+        </div>
 
+
+      </div>
+    </div>
   </div>
 
 </div>
 
 
-  </div>
-
-</div>

@@ -47,6 +47,7 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
               faIcon: 'fa-gears',
               roles:['Administrator','IndeAdministrator'],
               pages: [
+
                 {
                   name: 'Locations',
                   type: 'link',
@@ -56,6 +57,20 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                 },
                 {
                   name: 'Rooms',
+                  type: 'link',
+                  path: '',
+              //    mdIcon: 'all_inclusive',
+                  roles:['Administrator','IndeAdministrator'],
+                },
+                {
+                  name: 'Resources',
+                  type: 'link',
+                  path: '',
+              //    mdIcon: 'all_inclusive',
+                  roles:['Administrator','IndeAdministrator'],
+                },
+                {
+                  name: 'Conferences',
                   type: 'link',
                   path: '',
               //    mdIcon: 'all_inclusive',
