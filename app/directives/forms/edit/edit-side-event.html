@@ -45,9 +45,9 @@ label{padding-top:5px;}
 
                       <div   ng-class="{'has-warning': editForm.meeting.$error.required  && submitted}"  >
                           <label>Meeting</label>
-                            <select id="editForm.meeting" class="form-control" ng-model="doc.confrence" name="meeting"   required>
+                            <select id="editForm.meeting" class="form-control" ng-model="doc.conference" name="meeting"   required>
 
-                              <option ng-repeat="docObj in options.confrences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+                              <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
                             </select>
 
                               <p ng-show="editForm.meeting.$error.required && submitted" class="help-block">A meeting is required.</p>

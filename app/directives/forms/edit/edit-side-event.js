@@ -40,9 +40,9 @@ define(['app', 'lodash',
 
             var data = {}; //catch for profile data
 
-            $scope.$watch('doc.confrence', function() {
-              if ($scope.doc.confrence)
-                generateDates($scope.doc.confrence);
+            $scope.$watch('doc.conference', function() {
+              if ($scope.doc.conference)
+                generateDates($scope.doc.conference);
 
             });
 
@@ -55,13 +55,13 @@ define(['app', 'lodash',
               }
             }, true);
 
-            $http.get("https://api.cbd.int/api/v2015/confrences", {
+            $http.get("https://api.cbd.int/api/v2015/conferences", {
               cache: true
             }).then(function(o) {
 
-              $scope.options.confrences = $filter("orderBy")(o.data, "start");
+              $scope.options.conferences = $filter("orderBy")(o.data, "start");
             //  $location.search();
-              _.each($scope.options.confrences, function(conf) {
+              _.each($scope.options.conferences, function(conf) {
                 if (conf._id === $location.search().m)
                   conf.selected = true;
                 else
@@ -69,7 +69,7 @@ define(['app', 'lodash',
               });
 
             }).then($timeout(function() {
-              if ($location.search().m) $scope.doc.confrence = $location.search().m;
+              if ($location.search().m) $scope.doc.conference = $location.search().m;
             }, 1000)).catch(function onerror(response) {
 
               $scope.onError(response);
@@ -130,16 +130,16 @@ define(['app', 'lodash',
             //=======================================================================
             $scope.selectMeeting = function(docObj) {
               $timeout(function() {
-                _.each($scope.options.confrences, function(meeting) {
+                _.each($scope.options.conferences, function(meeting) {
                   meeting.selected = false;
                 });
 
                 docObj.selected = !docObj.selected;
                 if (true) {
                   if (docObj.selected) {
-                    $scope.doc.confrence = docObj._id;
+                    $scope.doc.conference = docObj._id;
                   } else {
-                    $scope.doc.confrence = '';
+                    $scope.doc.conference = '';
                     $scope.search = '';
                   }
                 }
@@ -193,7 +193,7 @@ define(['app', 'lodash',
             //============================================================
             function generateDates() {
 
-              mongoStorage.loadDoc('confrences', $scope.doc.confrence).then(function(confr) {
+              mongoStorage.loadDoc('conferences', $scope.doc.conference).then(function(confr) {
 
                 var diff = Number(confr.end) - Number(confr.start);
                 var numDays = Math.ceil(diff / 86400);
@@ -208,8 +208,8 @@ define(['app', 'lodash',
                 $scope.onError(response);
 
               });
-              _.each($scope.options.confrences, function(conf) {
-                if (conf._id === $scope.doc.confrence)
+              _.each($scope.options.conferences, function(conf) {
+                if (conf._id === $scope.doc.conference)
                   conf.selected = true;
               });
 
