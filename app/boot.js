@@ -56,12 +56,12 @@ require.config({
         'bootstrap'                 : { deps:[ 'jquery']},
         'ng-file-upload'            : { deps:[ 'angular']},
         'ngSmoothScroll'            : { deps:[ 'angular','jquery']},
-        'toastr'          : { deps:[ 'angular']},
+        'toastr'                    : { deps:[ 'angular']},
         'scroll-directive'          : { deps:[ 'angular']},
-        'moment' : { deps:[ 'jquery']},
+        'moment'                    : { deps:[ 'jquery']},
         'BM-date-picker'            : { deps:[ 'jquery','moment']},
-        'dragula': { deps: ['jquery','angular'] },
-        'app-css': { deps: ['toastr-css'] },
+        'dragula'                   : { deps: ['angular','jquery'] },
+        'app-css'                   : { deps: ['toastr-css'] },
 
         // 'text-angular'                  : { 'deps': ['text-angular-sanitize', 'angular'] },
         // 'text-angular-sanitize'         : { 'deps': ['angular', 'angular-sanitize']},
@@ -82,7 +82,7 @@ require(['angular', 'app','moment', 'text', 'routes', 'template','bootstrap'], f
 
     ng.element(document).ready(function () {
          ng.bootstrap(document, [app.name]);
-window.moment = require('moment');
+         window.moment = moment;
     });
 
 });

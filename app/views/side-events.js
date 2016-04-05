@@ -23,7 +23,7 @@ define(['app', 'lodash', 'moment',
       $scope.meeting = 0;
       $scope.search='';
       var hoverArray = [];
-$scope.syncLoading =0;
+      $scope.syncLoading =0;
       init();
 
       //============================================================
