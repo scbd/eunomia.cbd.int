@@ -31,7 +31,7 @@
     "socket.io-1.4.5": "https://cdn.socket.io/socket.io-1.4.5.js",
     "bootstrap-material-datetimepicker": "2.5.3",
     "bootstrap-material-design": "v0.5.9",
-    "angular-dragula": "1.2.6",
+    "angular-dragula": "https://github.com/randyhoulahan/angular-dragula.git",
     "angular-toastr": "1.7.0",
     "angular-bootstrap-colorpicker": "3.0.25",
     "js-sha256": "0.3.0"
