@@ -90,7 +90,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
                            'type':type
                          }
                       };
-            return $http.get('/api/v2015/reservations',{'params':params});
+            return $http.get('/api/v2016/reservations',{'params':params});
 
 
         }// loadDocs
@@ -140,7 +140,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
                         };
 
 
-              return $http.get('/api/v2015/inde-orgs',{'params':params});
+              return $http.get('/api/v2015/inde-orgs',{'params':params, 'cache':true});
 
         }// loadDocs
         // //============================================================
@@ -203,7 +203,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
                           q:{'meta.status':{$nin:['archived','deleted']}},
                           s:{'start':-1}
                         };
-              return $http.get('/api/v2016/conferences',{'params':params});
+              return $http.get('/api/v2016/conferences',{'params':params, 'cache':true});
             }
 
         }
@@ -222,7 +222,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
 
 
                         };
-              return $http.get('/api/v2016/reservations',{'params':params});
+              return $http.get('/api/v2016/reservations',{'params':params, 'cache':true});
 
 
         }
@@ -235,30 +235,30 @@ app.factory("mongoStorage", ['$http','authentication','$q','locale','$location',
         }
 
 
-        //=======================================================================
+        // //=======================================================================
+        // //
+        // //=======================================================================
+        // function touch(doc){
+        //   return authentication.getUser().then(function(u){
+        //     user=u;
         //
-        //=======================================================================
-        function touch(doc){
-          return authentication.getUser().then(function(u){
-            user=u;
-
-              if(!user.userID) throw "Error no userID to touch record";
-              if(!doc.meta) throw "Error mongo document contains no meta data";
-              if(!doc.clinetOrg)doc.clientOrg=clientOrg;
-              if(!doc.meta.status) doc.meta.status='draft';
-
-              if(!doc.meta.createdBy && !doc.meta.createdOn){
-                doc.meta.createdBy = doc.meta.modifiedBy = user.userID;
-                doc.meta.createdOn  = doc.meta.modifiedOn = Date.now();
-              }else if (doc.meta.createdBy && doc.meta.createdOn){
-                doc.meta.modifiedBy = user.userID;
-                doc.meta.modifiedOn = Date.now();
-              }
-              doc.meta.v=Number(doc.meta.v)+1;
-
-              doc.meta.hash=sha256(JSON.stringify(doc));  //jshint ignore:line
-          });
-        } // touch
+        //       if(!user.userID) throw "Error no userID to touch record";
+        //       if(!doc.meta) throw "Error mongo document contains no meta data";
+        //       if(!doc.clinetOrg)doc.clientOrg=clientOrg;
+        //       if(!doc.meta.status) doc.meta.status='draft';
+        //
+        //       if(!doc.meta.createdBy && !doc.meta.createdOn){
+        //         doc.meta.createdBy = doc.meta.modifiedBy = user.userID;
+        //         doc.meta.createdOn  = doc.meta.modifiedOn = Date.now();
+        //       }else if (doc.meta.createdBy && doc.meta.createdOn){
+        //         doc.meta.modifiedBy = user.userID;
+        //         doc.meta.modifiedOn = Date.now();
+        //       }
+        //       doc.meta.v=Number(doc.meta.v)+1;
+        //
+        //       doc.meta.hash=sha256(JSON.stringify(doc));  //jshint ignore:line
+        //   });
+        // } // touch
 
 
 
