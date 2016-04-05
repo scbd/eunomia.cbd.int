@@ -21,8 +21,9 @@ define(['app', 'lodash', 'moment',
       $scope.rooms = [];
       $scope.days = [];
       $scope.meeting = 0;
+      $scope.search='';
       var hoverArray = [];
-
+$scope.syncLoading =0;
       init();
 
       //============================================================
@@ -55,6 +56,12 @@ define(['app', 'lodash', 'moment',
         // $scope.dateChange('start-filter');
       }; //init
 
+
+$scope.sync = function(){
+   $scope.syncLoading = 1;
+   console.log('setting sync');
+  mongoStorage.syncSideEvents().then(function(){initSideEvents($scope.meeting);}).then(function(){$scope.syncLoading=0;console.log('sync finnished');});
+};
       //============================================================
       //
       //============================================================
@@ -115,8 +122,8 @@ define(['app', 'lodash', 'moment',
       //============================================================
       function initSideEvents(meeting) {
         var allOrgs;
-        return mongoStorage.syncSideEvents().then(function(r) {
-          mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
+
+          return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
             $scope.sideEvents = res.data;
           }).then(
             function() {
@@ -135,8 +142,13 @@ define(['app', 'lodash', 'moment',
                 }));
               });
             }); // each
+          }).then(function(){
+                if(!$scope.seModels)$scope.seModels=[];
+              _.each($scope.sideEvents,function(se){
+                  $scope.seModels.push(se);
+              });
           });
-        }); // sync side events
+
       } //initMeeting
 
       //============================================================
@@ -190,6 +202,10 @@ define(['app', 'lodash', 'moment',
         $scope.venue = meeting.venue;
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
           $scope.reservations = res.data;
+          if(!$scope.seModels)$scope.seModels=[];
+          _.each($scope.reservations,function(res){
+            $scope.seModels.push(res);
+          });
         }).then(function() {
           var room;
           var dayIndex = -1;
@@ -347,6 +363,7 @@ define(['app', 'lodash', 'moment',
         _.each(hoverArray, function(el) {
           el.find('span.empty-bag').show();
           el.removeClass('label-success');
+          el.removeClass('label-danger');
         });
       } //generateDays
 
@@ -415,6 +432,13 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.$on('se-bag.drag', function(e, el, container) {
 
+                var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+            $element.find('div.tiers.ng-scope').each(function(){
+                var room = _.findWhere($scope.options.rooms,{'_id':$(this).attr('room-index')});
+
+                  console.log($(this).children().attr('room-index'));
+            });
+            //.available
 
       });
 
@@ -430,8 +454,9 @@ define(['app', 'lodash', 'moment',
 
         var siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
 
-        mirror.height(15);
-        mirror.width(40);
+          mirror.height(15);
+          mirror.width(40);
+
         // shadow.height(15);
         // shadow.width(40);
         //shadow.css('display','inline');
@@ -449,8 +474,14 @@ define(['app', 'lodash', 'moment',
             el.children('div.panel.panel-default.se-panel').show();
             el.children('div.drag-view.text-center').hide();
             siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
-            el.height(siblings.height());
-            el.width(siblings.width());
+            console.log(siblings.length);
+            if(siblings.length>1){
+                el.height(siblings.height());
+                el.width(siblings.width());
+            }else{
+              el.height(164);
+              el.width(254);
+            }
           }
         } else {
           el.children('div.panel.panel-default.se-panel').hide();
@@ -497,7 +528,7 @@ define(['app', 'lodash', 'moment',
                   'seconds': Number(container.attr('time'))
                 });
 
-                $rootScope.$broadcast("showInfo", "Server successfully updated:  Side Event " + res.title + "'s reservation is set in room " + res.location.room + " on " + source.attr('date') + " at the " + tier.title + " tier.");
+                $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered' );
 
               }
             }
@@ -517,23 +548,47 @@ define(['app', 'lodash', 'moment',
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.over', function(e, el, container) {
+      $scope.$on('se-bag.over', function(e, el, target) {
         hoverCleanUp();
-        hoverArray.push(container);
+        hoverArray.push(target);
 
-        container.find('span.empty-bag').hide();
-        container.addClass('label-success');
+        target.find('span.empty-bag').hide();
+        target.addClass('label-success');
 
+        if(target.attr('id') !== 'unscheduled-side-events'){
+              var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
+               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+              //if()
+              if(elModel.sideEvent.expNumPart > room.capacity)
+                  target.addClass('label-danger');
+        }
+      });
+
+      //============================================================
+      //
+      //============================================================
+      $scope.$on('se-bag.drop-model', function(e, el, target,source) {
+
+        if(target.attr('id') !== 'unscheduled-side-events'){
+              var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
+               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+              //if()
+
+              if(elModel.sideEvent.expNumPart > room.capacity)
+                  $rootScope.$broadcast('showWarning','Warning: The expected number of participants ('+elModel.sideEvent.expNumPart+') excceds room capacity ('+room.capacity+').');
+        }
 
       });
 
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.drop-model', function(el, target, source) {
+      $scope.searchSe = function(se) {
 
-
-      });
+        if (!$scope.search || $scope.search == ' ' ) return true;
+        var temp = JSON.stringify(se);
+        return (temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0);
+      };
 
       //============================================================
       //
