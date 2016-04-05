@@ -37,7 +37,7 @@
     "js-sha256": "0.3.0"
   },
   "resolutions": {
-    "angular": "1.5.2",
+    "angular": "1.5",
     "bootstrap": "3.3.6",
     "scbd-angularjs-services": "1.1.8",
     "angular-animate": "1.5",
