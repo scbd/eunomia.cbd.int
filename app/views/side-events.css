@@ -1,11 +1,19 @@
 .x-container{
   width:100%;
-  overflow:auto;
+  overflow-y:auto;
   display:table-cell;
 }
 
 .se-panel {
   margin: 5% 5% 5% 5%;
+  width: 90%;
+}
+
+.available {
+  border-color: #009b48;
+  border-style: solid;
+  border-width: .5px;
+  background-color: rgba(0,155,72,.3)
   width: 90%;
 }
 
@@ -21,13 +29,16 @@
   border-spacing:3px 0px;
 }
 .se-cont-header {
-height:40px;
+min-height:40px;
   background-color: #a7a7a7;
+  color:#eee;
+  text-align: :center;
 }
 .se-cont {
   display: table-cell;
   overflow-x: hidden;
   background-color: #d7d7d7;
+  max-width:250px;
 }
 .se-cont .title {
   display: table-cell;
