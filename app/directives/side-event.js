@@ -21,7 +21,7 @@ define(['app',
 
           });//.popover({ placement: 'bottom', html: 'true'});
 
-          var orgs = $element.find("#orgs").popover({ placement: 'bottom', html: 'true',container: 'body',
+          var orgs = $element.find("#orgs").popover({ placement: 'top', html: 'true',container: 'body',
              content: function() {
                return $element.find('#pop-orgs').html();
              }

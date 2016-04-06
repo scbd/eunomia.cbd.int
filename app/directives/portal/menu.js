@@ -16,20 +16,20 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
           childrenColorClass: 'main-menu-children-color',
           childrenActiveClass: 'main-menu-children-active'
         });
-        scbdMenuService.menus.mainMenu.push({
-          name: 'Dashbord',
-          type: 'link',
-          faIcon: 'fa-th',
-          path: '/',
-  //            roles:['Administrator','IndeAdministrator'],
-        });
-        scbdMenuService.menus.mainMenu.push({
-          name: 'Schedule',
-          type: 'link',
-          faIcon: 'fa-calendar',
-          path: '/schedule/day',
-  //            roles:['Administrator','IndeAdministrator'],
-        });
+  //       scbdMenuService.menus.mainMenu.push({
+  //         name: 'Dashbord',
+  //         type: 'link',
+  //         faIcon: 'fa-th',
+  //         path: '/',
+  // //            roles:['Administrator','IndeAdministrator'],
+  //       });
+  //       scbdMenuService.menus.mainMenu.push({
+  //         name: 'Schedule',
+  //         type: 'link',
+  //         faIcon: 'fa-calendar',
+  //         path: '/schedule/day',
+  // //            roles:['Administrator','IndeAdministrator'],
+  //       });
 
         scbdMenuService.menus.mainMenu.push({
           name: 'Side Events',
@@ -39,59 +39,59 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
   //            roles:['Administrator','IndeAdministrator'],
         });
 
-
-        scbdMenuService.menus.mainMenu.push({
-              name: 'Admin',
-              type: 'toggle',
-              open:0,
-              faIcon: 'fa-gears',
-              roles:['Administrator','IndeAdministrator'],
-              pages: [
-
-                {
-                  name: 'Locations',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-                {
-                  name: 'Rooms',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-                {
-                  name: 'Resources',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-                {
-                  name: 'Conferences',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-                {
-                  name: 'Meeting Types',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-                {
-                  name: 'Meeting Groupes',
-                  type: 'link',
-                  path: '',
-              //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','IndeAdministrator'],
-                },
-
-          ]});
+        //
+        // scbdMenuService.menus.mainMenu.push({
+        //       name: 'Admin',
+        //       type: 'toggle',
+        //       open:0,
+        //       faIcon: 'fa-gears',
+        //       roles:['Administrator','IndeAdministrator'],
+        //       pages: [
+        //
+        //         {
+        //           name: 'Locations',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //         {
+        //           name: 'Rooms',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //         {
+        //           name: 'Resources',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //         {
+        //           name: 'Conferences',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //         {
+        //           name: 'Meeting Types',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //         {
+        //           name: 'Meeting Groupes',
+        //           type: 'link',
+        //           path: '',
+        //       //    mdIcon: 'all_inclusive',
+        //           roles:['Administrator','IndeAdministrator'],
+        //         },
+        //
+        //   ]});
           scbdMenuService.validateMenus();// minds color classes and animation ect
         return scbdMenuService;
   }]);
