@@ -94,6 +94,11 @@ min-height:40px;
   border-top-width: .5px;
   border-top-style: solid;
 }
+.se-dragable-wrapper{
+
+overflow-y:auto;
+width:250px;
+}
 .day-label-y .tiers div:first-child {
 
   border-top-style: none;

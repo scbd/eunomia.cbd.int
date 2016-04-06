@@ -8,6 +8,7 @@ define(['app', 'lodash', 'moment',
   'ngDialog',
   'css!libs/ng-dialog/css/ngDialog.css',
   'css!libs/ng-dialog/css/ngDialog-theme-default.min.css',
+  'directives/side-event'
 
 ], function(app, _, moment, roomDialog) {
 
@@ -374,10 +375,11 @@ console.log('unsceduled se',res.data);
       //============================================================
       //
       //============================================================
-      $scope.test = function() {
-
+      $scope.test = function($event) {
+$.material.init();
           alert('test');
-          console.log('test');
+          console.log($event);
+          $event.currentTarget.popover('show');
 
         } //generateDays
 
@@ -423,7 +425,7 @@ console.log('unsceduled se',res.data);
       //
       //============================================================
       dragulaService.options($scope, 'se-bag', {
-        mirrorAnchor: 'bottom',
+        mirrorAnchor: 'top',
         accepts: sEBagAccepts
       });
       //============================================================
@@ -493,13 +495,22 @@ console.log('have room now show available');
       //============================================================
       //
       //============================================================
+      $scope.$on('se-bag.canceled', function(e, mirror, shadow) {
+
+        mirror.children('div.panel.panel-default.se-panel').toggle();
+        mirror.children('div.drag-view.text-center').toggle();
+      });
+
+      //============================================================
+      //
+      //============================================================
       $scope.$on('se-bag.shadow', function(e, el, container, source) {
         var siblings;
-
+        el.children('div.panel.panel-default.se-panel').show();
+        el.children('div.drag-view.text-center').hide();
         if (container[0].id === 'unscheduled-side-events') {
           //if (source !== 'unscheduled-side-events') {
-            el.children('div.panel.panel-default.se-panel').show();
-            el.children('div.drag-view.text-center').hide();
+
             siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
           //  console.log(siblings);
           //  console.log(siblings[0].width());
@@ -508,8 +519,10 @@ console.log('have room now show available');
       //           el.height(siblings.height());
       //           el.width(siblings.width());
       //       }else{
-      el.height(144);
-      el.width(250);
+      if(source[0].id !== 'unscheduled-side-events' || el.width()<200){
+        el.height(164);
+        el.width(254);
+      }
           //  }
 //          }
         } else {
@@ -538,7 +551,7 @@ console.log('have room now show available');
 
         var res;
         if (source.attr('id') === 'unscheduled-side-events') {
-          res = $scope.sideEvents[el.attr('se-res-index')];
+          res = _.findWhere($scope.sideEvents,{'_id':el.attr('res-id')});
 
         } else
           res = getBagScope(source)[0];
@@ -572,7 +585,13 @@ console.log('have room now show available');
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.over', function(e, el, target) {
+      $scope.$on('se-bag.over', function(e, el, target,source) {
+        if(target.attr('id') === 'unscheduled-side-events' && source.attr('id') === 'unscheduled-side-events' ){
+              el.children('div.panel.panel-default.se-panel').toggle();
+              el.children('div.drag-view.text-center').toggle();
+              return;
+        }
+
         hoverCleanUp();
         hoverArray.push(target);
 
