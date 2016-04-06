@@ -20,6 +20,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                delete(doc.sideEvent);
                var params     = {};
                 if(!doc.clientOrg)doc.clientOrg=clientOrg;
+                if(doc.sideEvent) delete(doc.sideEvent);
                 if(doc._id){
                     params.id = doc._id;
                     url=url+'/'+doc._id;

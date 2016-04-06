@@ -23,6 +23,7 @@ define(['app', 'lodash', 'moment',
       $scope.meeting = 0;
       $scope.search='';
       var hoverArray = [];
+      var dragElOrgHeight,dragElOrgWidth;
       $scope.syncLoading =0;
       init();
 
@@ -124,6 +125,7 @@ $scope.sync = function(){
         var allOrgs;
 
           return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
+console.log('unsceduled se',res.data);
             $scope.sideEvents = res.data;
           }).then(
             function() {
@@ -143,6 +145,8 @@ $scope.sync = function(){
               });
             }); // each
           }).then(function(){
+
+
                 if(!$scope.seModels)$scope.seModels=[];
               _.each($scope.sideEvents,function(se){
                   $scope.seModels.push(se);
@@ -198,7 +202,7 @@ $scope.sync = function(){
         var meeting = _.findWhere($scope.options.conferences, {
           _id: $scope.meeting
         });
-        var time, tier;
+        var time, tier, allOrgs;
         $scope.venue = meeting.venue;
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
           $scope.reservations = res.data;
@@ -206,7 +210,30 @@ $scope.sync = function(){
           _.each($scope.reservations,function(res){
             $scope.seModels.push(res);
           });
-        }).then(function() {
+        })
+        .then(
+          function() {
+            return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
+              allOrgs = orgs.data;
+
+            });
+
+          }
+        ).then(function() {
+          _.each($scope.reservations, function(res) {
+            if(!res.sideEvent) throw 'side vent data not loaded for res';
+            res.sideEvent.orgs = [];
+            _.each(res.sideEvent.hostOrgs, function(org) {
+              res.sideEvent.orgs.push(_.findWhere(allOrgs, {
+                '_id': org
+              }));
+            });
+          }); // each
+        })
+
+
+
+        .then(function() {
           var room;
           var dayIndex = -1;
           var cancelInterval = setInterval(function() { // hack for unresolved timming issue
@@ -432,14 +459,14 @@ $scope.sync = function(){
       //============================================================
       $scope.$on('se-bag.drag', function(e, el, container) {
 
-                var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+              var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
             $element.find('div.tiers.ng-scope').each(function(){
-                var room = _.findWhere($scope.options.rooms,{'_id':$(this).attr('room-index')});
+                var room = _.findWhere($scope.options.rooms,{'_id':$(this).children().attr('room-index')});
 
-                  console.log($(this).children().attr('room-index'));
+
             });
             //.available
-
+console.log('have room now show available');
       });
 
       //============================================================
@@ -452,10 +479,10 @@ $scope.sync = function(){
         shadow.children('div.panel.panel-default.se-panel').hide();
         shadow.children('div.drag-view.text-center').show();
 
-        var siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
+        // var siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
 
-          mirror.height(15);
-          mirror.width(40);
+          // mirror.height(15);
+          // mirror.width(40);
 
         // shadow.height(15);
         // shadow.width(40);
@@ -470,39 +497,38 @@ $scope.sync = function(){
         var siblings;
 
         if (container[0].id === 'unscheduled-side-events') {
-          if (source !== 'unscheduled-side-events') {
+          //if (source !== 'unscheduled-side-events') {
             el.children('div.panel.panel-default.se-panel').show();
             el.children('div.drag-view.text-center').hide();
             siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
-            console.log(siblings.length);
-            if(siblings.length>1){
-                el.height(siblings.height());
-                el.width(siblings.width());
-            }else{
-              el.height(164);
-              el.width(254);
-            }
-          }
+          //  console.log(siblings);
+          //  console.log(siblings[0].width());
+      //       if(siblings.length>1){
+      // console.log(siblings.width());
+      //           el.height(siblings.height());
+      //           el.width(siblings.width());
+      //       }else{
+      el.height(144);
+      el.width(250);
+          //  }
+//          }
         } else {
           el.children('div.panel.panel-default.se-panel').hide();
           el.children('div.drag-view.text-center').show();
           siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
+          if(siblings.length>0){
+              el.height(siblings.height());
+              el.width(siblings.width());
+          }else{
+            el.height(16);
+            el.width(50);
+          }
 
-          el.height(siblings.height());
-          el.width(siblings.width());
         }
 
       });
 
-      //============================================================
-      //
-      //============================================================
-      $scope.$on('se-bag.drop-model', function(e, el, container, source) {
-        hoverArray = [];
-        container.removeClass('label-success');
-        if ((source.attr('id') !== 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
-          initSideEvents($scope.meeting);
-      });
+
 
 
       //============================================================
@@ -527,10 +553,8 @@ $scope.sync = function(){
                 var tier = _.findWhere(meeting.seTiers, {
                   'seconds': Number(container.attr('time'))
                 });
-
-                $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered' );
-
-              }
+              }// if
+              $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered' );
             }
 
           ).catch(function(error) {
@@ -555,23 +579,33 @@ $scope.sync = function(){
         target.find('span.empty-bag').hide();
         target.addClass('label-success');
 
-        if(target.attr('id') !== 'unscheduled-side-events'){
+        if(target.attr('id') && target.attr('id') !== 'unscheduled-side-events'){
+      console.log('room-index',target.attr('room-index'));
+            console.log('room-name',target.attr('room'));
               var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
-               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+    console.log(el.attr('res-id'));
+               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('res-id')});
+
               //if()
               if(elModel.sideEvent.expNumPart > room.capacity)
                   target.addClass('label-danger');
         }
       });
 
+
+
       //============================================================
       //
       //============================================================
       $scope.$on('se-bag.drop-model', function(e, el, target,source) {
 
+        hoverArray = [];
+        target.removeClass('label-success');
+        // if ((source.attr('id') !== 'unscheduled-side-events' && target.attr('id') === 'unscheduled-side-events'))
+        //   initSideEvents($scope.meeting);
         if(target.attr('id') !== 'unscheduled-side-events'){
               var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
-               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
+               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('res-id')});
               //if()
 
               if(elModel.sideEvent.expNumPart > room.capacity)
@@ -594,9 +628,13 @@ $scope.sync = function(){
       //
       //============================================================
       $document.ready(function() {
-        $.material.init();
-        $.material.input();
-        $.material.ripples();
+
+
+          $.material.init();
+          $.material.input();
+          $.material.ripples();
+
+
         $element.find('#end-filter').bootstrapMaterialDatePicker({
           weekStart: 0,
           time: false

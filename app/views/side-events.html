@@ -66,13 +66,15 @@
           <div class="wrapper" style="width:260px;height:100%;">
             <!-- dragu;ar containers -->
             <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
-                  <div class="se-dragable-wrapper grabbible" se-res-index="{{$index}}" id="{{se._id}}" ng-repeat="se in ses = (sideEvents | filter:searchSe)">
-                    <div class="panel panel-default se-panel  ">
+                  <div class="se-dragable-wrapper grabbible" se-res-index="{{$index}}" res-id="{{se._id}}" ng-repeat="se in ses = (sideEvents | filter:searchSe)">
+                    <div class="panel panel-default se-panel">
                       <div class="panel-heading relative">
                         <h2 class="panel-title text-center">{{se.title}} </h2>
+                        <div class="debug-border-thin" style="max-height:16px;line-height:16px;overflow:hidden">
                         <span ng-repeat="org in se.sideEvent.orgs">
                           <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} | </span>
-                        <div style="position:absolute;bottom:3px;right:3px;">
+                        </div>
+                        <div style="position:absolute;bottom:3px;right:3px;"  data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
                           <span  style="font-size:10px;"><i class="fa fa-users"></i> {{se.sideEvent.expNumPart}}</span>
                         </div>
                       </div>
@@ -120,7 +122,7 @@
                         </table>
                       </div>
                     </div>
-                    <div class="drag-view text-center text-nowrap" style="display:none;">
+                    <div class="drag-view text-center text-nowrap" style="width:100%;display:none;">
                       <span  class="drag-view text-center text-nowrap"><i class="fa fa-calendar-o"></i> {{se.title}}</span>
                     </div>
                   </div>
@@ -132,7 +134,7 @@
       </div>
 
         <!-- y labels -->
-        <div class='room-cont'>
+        <div class='room-cont' id="x-lables">
           <div class="" style="min-width:100px;height:100%;display:table-cell;">
             <div>
               <div class="relative" style="height:49px;">
@@ -167,8 +169,8 @@
                 <div class="tiers">
                 <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:20px;">
                   <!-- dragula-model='tier.bag' -->
-                  <div  room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.name}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
-                     <span ng-repeat="b in tier.bag track by $index" id="{{b._id}}" class="se-in-grid"> {{b.title}} </span>
+                  <div  room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
+                     <span ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </span>
                     <span class="empty-bag" >&nbsp;</span>
                   <!-- <span class="material-input"></span> -->
                   </div>
