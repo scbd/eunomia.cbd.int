@@ -37,10 +37,9 @@
   "resolutions": {
     "angular": "1.5",
     "bootstrap": "3.3.6",
-    "scbd-angularjs-services": "1.1.12",
+    "scbd-angularjs-services": "test",
     "angular-animate": "1.5",
     "jquery": "2.2.0",
-    "bootstrap-material-design": "v0.5.9",
-    "scbd-angularjs-services": "https://github.com/scbd/scbd-angularjs-services.git#test"
+    "bootstrap-material-design": "v0.5.9"
   }
 }
