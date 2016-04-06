@@ -1,6 +1,6 @@
-define(['app','lodash','libs/js-sha256/build/sha256.min','scbd-angularjs-services/locale'], function (app,_) {
+define(['app','lodash'], function (app,_) {
 
-app.factory("mongoStorage", ['$http','authentication','$q','locale','$location', function($http,authentication,$q,locale,$location) {
+app.factory("mongoStorage", ['$http','authentication','$q','$location', function($http,authentication,$q,$location) {
 
         var user;
         authentication.getUser().then(function(u){

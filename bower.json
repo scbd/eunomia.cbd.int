@@ -22,9 +22,8 @@
     "require-css": "0.1.8",
     "requirejs-plugins": "1.0.3",
     "requirejs-text": "2.0.14",
-    "scbd-angularjs-services": "1.1.8",
+    "scbd-angularjs-services": "1.1.11",
     "scbd-branding": "1.3.4",
-    "scbd-filters": "1.0.0",
     "ng-dialog": "0.5.8",
     "ngSmoothScroll": "2.0.0",
     "scroll-animate-directive": "0.1.2",
@@ -33,13 +32,12 @@
     "bootstrap-material-design": "v0.5.9",
     "angular-dragula": "https://github.com/randyhoulahan/angular-dragula.git",
     "angular-toastr": "1.7.0",
-    "angular-bootstrap-colorpicker": "3.0.25",
-    "js-sha256": "0.3.0"
+    "angular-bootstrap-colorpicker": "3.0.25"
   },
   "resolutions": {
     "angular": "1.5",
     "bootstrap": "3.3.6",
-    "scbd-angularjs-services": "1.1.8",
+    "scbd-angularjs-services": "1.1.12",
     "angular-animate": "1.5",
     "jquery": "2.2.0",
     "bootstrap-material-design": "v0.5.9"
