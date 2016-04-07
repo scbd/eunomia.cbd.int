@@ -22,10 +22,10 @@ define(['app', 'lodash', 'moment',
       $scope.rooms = [];
       $scope.days = [];
       $scope.meeting = 0;
-      $scope.search='';
+      $scope.search = '';
       var hoverArray = [];
-      var dragElOrgHeight,dragElOrgWidth;
-      $scope.syncLoading =0;
+      var dragElOrgHeight, dragElOrgWidth;
+      $scope.syncLoading = 0;
       init();
 
       //============================================================
@@ -59,11 +59,16 @@ define(['app', 'lodash', 'moment',
       }; //init
 
 
-$scope.sync = function(){
-   $scope.syncLoading = 1;
-   console.log('setting sync');
-  mongoStorage.syncSideEvents().then(function(){initSideEvents($scope.meeting);}).then(function(){$scope.syncLoading=0;console.log('sync finnished');});
-};
+      $scope.sync = function() {
+        $scope.syncLoading = 1;
+        console.log('setting sync');
+        mongoStorage.syncSideEvents().then(function() {
+          initSideEvents($scope.meeting);
+        }).then(function() {
+          $scope.syncLoading = 0;
+          console.log('sync finnished');
+        });
+      };
       //============================================================
       //
       //============================================================
@@ -125,34 +130,34 @@ $scope.sync = function(){
       function initSideEvents(meeting) {
         var allOrgs;
 
-          return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
-console.log('unsceduled se',res.data);
-            $scope.sideEvents = res.data;
-          }).then(
-            function() {
-              return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
-                allOrgs = orgs.data;
+        return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
+          console.log('unsceduled se', res.data);
+          $scope.sideEvents = res.data;
+        }).then(
+          function() {
+            return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
+              allOrgs = orgs.data;
 
-              });
+            });
 
-            }
-          ).then(function() {
-            _.each($scope.sideEvents, function(res) {
-              res.sideEvent.orgs = [];
-              _.each(res.sideEvent.hostOrgs, function(org) {
-                res.sideEvent.orgs.push(_.findWhere(allOrgs, {
-                  '_id': org
-                }));
-              });
-            }); // each
-          }).then(function(){
+          }
+        ).then(function() {
+          _.each($scope.sideEvents, function(res) {
+            res.sideEvent.orgs = [];
+            _.each(res.sideEvent.hostOrgs, function(org) {
+              res.sideEvent.orgs.push(_.findWhere(allOrgs, {
+                '_id': org
+              }));
+            });
+          }); // each
+        }).then(function() {
 
 
-                if(!$scope.seModels)$scope.seModels=[];
-              _.each($scope.sideEvents,function(se){
-                  $scope.seModels.push(se);
-              });
+          if (!$scope.seModels) $scope.seModels = [];
+          _.each($scope.sideEvents, function(se) {
+            $scope.seModels.push(se);
           });
+        });
 
       } //initMeeting
 
@@ -206,31 +211,31 @@ console.log('unsceduled se',res.data);
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
-          $scope.reservations = res.data;
-          if(!$scope.seModels)$scope.seModels=[];
-          _.each($scope.reservations,function(res){
-            $scope.seModels.push(res);
-          });
-        })
-        .then(
-          function() {
-            return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
-              allOrgs = orgs.data;
-
+            $scope.reservations = res.data;
+            if (!$scope.seModels) $scope.seModels = [];
+            _.each($scope.reservations, function(res) {
+              $scope.seModels.push(res);
             });
+          })
+          .then(
+            function() {
+              return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
+                allOrgs = orgs.data;
 
-          }
-        ).then(function() {
-          _.each($scope.reservations, function(res) {
-            if(!res.sideEvent) throw 'side vent data not loaded for res';
-            res.sideEvent.orgs = [];
-            _.each(res.sideEvent.hostOrgs, function(org) {
-              res.sideEvent.orgs.push(_.findWhere(allOrgs, {
-                '_id': org
-              }));
-            });
-          }); // each
-        })
+              });
+
+            }
+          ).then(function() {
+            _.each($scope.reservations, function(res) {
+              if (!res.sideEvent) throw 'side vent data not loaded for res';
+              res.sideEvent.orgs = [];
+              _.each(res.sideEvent.hostOrgs, function(org) {
+                res.sideEvent.orgs.push(_.findWhere(allOrgs, {
+                  '_id': org
+                }));
+              });
+            }); // each
+          })
 
 
 
@@ -376,7 +381,7 @@ console.log('unsceduled se',res.data);
       //
       //============================================================
       $scope.test = function($event) {
-$.material.init();
+          $.material.init();
           alert('test');
           console.log($event);
           $event.currentTarget.popover('show');
@@ -441,18 +446,41 @@ $.material.init();
       //============================================================
       //
       //============================================================
-      $scope.$on('rooms-bag.drop-model', function(el, target, source, sibling) {
-            target.parent().children().each(function(){
+      function removeDropIndicators(){
+        var room;
+        $element.find('div.tiers.ng-scope').each(function() {
+            room = $(this).children().attr('room-index');
 
-                  var room = _.findWhere($scope.options.rooms,{'_id':$(this).attr('id')});
-                  room.sort=$(this).index();
-                  var roomClone = _.cloneDeep(room);
-                  delete(roomClone);
-                  return mongoStorage.save('venue-rooms',roomClone,roomClone._id).catch(function(){
-                              $rootScope.$broadcast("showError","There was an error updating the server with the room order.");
-                  });
-            });
-            $rootScope.$broadcast("showInfo","Room Sort Order Successfully Updated.");
+              $element.find('#'+room).children().children().children().children().each(function(){
+                  $(this).removeClass('label-danger-light');
+              });
+
+              $element.find('#'+room).children().children().children().children().each(function(){
+                  $(this).removeClass('label-success-light');
+              });
+
+        });
+      }
+
+
+      //============================================================
+      //
+      //============================================================
+      $scope.$on('rooms-bag.drop-model', function(el, target, source, sibling) {
+
+        target.parent().children().each(function() {
+
+          var room = _.findWhere($scope.options.rooms, {
+            '_id': $(this).attr('id')
+          });
+          room.sort = $(this).index();
+          var roomClone = _.cloneDeep(room);
+          delete(roomClone);
+          return mongoStorage.save('venue-rooms', roomClone, roomClone._id).catch(function() {
+            $rootScope.$broadcast("showError", "There was an error updating the server with the room order.");
+          });
+        });
+        $rootScope.$broadcast("showInfo", "Room Sort Order Successfully Updated.");
 
       });
 
@@ -460,15 +488,29 @@ $.material.init();
       //
       //============================================================
       $scope.$on('se-bag.drag', function(e, el, container) {
+        var room;
+        var elModel = _.findWhere($scope.seModels, {
+          '_id': el.attr('res-id')
+        });
+        $element.find('div.tiers.ng-scope').each(function() {
+            room = _.findWhere($scope.options.rooms, {
+                          '_id': $(this).children().attr('room-index')
+                    });
+            if (elModel.sideEvent.expNumPart > room.capacity){
+            //  $element.find('#'+room._id).addClass('label-danger-light');
+              $element.find('#'+room._id).children().children().children().children().each(function(){
+                  $(this).addClass('label-danger-light');
+              });
+            }else{
+              $element.find('#'+room._id).children().children().children().children().each(function(){
+                  $(this).addClass('label-success-light');
+              });
+            }
+            $timeout(function(){
+              removeDropIndicators();
+            },10000);
 
-              var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('id')});
-            $element.find('div.tiers.ng-scope').each(function(){
-                var room = _.findWhere($scope.options.rooms,{'_id':$(this).children().attr('room-index')});
-
-
-            });
-            //.available
-console.log('have room now show available');
+        });
       });
 
       //============================================================
@@ -480,23 +522,13 @@ console.log('have room now show available');
         mirror.children('div.drag-view.text-center').show();
         shadow.children('div.panel.panel-default.se-panel').hide();
         shadow.children('div.drag-view.text-center').show();
-
-        // var siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
-
-          // mirror.height(15);
-          // mirror.width(40);
-
-        // shadow.height(15);
-        // shadow.width(40);
-        //shadow.css('display','inline');
-
       });
 
       //============================================================
       //
       //============================================================
       $scope.$on('se-bag.canceled', function(e, mirror, shadow) {
-
+        removeDropIndicators();
         mirror.children('div.panel.panel-default.se-panel').toggle();
         mirror.children('div.drag-view.text-center').toggle();
       });
@@ -509,40 +541,25 @@ console.log('have room now show available');
         el.children('div.panel.panel-default.se-panel').show();
         el.children('div.drag-view.text-center').hide();
         if (container[0].id === 'unscheduled-side-events') {
-          //if (source !== 'unscheduled-side-events') {
+          siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
+          if (source[0].id !== 'unscheduled-side-events' || el.width() < 200) {
+            el.height(164);
+            el.width(254);
+          }
 
-            siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
-          //  console.log(siblings);
-          //  console.log(siblings[0].width());
-      //       if(siblings.length>1){
-      // console.log(siblings.width());
-      //           el.height(siblings.height());
-      //           el.width(siblings.width());
-      //       }else{
-      if(source[0].id !== 'unscheduled-side-events' || el.width()<200){
-        el.height(164);
-        el.width(254);
-      }
-          //  }
-//          }
         } else {
           el.children('div.panel.panel-default.se-panel').hide();
           el.children('div.drag-view.text-center').show();
           siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
-          if(siblings.length>0){
-              el.height(siblings.height());
-              el.width(siblings.width());
-          }else{
+          if (siblings.length > 0) {
+            el.height(siblings.height());
+            el.width(siblings.width());
+          } else {
             el.height(16);
             el.width(50);
           }
-
-        }
-
+        }//else
       });
-
-
-
 
       //============================================================
       //
@@ -550,12 +567,14 @@ console.log('have room now show available');
       $scope.$on('se-bag.drop', function(e, el, container, source) {
 
         var res;
-        if (source.attr('id') === 'unscheduled-side-events') {
-          res = _.findWhere($scope.sideEvents,{'_id':el.attr('res-id')});
-
-        } else
+        if (source.attr('id') === 'unscheduled-side-events')
+          res = _.findWhere($scope.sideEvents, {
+            '_id': el.attr('res-id')
+          });
+        else
           res = getBagScope(source)[0];
 
+        //if not dropping on it self change time
         if (!(source.attr('id') === 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
           setTimes(res, container).then(
             function() {
@@ -566,8 +585,8 @@ console.log('have room now show available');
                 var tier = _.findWhere(meeting.seTiers, {
                   'seconds': Number(container.attr('time'))
                 });
-              }// if
-              $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered' );
+              } // if
+              $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered');
             }
 
           ).catch(function(error) {
@@ -585,52 +604,57 @@ console.log('have room now show available');
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.over', function(e, el, target,source) {
-        if(target.attr('id') === 'unscheduled-side-events' && source.attr('id') === 'unscheduled-side-events' ){
-              el.children('div.panel.panel-default.se-panel').toggle();
-              el.children('div.drag-view.text-center').toggle();
-              return;
+      $scope.$on('se-bag.over', function(e, el, target, source) {
+
+        // keep original shadow on moving unscheduled side events within its own container
+        if (target.attr('id') === 'unscheduled-side-events' && source.attr('id') === 'unscheduled-side-events') {
+          el.children('div.panel.panel-default.se-panel').toggle();
+          el.children('div.drag-view.text-center').toggle();
+          return;
         }
 
+        // cleans style changes on hovers, left overs form events not always triggering
         hoverCleanUp();
+        //keeps track of overed elements for style cleans when done
+        //more efficiant then doing all elements
         hoverArray.push(target);
 
+        // hack to fix empty bag screen jump
         target.find('span.empty-bag').hide();
+        // show green if a good drop
         target.addClass('label-success');
 
-        if(target.attr('id') && target.attr('id') !== 'unscheduled-side-events'){
-      console.log('room-index',target.attr('room-index'));
-            console.log('room-name',target.attr('room'));
-              var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
-    console.log(el.attr('res-id'));
-               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('res-id')});
-
-              //if()
-              if(elModel.sideEvent.expNumPart > room.capacity)
-                  target.addClass('label-danger');
+        // check if capacity is good else show red
+        if (target.attr('id') !== 'unscheduled-side-events') {
+          var room = _.findWhere($scope.options.rooms, {
+                          '_id': target.attr('room-index')
+                        });
+          var elModel = _.findWhere($scope.seModels, {
+                          '_id': el.attr('res-id')
+                        });
+          if (elModel.sideEvent.expNumPart > room.capacity)
+            target.addClass('label-danger');
         }
       });
-
-
 
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.drop-model', function(e, el, target,source) {
+      $scope.$on('se-bag.drop-model', function(e, el, target, source) {
 
-        hoverArray = [];
+        removeDropIndicators();
         target.removeClass('label-success');
-        // if ((source.attr('id') !== 'unscheduled-side-events' && target.attr('id') === 'unscheduled-side-events'))
-        //   initSideEvents($scope.meeting);
-        if(target.attr('id') !== 'unscheduled-side-events'){
-              var room = _.findWhere($scope.options.rooms,{'_id':target.attr('room-index')});
-               var elModel =  _.findWhere($scope.seModels,{'_id':el.attr('res-id')});
-              //if()
-
-              if(elModel.sideEvent.expNumPart > room.capacity)
-                  $rootScope.$broadcast('showWarning','Warning: The expected number of participants ('+elModel.sideEvent.expNumPart+') excceds room capacity ('+room.capacity+').');
+        // show warning toast is drop not good
+        if (target.attr('id') !== 'unscheduled-side-events') {
+          var room = _.findWhere($scope.options.rooms, {
+            '_id': target.attr('room-index')
+          });
+          var elModel = _.findWhere($scope.seModels, {
+            '_id': el.attr('res-id')
+          });
+          if (elModel.sideEvent.expNumPart > room.capacity)
+            $rootScope.$broadcast('showWarning', 'Warning: The expected number of participants (' + elModel.sideEvent.expNumPart + ') excceds room capacity (' + room.capacity + ').');
         }
-
       });
 
       //============================================================
@@ -638,7 +662,7 @@ console.log('have room now show available');
       //============================================================
       $scope.searchSe = function(se) {
 
-        if (!$scope.search || $scope.search == ' ' ) return true;
+        if (!$scope.search || $scope.search == ' ') return true;
         var temp = JSON.stringify(se);
         return (temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0);
       };
@@ -649,9 +673,9 @@ console.log('have room now show available');
       $document.ready(function() {
 
 
-          $.material.init();
-          $.material.input();
-          $.material.ripples();
+        $.material.init();
+        $.material.input();
+        $.material.ripples();
 
 
         $element.find('#end-filter').bootstrapMaterialDatePicker({

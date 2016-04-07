@@ -16,7 +16,20 @@
   background-color: rgba(0,155,72,.3)
   width: 90%;
 }
-
+.label-danger-light{
+  background-color: rgba(217,83,79,.08);
+  border-style: inset;
+  border-width: .5px;
+  border-color: rgba(217,83,79,1);
+  height:20px;
+}
+.label-success-light{
+  background-color: rgba(76,175,80,.08);
+  border-style: inset;
+  border-width: .5px;
+  border-color: rgb(76,175,80);
+  height:20px;
+}
 /* dragula-specific example page styles */
 .se-in-grid{
   background-color: yellow;
