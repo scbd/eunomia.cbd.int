@@ -38,7 +38,30 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
           path: '/side-events',
   //            roles:['Administrator','IndeAdministrator'],
         });
+        //
+        scbdMenuService.menus.mainMenu.push({
+              name: 'CCTV',
+              type: 'toggle',
+              open:0,
+              faIcon: 'fa-television',
+              roles:['Administrator'],
+              pages: [
 
+                {
+                  name: 'Feeds',
+                  type: 'link',
+                  path: '/cctv/feeds',
+              //    mdIcon: 'all_inclusive',
+                  roles:['Administrator'],
+                },
+                {
+                  name: 'Frames',
+                  type: 'link',
+                  path: '/cctv/frames',
+              //    mdIcon: 'all_inclusive',
+                  roles:['Administrator'],
+                }]
+              });
         //
         // scbdMenuService.menus.mainMenu.push({
         //       name: 'Admin',
