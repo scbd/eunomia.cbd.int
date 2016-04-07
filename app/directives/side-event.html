@@ -11,10 +11,10 @@
       <span  ng-repeat="org in res.sideEvent.orgs" class="text-nowrap">
         <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} <br> </span>
       </div>
-      <div class="num-orgs"  style="position:absolute;top:3px;right:3px;z-index:100;"  data-toggle="popover" data-placement="bottom" >
+      <div class="num-orgs"  style="position:absolute;top:3px;right:3px;z-index:100;" >
         <span  style="font-size:10px;"><img src="app/images/ic_business_black_48px.svg" class="img-circle"  width="15" height="15"> {{res.sideEvent.orgs.length}}</span>
       </div>
-      <div style="position:absolute;top:3px;left:3px;"  data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." ng-click="test($event);">
+      <div style="position:absolute;top:3px;left:3px;"  ng-click="test($event);">
         <span  style="font-size:10px;"><i class="fa fa-users"></i> {{res.sideEvent.expNumPart}}</span>
       </div>
     </div>
