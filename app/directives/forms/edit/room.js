@@ -77,6 +77,23 @@ $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{
               });
               $scope.tabs[tabName].active=true;
           }//initVunues
+
+          //============================================================
+          //
+          //============================================================
+          function initVal (){
+              $timeout(function(){
+                $scope.doc.atTable = $scope.doc.atTable || 0;
+                $scope.doc.capacity = $scope.doc.capacity || 0;
+                $scope.doc.sort = $scope.doc.sort || 0;
+                $timeout(function(){
+                  $element.find('#roomAtTableD').trigger("change");
+                  $element.find('#roomCapacityD').trigger("change");
+                  $element.find('#roomSortD').trigger("change");
+                });
+              },200);
+
+          }//initVunues
           //============================================================
           //
           //============================================================
@@ -86,7 +103,7 @@ $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{
               if(!$scope.doc.location)$scope.doc.location=$scope.venue._id;
               initVenues();
               $timeout(function(){$element.find('#roomNameD').focus();},500);
-
+              initVal();
 
           }//triggerChanges
 
