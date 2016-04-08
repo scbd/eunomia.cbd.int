@@ -1,12 +1,14 @@
 <div class="se-dragable-wrapper grabbible" res-id="{{res._id}}" style="max-width:245px;">
   <div class="panel panel-default se-panel">
     <div class="panel-heading relative">
-      <h2 class="panel-title text-center">{{res.title}} </h2>
+      <h2 id="title" class="panel-title text-center">{{res.title}} </h2>
       <div id="orgs"  style="max-height:16px;line-height:16px;overflow:hidden" data-toggle="popover" data-placement="top">
       <span ng-repeat="org in res.sideEvent.orgs">
         <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} | </span>
       </div>
-
+      <div id="pop-title" style="display: none;">
+      <span>{{res.sideEvent.title}}</span>
+      </div>
       <div id="pop-orgs" style="display: none;">
       <span  ng-repeat="org in res.sideEvent.orgs" class="text-nowrap">
         <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} <br> </span>
