@@ -23,9 +23,9 @@
         <div class="se-cont-header text-center"><h4 style="margin-top:0px;padding-top:10px;">Unscheduled Side Events</h4>
 
 <div class="btn-group  btn-group-raised btn-group-xs" style="margin:auto;">
-  <a href="javascript:void(0)" class="btn "><i class="fa fa-filter"></i> Filter</a>
-  <a href="javascript:void(0)" class="btn " ng-click="showSearch=1;"><i class="fa fa-search"></i> Search</a>
-    <a href="javascript:void(0)" class="btn " ng-click="sync();" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left"><i class="fa fa-refresh fa-spin" ng-show="syncLoading"></i><i class="fa fa-refresh" ng-show="!syncLoading"></i> Sync</a>
+  <a href="javascript:void(0)" class="btn " ng-click="showFilter=!showFilter;"><i class="fa fa-filter"></i> Filter</a>
+  <a href="javascript:void(0)" class="btn " ng-click="showSearch=!showSearch;"><i class="fa fa-search"></i> Search</a>
+  <a href="javascript:void(0)" class="btn " ng-click="sync();" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left"><i class="fa fa-refresh fa-spin" ng-show="syncLoading"></i><i class="fa fa-refresh" ng-show="!syncLoading"></i> Sync</a>
 </div>
 <div></div>
 <div class="relative" style="width:100%;" ng-show="showSearch">
@@ -34,7 +34,7 @@
     <div class="input-group">
       <label class="control-label" for="searchSe">Search Side Events</label>
       <input type="text" id="searchSe" class="form-control" ng-model="search">
-      <p class="help-block" >Showing <span class="badge">{{ses.length}}</span> for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}"</span></p>
+
       <span class="input-group-btn">
         <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
           <i class="fa fa-search" ng-if="!search"></i>          <i class="fa fa-times" ng-if="search"></i>
@@ -42,25 +42,26 @@
       </span>
     </div>
   </div>
+
 </div>
 
 <div class="relative" style="width:100%;" ng-show="showFilter">
     <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showFilter=0;"></i>
   <div class="form-group label-floating">
-    <div class="input-group">
-      <label class="control-label" for="searchSe">Search Side Events</label>
-      <input type="text" id="searchSe" class="form-control" ng-model="search">
+    <div class="input-group text-left" style="width:100%">
+      <label class="control-label" for="org-select">Filter By Organization</label>
+      <input type="text" id="searchSe" class="form-control" ng-model="searchOrg">
       <p class="help-block" >Showing <span class="badge">{{ses.length}}</span> for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}"</span></p>
-      <span class="input-group-btn">
-        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
-          <i class="fa fa-search" ng-if="!search"></i>          <i class="fa fa-times" ng-if="search"></i>
-        </button>
-      </span>
+      <span class="material-input"></span>
     </div>
   </div>
 
 </div>
 <span>&nbsp;</span>
+<div class="text-left" style="padding-bottom:10px;">
+    <p class="help-block" >Showing <span class="badge">{{ses.length}}</span> <span ng-show="search">for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}"</span></span></p>
+</div>
+
         </div>
         <div style=" height:100vh;overflow-y:auto;">
           <div class="wrapper" style="width:265px;height:100%;">
@@ -100,7 +101,7 @@
 
         <!-- room rows -->
         <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
-          <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room-x" id="{{room._id}}" ng-show="!room.seHidden">
+          <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
             <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
               {{room.acronym}}<br>
               <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span><span class="small" ng-if="!room.atTable">{{room.capacity}}</span>

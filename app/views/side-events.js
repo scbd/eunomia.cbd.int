@@ -19,12 +19,14 @@ define(['app', 'lodash', 'moment',
       // $scope.startFilter=0;
       // $scope.endFilter=0;
       $scope.sideEvents = ['1'];
-      $scope.rooms = [];
       $scope.days = [];
       $scope.meeting = 0;
       $scope.search = '';
+      $scope.rooms={};
       var hoverArray = [];
-      var dragElOrgHeight, dragElOrgWidth;
+      var slotElements =[];
+      var cancelDropIdicators;
+    //  var dragElOrgHeight, dragElOrgWidth;
       $scope.syncLoading = 0;
       init();
 
@@ -35,12 +37,28 @@ define(['app', 'lodash', 'moment',
         $scope.options = {};
         initMeeting().then(function() {
           generateDays();
-        }).then(function() {
-          loadRooms();
-        }).then(function() {
-          initSideEvents($scope.meeting);
-        }).then(function() {
-          loadReservations();
+            loadRooms().then(function(){
+              initSideEvents($scope.meeting).then(function(){
+                  loadReservations().then(function(){
+                        var room;
+
+                        $timeout(function(){
+
+                          _.each($scope.options.rooms,function(room) {
+
+
+                                var roomEl = $element.find('#'+room._id);
+                                slotElements[room._id]=[];
+                                roomEl.children().children().children().children().each(function(){
+                                    slotElements[room._id].push($(this));
+                                });
+                            });
+
+                        },2000);
+                  });
+              });
+            });
+
         });
       } //init
       //============================================================
@@ -131,7 +149,6 @@ define(['app', 'lodash', 'moment',
         var allOrgs;
 
         return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
-          console.log('unsceduled se', res.data);
           $scope.sideEvents = res.data;
         }).then(
           function() {
@@ -323,6 +340,7 @@ define(['app', 'lodash', 'moment',
 
           _.each($scope.options.rooms, function(room) {
             room.bookings = _.cloneDeep($scope.days);
+            $scope.rooms[room._id]=room;
           });
         });
       } //generateDays
@@ -447,20 +465,15 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       function removeDropIndicators(){
-        var room;
-        $element.find('div.tiers.ng-scope').each(function() {
-            room = $(this).children().attr('room-index');
 
-              $element.find('#'+room).children().children().children().children().each(function(){
-                  $(this).removeClass('label-danger-light');
+        $timeout.cancel(cancelDropIdicators);
+        _.each($scope.rooms,function(room){
+              _.each(slotElements[room._id],function(el){
+                  angular.element(el).removeClass('label-danger-light');
+                  angular.element(el).removeClass('label-success-light');
               });
-
-              $element.find('#'+room).children().children().children().children().each(function(){
-                  $(this).removeClass('label-success-light');
-              });
-
         });
-      }
+      }// removeDropIndicators
 
 
       //============================================================
@@ -488,30 +501,26 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       $scope.$on('se-bag.drag', function(e, el, container) {
-        var room;
+        var roomId;
         var elModel = _.findWhere($scope.seModels, {
           '_id': el.attr('res-id')
         });
-        $element.find('div.tiers.ng-scope').each(function() {
-            room = _.findWhere($scope.options.rooms, {
-                          '_id': $(this).children().attr('room-index')
-                    });
+
+        _.each($scope.rooms,function(room){
             if (elModel.sideEvent.expNumPart > room.capacity){
-            //  $element.find('#'+room._id).addClass('label-danger-light');
-              $element.find('#'+room._id).children().children().children().children().each(function(){
-                  $(this).addClass('label-danger-light');
+              _.each(slotElements[room._id],function(el,key){
+                angular.element(el).addClass('label-danger-light');
               });
             }else{
-              $element.find('#'+room._id).children().children().children().children().each(function(){
-                  $(this).addClass('label-success-light');
+              _.each(slotElements[room._id],function(el){
+                angular.element(el).addClass('label-success-light');
               });
             }
-            $timeout(function(){
-              removeDropIndicators();
-            },10000);
-
         });
-      });
+        cancelDropIdicators = $timeout(function(){
+            removeDropIndicators();
+        },10000);
+      });//se-bag.drag
 
       //============================================================
       //
@@ -528,7 +537,7 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       $scope.$on('se-bag.canceled', function(e, mirror, shadow) {
-        removeDropIndicators();
+//        removeDropIndicators();
         mirror.children('div.panel.panel-default.se-panel').toggle();
         mirror.children('div.drag-view.text-center').toggle();
       });
@@ -658,7 +667,10 @@ define(['app', 'lodash', 'moment',
       });
 
       //============================================================
-      //
+      // - orgs
+      // - pref
+      // - require
+      // - contact
       //============================================================
       $scope.searchSe = function(se) {
 
