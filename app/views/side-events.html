@@ -1,3 +1,12 @@
+<style>
+.small {
+  transform: scale(0.8, 0.8);
+  -ms-transform: scale(0.8, 0.8); /* IE 9 */
+  -webkit-transform: scale(0.8, 0.8); /* Safari and Chrome */
+  -o-transform: scale(0.8, 0.8); /* Opera */
+  -moz-transform: scale(0.8, 0.8); /* Firefox */
+}
+</style>
 <div ng-controller="events" class="container-fluid">
 
   <div class="row  view-header text-center">
@@ -35,7 +44,7 @@
       <label class="control-label" for="searchSe">Search Side Events</label>
       <input type="text" id="searchSe" class="form-control" ng-model="search">
 
-      <span class="input-group-btn">
+      <span class="input-group-btn small" >
         <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
           <i class="fa fa-search" ng-if="!search"></i>          <i class="fa fa-times" ng-if="search"></i>
         </button>
@@ -51,15 +60,28 @@
     <div class="input-group text-left" style="width:100%">
       <label class="control-label" for="org-select">Filter By Organization</label>
       <input type="text" id="searchSe" class="form-control" ng-model="searchOrg">
-      <p class="help-block" >Showing <span class="badge">{{ses.length}}</span> for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}"</span></p>
       <span class="material-input"></span>
+      <span class="input-group-btn small">
+        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchOrg='';" >
+          <i class="fa fa-search" ng-if="!searchOrg"></i>          <i class="fa fa-times" ng-if="searchOrg"></i>
+        </button>
+      </span>
     </div>
   </div>
-
+  <div class="form-group teft-left">
+    <label class="control-label pull-left" >Filter By Preference</label>
+    <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
+      <option ng-repeat="docObj in options.preferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.title}} </option>
+    </select>
+  </div>
 </div>
+
 <span>&nbsp;</span>
 <div class="text-left" style="padding-bottom:10px;">
-    <p class="help-block" >Showing <span class="badge">{{ses.length}}</span> <span ng-show="search">for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}"</span></span></p>
+    <p class="help-block" >Showing <span class="badge">{{ses.length}}</span>
+      <span ng-show="search">for <span class="label label-default" style="font-size:13px;font-weight:300;">"{{search}}{{searchOrg}}"</span></span>
+      <span ng-show="searchOrg"><span ng-show='!search'>for</span><span ng-show='search'>and</span> <span class="label label-default" style="font-size:13px;font-weight:300;">"{{searchOrg}}"</span> in orgs</span>
+    </p>
 </div>
 
         </div>
@@ -67,7 +89,7 @@
           <div class="wrapper" style="width:265px;height:100%;">
             <!-- dragu;ar containers -->
             <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
-                  <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe)"></side-event>
+                  <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe | filter:searchOrgFilter)"></side-event>
             </div>
             <!-- endn of container -->
           </div>
