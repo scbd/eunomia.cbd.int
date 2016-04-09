@@ -24,8 +24,17 @@
 </head>
 <body class="ltr" id="top">
   <!-- used by authentication service as work around for cross domain storage of token -->
-  <iframe id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
+  <!-- <iframe ng-if="!ACCOUNTS_URL" id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none"></iframe> -->
+  <iframe   id="authenticationFrame" style="display:none"></iframe>
+  <script>
 
+      var domain = document.location.hostname.replace(/[^\.]+\./, '');
+
+       if(domain=='localhost') domain = 'cbddev.xyz';
+
+      document.getElementById('authenticationFrame').src = 'https://accounts.'+domain+'/app/authorize.html';
+
+  </script>
     <!-- HEADER (MOBILE) -->
 
 
