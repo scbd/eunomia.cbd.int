@@ -9,7 +9,7 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
         $routeProvider.
             when('/',                   { template:    rootTemplate,  label:'Home',  resolveController: 'views/index', reloadOnSearch : false }).
             when('/home', { redirectTo: '/' }).
-            when('/',                     { templateUrl: 'views/index.html',                 resolveController: true, resolveUser: true }).
+            when('/',                     { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
 
             when('/cctv/feeds',               { templateUrl: 'views/cctv/feeds.html',          resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/cctv/frames',              { templateUrl: 'views/cctv/frames.html',         resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
