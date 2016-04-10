@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" ng-controller="TemplateController">
+
 <head>
   <base href="<%=baseUrl%>">
   <title>Eunomia - Meeting Room Scheduling</title>
@@ -9,52 +10,32 @@
   <link rel="shortcut icon" href="app/images/favicon.ico">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-  <!-- Begin Inspectlet Embed Code -->
-  <!-- <script type="text/javascript" id="inspectletjs">
-  window.__insp = window.__insp || [];
-  __insp.push(['wid', 811324986]);
-  (function() {
-  function ldinsp(){if(typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); };
-  setTimeout(ldinsp, 500); document.readyState != "complete" ? (window.attachEvent ? window.attachEvent('onload', ldinsp) : window.addEventListener('load', ldinsp, false)) : ldinsp();
-  })();
-  </script> -->
-  <!-- End Inspectlet Embed Code -->
-
 </head>
+
 <body class="ltr" id="top">
   <!-- used by authentication service as work around for cross domain storage of token -->
   <!-- <iframe ng-if="!ACCOUNTS_URL" id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none"></iframe> -->
-  <iframe   id="authenticationFrame" style="display:none"></iframe>
+  <iframe id="authenticationFrame" style="display:none"></iframe>
   <script>
-
-      var domain = document.location.hostname.replace(/[^\.]+\./, '');
-
-       if(domain=='localhost') domain = 'cbddev.xyz';
-
-      document.getElementById('authenticationFrame').src = 'https://accounts.'+domain+'/app/authorize.html';
-
+    var domain = document.location.hostname.replace(/[^\.]+\./, '');
+    if (domain == 'localhost') domain = 'cbddev.xyz';
+    document.getElementById('authenticationFrame').src = 'https://accounts.' + domain + '/app/authorize.html';
   </script>
-    <!-- HEADER (MOBILE) -->
 
+  <div class="view">
+    <!-- <scbd-header>  </scbd-header> -->
+    <div class="relative">
 
-
-    <!-- CONTENT -->
-    <!-- CONTENT -->
-
-    <div class="view">
-<scbd-header>  </scbd-header>
-      <div class="relative">
-
-<portal-nav></portal-nav>
-<div id="main">
-        <ng-view > </ng-view>
-</div>
+      <portal-nav></portal-nav>
+      <div id="main">
+        <ng-view> </ng-view>
       </div>
     </div>
+  </div>
 
 
-    <script src="app/libs/requirejs/require.js" data-main="app/boot.js"></script>
+  <script src="app/libs/requirejs/require.js" data-main="app/boot.js"></script>
 
 </body>
+
 </html>
