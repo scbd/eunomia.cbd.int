@@ -26,6 +26,8 @@ define(['app', 'lodash', 'moment',
       var hoverArray = [];
       var slotElements =[];
       var cancelDropIdicators;
+
+
     //  var dragElOrgHeight, dragElOrgWidth;
       $scope.syncLoading = 0;
       init();
@@ -35,6 +37,7 @@ define(['app', 'lodash', 'moment',
       //============================================================
       function init() {
         $scope.options = {};
+        initReq();
         initMeeting().then(function() {
           generateDays();
             loadRooms().then(function(){
@@ -55,12 +58,28 @@ define(['app', 'lodash', 'moment',
                             });
 
                         },2000);
+                        initPreferences();
                   });
               });
             });
 
         });
       } //init
+
+      //============================================================
+      //
+      //============================================================
+      function initReq() {
+        $scope.options.requirements=[
+                  {title:'interpretation',value:'interpretation'},
+          {title:'catering',value:'catering'},
+          {title:'overhead',value:'overhead'},
+          {title:'pc',value:'pc'},
+            {title:'sound',value:'sound'},
+            {title:'lcd',value:'lcd'},
+            {title:'skype',value:'skype'},
+        ];
+      } //initMeeting
       //============================================================
       //
       //============================================================
@@ -229,6 +248,7 @@ define(['app', 'lodash', 'moment',
         $scope.venue = meeting.venue;
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
             $scope.reservations = res.data;
+
             if (!$scope.seModels) $scope.seModels = [];
             _.each($scope.reservations, function(res) {
               $scope.seModels.push(res);
@@ -267,12 +287,16 @@ define(['app', 'lodash', 'moment',
                   _id: res.location.room
                 });
                 dayIndex = _.findIndex($scope.days, {
-                  date: moment(res.start * 1000).format('YYYY-MM-DD')
+                  date: moment.utc(moment(res.start).format('YYYY-MM-DD')).format()
                 });
-                time = res.start - moment($scope.days[dayIndex].date).format('X');
+
+                if(dayIndex<0) throw 'Error: no day found from reservation.';
+                time = moment.utc(res.start).format('X') - moment.utc($scope.days[dayIndex].date).format('X');
+
                 tier = _.findWhere(room.bookings[dayIndex].tiers, {
                   'seconds': time
                 });
+
                 tier.bag.push(res);
 
               });
@@ -313,7 +337,7 @@ define(['app', 'lodash', 'moment',
           });
           $scope.days.push({
             'selected': true,
-            'date': date.format("YYYY-MM-DD"),
+            'date': moment.utc(date.format("YYYY-MM-DD")).format(),
             'month': date.format("MMM").toUpperCase(),
             'day': date.format("DD"),
             'tiers': _.cloneDeep(meeting.seTiers)
@@ -362,6 +386,7 @@ define(['app', 'lodash', 'moment',
           if (!res.location) res.location = {};
           res.location.venue = getVenueId($scope.meeting);
           res.location.room = container.attr('room-index');
+          delete(res['$unset']);
         } else {
           delete(res.start);
           delete(res.end);
@@ -371,7 +396,6 @@ define(['app', 'lodash', 'moment',
             'end': ''
           };
         }
-
         return mongoStorage.saveRes(res);
       }
       //============================================================
@@ -587,14 +611,14 @@ define(['app', 'lodash', 'moment',
         if (!(source.attr('id') === 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
           setTimes(res, container).then(
             function() {
-              if (container.attr('id') !== 'unscheduled-side-events') {
-                var meeting = _.findWhere($scope.options.conferences, {
-                  _id: $scope.meeting
-                });
-                var tier = _.findWhere(meeting.seTiers, {
-                  'seconds': Number(container.attr('time'))
-                });
-              } // if
+              // if (container.attr('id') !== 'unscheduled-side-events') {
+              //   var meeting = _.findWhere($scope.options.conferences, {
+              //     _id: $scope.meeting
+              //   });
+              //   var tier = _.findWhere(meeting.seTiers, {
+              //     'seconds': Number(container.attr('time'))
+              //   });
+              // } // if
               $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered');
             }
 
@@ -678,7 +702,78 @@ define(['app', 'lodash', 'moment',
         var temp = JSON.stringify(se);
         return (temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0);
       };
+      //============================================================
+      //
+      //============================================================
+      function initPreferences() {
+        $scope.options.preferences=[];
+        _.each($scope.days,function(day){
+          console.log(day.date);
+          _.each(day.tiers,function(tier){
+              $scope.options.preferences.push({'timeValue':tier.title,'dateValue':moment.utc(day.date).format('YYYY/MM/DD'),'title':moment.utc(day.date).format('YYYY-MM-DD')+' '+tier.title,'value':moment(day.date).add(tier.seconds,'seconds').format()});
+          });
+        });
+      }//initPreferences()
 
+      //============================================================
+      // - orgs
+      // - pref
+      // - require
+      // - contact
+      //============================================================
+      $scope.searchOrgFilter = function(se) {
+            if (!$scope.searchOrg || $scope.searchOrg == ' ') return true;
+            var temp = JSON.stringify(se.sideEvent.orgs);
+
+            return (temp.toLowerCase().indexOf($scope.searchOrg.toLowerCase()) >= 0);
+      };
+      //============================================================
+      // - orgs
+      // - pref
+      // - require
+      // - contact
+      //============================================================
+      $scope.searchReqFilter = function(se) {
+            if (!$scope.searchReq || $scope.searchReq== ' ') return true;
+            var temp = JSON.stringify(se.sideEvent.requirements);
+//console.log(se.sideEvent);
+            if(temp)
+            return (temp.toLowerCase().indexOf($scope.searchReq.toLowerCase()) >= 0);
+            else
+              false;
+
+      };
+      //============================================================
+      // - orgs
+      // - pref
+      // - require
+      // - contact
+      //============================================================
+      $scope.searchPrefFilter = function(se) {
+            if (!$scope.preferenceSearch || $scope.preferenceSearch == ' ') return true;
+            $scope.prefObj = _.findWhere($scope.options.preferences,{'value':$scope.preferenceSearch});
+
+            var match = false;
+            _.each(se.sideEvent.prefDate,function(p,key){
+                  if(p===$scope.prefObj.dateValue  && se.sideEvent.prefDateTime[key].toLowerCase()===$scope.prefObj.timeValue.toLowerCase())
+                    match =  true;
+            });
+
+            return match;
+      };
+      //============================================================
+      // - orgs
+      // - pref
+      // - require
+      // - contact
+      //============================================================
+      $scope.clearFilters= function() {
+            $scope.preferenceSearch='';
+            $scope.searchReq='';
+            $scope.searchOrg='';
+
+
+      };
       //============================================================
       //
       //============================================================
@@ -701,5 +796,11 @@ define(['app', 'lodash', 'moment',
       });
     }
   ]);
-
+  app.filter('ucf', function()
+  {
+      return function(word)
+      {
+          return word.substring(0,1).toUpperCase() + word.slice(1);
+      };
+  });
 });
