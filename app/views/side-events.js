@@ -386,6 +386,7 @@ define(['app', 'lodash', 'moment',
           if (!res.location) res.location = {};
           res.location.venue = getVenueId($scope.meeting);
           res.location.room = container.attr('room-index');
+          res.meta.status= res.meta.status || 'request-non-blocking';
           delete(res['$unset']);
         } else {
           delete(res.start);
