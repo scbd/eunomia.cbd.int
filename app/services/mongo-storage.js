@@ -51,31 +51,31 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                 }  //create
         }
 
-        //============================================================
-        //
-        //============================================================
-        function loadDoc (schema,_id){
-          //+'?q={"_id":{"$oid":"'+_id+'"},"clientOrganization":'+clientOrg+'}&f={"document":1}'
-  console.log(schema);
-            if(!schema) throw "Error: failed to indicate schema mongoStorageService.loadDocument";
-            if(!_id) throw "Error: failed to indicate _id mongoStorageService.loadDocument"
-            var params = {
-                          'f':{'document':1}
-                        };
-            return $q.when( $http.get('/api/v2015/'+schema+'/'+_id))//}&f={"document":1}'))
-                   .then(
-
-                        function(response){
-                            if(!_.isEmpty(response.data)){
-                                response.data.initialState=_.cloneDeep(response.data);
-                                delete(response.data.initialState.history);
-                                return  response.data;
-                            }
-                            else
-                              return false;
-                        }
-                  );
-        }
+  //       //============================================================
+  //       //
+  //       //============================================================
+  //       function loadDoc (schema,_id){
+  //         //+'?q={"_id":{"$oid":"'+_id+'"},"clientOrganization":'+clientOrg+'}&f={"document":1}'
+  // //console.log(schema);
+  //           if(!schema) throw "Error: failed to indicate schema mongoStorageService.loadDocument";
+  //           if(!_id) throw "Error: failed to indicate _id mongoStorageService.loadDocument"
+  //           var params = {
+  //                         'f':{'document':1}
+  //                       };
+  //           return $q.when( $http.get('/api/v2016/'+schema+'/'+_id))//}&f={"document":1}'))
+  //                  .then(
+  //
+  //                       function(response){
+  //                           if(!_.isEmpty(response.data)){
+  //                               response.data.initialState=_.cloneDeep(response.data);
+  //                               delete(response.data.initialState.history);
+  //                               return  response.data;
+  //                           }
+  //                           else
+  //                             return false;
+  //                       }
+  //                 );
+  //       }
 
         //============================================================
         //
@@ -141,7 +141,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                         };
 
 
-              return $http.get('/api/v2015/inde-orgs',{'params':params, 'cache':true});
+              return $http.get('/api/v2016/inde-orgs',{'params':params, 'cache':true});
 
         }// loadDocs
         // //============================================================
@@ -268,7 +268,7 @@ loadOrgs:loadOrgs,
 saveRes:saveRes ,
 syncSideEvents:syncSideEvents,
           deleteDoc:deleteDoc,
-          loadDoc:loadDoc,
+  //        loadDoc:loadDoc,
 save:save,
 loadConferenceRooms:loadConferenceRooms,
 loadUnscheduledSideEvents:loadUnscheduledSideEvents,
