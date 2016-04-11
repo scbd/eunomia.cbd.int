@@ -24,7 +24,7 @@ define(['app', 'lodash', 'moment',
       $scope.search = '';
       $scope.rooms={};
       var hoverArray = [];
-      var slotElements =[];
+      var slotElements ={};
       var cancelDropIdicators;
 
 
@@ -43,21 +43,8 @@ define(['app', 'lodash', 'moment',
             loadRooms().then(function(){
               initSideEvents($scope.meeting).then(function(){
                   loadReservations().then(function(){
-                        var room;
 
-                        $timeout(function(){
-
-                          _.each($scope.options.rooms,function(room) {
-
-
-                                var roomEl = $element.find('#'+room._id);
-                                slotElements[room._id]=[];
-                                roomEl.children().children().children().children().each(function(){
-                                    slotElements[room._id].push($(this));
-                                });
-                            });
-
-                        },2000);
+                        resize();
                         initPreferences();
                   });
               });
@@ -88,22 +75,65 @@ define(['app', 'lodash', 'moment',
         loadRooms().then(function() {
           initSideEvents($scope.meeting);
         }).then(function() {
-          loadReservations();
+          loadReservations().then(function(){
+
+              resize();
+
+          });
         });
 
         // $scope.dateChange('end-filter');
         // $scope.dateChange('start-filter');
       }; //init
 
+      //============================================================
+      //
+      //============================================================
+      function resize(){
+        $timeout(function(){
+          _.each($scope.options.rooms,function(room) {
+                var roomEl = $element.find('#'+room._id);
+                slotElements[room._id]=[];
+                roomEl.children().children().children().children().each(function(){
+                    slotElements[room._id].push($(this));
+                });
+            });
+
+        },100).then(function(){
+            var roomHolder =$element.find('#room-holder');
+            var seScroll = $element.find('div.se-scroll');
+            var yLabels = $element.find('div.ng-binding.ng-scope');
+            var numSlot =0;
+            seScroll.height(roomHolder.height()-120);
+
+            var cancelHeight = setInterval(function(){
+              if(!_.isEmpty(slotElements)){
+                    _.each($scope.rooms,function(room,key){
+                        if(!numSlot)
+                            numSlot = room.bookings.length*room.bookings[0].tiers.length;
+                        _.each(slotElements[key],function(slot){
+                          if(slot.height()<(roomHolder.height()-47-(numSlot*3))/numSlot)
+                              slot.height((roomHolder.height()-47-(numSlot*3))/numSlot);
+                        });
+                    });
+                    yLabels.each(function(){
+                        $(this).height((roomHolder.height()-47-(numSlot*3))/numSlot);
+                    });
+                    clearInterval(cancelHeight);
+              }
+            },500);
+        });
+      }
 
       $scope.sync = function() {
         $scope.syncLoading = 1;
-        console.log('setting sync');
+
         mongoStorage.syncSideEvents().then(function() {
           initSideEvents($scope.meeting);
         }).then(function() {
           $scope.syncLoading = 0;
-          console.log('sync finnished');
+
+          init();
         });
       };
       //============================================================
@@ -316,7 +346,7 @@ define(['app', 'lodash', 'moment',
         });
 
 
-        var numDays = Math.round((Number(meeting.end) - Number(meeting.start)) / (24 * 60 * 60));
+        var numDays = Math.floor((Number(meeting.end) - Number(meeting.start)) / (24 * 60 * 60));
         var seconds = Number(meeting.start);
         var date = moment.unix(seconds);
 
@@ -325,8 +355,9 @@ define(['app', 'lodash', 'moment',
 
         $element.find('#start-filter').bootstrapMaterialDatePicker('setMinDate', date);
         $element.find('#end-filter').bootstrapMaterialDatePicker('setMinDate', date);
-        for (var i = 1; i <= numDays + 1; i++) {
-          if (i === numDays + 1) {
+        for (var i = 1; i <= numDays +1; i++) {
+          if (i === numDays +1) {
+
             $element.find('#end-filter').bootstrapMaterialDatePicker('setMaxDate', date);
             $element.find('#start-filter').bootstrapMaterialDatePicker('setMaxDate', date);
             $scope.endDate = date.format('YYYY-MM-DD');
@@ -709,7 +740,6 @@ define(['app', 'lodash', 'moment',
       function initPreferences() {
         $scope.options.preferences=[];
         _.each($scope.days,function(day){
-          console.log(day.date);
           _.each(day.tiers,function(tier){
               $scope.options.preferences.push({'timeValue':tier.title,'dateValue':moment.utc(day.date).format('YYYY/MM/DD'),'title':moment.utc(day.date).format('YYYY-MM-DD')+' '+tier.title,'value':moment(day.date).add(tier.seconds,'seconds').format()});
           });

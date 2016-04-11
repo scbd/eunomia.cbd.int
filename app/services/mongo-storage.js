@@ -86,7 +86,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
 
             params = {
                         q:{'location.venue':venue,
-                           'start':{'$gt':{'$date':start*1000}},
+                           'start':{'$gt':{'$date':(start*1000)}},
                            'end':{'$lt':{'$date':end*1000}},
                            'type':type
                          }

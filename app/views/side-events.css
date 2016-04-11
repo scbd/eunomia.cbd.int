@@ -38,8 +38,13 @@
   font-size: 14px;
 }
 .wrapper {
-  display: inline-table;
+  white-space : nowrap; /* this does the trick */
+     overflow : hidden; /* this prevents the grey divs from overflowing */
+vertical-align : top;
+  display: inline-block;
   border-spacing:3px 0px;
+  height:100%;
+  /*width:18%;*/
 }
 .se-cont-header {
 min-height:40px;
@@ -48,10 +53,11 @@ min-height:40px;
   text-align: :center;
 }
 .se-cont {
-  display: table-cell;
+  /*display: table-cell;*/
   overflow-x: hidden;
   background-color: #d7d7d7;
   max-width:250px;
+
 }
 .se-cont .title {
   display: table-cell;
@@ -64,6 +70,7 @@ min-height:40px;
   background-color: rgba(0, 0, 0, 0.1);
 }*/
 .room-cont {
+  height:100%;
   display: table-cell;
   overflow-x: hidden;
 }
@@ -79,7 +86,7 @@ min-height:40px;
   border-top-width: .5px;
   border-top-style: solid;
     background-color: rgba(0, 0, 0, 0.1);
-  max-height: 100%;
+  /*max-height: 100%;*/
   overflow:hidden;
 }
 .day-label-y .day {
@@ -122,11 +129,11 @@ width:250px;
 }
 .room-x {
   height: 100%;
-  width: 200px;
+  min-width: 100px;
   display: table-cell;
 }
 .room-title {
-  height: 37px;
+  height: 45px;
   margin-bottom: 6px;
   border-bottom-color: #ccc;
   border-bottom-width: 1px;

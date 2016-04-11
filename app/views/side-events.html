@@ -1,13 +1,18 @@
 <style>
-.small {
-  transform: scale(0.8, 0.8);
-  -ms-transform: scale(0.8, 0.8); /* IE 9 */
-  -webkit-transform: scale(0.8, 0.8); /* Safari and Chrome */
-  -o-transform: scale(0.8, 0.8); /* Opera */
-  -moz-transform: scale(0.8, 0.8); /* Firefox */
-}
+  .small {
+    transform: scale(0.8, 0.8);
+    -ms-transform: scale(0.8, 0.8);
+    /* IE 9 */
+    -webkit-transform: scale(0.8, 0.8);
+    /* Safari and Chrome */
+    -o-transform: scale(0.8, 0.8);
+    /* Opera */
+    -moz-transform: scale(0.8, 0.8);
+    /* Firefox */
+  }
+
 </style>
-<div ng-controller="events" class="container-fluid">
+<div ng-controller="events" class="container-fluid" style="height:100%;">
 
   <div class="row  view-header text-center">
     <span class="view-title pull-left">Side Event Scheduling</span>
@@ -23,143 +28,162 @@
   </div>
 
   <!-- style="width:100%; min-height:600px;position:relative;" -->
-  <div class="row wrapper" style="width:100%;height:100%;position:relative;" >
-    <div class="x-container pull-left">
+  <div class="row wrapper" style="width:100%;height:100%;position:relative; overflow:none;">
+    <div class="pull-left" style="height:100%;width:100%">
 
-      <div class="wrapper">
+      <div class="wrapper" style="vertical-align:top;height:100%">
         <!-- side event container -->
-      <div class="se-cont" style="vertical-align:top;">
-        <div class="se-cont-header text-center"><h4 style="margin-top:0px;padding-top:10px;">Unscheduled Side Events</h4>
+        <div class="se-cont" style="vertical-align:top;height:100%">
+          <div class="se-cont-header text-center">
+            <h4 style="margin-top:0px;padding-top:10px;">Unscheduled Side Events</h4>
 
-<div class="btn-group  btn-group-raised btn-group-xs" style="margin:auto;">
-  <a href="javascript:void(0)" class="btn " ng-click="showFilter=!showFilter;"><i class="fa fa-filter"></i> Filter</a>
-  <a href="javascript:void(0)" class="btn " ng-click="showSearch=!showSearch;"><i class="fa fa-search"></i> Search</a>
-  <a href="javascript:void(0)" class="btn " ng-click="sync();" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left"><i class="fa fa-refresh fa-spin" ng-show="syncLoading"></i><i class="fa fa-refresh" ng-show="!syncLoading"></i> Sync</a>
-</div>
-<div></div>
-<div class="relative" style="width:100%;" ng-show="showSearch">
-    <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showSearch=0;"></i>
-  <div class="form-group label-floating">
-    <div class="input-group">
-      <label class="control-label" for="searchSe">Search Side Events</label>
-      <input type="text" id="searchSe" class="form-control" ng-model="search">
-
-      <span class="input-group-btn small" >
-        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
-          <i class="fa fa-search" ng-if="!search"></i>          <i class="fa fa-times" ng-if="search"></i>
-        </button>
-      </span>
-    </div>
-  </div>
-
-</div>
-
-<div class="relative" style="width:100%;" ng-show="showFilter">
-    <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showFilter=0;"></i>
-  <div class="form-group label-floating">
-    <div class="input-group text-left" style="width:100%">
-      <label class="control-label" for="org-select" style="margin-left:2px;">Filter By Organization</label>
-      <input type="text" id="searchSe" class="form-control" ng-model="searchOrg">
-      <span class="material-input"></span>
-      <span class="input-group-btn small">
-        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchOrg='';" >
-          <i class="fa fa-search" ng-if="!searchOrg"></i>          <i class="fa fa-times" ng-if="searchOrg"></i>
-        </button>
-      </span>
-    </div>
-  </div>
-  <div class="form-group label-floating" style="margin-left:2px;">
-    <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Preference</label>
-    <select id="conf-select" class="form-control" ng-model="preferenceSearch" >
-
-      <option ng-repeat="docObj in options.preferences" value="{{docObj.value}}"  ng-selected="docObj.selected">{{docObj.title}} </option>
-    </select>
-  </div>
-
-  <div class="form-group label-floating" style="margin-left:2px;">
-    <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Requirement</label>
-    <select id="conf-select" class="form-control" ng-model="searchReq" >
-
-      <option ng-repeat="docObj in options.requirements track by $index" value="{{docObj.value}}"  ng-selected="docObj.selected">{{docObj.title | ucf}}</option>
-    </select>
-  </div>
-</div>
-
-<span>&nbsp;</span>
-<div class="text-left" style="padding-bottom:10px;">
-    <p class="help-block" style="line-height:20px;">Showing <span class="badge">{{ses.length}}</span>
-      <span ng-show="search">for <span class="label label-default" style="font-size:11px;font-weight:300;">"{{search}}"</span></span>
-      <span ng-show="searchOrg"><span ng-show='!search'>for</span><span ng-show='search'>and</span> <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchOrg}}"</span> in orgs</span>
-      <span ng-show="preferenceSearch"><span ng-show='!searchOrg && !search'>for</span><span ng-show='searchOrg || search'>and</span> <span class="label label-default" style="font-size:11px;font-weight:300;">"{{prefObj.title}}"</span> in prefrences</span>
-      <span ng-show="searchReq"><span ng-show='!searchOrg && !search && !preferenceSearch'>for</span><span ng-show='searchOrg || search || preferenceSearch'>and</span> <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchReq}}"</span> in requirements</span>
-    </p>
-    <span ng-show='searchOrg || search || preferenceSearch || searchReq' class="text-right" style="font-size:10px;cursor:pointer;" ng-click="clearFilters();"><a>Clear All Filters</a></span>
-</div>
-
-        </div>
-        <div style=" height:100vh;overflow-y:auto;">
-          <div class="wrapper" style="width:265px;height:100%;">
-            <!-- dragu;ar containers -->
-            <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
-                  <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter)"></side-event>
+            <div class="btn-group  btn-group-raised btn-group-xs" style="margin:auto;">
+              <a href="javascript:void(0)" class="btn " ng-click="showFilter=!showFilter;"><i class="fa fa-filter"></i> Filter</a>
+              <a href="javascript:void(0)" class="btn " ng-click="showSearch=!showSearch;"><i class="fa fa-search"></i> Search</a>
+              <a href="javascript:void(0)" class="btn " ng-click="sync();" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left"><i class="fa fa-refresh fa-spin" ng-show="syncLoading"></i><i class="fa fa-refresh" ng-show="!syncLoading"></i> Sync</a>
             </div>
-            <!-- endn of container -->
-          </div>
-        </div>
-      </div>
+            <div></div>
+            <div class="relative" style="width:100%;" ng-show="showSearch">
+              <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showSearch=0;"></i>
+              <div class="form-group label-floating">
+                <div class="input-group">
+                  <label class="control-label" for="searchSe">Search Side Events</label>
+                  <input type="text" id="searchSe" class="form-control" ng-model="search">
+                  <span class="input-group-btn small">
+                    <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
+                      <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        <!-- y labels -->
-        <div class='room-cont' id="x-lables">
-          <div class="" style="min-width:100px;height:100%;display:table-cell;">
-            <div>
-              <div class="relative" style="height:49px;">
-                <div class="form-group " style="margin-top:0px;">
-                  <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
-                    <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
-                  </select>
+            <div class="relative" style="width:100%;" ng-show="showFilter">
+              <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showFilter=0;"></i>
+              <div class="form-group label-floating">
+                <div class="input-group text-left" style="width:100%">
+                  <label class="control-label" for="org-select" style="margin-left:2px;">Filter By Organization</label>
+                  <input type="text" id="searchSe" class="form-control" ng-model="searchOrg">
                   <span class="material-input"></span>
+                  <span class="input-group-btn small">
+                    <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchOrg='';">
+                      <i class="fa fa-search" ng-if="!searchOrg"></i> <i class="fa fa-times" ng-if="searchOrg"></i>
+                    </button>
+                  </span>
                 </div>
               </div>
+              <div class="form-group label-floating" style="margin-left:2px;">
+                <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Preference</label>
+                <select id="conf-select" class="form-control" ng-model="preferenceSearch">
+
+                  <option ng-repeat="docObj in options.preferences" value="{{docObj.value}}" ng-selected="docObj.selected">{{docObj.title}} </option>
+                </select>
+              </div>
+
+              <div class="form-group label-floating" style="margin-left:2px;">
+                <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Requirement</label>
+                <select id="conf-select" class="form-control" ng-model="searchReq">
+
+                  <option ng-repeat="docObj in options.requirements track by $index" value="{{docObj.value}}" ng-selected="docObj.selected">{{docObj.title | ucf}}</option>
+                </select>
+              </div>
             </div>
+
+            <span>&nbsp;</span>
+            <div class="text-left" style="padding-bottom:10px;">
+              <p class="help-block" style="line-height:20px;">Showing
+                <span class="badge">{{ses.length}}</span>
+                <span ng-show="search">for
+                  <span class="label label-default" style="font-size:11px;font-weight:300;">"{{search}}"</span>
+                </span>
+                <span ng-show="searchOrg">
+                  <span ng-show='!search'>for</span>
+                  <span ng-show='search'>and</span>
+                  <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchOrg}}"</span> in orgs</span>
+                <span ng-show="preferenceSearch">
+                  <span ng-show='!searchOrg && !search'>for</span>
+                  <span ng-show='searchOrg || search'>and</span>
+                  <span class="label label-default" style="font-size:11px;font-weight:300;">"{{prefObj.title}}"</span> in prefrences</span>
+                <span ng-show="searchReq">
+                  <span ng-show='!searchOrg && !search && !preferenceSearch'>for</span>
+                  <span ng-show='searchOrg || search || preferenceSearch'>and</span>
+                  <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchReq}}"</span> in requirements</span>
+              </p>
+              <span ng-show='searchOrg || search || preferenceSearch || searchReq' class="text-right" style="font-size:10px;cursor:pointer;" ng-click="clearFilters();"><a>Clear All Filters</a></span>
+            </div>
+
           </div>
-          <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected">
-            <div class="day">
-              <div>{{day.month}}</div>
-              <div>{{day.day}}</div>
-            </div>
-            <div class="tiers">
-              <div ng-repeat="tier in day.tiers track by $index">{{tier.title}}</div>
+          <div class="se-scroll" style="height:83vh;overflow-y:auto;">
+            <div class="wrapper" style="width:265px;height:100%;">
+              <!-- dragu;ar containers -->
+              <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
+                <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter)"></side-event>
+              </div>
+              <!-- endn of container -->
             </div>
           </div>
         </div>
+</div>
 
-        <!-- room rows -->
-        <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
-          <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
-            <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
-              {{room.acronym}}<br>
-              <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span><span class="small" ng-if="!room.atTable">{{room.capacity}}</span>
+
+
+
+              <!-- y labels -->
+    <div class="wrapper" style="vertical-align:top;height:100%;">
+              <div class='room-cont' id="x-lables"style="position:relative;display:inline-block;">
+                        <div style="min-width:100px;">
+                          <div>
+                            <div class="relative" style="height:49px;">
+                              <div class="form-group " style="margin-top:0px;">
+                                <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
+                                  <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+                                </select>
+                                <span class="material-input"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                            <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected" >
+                              <div class="day">
+                                <div>{{day.month}}</div>
+                                <div>{{day.day}}</div>
+                              </div>
+                              <div class="tiers">
+                                <div ng-repeat="tier in day.tiers track by $index">{{tier.title}}</div>
+                              </div>
+                            </div>
+
+              </div>
             </div>
-              <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
-                <div class="tiers">
-                <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:20px;">
-                  <!-- dragula-model='tier.bag' -->
-                  <div  room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
-                     <span ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </span>
-                    <span class="empty-bag" >&nbsp;</span>
-                  <!-- <span class="material-input"></span> -->
+<div id="room-holder"  style="width:100%;height:101vh;position:relative;display:inline-block;overflow:auto;">
+              <!-- room colms -->
+              <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
+                <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
+                  <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
+                    {{room.acronym}}<br>
+                    <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span><span class="small" ng-if="!room.atTable">{{room.capacity}}</span>
                   </div>
-                </div>
+                    <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
+                      <div class="tiers">
+                      <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:20px;">
+                        <!-- dragula-model='tier.bag' -->
+                        <div  room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
+                           <div class="se-in-grid" ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </div>
+                          <span class="empty-bag" ng-if="!tier.bag.length">&nbsp;</span>
+                        <!-- <span class="material-input"></span> -->
+                        </div>
+                      </div>
+                      </div>
+                    </div>
                 </div>
               </div>
-          </div>
-        </div>
 
-
-      </div>
-    </div>
-  </div>
 
 </div>
 
 
+    </div>
+  </div>
+
+</div>
