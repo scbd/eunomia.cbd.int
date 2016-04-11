@@ -18,7 +18,7 @@ define(['app', 'lodash', 'moment',
 
       // $scope.startFilter=0;
       // $scope.endFilter=0;
-      $scope.sideEvents = ['1'];
+      $scope.sideEvents = [];
       $scope.days = [];
       $scope.meeting = 0;
       $scope.search = '';
@@ -276,6 +276,8 @@ define(['app', 'lodash', 'moment',
         });
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
+console.log('start ',moment.utc(meeting.start*1000).format('YYYY-MM-DD'));
+console.log('start ',meeting.start);
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
             $scope.reservations = res.data;
 
@@ -326,7 +328,7 @@ define(['app', 'lodash', 'moment',
                 tier = _.findWhere(room.bookings[dayIndex].tiers, {
                   'seconds': time
                 });
-
+                tier.bag=[];
                 tier.bag.push(res);
 
               });
@@ -348,10 +350,10 @@ define(['app', 'lodash', 'moment',
 
         var numDays = Math.floor((Number(meeting.end) - Number(meeting.start)) / (24 * 60 * 60));
         var seconds = Number(meeting.start);
-        var date = moment.unix(seconds);
+        var date = moment.utc(seconds*1000);
 
         $scope.startDate = date.format('YYYY-MM-DD');
-
+console.log('gendays',$scope.startDate );
 
         $element.find('#start-filter').bootstrapMaterialDatePicker('setMinDate', date);
         $element.find('#end-filter').bootstrapMaterialDatePicker('setMinDate', date);
@@ -374,7 +376,7 @@ define(['app', 'lodash', 'moment',
             'tiers': _.cloneDeep(meeting.seTiers)
           });
           seconds = seconds + (24 * 60 * 60);
-          date = moment.unix(seconds);
+          date = moment.utc(seconds*1000);
         }
         $timeout(function() {
           dateChangeEffect('start-filter');
@@ -638,11 +640,18 @@ define(['app', 'lodash', 'moment',
           });
         else
           res = getBagScope(source)[0];
-
+console.log('res on drop',res);
         //if not dropping on it self change time
         if (!(source.attr('id') === 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
           setTimes(res, container).then(
             function() {
+              if($scope.searchReq || $scope.preferenceSearch || $scope.searchOrg || $scope.search)
+              initSideEvents($scope.meeting).then(function(){
+        //        alert('init side events');
+                  loadReservations().then(function(){//alert('reloading reses')
+                  $scope.searchReq = $scope.preferenceSearch = $scope.searchOrg = $scope.search ='';
+                });
+              });
               // if (container.attr('id') !== 'unscheduled-side-events') {
               //   var meeting = _.findWhere($scope.options.conferences, {
               //     _id: $scope.meeting
@@ -717,6 +726,7 @@ define(['app', 'lodash', 'moment',
           var elModel = _.findWhere($scope.seModels, {
             '_id': el.attr('res-id')
           });
+          alert(elModel.sideEvent.id);
           if (elModel.sideEvent.expNumPart > room.capacity)
             $rootScope.$broadcast('showWarning', 'Warning: The expected number of participants (' + elModel.sideEvent.expNumPart + ') excceds room capacity (' + room.capacity + ').');
         }

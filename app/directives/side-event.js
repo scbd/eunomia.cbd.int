@@ -29,7 +29,7 @@ define(['app',
                  orgs.popover('hide');
            });
           $timeout(function(){
-            if($scope.res.sideEvent && $scope.res.sideEvent.orgs.length >1 ){
+            if($scope.res.sideEvent.orgs && $scope.res.sideEvent.orgs.length >1 ){
                 var orgEl = $element.find("div.num-orgs");//.popover({ placement: 'bottom', html: 'true'});
 
                 var orgs = $element.find("#orgs").popover({ placement: 'bottom', html: 'true',container: 'body',
