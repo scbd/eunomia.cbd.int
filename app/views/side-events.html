@@ -117,7 +117,7 @@
             <div class="wrapper" style="width:265px;height:100%;">
               <!-- dragu;ar containers -->
               <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="height:100%;width:100%">
-                <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter)"></side-event>
+                <side-event res="se" ng-repeat="se in ses = (sideEvents | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter |orderBy:'sideEvent.id' )"></side-event>
               </div>
               <!-- endn of container -->
             </div>
