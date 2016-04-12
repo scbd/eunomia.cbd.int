@@ -726,7 +726,7 @@ console.log('res on drop',res);
           var elModel = _.findWhere($scope.seModels, {
             '_id': el.attr('res-id')
           });
-          alert(elModel.sideEvent.id);
+
           if (elModel.sideEvent.expNumPart > room.capacity)
             $rootScope.$broadcast('showWarning', 'Warning: The expected number of participants (' + elModel.sideEvent.expNumPart + ') excceds room capacity (' + room.capacity + ').');
         }
