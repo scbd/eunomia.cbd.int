@@ -132,15 +132,11 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
         //============================================================
         function loadOrgs (){
 
-
-
               var params = {
                           q:{'meta.status':'published'}
 
 
                         };
-
-
               return $http.get('/api/v2016/inde-orgs',{'params':params, 'cache':true});
 
         }// loadDocs
@@ -218,6 +214,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
 
               params = {
                           q:{'link.meeting':meeting,
+                            'sideEvent.meta.status':'published',
                               'start':{'$exists':0}
                             }
 
@@ -231,52 +228,28 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
         //============================================================
         //
         //============================================================
-        function syncSideEvents (){
-              return $http.get('/api/v2016/reservations/sync/side-events');
+        function syncSideEvents (conferenceId){
+              if(!conferenceId) throw "Error no confrence selected to sync";
+              return $http.get('/api/v2016/reservations/sync/side-events/'+conferenceId);
         }
 
-
-        // //=======================================================================
-        // //
-        // //=======================================================================
-        // function touch(doc){
-        //   return authentication.getUser().then(function(u){
-        //     user=u;
-        //
-        //       if(!user.userID) throw "Error no userID to touch record";
-        //       if(!doc.meta) throw "Error mongo document contains no meta data";
-        //       if(!doc.clinetOrg)doc.clientOrg=clientOrg;
-        //       if(!doc.meta.status) doc.meta.status='draft';
-        //
-        //       if(!doc.meta.createdBy && !doc.meta.createdOn){
-        //         doc.meta.createdBy = doc.meta.modifiedBy = user.userID;
-        //         doc.meta.createdOn  = doc.meta.modifiedOn = Date.now();
-        //       }else if (doc.meta.createdBy && doc.meta.createdOn){
-        //         doc.meta.modifiedBy = user.userID;
-        //         doc.meta.modifiedOn = Date.now();
-        //       }
-        //       doc.meta.v=Number(doc.meta.v)+1;
-        //
-        //       doc.meta.hash=sha256(JSON.stringify(doc));  //jshint ignore:line
-        //   });
-        // } // touch
 
 
 
         return{
-loadOrgs:loadOrgs,
-saveRes:saveRes ,
-syncSideEvents:syncSideEvents,
-          deleteDoc:deleteDoc,
-  //        loadDoc:loadDoc,
-save:save,
-loadConferenceRooms:loadConferenceRooms,
-loadUnscheduledSideEvents:loadUnscheduledSideEvents,
-          archiveDoc:archiveDoc,
-loadReservations:loadReservations,
-          loadDocs:loadDocs,
-          loadconferences :loadconferences ,
-          unArchiveDoc:unArchiveDoc
+          loadOrgs: loadOrgs,
+          saveRes: saveRes,
+          syncSideEvents: syncSideEvents,
+          deleteDoc: deleteDoc,
+          //        loadDoc:loadDoc,
+          save: save,
+          loadConferenceRooms: loadConferenceRooms,
+          loadUnscheduledSideEvents: loadUnscheduledSideEvents,
+          archiveDoc: archiveDoc,
+          loadReservations: loadReservations,
+          loadDocs: loadDocs,
+          loadconferences: loadconferences,
+          unArchiveDoc: unArchiveDoc
         };
 }]);
 

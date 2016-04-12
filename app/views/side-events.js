@@ -128,7 +128,7 @@ define(['app', 'lodash', 'moment',
       $scope.sync = function() {
         $scope.syncLoading = 1;
 
-        mongoStorage.syncSideEvents().then(function() {
+        mongoStorage.syncSideEvents($scope.meeting).then(function() {
           initSideEvents($scope.meeting);
         }).then(function() {
           $scope.syncLoading = 0;
