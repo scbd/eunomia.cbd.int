@@ -619,6 +619,7 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.$on('se-bag.shadow', function(e, el, container, source) {
         var siblings;
+        console.log(source[0].id);
         el.children('div.panel.panel-default.se-panel').show();
         el.children('div.drag-view.text-center').hide();
         if (container[0].id === 'unscheduled-side-events') {
@@ -628,11 +629,10 @@ define(['app', 'lodash', 'moment',
             el.width(254);
           }
 
-        } else {
+        } else if(source[0].id === 'unscheduled-side-events') {
           el.children('div.panel.panel-default.se-panel').hide();
           el.children('div.drag-view.text-center').show();
            siblings = $element.find('#res-el');
-
           if (siblings.length > 0) {
             el.height(siblings.height());
             el.width(siblings.width());

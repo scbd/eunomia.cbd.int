@@ -36,7 +36,7 @@
    <div class="text-center"><span>{{doc.title}}</span></div><br>
     <div><span>{{doc.sideEvent.title}}</span></div><br>
     <div><span ng-repeat="org in doc.sideEvent.orgs">
-      <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} | </span>
+      <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} <span ng-if="($index)<=doc.sideEvent.orgs.length-2">|</span> </span>
     </div>
     </div>
  </div>
