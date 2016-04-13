@@ -14,8 +14,9 @@
 </style>
 <div ng-controller="events" class="container-fluid" style="height:100%; width:100%;">
 
-  <div class="row  view-header text-center">
-    <span class="view-title pull-left">Side Event Scheduling</span>
+  <div class="row  view-header text-center" style="position:relative;">
+    <div class="view-title pull-left">Side Event Reservations <span class="badge" style="position:absolute;top:3px;left:250px;">{{reservations.length}}</span></div>
+
     <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
       <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
         <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;">
@@ -25,6 +26,22 @@
         <input id="end-filter" class="form-control" type="text" ng-model="endDate" ng-change="dateChange('end-filter')" style="color:#eee;">
       </div>
     </div>
+    <div style="position:absolute;top:-30px;right:1px;width:210px;" >
+      <div class="relative">
+    <div class="form-group label-floating" >
+      <div class="input-group" >
+        <label class="control-label" for="searchSe">Search Reservations</label>
+        <input type="text" id="searchSe" class="form-control" ng-model="searchRes" >
+        <span class="input-group-btn small">
+          <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchRes='';">
+            <i class="fa fa-search" ng-if="!searchRes"></i> <i class="fa fa-times" ng-if="searchRes"></i>
+          </button>
+        </span>
+      </div>
+    </div>
+    </div>
+
+  </div>
   </div>
 
   <!-- style="width:100%; min-height:600px;position:relative;" -->
@@ -171,7 +188,7 @@
                         <!-- dragula-model='tier.bag' -->
                         <div style="height:100%;" room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag' >
                            <!-- <div class="se-in-grid" ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </div> -->
-                           <grid-reservation-se  ng-repeat="b in tier.bag track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}" >  </grid-reservation-se>
+                           <grid-reservation-se  ng-repeat="b in tier.bag |filter:searchReservations track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}" >  </grid-reservation-se>
                           <span class="empty-bag" ng-if="!tier.bag.length">&nbsp;</span>
                         <!-- <span class="material-input"></span> -->
                         </div>
