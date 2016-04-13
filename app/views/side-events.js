@@ -89,12 +89,30 @@ define(['app', 'lodash', 'moment',
             initSideEvents($scope.meeting);
         }).then(function() {
             loadReservations().then(function(){
+                $scope.rowMinHeight=0;
                 resize();
                 initPreferences();
             });
         });
       }; //init
+      //============================================================
+      //
+      //============================================================
+      $scope.searchReservations = function(res) {
+        if (!$scope.searchRes || $scope.searchsearchRes == ' ') {
+          res.searchFound=false;
+          return true;
+        }
+        var temp = JSON.stringify(res);
+        if(temp.toLowerCase().indexOf($scope.searchRes.toLowerCase()) >= 0){
+          res.searchFound=true;
+          return true;
+        }else{
+          res.searchFound=false;
+          return true;
+        }
 
+      }; //searchReservations
       //============================================================
       //
       //============================================================
@@ -149,9 +167,9 @@ define(['app', 'lodash', 'moment',
                 var labelEl = $element.find('div.tier-label.ng-binding.ng-scope');
                 if($scope.resized && labelEl.height()){
                   clearInterval(cancelMinHeight);
-      console.log('$scope.rowMinHeight',labelEl.height());
-      if(labelEl.height())
-                  $scope.rowMinHeight=labelEl.height();
+
+                  if(labelEl.height())
+                    $scope.rowMinHeight=labelEl.height();
                   $scope.resized=0;
                 }
             },1000);
@@ -666,11 +684,11 @@ define(['app', 'lodash', 'moment',
                   $scope.searchReq = $scope.preferenceSearch = $scope.searchOrg = $scope.search ='';
                 });
               });
-              $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered');
+              $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event '+res.title+' reservation registered');
             }
           ).catch(function(error) {
             console.log(error);
-            $rootScope.$broadcast("showError", "There was an error updating the server, Please try your action again. ");
+            $rootScope.$broadcast("showError", 'There was an error updating the server with '+res.title+', Please try your action again. ');
           });
         // $rootScope.$broadcast("showWarning","Test warning title", "Test warning message");
         // $rootScope.$broadcast("showSuccess","Test info Title", "Test info message");
