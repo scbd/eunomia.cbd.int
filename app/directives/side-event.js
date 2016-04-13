@@ -1,6 +1,7 @@
 define(['app',
     'lodash',
       'text!./side-event.html',
+      './grid-reservation-se',
   ],
   function(app,  _,template) {
 
@@ -16,17 +17,17 @@ define(['app',
 
 
         controller: function($scope, $element) {
-          var orgs = $element.find("#title").popover({ placement: 'top', html: 'true',container: 'body',
+          var titleEl = $element.find("#title").popover({ placement: 'top', html: 'true',container: 'body',
                  content: function() {
                    return $element.find('#pop-title').html();
                  }
            });
-           var titleEl = $element.find("#title");
+
            titleEl.on('mouseenter', function() {
-                 orgs.popover('show');
+                 titleEl.popover('show');
            });
            titleEl.on('mouseleave', function() {
-                 orgs.popover('hide');
+                 titleEl.popover('hide');
            });
           $timeout(function(){
             if($scope.res.sideEvent.orgs && $scope.res.sideEvent.orgs.length >1 ){
