@@ -12,7 +12,7 @@
   }
 
 </style>
-<div ng-controller="events" class="container-fluid" style="height:100%;">
+<div ng-controller="events" class="container-fluid" style="height:100%; width:100%;">
 
   <div class="row  view-header text-center">
     <span class="view-title pull-left">Side Event Scheduling</span>
@@ -29,7 +29,7 @@
 
   <!-- style="width:100%; min-height:600px;position:relative;" -->
   <div class="row wrapper" style="width:100%;height:100%;position:relative; overflow:none;">
-    <div class="pull-left" style="height:100%;width:100%">
+    <div  style="height:100%;width:100%">
 
       <div class="wrapper" style="vertical-align:top;height:100%">
         <!-- side event container -->
@@ -156,10 +156,11 @@
 
               </div>
             </div>
-<div id="room-holder"  style="width:100%;height:101vh;position:relative;display:inline-block;overflow:auto;">
+<div  id="room-holder"  style="width:75%;height:101vh;position:relative;display:inline-block;overflow:auto;">
+
               <!-- room colms -->
               <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
-                <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
+                <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden" >
                   <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
                     {{room.acronym}}<br>
                     <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span><span class="small" ng-if="!room.atTable">{{room.capacity}}</span>

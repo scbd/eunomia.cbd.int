@@ -16,20 +16,18 @@ define(['app', 'lodash', 'moment',
     function($scope, $element, $document, dragulaService, mongoStorage, $timeout, $rootScope, ngDialog) {
 
 
-      // $scope.startFilter=0;
-      // $scope.endFilter=0;
+
+      //var emptyEl = angular.element('<span class="empty-bag" >&nbsp;</span>'); // so we can drop into empty bags
+      var hoverArray = [];
+      var slotElements ={};
+      var cancelDropIdicators;
       $scope.sideEvents = [];
       $scope.days = [];
       $scope.meeting = 0;
       $scope.search = '';
       $scope.rooms={};
-      var hoverArray = [];
-      var slotElements ={};
-      var cancelDropIdicators;
-
-
-    //  var dragElOrgHeight, dragElOrgWidth;
       $scope.syncLoading = 0;
+
       init();
 
       //============================================================
@@ -43,13 +41,11 @@ define(['app', 'lodash', 'moment',
             loadRooms().then(function(){
               initSideEvents($scope.meeting).then(function(){
                   loadReservations().then(function(){
-
                         resize();
                         initPreferences();
                   });
               });
             });
-
         });
       } //init
 
@@ -57,15 +53,28 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       function initReq() {
-        $scope.options.requirements=[
-                  {title:'interpretation',value:'interpretation'},
-          {title:'catering',value:'catering'},
-          {title:'overhead',value:'overhead'},
-          {title:'pc',value:'pc'},
-            {title:'sound',value:'sound'},
-            {title:'lcd',value:'lcd'},
-            {title:'skype',value:'skype'},
-        ];
+        $scope.options.requirements = [{
+          title: 'interpretation',
+          value: 'interpretation'
+        }, {
+          title: 'catering',
+          value: 'catering'
+        }, {
+          title: 'overhead',
+          value: 'overhead'
+        }, {
+          title: 'pc',
+          value: 'pc'
+        }, {
+          title: 'sound',
+          value: 'sound'
+        }, {
+          title: 'lcd',
+          value: 'lcd'
+        }, {
+          title: 'skype',
+          value: 'skype'
+        }, ];
       } //initMeeting
 
       //============================================================
@@ -74,13 +83,11 @@ define(['app', 'lodash', 'moment',
       $scope.changeMeeting = function() {
         generateDays();
         loadRooms().then(function() {
-          initSideEvents($scope.meeting);
+            initSideEvents($scope.meeting);
         }).then(function() {
-          loadReservations().then(function(){
-
-              resize();
-
-          });
+            loadReservations().then(function(){
+                resize();
+            });
         });
       }; //init
 
@@ -118,23 +125,35 @@ define(['app', 'lodash', 'moment',
                         $(this).height((roomHolder.height()-47-(numSlot*3))/numSlot);
                     });
                     clearInterval(cancelHeight);
+                    var roomWidth,numRooms=0;
+                    _.each($scope.options.rooms,function(room) {
+                          if(!room.seHidden)
+                            numRooms++;
+                    });
+                  _.each($scope.options.rooms,function(room) {
+                          roomWidth = roomHolder.width()/numRooms;
+                          console.log(numRooms);
+                          if(roomWidth>100)
+                            $element.find('#'+room._id).width(roomWidth);
+                  });
               }
             },500);
         });
       }
 
+      //============================================================
+      //
+      //============================================================
       $scope.sync = function() {
         $scope.syncLoading = 1;
 
         mongoStorage.syncSideEvents($scope.meeting).then(function() {
-          //initSideEvents($scope.meeting);
           $scope.changeMeeting();
         }).then(function() {
           $scope.syncLoading = 0;
-
-          //init();
         });
       };
+
       //============================================================
       //
       //============================================================
@@ -190,13 +209,13 @@ define(['app', 'lodash', 'moment',
         }
         dateChangeEffect(id);
       }; //init
+
       //============================================================
       //
       //============================================================
       function initSideEvents(meeting) {
         var allOrgs;
         $scope.sideEvent=[];
-  console.log('unscheduled side events meeting',meeting);
         return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
           $scope.sideEvents = res.data;
           console.log('unscheduled side events',$scope.sideEvents);
@@ -218,14 +237,11 @@ define(['app', 'lodash', 'moment',
             });
           }); // each
         }).then(function() {
-
-
           if (!$scope.seModels) $scope.seModels = [];
           _.each($scope.sideEvents, function(se) {
             $scope.seModels.push(se);
           });
         });
-
       } //initMeeting
 
       //============================================================
@@ -251,6 +267,7 @@ define(['app', 'lodash', 'moment',
 
         });
       } //initMeeting
+
       //============================================================
       //
       //============================================================
@@ -279,25 +296,21 @@ define(['app', 'lodash', 'moment',
         });
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
-console.log('start ',moment.utc(meeting.start*1000).format('YYYY-MM-DD'));
-console.log('start ',meeting.start);
         return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
             $scope.reservations = res.data;
-
+            //set ref to models
             if (!$scope.seModels) $scope.seModels = [];
             _.each($scope.reservations, function(res) {
               $scope.seModels.push(res);
             });
           })
-          .then(
+          .then( // preload orgs not one by one
             function() {
               return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
                 allOrgs = orgs.data;
-
               });
-
             }
-          ).then(function() {
+          ).then(function() { // initialive each SE's orgs
             _.each($scope.reservations, function(res) {
               if (!res.sideEvent) throw 'side vent data not loaded for res';
               res.sideEvent.orgs = [];
@@ -308,10 +321,7 @@ console.log('start ',meeting.start);
               });
             }); // each
           })
-
-
-
-        .then(function() {
+        .then(function() {  // initialize times  set each room and times for reses
           var room;
           var dayIndex = -1;
           var cancelInterval = setInterval(function() { // hack for unresolved timming issue
@@ -333,7 +343,6 @@ console.log('start ',meeting.start);
                 });
                 tier.bag=[];
                 tier.bag.push(res);
-
               });
             }
           }, 100); //settime Interval
@@ -356,7 +365,7 @@ console.log('start ',meeting.start);
         var date = moment.utc(seconds*1000);
 
         $scope.startDate = date.format('YYYY-MM-DD');
-console.log('gendays',$scope.startDate );
+
 
         $element.find('#start-filter').bootstrapMaterialDatePicker('setMinDate', date);
         $element.find('#end-filter').bootstrapMaterialDatePicker('setMinDate', date);
@@ -410,12 +419,8 @@ console.log('gendays',$scope.startDate );
       //============================================================
       function setTimes(res, container) {
 
-
         var startDate = Number(moment(container.attr('date')).format('X')); //.format('X')
-
         startDate = startDate + Number(container.attr('time'));
-
-
         if (container.attr('id') !== 'unscheduled-side-events') {
           res.start = startDate;
           res.end = startDate + 5400;
@@ -435,6 +440,7 @@ console.log('gendays',$scope.startDate );
         }
         return mongoStorage.saveRes(res);
       }
+
       //============================================================
       //
       //============================================================
@@ -445,6 +451,7 @@ console.log('gendays',$scope.startDate );
         }).venue;
 
       } //generateDays
+
       //============================================================
       //
       //============================================================
@@ -456,18 +463,9 @@ console.log('gendays',$scope.startDate );
         else
           return true;
       }
-      //============================================================
-      //
-      //============================================================
-      $scope.test = function($event) {
-          $.material.init();
-          alert('test');
-          console.log($event);
-          $event.currentTarget.popover('show');
 
-        } //generateDays
 
-      var emptyEl = angular.element('<span class="empty-bag" >&nbsp;</span>');
+
       //============================================================
       //
       //============================================================
@@ -541,35 +539,31 @@ console.log('gendays',$scope.startDate );
       //
       //============================================================
       $scope.$on('rooms-bag.drop-model', function(el, target, source, sibling) {
-
         target.parent().children().each(function() {
-
           var room = _.findWhere($scope.options.rooms, {
             '_id': $(this).attr('id')
           });
           room.sort = $(this).index();
           var roomClone = _.cloneDeep(room);
-          delete(roomClone);
+    //      delete(roomClone);
           return mongoStorage.save('venue-rooms', roomClone, roomClone._id).catch(function() {
             $rootScope.$broadcast("showError", "There was an error updating the server with the room order.");
           });
         });
         $rootScope.$broadcast("showInfo", "Room Sort Order Successfully Updated.");
-
       });
 
       //============================================================
       //
       //============================================================
       $scope.$on('se-bag.drag', function(e, el, container) {
-        var roomId;
+
         var elModel = _.findWhere($scope.seModels, {
           '_id': el.attr('res-id')
         });
-
         _.each($scope.rooms,function(room){
             if (elModel.sideEvent.expNumPart > room.capacity){
-              _.each(slotElements[room._id],function(el,key){
+              _.each(slotElements[room._id],function(el){
                 angular.element(el).addClass('label-danger-light');
               });
             }else{
@@ -597,8 +591,7 @@ console.log('gendays',$scope.startDate );
       //============================================================
       //
       //============================================================
-      $scope.$on('se-bag.canceled', function(e, mirror, shadow) {
-//        removeDropIndicators();
+      $scope.$on('se-bag.canceled', function(e, mirror) {
         mirror.children('div.panel.panel-default.se-panel').toggle();
         mirror.children('div.drag-view.text-center').toggle();
       });
@@ -643,35 +636,23 @@ console.log('gendays',$scope.startDate );
           });
         else
           res = getBagScope(source)[0];
-console.log('res on drop',res);
-        //if not dropping on it self change time
+
+
         if (!(source.attr('id') === 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
           setTimes(res, container).then(
             function() {
               if($scope.searchReq || $scope.preferenceSearch || $scope.searchOrg || $scope.search)
               initSideEvents($scope.meeting).then(function(){
-        //        alert('init side events');
-                  loadReservations().then(function(){//alert('reloading reses')
+                  loadReservations().then(function(){
                   $scope.searchReq = $scope.preferenceSearch = $scope.searchOrg = $scope.search ='';
                 });
               });
-              // if (container.attr('id') !== 'unscheduled-side-events') {
-              //   var meeting = _.findWhere($scope.options.conferences, {
-              //     _id: $scope.meeting
-              //   });
-              //   var tier = _.findWhere(meeting.seTiers, {
-              //     'seconds': Number(container.attr('time'))
-              //   });
-              // } // if
               $rootScope.$broadcast('showInfo', 'Server successfully updated:  Side Event reservation registered');
             }
-
           ).catch(function(error) {
-
+            console.log(error);
             $rootScope.$broadcast("showError", "There was an error updating the server, Please try your action again. ");
           });
-
-
         // $rootScope.$broadcast("showWarning","Test warning title", "Test warning message");
         // $rootScope.$broadcast("showSuccess","Test info Title", "Test info message");
         // $rootScope.$broadcast("showError","Test warning title", "Test warning message");
@@ -823,11 +804,9 @@ console.log('res on drop',res);
       //============================================================
       $document.ready(function() {
 
-
         $.material.init();
         $.material.input();
         $.material.ripples();
-
 
         $element.find('#end-filter').bootstrapMaterialDatePicker({
           weekStart: 0,
