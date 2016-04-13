@@ -1,56 +1,78 @@
-define(['app', 'lodash','text!./grid-reservation-se.html',
-  'moment'
-], function(app, _, template, moment) { //'scbd-services/utilities',
+define(['app', 'lodash', 'text!./grid-reservation-se.html','moment'
+], function(app, _, template, moment) {
 
-  app.directive("gridReservationSe", ['$timeout','mongoStorage','$rootScope',
-    function($timeout,mongoStorage,$rootScope) {
+  app.directive("gridReservationSe", ['$timeout',
+    function($timeout) {
       return {
         restrict: 'E',
         template: template,
         replace: true,
         transclude: false,
-        scope: {'doc':'=','rowMinHeight':'='},
-        controller: function($scope, $element) { //, $http, $filter, Thesaurus
+        priority: -100,
+        scope: {
+          'doc': '=',
+          'rowMinHeight': '=',
+          'ignoreMinHeight': '=?'
+        },
+        controller: function($scope, $element) {
 
+            $scope.oneLine = false;
+            $scope.twoLine = false;
+            $scope.threeLine = false;
+            init();
 
+            //============================================================
+            //
+            //============================================================
+            function init() {
+              if (!$scope.ignoreMinHeight)
+                var cancelMinHeight = setInterval(function() {
 
-init();
+                  if (!$scope.doc) clearInterval(cancelMinHeight);
+                  if ($scope.rowMinHeight) {
+                    clearInterval(cancelMinHeight);
 
+                    $timeout(function() {
+                      if ($scope.rowMinHeight <= 42)
+                        $scope.oneLine = true;
+                      else
+                        $scope.oneLine = false;
 
-          //============================================================
-          //
-          //============================================================
-          function init() {
+                      if ($scope.rowMinHeight > 42 && $scope.rowMinHeight <= 63)
+                        $scope.twoLine = true;
+                      else
+                        $scope.twoLine = false;
 
-            var cancelMinHeight = setInterval(function(){
-              if($scope.rowMinHeight){
-                clearInterval(cancelMinHeight);
-                console.log('rowMinHeight',$scope.rowMinHeight);
-                console.log('$element.height()',$element.height());
-                              if($element.height()>$scope.rowMinHeight || $scope.rowMinHeight <42)
-                                  $scope.oneLine=true;
-                                  else
-                                    $scope.oneLine=false;
-                        $element.height($scope.rowMinHeight);
+                      if ($scope.rowMinHeight > 63)
+                        $scope.threeLine = true;
+                      else
+                        $scope.threeLine = false;
+                    });
 
-              }
-           },100);
-           var titleEl = $element.find("#res-el").popover({ placement: 'top', html: 'true',container: 'body',
-                  content: function() {
-                    return $element.find('#pop-title').html();
+                    if ($element.height() > $scope.rowMinHeight)
+                      $element.height($scope.rowMinHeight);
+
                   }
-            });
+                }, 500);
+              var titleEl = $element.find("#res-el").popover({
+                placement: 'top',
+                html: 'true',
+                container: 'body',
+                content: function() {
+                  return $element.find('#pop-title').html();
+                }
+              });
 
-            titleEl.on('mouseenter', function() {
-                  titleEl.popover('show');
-            });
-            titleEl.on('mouseleave', function() {
-                  titleEl.popover('hide');
-            });
+              titleEl.on('mouseenter', function() {
+                titleEl.popover('show');
+              });
+              titleEl.on('mouseleave', function() {
+                titleEl.popover('hide');
+              });
 
-          }//triggerChanges
+            } //triggerChanges
 
-        } //link
+          } //link
       }; //return
     }
   ]);

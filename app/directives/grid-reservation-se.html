@@ -21,15 +21,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   background-color: #ddd;
-  padding: 0 4px 0 4px 0;
+  padding: 2px 4px 2px 4px;
 }
 </style>
 
   <div id="res-el" class="grid-slot-dir" style="border:none;" data-toggle="popover" data-placement="top">
 <span  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
  <span  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
- <span style="display:inline;  overflow: hidden;text-overflow: ellipsis;">
- <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs">
+ <span ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
+ <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs" >
    <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}} | </span>
  </span>
  <div id="pop-title" style="display: none;">

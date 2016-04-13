@@ -145,11 +145,16 @@ define(['app', 'lodash', 'moment',
             },500);
 
               var cancelMinHeight = setInterval(function(){
-                if($scope.resized){
+                console.log('$scope.resized',$scope.resized);
+                var labelEl = $element.find('div.tier-label.ng-binding.ng-scope');
+                if($scope.resized && labelEl.height()){
                   clearInterval(cancelMinHeight);
-                  $scope.rowMinHeight=$element.find('div.tier-label.ng-binding.ng-scope').height();
+      console.log('$scope.rowMinHeight',labelEl.height());
+      if(labelEl.height())
+                  $scope.rowMinHeight=labelEl.height();
+                  $scope.resized=0;
                 }
-            },100);
+            },1000);
         });
       }
 
@@ -626,7 +631,8 @@ define(['app', 'lodash', 'moment',
         } else {
           el.children('div.panel.panel-default.se-panel').hide();
           el.children('div.drag-view.text-center').show();
-          siblings = $element.find('span.se-in-grid.ng-binding.ng-scope');
+           siblings = $element.find('#res-el');
+
           if (siblings.length > 0) {
             el.height(siblings.height());
             el.width(siblings.width());
@@ -693,19 +699,19 @@ define(['app', 'lodash', 'moment',
         // hack to fix empty bag screen jump
         target.find('span.empty-bag').hide();
         // show green if a good drop
-        target.addClass('label-success');
-
-        // check if capacity is good else show red
-        if (target.attr('id') !== 'unscheduled-side-events') {
-          var room = _.findWhere($scope.options.rooms, {
-                          '_id': target.attr('room-index')
-                        });
-          var elModel = _.findWhere($scope.seModels, {
-                          '_id': el.attr('res-id')
-                        });
-          if (elModel.sideEvent.expNumPart > room.capacity)
-            target.addClass('label-danger');
-        }
+        // target.addClass('label-success');
+        //
+        // // check if capacity is good else show red
+        // if (target.attr('id') !== 'unscheduled-side-events') {
+        //   var room = _.findWhere($scope.options.rooms, {
+        //                   '_id': target.attr('room-index')
+        //                 });
+        //   var elModel = _.findWhere($scope.seModels, {
+        //                   '_id': el.attr('res-id')
+        //                 });
+        //   if (elModel.sideEvent.expNumPart > room.capacity)
+        //     target.addClass('label-danger');
+        // }
       });
 
       //============================================================
