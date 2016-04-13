@@ -220,7 +220,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
 
 
                         };
-              return $http.get('/api/v2016/reservations',{'params':params, 'cache':true});
+              return $http.get('/api/v2016/reservations',{'params':params});
 
 
         }
