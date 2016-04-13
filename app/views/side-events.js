@@ -90,7 +90,7 @@ define(['app', 'lodash', 'moment',
         }).then(function() {
             loadReservations().then(function(){
                 resize();
-
+                initPreferences();
             });
         });
       }; //init
