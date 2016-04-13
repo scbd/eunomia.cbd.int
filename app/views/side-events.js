@@ -67,6 +67,7 @@ define(['app', 'lodash', 'moment',
             {title:'skype',value:'skype'},
         ];
       } //initMeeting
+
       //============================================================
       //
       //============================================================
@@ -81,9 +82,6 @@ define(['app', 'lodash', 'moment',
 
           });
         });
-
-        // $scope.dateChange('end-filter');
-        // $scope.dateChange('start-filter');
       }; //init
 
       //============================================================
@@ -129,11 +127,12 @@ define(['app', 'lodash', 'moment',
         $scope.syncLoading = 1;
 
         mongoStorage.syncSideEvents($scope.meeting).then(function() {
-          initSideEvents($scope.meeting);
+          //initSideEvents($scope.meeting);
+          $scope.changeMeeting();
         }).then(function() {
           $scope.syncLoading = 0;
 
-          init();
+          //init();
         });
       };
       //============================================================
@@ -196,9 +195,11 @@ define(['app', 'lodash', 'moment',
       //============================================================
       function initSideEvents(meeting) {
         var allOrgs;
-
+        $scope.sideEvent=[];
+  console.log('unscheduled side events meeting',meeting);
         return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
           $scope.sideEvents = res.data;
+          console.log('unscheduled side events',$scope.sideEvents);
         }).then(
           function() {
             return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
@@ -245,7 +246,9 @@ define(['app', 'lodash', 'moment',
             }
           });
           $scope.options.conferences[selectedKey].selected = true;
-          $scope.meeting = $scope.options.conferences[selectedKey]._id;
+          $scope.meeting = $scope.meeting || $scope.options.conferences[selectedKey]._id;
+        //  $timeout(function(){$scope.meeting = $scope.meeting || $scope.options.conferences[selectedKey]._id;});
+
         });
       } //initMeeting
       //============================================================
