@@ -5,6 +5,7 @@ define(['app', 'lodash', 'moment',
   'css!libs/angular-dragula/dist/dragula.css', 'css!./side-events.css',
   '../services/mongo-storage',
   '../directives/forms/edit/room',
+  '../directives/grid-reservation-se',
   'ngDialog',
   'css!libs/ng-dialog/css/ngDialog.css',
   'css!libs/ng-dialog/css/ngDialog-theme-default.min.css',
@@ -27,7 +28,8 @@ define(['app', 'lodash', 'moment',
       $scope.search = '';
       $scope.rooms={};
       $scope.syncLoading = 0;
-
+      $scope.resizeDone=0;
+      $scope.rowMinHeight=0;
       init();
 
       //============================================================
@@ -42,6 +44,7 @@ define(['app', 'lodash', 'moment',
               initSideEvents($scope.meeting).then(function(){
                   loadReservations().then(function(){
                         resize();
+
                         initPreferences();
                   });
               });
@@ -87,6 +90,7 @@ define(['app', 'lodash', 'moment',
         }).then(function() {
             loadReservations().then(function(){
                 resize();
+
             });
         });
       }; //init
@@ -110,7 +114,7 @@ define(['app', 'lodash', 'moment',
             var yLabels = $element.find('div.ng-binding.ng-scope');
             var numSlot =0;
             seScroll.height(roomHolder.height()-120);
-
+            $scope.resized=0;
             var cancelHeight = setInterval(function(){
               if(!_.isEmpty(slotElements)){
                     _.each($scope.rooms,function(room,key){
@@ -136,8 +140,16 @@ define(['app', 'lodash', 'moment',
                           if(roomWidth>100)
                             $element.find('#'+room._id).width(roomWidth);
                   });
+                  $scope.resized=1;
               }
             },500);
+
+              var cancelMinHeight = setInterval(function(){
+                if($scope.resized){
+                  clearInterval(cancelMinHeight);
+                  $scope.rowMinHeight=$element.find('div.tier-label.ng-binding.ng-scope').height();
+                }
+            },100);
         });
       }
 
@@ -344,6 +356,7 @@ define(['app', 'lodash', 'moment',
                 tier.bag=[];
                 tier.bag.push(res);
               });
+
             }
           }, 100); //settime Interval
         });
