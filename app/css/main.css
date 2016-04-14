@@ -8,6 +8,10 @@
   cursor: -moz-grab;
   cursor: -webkit-grab;
 }
+html,body {
+    height:100%;
+}
+.view{height:100%;width:100%;}
 .gu-mirror {
   cursor: grabbing;
   cursor: -moz-grabbing;
