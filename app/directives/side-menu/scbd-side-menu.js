@@ -57,25 +57,13 @@ define(['app',
             $scope.isRight=false;
 
           $scope.navId=$attr.id;
-
-
           $element.find('.site-overlay').attr('id','site-overlay-'+$attr.id);
-
-
-
-
           $scope.$watch('sections',function(){
               if($scope.sections && $scope.sections.length>=2){
                   scbdSideMenu.init($attr.id,scbdSideMenu);
               }
-
           });
-
         },
-
-
-
-
 
 
         controller: ['$scope', '$element',  '$timeout', '$log', '$transclude','$window',
@@ -143,12 +131,16 @@ define(['app',
                 //
                 if($scope.open)
                     setTimeout(function(){togglePushy();},500);
-
+                var w = angular.element($window);
                 if($scope.bumpId)
-                $($window).resize(function() {
-                    resizeContainer();
+                w.bind('resize', function ($e) {
 
+                      resizeContainer($e);
                 });
+                // $window.resize(function($e,el) {
+                //
+                //
+                // });
 
           }
 
@@ -174,6 +166,7 @@ define(['app',
                   if($scope.overlay)
                     $element.toggleClass(pushyActiveClass);
 
+                  resizeContainer();
           	}//togglePushy()
 
             //============================================================
@@ -200,6 +193,7 @@ define(['app',
                 pushContainerRight();
                 $scope.isOpen=true;
                 isOpen=true;
+                resizeContainer();
             }// openPushyLeft
 
             //============================================================
@@ -211,8 +205,8 @@ define(['app',
                 resetContainer();
                 $scope.isOpen=false;
                 isOpen=false;
-
-                $timeout(function(){pushy.css('display','none');},100);
+resizeContainer();
+                // $timeout(function(){pushy.css('display','none');},100);
             }// closePushyRight
 
             //============================================================
@@ -266,12 +260,12 @@ define(['app',
               container.css('-ms-transform','translate3d(0,0,0)');
               container.css('-o-transform','translate3d(0,0,0)');
               container.css('transform','translate3d(0,0,0)');
-              containerWidth = $('.view').innerWidth() || $window.innerWidth;
+              containerWidth = '100%';
 
-var mLeft = container.css('margin-left');
-var mRight = container.css('margin-right');
-
-              containerWidth = containerWidth - Number(mLeft.slice(0, -2)) - Number(mRight.slice(0, -2));
+// var mLeft = container.css('margin-left');
+// var mRight = container.css('margin-right');
+//
+//               containerWidth = containerWidth - Number(mLeft.slice(0, -2)) - Number(mRight.slice(0, -2));
 
               container.css('width',containerWidth);
           	}// resetContainer
@@ -280,13 +274,18 @@ var mRight = container.css('margin-right');
             //
             //============================================================
             function resizeContainer(){
+              if(!$scope.isOpen && container.parent().width()===container.width()) return;
                   if(!resizeInProgress){
-                        resizeInProgress =true;
+                    alert('resizing');
+                    resizeInProgress =true;
+                    $timeout(function(){
+                      if($scope.isOpen)
+                        container.css('width',(container.parent().width()-240));
+                      else
+                        container.css('width',(container.parent().width()));
 
-                            containerWidth = $('.view').innerWidth() || $window.innerWidth,
-                            container.css('width',(containerWidth-278));
-                            resizeInProgress =false;
-
+                      resizeInProgress =false;
+                    },200);
                   }
           	}//resizeContainer
 

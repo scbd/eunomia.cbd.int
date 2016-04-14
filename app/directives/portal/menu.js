@@ -21,29 +21,50 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
   //         type: 'link',
   //         faIcon: 'fa-th',
   //         path: '/',
-  // //            roles:['Administrator','IndeAdministrator'],
+  // //            roles:['Administrator','EunoAdministrator'],
   //       });
   //       scbdMenuService.menus.mainMenu.push({
   //         name: 'Schedule',
   //         type: 'link',
   //         faIcon: 'fa-calendar',
   //         path: '/schedule/day',
-  // //            roles:['Administrator','IndeAdministrator'],
+  // //            roles:['Administrator','EunoAdministrator'],
   //       });
-
+  // scbdMenuService.menus.mainMenu.push({
+  //       name: 'Side Events',
+  //       type: 'toggle',
+  //       open:0,
+  //       faIcon: 'fa-calendar-o',
+  //       //roles:['Administrator','EunoAdministrator'],
+  //       pages: [
+  //
+  //         {
+  //           name: 'Side Events',
+  //           type: 'link',
+  //           faIcon: 'fa-calendar-o',
+  //           path: '/side-events',
+  //         },
+  //         // {
+  //         //   name: 'Post Schedule',
+  //         //   type: 'link',
+  //         //   faIcon: 'fa-bullhorn',
+  //         //   path: '/post-se-schedule',
+  //         // }
+  //         ]
+  //       });
         scbdMenuService.menus.mainMenu.push({
           name: 'Side Events',
           type: 'link',
           faIcon: 'fa-calendar-o',
           path: '/side-events',
-  //            roles:['Administrator','IndeAdministrator'],
+              roles:['Administrator','EunoAdministrator'],
         });
         //
         scbdMenuService.menus.mainMenu.push({
               name: 'CCTV',
               type: 'toggle',
               open:0,
-              faIcon: 'fa-television',
+              faIcon: 'fa-cc',
               roles:['Administrator'],
               pages: [
 
@@ -63,58 +84,58 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                 }]
               });
         //
-        // scbdMenuService.menus.mainMenu.push({
-        //       name: 'Admin',
-        //       type: 'toggle',
-        //       open:0,
-        //       faIcon: 'fa-gears',
-        //       roles:['Administrator','IndeAdministrator'],
-        //       pages: [
-        //
+        scbdMenuService.menus.mainMenu.push({
+              name: 'Admin',
+              type: 'toggle',
+              open:0,
+              faIcon: 'fa-gears',
+              roles:['Administrator','EunoAdministrator'],
+              pages: [
+
         //         {
         //           name: 'Locations',
         //           type: 'link',
         //           path: '',
         //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
+        //           roles:['Administrator','EunoAdministrator'],
         //         },
         //         {
         //           name: 'Rooms',
         //           type: 'link',
         //           path: '',
         //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
+        //           roles:['Administrator','EunoAdministrator'],
         //         },
         //         {
         //           name: 'Resources',
         //           type: 'link',
         //           path: '',
         //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
+        //           roles:['Administrator','EunoAdministrator'],
         //         },
         //         {
         //           name: 'Conferences',
         //           type: 'link',
         //           path: '',
         //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
+        //           roles:['Administrator','EunoAdministrator'],
         //         },
-        //         {
-        //           name: 'Meeting Types',
-        //           type: 'link',
-        //           path: '',
-        //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
-        //         },
+                 {
+                  name: 'Reservation Types',
+                  type: 'link',
+                  path: '/admin/reservation/types',
+                  faIcon: 'fa-cubes',
+                  roles:['Administrator','EunoAdministrator'],
+                },
         //         {
         //           name: 'Meeting Groupes',
         //           type: 'link',
         //           path: '',
         //       //    mdIcon: 'all_inclusive',
-        //           roles:['Administrator','IndeAdministrator'],
+        //           roles:['Administrator','EunoAdministrator'],
         //         },
         //
-        //   ]});
+          ]});
           scbdMenuService.validateMenus();// minds color classes and animation ect
         return scbdMenuService;
   }]);

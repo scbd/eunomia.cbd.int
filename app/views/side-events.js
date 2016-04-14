@@ -13,8 +13,8 @@ define(['app', 'lodash', 'moment',
 
 ], function(app, _, moment, roomDialog) {
 
-  app.controller("events", ['$scope', '$element', '$document', 'dragulaService', 'mongoStorage', '$timeout', '$rootScope', 'ngDialog',
-    function($scope, $element, $document, dragulaService, mongoStorage, $timeout, $rootScope, ngDialog) {
+  app.controller("events", ['$scope', '$element','scbdMenuService',  '$document', 'dragulaService', 'mongoStorage', '$timeout', '$rootScope', 'ngDialog',
+    function($scope, $element,scbdMenuService, $document, dragulaService, mongoStorage, $timeout, $rootScope, ngDialog) {
 
 
 
@@ -37,6 +37,7 @@ define(['app', 'lodash', 'moment',
       //============================================================
       function init() {
         $scope.options = {};
+        $scope.toggle = scbdMenuService.toggle;
         initReq();
         initMeeting().then(function() {
           generateDays();
