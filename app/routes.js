@@ -16,6 +16,7 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
 
             //when('/schedule/day',             { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true }).
             when('/side-events',              { templateUrl: 'views/side-events.html',            resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/admin/reservation/types',              { templateUrl: 'views/admin/reservation-types.html',            resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
 
             when('/404',                       { templateUrl: 'views/404.html',                          resolveUser: true }).
             otherwise({ redirectTo: '/404' });
