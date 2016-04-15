@@ -148,7 +148,7 @@ define(['app', 'lodash', 'moment',
                         $(this).height((roomHolder.height()-47-(numSlot*3))/numSlot);
                     });
                     clearInterval(cancelHeight);
-                    var roomWidth,numRooms=0;
+                    var roomWidth,numRooms=0,roomEl;
                     _.each($scope.options.rooms,function(room) {
                           if(!room.seHidden)
                             numRooms++;
@@ -156,8 +156,10 @@ define(['app', 'lodash', 'moment',
                   _.each($scope.options.rooms,function(room) {
                           roomWidth = roomHolder.width()/numRooms;
                           console.log(numRooms);
-                          if(roomWidth>100)
-                            $element.find('#'+room._id).width(roomWidth);
+                          if(roomWidth>100){
+                            roomEl=$element.find('#'+room._id).css('max-width',roomWidth);
+                             roomEl.children().children().children().children().find('grid-reservation-se').width(roomWidth);
+                          }
                   });
                   $scope.resized=1;
               }
