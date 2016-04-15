@@ -102,8 +102,8 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
         //============================================================
         //
         //============================================================
-        function loadDocs (schema,status){
-
+        function loadDocs (schema,status,cache){
+            if(!cache)cache=false;
             var params={};
             if(!schema) throw "Error: failed to indicate schema loadOwnerDocs";
             if(!status){
@@ -112,19 +112,19 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                             },
 
                         };
-              return $http.get('/api/v2016/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params, 'cache':cache});
             }
             if(!_.isArray(status)){
               params = {
                           q:{'meta.status':status}
                         };
-              return $http.get('/api/v2016/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params, 'cache':cache});
             }
             else {
                 params = {
                             q:{'meta.status':{$in:status}}
                           };
-              return $http.get('/api/v2016/'+schema,{'params':params});
+              return $http.get('/api/v2016/'+schema,{'params':params, 'cache':cache});
             }
         }// loadDocs
         //============================================================
