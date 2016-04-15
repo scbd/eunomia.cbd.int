@@ -59,6 +59,8 @@ require.config({
         'toastr'                    : { deps:[ 'angular']},
         'scroll-directive'          : { deps:[ 'angular']},
         'moment'                    : { deps:[ 'jquery']},
+        'bm'                        : { deps:[ 'jquery']},
+        'bm-rip'                    : { deps:[ 'bm']},
         'BM-date-picker'            : { deps:[ 'jquery','moment']},
         'dragula'                   : { deps: ['angular','jquery'] },
         'app-css'                   : { deps: ['toastr-css'] },
