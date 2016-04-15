@@ -276,7 +276,7 @@ resizeContainer();
             function resizeContainer(){
               if(!$scope.isOpen && container.parent().width()===container.width()) return;
                   if(!resizeInProgress){
-                    alert('resizing');
+      
                     resizeInProgress =true;
                     $timeout(function(){
                       if($scope.isOpen)
