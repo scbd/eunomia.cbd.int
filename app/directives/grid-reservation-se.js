@@ -25,6 +25,14 @@ define(['app', 'lodash', 'text!./grid-reservation-se.html','moment'
             //
             //============================================================
             function init() {
+              var titleEl = $element.find("#res-el").popover({
+                placement: 'top',
+                html: 'true',
+                container: 'body',
+                content: function() {
+                  return $element.find('#pop-title').html();
+                }
+              });
               if (!$scope.ignoreMinHeight)
                 var cancelMinHeight = setInterval(function() {
 
@@ -51,17 +59,12 @@ define(['app', 'lodash', 'text!./grid-reservation-se.html','moment'
 
                     if ($element.height() > $scope.rowMinHeight)
                       $element.height($scope.rowMinHeight);
+          
+
 
                   }
                 }, 500);
-              var titleEl = $element.find("#res-el").popover({
-                placement: 'top',
-                html: 'true',
-                container: 'body',
-                content: function() {
-                  return $element.find('#pop-title').html();
-                }
-              });
+
 
               titleEl.on('mouseenter', function() {
                 titleEl.popover('show');
