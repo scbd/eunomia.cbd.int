@@ -31,6 +31,7 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
 
         return ['$location', '$window', '$q','authentication', function ($location, $window, $q, authentication) {
 
+            return true; // TEMPORARY DISABLED SECURIZE TO PREVENT LOOPING
             return authentication.getUser().then(function (user) {
 
                 if (!user.isAuthenticated) {
