@@ -15,7 +15,7 @@
   <div class="form-group label-floating">
 
   </div>
-  <div>
+  <!-- <div>
     <div class="btn-group btn-group-justified btn-group-raised hidden-xs">
       <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
       <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('resources')">Resources</a>
@@ -26,7 +26,7 @@
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('resources')">Resources</a>
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.compound.active}" ng-click="changeTab('compound')">Compound</a>
     </div>
-  </div>
+  </div> -->
   <div class="row" ng-show="tabs.details.active">
     <div class="col-xs-8">
       <!-- dirty dirty hack jquery change removing value from first input fix-->
@@ -132,12 +132,12 @@
   <div class="col-xs-12">
     <div class="form-group hidden-xs">
       <div class="btn-group btn-group-justified btn-group-raised">
-        <a href="javascript:void(0)" class="btn btn-default  btn-block btn-raised" ng-click="save();">Save</a>
+        <a href="javascript:void(0)" class="btn btn-default  btn-block btn-raised" ng-click="save();closeThisDialog();">Save</a>
       </div>
     </div>
     <div class="form-group hidden-md hidden-lg hidden-xl">
       <div class="btn-group btn-group-justified btn-group-raised">
-        <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="save();closeThisDialog('publish');">Save</a>
+        <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="save();closeThisDialog();">Save</a>
       </div>
     </div>
   </div>
