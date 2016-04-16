@@ -1,13 +1,41 @@
-<div ng-controller="organizations">
-  <div class="view-header text-center"><span class="pull-left">Schedule Day View</span>
-  <span>< 22.03.2016 ></span>
-  <span >          <div class="input-group input-group-sm search-bs pull-right" style="width:200px;">
-              <input type="test" class="form-control " ng-model="search" >
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button" ng-click="search='';"><i class="fa fa-search" ng-if="!search"></i><i class="fa fa-times" ng-if="search"></i></button>
-              </span>
-            </div></span>
+<div ng-controller="day" class="container-fluid view">
+  <div class="row  view-header text-center" style="position:relative;">
+    <div class="view-title pull-left" ><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Day Schedule
+    </div>
+    <div class="form-group pull-left" style="position:absolute;left:200px;top:-2px;margin-top:0px;width:85px;">
+      <input id="day" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('day-filter')" style="color:#eee;">
+    </div>
+    <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
+
+      <div class="form-group" style="position:absolute;left:1px;top:-2px;margin-top:0px;width:85px;">
+        <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;">
+      </div>
+      <span style="position:absolute;right:48%;top:25%;font-size:16px;">to</span>
+      <div class="form-group" style="position:absolute;right:1px;top:-2px;margin-top:0px;width:85px;">
+        <input id="end-filter" class="form-control" type="text" ng-model="endDate" ng-change="dateChange('end-filter')" style="color:#eee;">
+      </div>
+    </div>
+    <div style="position:absolute;top:-30px;right:1px;width:210px;">
+      <div class="relative">
+        <div class="form-group label-floating">
+          <div class="input-group">
+            <label class="control-label" for="searchSe">Search Reservations</label>
+            <input type="text" id="searchSe" class="form-control" ng-model="searchRes">
+            <span class="input-group-btn small">
+              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchRes='';">
+                <i class="fa fa-search" ng-if="!searchRes"></i> <i class="fa fa-times" ng-if="searchRes"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <img src="app/images/gr.png" style="height:700px;"></img>
+<div class="view">
+
+<div>
+
+
+
 </div>
