@@ -1,5 +1,4 @@
-
-define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs-services/extended-route',  'scbd-angularjs-services/authentication'], function(app, _, rootTemplate) { 'use strict';
+define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angularjs-services/authentication'], function(app, _) { 'use strict';
 
     app.config(['extendedRouteProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
@@ -7,21 +6,16 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
         $locationProvider.hashPrefix('!');
 
         $routeProvider.
-            when('/',                   { template:    rootTemplate,  label:'Home',  resolveController: 'views/index', reloadOnSearch : false }).
-            when('/home', { redirectTo: '/' }).
-            when('/',                     { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-
-            when('/cctv/feeds',               { templateUrl: 'views/cctv/feeds.html',          resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-            when('/cctv/frames',              { templateUrl: 'views/cctv/frames.html',         resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-
-            //when('/schedule/day',             { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true }).
-            when('/side-events',              { templateUrl: 'views/side-events.html',            resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-            when('/admin/reservation/types',              { templateUrl: 'views/admin/reservation-types.html',            resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-
-            when('/404',                       { templateUrl: 'views/404.html',                          resolveUser: true }).
+            when('/',                         { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/home',                     { redirectTo: '/' }).
+            when('/cctv/feeds',               { templateUrl: 'views/cctv/feeds.html',                  resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/cctv/frames',              { templateUrl: 'views/cctv/frames.html',                 resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/schedule/day',             { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true }).
+            when('/side-events',              { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/admin/reservation/types',  { templateUrl: 'views/admin/reservation-types.html',     resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/404',                      { templateUrl: 'views/404.html',                         resolveUser: true }).
             otherwise({ redirectTo: '/404' });
     }]);
-
 
     //============================================================
     //
@@ -30,8 +24,7 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
     function securize(roles) {
 
         return ['$location', '$window', '$q','authentication', function ($location, $window, $q, authentication) {
-
-            return true; // TEMPORARY DISABLED SECURIZE TO PREVENT LOOPING
+            //return true; // TEMPORARY DISABLED SECURIZE TO PREVENT LOOPING
             return authentication.getUser().then(function (user) {
 
                 if (!user.isAuthenticated) {
@@ -47,5 +40,4 @@ define(['app', 'lodash', 'text!views/index.html', 'views/index', 'scbd-angularjs
             });
         }];
     }
-
 });
