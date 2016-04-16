@@ -184,9 +184,10 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.sync = function() {
         $scope.syncLoading = 1;
-
-        mongoStorage.syncSideEvents($scope.meeting).then(function() {
+        var meeting=_.find($scope.options.conferences ,{'_id':$scope.meeting});
+        mongoStorage.syncSideEvents($scope.meeting).then(function(res) {
           $scope.changeMeeting();
+          $rootScope.$broadcast("showInfo",res.data.count+" side events successfully synced for "+ meeting.acronym);
         }).then(function() {
           $scope.syncLoading = 0;
         });
