@@ -1,23 +1,9 @@
-<style>
-  .small {
-    transform: scale(0.8, 0.8);
-    -ms-transform: scale(0.8, 0.8);
-    /* IE 9 */
-    -webkit-transform: scale(0.8, 0.8);
-    /* Safari and Chrome */
-    -o-transform: scale(0.8, 0.8);
-    /* Opera */
-    -moz-transform: scale(0.8, 0.8);
-    /* Firefox */
-  }
-</style>
 <div ng-controller="events" class="container-fluid" style="height:100%; width:100%;">
 
   <div class="row  view-header text-center" style="position:relative;">
     <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Side Event Reservations
       <span class="badge" style="position:absolute;top:3px;left:260px;">{{reservations.length}}</span>
     </div>
-
     <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
       <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
         <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;">
@@ -41,7 +27,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -171,7 +156,6 @@
       </div>
         <!-- room cont wrapper -->
       <div id="room-holder" style="width:100%;height:101vh;position:relative;display:inline-block;overflow:auto;">
-
         <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms'>
           <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
             <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
@@ -185,10 +169,9 @@
                 <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:21px;height:100%;">
                   <!-- dragula-model='tier.bag' -->
                   <div style="height:100%;" room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
-                    <!-- <div class="se-in-grid" ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </div> -->
-                    <grid-reservation-se ng-repeat="b in tier.bag |filter:searchReservations track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}"> </grid-reservation-se>
+                    <!-- ng-click="resDialog(b);"  -->
+                    <grid-reservation-se  ng-repeat="b in tier.bag |filter:searchReservations track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}"> </grid-reservation-se>
                     <span class="empty-bag" ng-if="!tier.bag.length">&nbsp;</span>
-                    <!-- <span class="material-input"></span> -->
                   </div>
                 </div>
               </div>
@@ -196,10 +179,8 @@
           </div>
         </div>
       </div>
-      <!-- room holder -->
+      <!-- room cont wrapper -->
     </div>
-    <!-- overflor contatiner -->
-
     </div>
   </div>
 </div>

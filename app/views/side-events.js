@@ -1,17 +1,17 @@
 define(['app', 'lodash', 'moment',
   'text!directives/forms/edit/room-dialog.html',
+  // 'text!directives/forms/edit/reservation-dialog.html',
   'BM-date-picker',
-  'css!libs/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css',
   'css!libs/angular-dragula/dist/dragula.css', 'css!./side-events.css',
   '../services/mongo-storage',
   '../directives/forms/edit/room',
+  // '../directives/forms/edit/reservation',
   '../directives/grid-reservation-se',
   'ngDialog',
-  'css!libs/ng-dialog/css/ngDialog.css',
-  'css!libs/ng-dialog/css/ngDialog-theme-default.min.css',
+
   'directives/side-event'
 
-], function(app, _, moment, roomDialog) {
+], function(app, _, moment, roomDialog, resDialog) {
 
   app.controller("events", ['$scope', '$element','scbdMenuService',  '$document', 'dragulaService', 'mongoStorage', '$timeout', '$rootScope', 'ngDialog',
     function($scope, $element,scbdMenuService, $document, dragulaService, mongoStorage, $timeout, $rootScope, ngDialog) {
@@ -155,7 +155,6 @@ define(['app', 'lodash', 'moment',
                     });
                   _.each($scope.options.rooms,function(room) {
                           roomWidth = roomHolder.width()/numRooms;
-                          console.log(numRooms);
                           if(roomWidth>100){
                             roomEl=$element.find('#'+room._id).css('max-width',roomWidth);
                              roomEl.children().children().children().children().find('grid-reservation-se').width(roomWidth);
@@ -166,7 +165,6 @@ define(['app', 'lodash', 'moment',
             },500);
 
               var cancelMinHeight = setInterval(function(){
-                console.log('$scope.resized',$scope.resized);
                 var labelEl = $element.find('div.tier-label.ng-binding.ng-scope');
                 if($scope.resized && labelEl.height()){
                   clearInterval(cancelMinHeight);
@@ -257,7 +255,6 @@ define(['app', 'lodash', 'moment',
         $scope.sideEvent=[];
         return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
           $scope.sideEvents = res.data;
-          console.log('unscheduled side events',$scope.sideEvents);
         }).then(
           function() {
             return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
@@ -523,21 +520,29 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.roomDialog = function(room) {
           $scope.editRoom = room;
-          var dialog = ngDialog.open({
+          ngDialog.open({
             template: roomDialog,
             className: 'ngdialog-theme-default',
             closeByDocument: true,
             plain: true,
             scope: $scope
           });
+      };//$scope.roomDialog
 
-          dialog.closePromise.then(function(ret) {
-                if (ret.value == 'draft') $scope.close();
-                if (ret.value == 'publish') $scope.requestPublish().then($scope.close).catch(function onerror(response) {
-                    $scope.onError(response);
-                });
+
+      //============================================================
+      //
+      //============================================================
+      $scope.resDialog = function(res) {
+          $scope.editRes = res;
+          ngDialog.open({
+            template: resDialog,
+            className: 'ngdialog-theme-default',
+            closeByDocument: true,
+            plain: true,
+            scope: $scope
           });
-      };
+      };//$scope.roomDialog
 
       //============================================================
       //
@@ -637,7 +642,6 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.$on('se-bag.shadow', function(e, el, container, source) {
         var siblings;
-        console.log(source[0].id);
         el.children('div.panel.panel-default.se-panel').show();
         el.children('div.drag-view.text-center').hide();
         if (container[0].id === 'unscheduled-side-events') {
@@ -708,28 +712,9 @@ define(['app', 'lodash', 'moment',
           return;
         }
 
-        // cleans style changes on hovers, left overs form events not always triggering
         hoverCleanUp();
-        //keeps track of overed elements for style cleans when done
-        //more efficiant then doing all elements
         hoverArray.push(target);
-
-        // hack to fix empty bag screen jump
         target.find('span.empty-bag').hide();
-        // show green if a good drop
-        // target.addClass('label-success');
-        //
-        // // check if capacity is good else show red
-        // if (target.attr('id') !== 'unscheduled-side-events') {
-        //   var room = _.findWhere($scope.options.rooms, {
-        //                   '_id': target.attr('room-index')
-        //                 });
-        //   var elModel = _.findWhere($scope.seModels, {
-        //                   '_id': el.attr('res-id')
-        //                 });
-        //   if (elModel.sideEvent.expNumPart > room.capacity)
-        //     target.addClass('label-danger');
-        // }
       });
 
       //============================================================
@@ -754,10 +739,8 @@ define(['app', 'lodash', 'moment',
       });
 
       //============================================================
-      // - orgs
-      // - pref
-      // - require
-      // - contact
+      //
+      //
       //============================================================
       $scope.searchSe = function(se) {
 
@@ -778,10 +761,8 @@ define(['app', 'lodash', 'moment',
       }//initPreferences()
 
       //============================================================
-      // - orgs
-      // - pref
-      // - require
-      // - contact
+      //
+      //
       //============================================================
       $scope.searchOrgFilter = function(se) {
             if (!$scope.searchOrg || $scope.searchOrg == ' ') return true;
@@ -790,15 +771,12 @@ define(['app', 'lodash', 'moment',
             return (temp.toLowerCase().indexOf($scope.searchOrg.toLowerCase()) >= 0);
       };
       //============================================================
-      // - orgs
-      // - pref
-      // - require
-      // - contact
+      //
+      //
       //============================================================
       $scope.searchReqFilter = function(se) {
             if (!$scope.searchReq || $scope.searchReq== ' ') return true;
             var temp = JSON.stringify(se.sideEvent.requirements);
-//console.log(se.sideEvent);
             if(temp)
             return (temp.toLowerCase().indexOf($scope.searchReq.toLowerCase()) >= 0);
             else
@@ -806,10 +784,8 @@ define(['app', 'lodash', 'moment',
 
       };
       //============================================================
-      // - orgs
-      // - pref
-      // - require
-      // - contact
+      //
+      //
       //============================================================
       $scope.searchPrefFilter = function(se) {
             if (!$scope.preferenceSearch || $scope.preferenceSearch == ' ') return true;
@@ -824,10 +800,8 @@ define(['app', 'lodash', 'moment',
             return match;
       };
       //============================================================
-      // - orgs
-      // - pref
-      // - require
-      // - contact
+      //
+      //
       //============================================================
       $scope.clearFilters= function() {
             $scope.preferenceSearch='';
