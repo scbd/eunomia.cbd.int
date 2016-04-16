@@ -167,7 +167,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
         //
         //=======================================================================
         function deleteDoc(schema,docObj,_id){
-
+              if(!docObj.meta) docObj.meta={};
               docObj.meta.status='deleted';
               return save(schema,docObj,_id);
         }
