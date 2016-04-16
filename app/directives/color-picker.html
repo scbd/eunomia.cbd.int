@@ -1,0 +1,18 @@
+<div>
+  <style>
+    .colorpicker-visible {
+      z-index: 33000;
+    }
+  </style>
+  <div class="form-group label-floating">
+    <div class="input-group">
+      <label class="control-label" for="colorChanger" ng-if="floatLabel">{{label}}</label>
+      <input colorpicker class="form-control" type="text" id="colorChanger" ng-model="binding" ng-change="updateColorSquare('colorChangerDSquare')" style="z-index:1000;" />
+      <span class="input-group-addon"><i class="fa fa-2x fa-square" id="colorChangerSquare" ng-show="binding"></i><i class="fa fa-2x fa-square-o" ng-show="!binding"></i></span>
+      <p class="help-block" ng-show="valid">error</p>
+    </div>
+  </div>
+  <script>
+    $.material.init();
+  </script>
+</div>
