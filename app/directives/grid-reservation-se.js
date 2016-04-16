@@ -46,12 +46,12 @@ define(['app', 'lodash', 'text!./grid-reservation-se.html','moment'
                       else
                         $scope.oneLine = false;
 
-                      if ($scope.rowMinHeight > 42 && $scope.rowMinHeight <= 63)
+                      if ($scope.rowMinHeight > 42 && $scope.rowMinHeight <= 61)
                         $scope.twoLine = true;
                       else
                         $scope.twoLine = false;
 
-                      if ($scope.rowMinHeight > 63)
+                      if ($scope.rowMinHeight > 61)
                         $scope.threeLine = true;
                       else
                         $scope.threeLine = false;
@@ -59,7 +59,7 @@ define(['app', 'lodash', 'text!./grid-reservation-se.html','moment'
 
                     if ($element.height() > $scope.rowMinHeight)
                       $element.height($scope.rowMinHeight);
-          
+
 
 
                   }
