@@ -10,12 +10,13 @@
     -moz-transform: scale(0.8, 0.8);
     /* Firefox */
   }
-
 </style>
 <div ng-controller="events" class="container-fluid" style="height:100%; width:100%;">
 
   <div class="row  view-header text-center" style="position:relative;">
-    <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i>  Side Event Reservations <span class="badge" style="position:absolute;top:3px;left:260px;">{{reservations.length}}</span></div>
+    <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Side Event Reservations
+      <span class="badge" style="position:absolute;top:3px;left:260px;">{{reservations.length}}</span>
+    </div>
 
     <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
       <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
@@ -26,27 +27,27 @@
         <input id="end-filter" class="form-control" type="text" ng-model="endDate" ng-change="dateChange('end-filter')" style="color:#eee;">
       </div>
     </div>
-    <div style="position:absolute;top:-30px;right:1px;width:210px;" >
+    <div style="position:absolute;top:-30px;right:1px;width:210px;">
       <div class="relative">
-    <div class="form-group label-floating" >
-      <div class="input-group" >
-        <label class="control-label" for="searchSe">Search Reservations</label>
-        <input type="text" id="searchSe" class="form-control" ng-model="searchRes" >
-        <span class="input-group-btn small">
-          <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchRes='';">
-            <i class="fa fa-search" ng-if="!searchRes"></i> <i class="fa fa-times" ng-if="searchRes"></i>
-          </button>
-        </span>
+        <div class="form-group label-floating">
+          <div class="input-group">
+            <label class="control-label" for="searchSe">Search Reservations</label>
+            <input type="text" id="searchSe" class="form-control" ng-model="searchRes">
+            <span class="input-group-btn small">
+              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchRes='';">
+                <i class="fa fa-search" ng-if="!searchRes"></i> <i class="fa fa-times" ng-if="searchRes"></i>
+              </button>
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
 
-  </div>
+    </div>
   </div>
 
   <!-- style="width:100%; min-height:600px;position:relative;" -->
   <div class="row wrapper" style="width:100%;height:100%;position:relative; overflow:none;">
-    <div  style="height:100%;width:100%">
+    <div style="height:100%;width:100%;">
 
       <div class="wrapper" style="vertical-align:top;height:100%">
         <!-- side event container -->
@@ -140,71 +141,65 @@
             </div>
           </div>
         </div>
-</div>
-
-
-
-
-              <!-- y labels -->
-    <div class="wrapper" style="vertical-align:top;height:100%;">
-              <div class='room-cont' id="x-lables"style="position:relative;display:inline-block;">
-                        <div style="min-width:100px;">
-                          <div>
-                            <div class="relative" style="height:49px;">
-                              <div class="form-group " style="margin-top:0px;">
-                                <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
-                                  <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
-                                </select>
-                                <span class="material-input"></span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                            <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected" >
-                              <div class="day">
-                                <div>{{day.month}}</div>
-                                <div>{{day.day}}</div>
-                              </div>
-                              <div class="tiers">
-                                <div class="tier-label" ng-repeat="tier in day.tiers track by $index">{{tier.title}}</div>
-                              </div>
-                            </div>
-
+      </div>
+      <!-- y labels -->
+      <div  style="display:inline-block;height:100%;width:100%;overflow:auto;">
+      <div class="wrapper" style="vertical-align:top;height:100%;">
+        <div class='room-cont' id="x-lables" style="position:relative;display:inline-block;">
+          <div style="min-width:100px;">
+            <div>
+              <div class="relative" style="height:49px;">
+                <div class="form-group " style="margin-top:0px;">
+                  <select id="conf-select" class="form-control" ng-model="meeting" ng-change="changeMeeting()">
+                    <option ng-repeat="docObj in options.conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+                  </select>
+                  <span class="material-input"></span>
+                </div>
               </div>
             </div>
-<div  id="room-holder"  style="width:100%;height:101vh;position:relative;display:inline-block;overflow:auto;">
+          </div>
+          <div class="day-label-y" ng-repeat="day in days" ng-show="day.selected">
+            <div class="day">
+              <div>{{day.month}}</div>
+              <div>{{day.day}}</div>
+            </div>
+            <div class="tiers">
+              <div class="tier-label" ng-repeat="tier in day.tiers track by $index">{{tier.title}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- room cont wrapper -->
+      <div id="room-holder" style="width:100%;height:101vh;position:relative;display:inline-block;overflow:auto;">
 
-              <!-- room colms -->
-              <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms' >
-                <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden" >
-                  <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
-                    {{room.acronym}}<br>
-                    <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span><span class="small" ng-if="!room.atTable">{{room.capacity}}</span>
+        <div class='room-cont' dragula='"rooms-bag"' dragula-model='options.rooms'>
+          <div ng-repeat='room in options.rooms | orderBy : "sort"' class="room room-x" id="{{room._id}}" ng-show="!room.seHidden">
+            <div class="grabbible room-title" ng-click="roomDialog(room);" style="text-align:center;background-color:{{room.color}}">
+              {{room.acronym}}
+              <br>
+              <span class="small" ng-if="room.atTable">{{room.capacity}}/{{room.atTable}}</span>
+              <span class="small" ng-if="!room.atTable">{{room.capacity}}</span>
+            </div>
+            <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
+              <div class="tiers">
+                <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:21px;height:100%;">
+                  <!-- dragula-model='tier.bag' -->
+                  <div style="height:100%;" room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag'>
+                    <!-- <div class="se-in-grid" ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </div> -->
+                    <grid-reservation-se ng-repeat="b in tier.bag |filter:searchReservations track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}"> </grid-reservation-se>
+                    <span class="empty-bag" ng-if="!tier.bag.length">&nbsp;</span>
+                    <!-- <span class="material-input"></span> -->
                   </div>
-                    <div class="intersect-containers" ng-repeat='slot in room.bookings' ng-show="slot.selected">
-                      <div class="tiers">
-                      <div class="tiers" ng-repeat="tier in slot.tiers track by $index" style="min-height:21px;height:100%;">
-                        <!-- dragula-model='tier.bag' -->
-                        <div style="height:100%;" room-index="{{room._id}}" slot-index="{{$parent.$index}}" tier-index="{{$index}}" room="{{room.title}}" date="{{slot.date}}" time="{{tier.seconds}}" dragula='"se-bag"' dragula-model='tier.bag' >
-                           <!-- <div class="se-in-grid" ng-repeat="b in tier.bag track by $index" res-id="{{b._id}}" class="se-in-grid"> {{b.title}} </div> -->
-                           <grid-reservation-se  ng-repeat="b in tier.bag |filter:searchReservations track by $index" doc="b" row-min-height="rowMinHeight" res-id="{{b._id}}">  </grid-reservation-se>
-                          <span class="empty-bag" ng-if="!tier.bag.length">&nbsp;</span>
-                        <!-- <span class="material-input"></span> -->
-                        </div>
-                      </div>
-                      </div>
-                    </div>
                 </div>
-
-                
               </div>
-
-
-</div>
-
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- room holder -->
+    </div>
+    <!-- overflor contatiner -->
 
     </div>
   </div>
-
 </div>
