@@ -1,9 +1,9 @@
 define(['app', 'lodash',
-  'text!./reservation-type.html',
+  'text!./reservation.html',
   '../../color-picker'
 ], function(app, _, template) {
 
-  app.directive("reservationType", ['$timeout','mongoStorage',
+  app.directive("reservation", ['$timeout','mongoStorage',
     function($timeout,mongoStorage) {
       return {
         restrict: 'E',
@@ -12,7 +12,7 @@ define(['app', 'lodash',
         transclude: false,
         scope: {'doc':'=?','closeThisDialog':'&'},
         link: function($scope, $element) {
-
+console.log($scope.doc);
             init();
 
             //============================================================
@@ -67,6 +67,7 @@ define(['app', 'lodash',
           //============================================================
           function init() {
               $scope.options={};
+              $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
               initTypes();
               triggerChanges();
           }//init
