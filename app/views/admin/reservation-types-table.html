@@ -36,14 +36,14 @@
             </span>
             <span class="hidden-xs hidden-sm btn-group-vertical">
               <a ng-click="typeDialog(type._id)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="New Child"><i class="fa fa-plus  fa-2x" aria-hidden="true"></i><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
-              <a ng-if="!type.system" ng-click="deleteDial(type,$index);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+              <a ng-if="!type.system" ng-click="deleteDial(type);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
             </span>
             <div class="btn-group-xs btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl" style="vertical-align:middle;text-align:center;">
               <a ng-if="!type.system" ng-click="save(type);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
               <a ng-if="!type.system" ng-click="typeDialog(type)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
 
               <a ng-if="!type.system" ng-click="typeDialog(type._id)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
-              <a  ng-click="deleteDial(type,$index);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
+              <a  ng-click="deleteDial(type);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
             </div>
           </td>
         </tr>
