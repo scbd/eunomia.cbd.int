@@ -1,4 +1,9 @@
 <div class="row">
+  <style>
+    .pointer {
+      cursor: pointer;
+    }
+  </style>
   <div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-xl-4 col-xl-offset-4">
     <table class="table table-striped table-hover ">
       <thead>
@@ -7,16 +12,12 @@
           <th width="50%">Title</th>
           <th width="25%">Color</th>
           <th width="20%">Actions</th>
-          <!-- <th >Border</th>
-    <th >Pattern</th>     -->
-
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat-start="type in types |orderBy:'title'">
-          <td class="hidden-xs hidden-sm" style="vertical-align:middle;"><a ng-if="type.children"><i class="fa fa-plus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Show Children"></i></a></td>
-          <!-- <td class="hidden-md hidden-lg hidden-xl"  style="vertical-align:middle;text-align:center;"><a><i class="fa fa-plus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Show Children"></i></a></td> -->
-
+        <tr ng-repeat-start="type in types | filter:searchType |orderBy:'title' track by $index">
+          <td class="hidden-xs hidden-sm" ng-class="{'pointer':type.children}" style="vertical-align:middle;" ng-click="type.showChildren=!type.showChildren;"><a ng-if="type.children"><i ng-show="type.showChildren" class="fa fa-minus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Hide Children"></i><i ng-show="!type.showChildren" class="fa fa-plus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Show Children"></i></a>
+          </td>
           <td>
             <div class="form-group label-floating" style="margin-top:10px;">
               <label class="control-label hidden-md hidden-lg hidden-xl" for="roomNameD">Title</label>
@@ -25,52 +26,38 @@
             </div>
           </td>
           <td>
-            <div class="form-group label-floating">
-              <div class="input-group">
-
-                <label class="control-label  hidden-md hidden-lg hidden-xl" for="roomColorD">Color</label>
-                <input colorpicker class="form-control" type="text" id="typeColor{{$index}}" ng-model="type.color" ng-change="updateColorSquare('color'+$index,type.color)" style="z-index:200;" />
-                <span class="input-group-addon"><i class="fa fa-2x fa-square" id="color{{$index}}" ng-show="type.color"></i><i class="fa fa-2x fa-square-o" ng-show="!type.color"></i></span>
-                <p class="help-block" ng-show="valid">error</p>
-              </div>
-            </div>
+            <color-picker class="hidden-md hidden-lg hidden-xl" binding="type.color" float-label></color-picker>
+            <color-picker class="hidden-xs hidden-sm" binding="type.color"></color-picker>
           </td>
-          <!-- <td>Border</td>
-    <td>Pattern</td> -->
-          <td>
-
-            <span class="hidden-xs hidden-sm btn-group">
-              <a style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="Save"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
-              <a style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="edit"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
-              <br>
-              <a style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="New Child"><i class="fa fa-plus  fa-2x" aria-hidden="true"></i><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
-              <a style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+          <td class="text-nowrap">
+            <span class="hidden-xs hidden-sm btn-group-vertical">
+              <a ng-click="save(type);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="Save"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="typeDialog(type)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="edit"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
             </span>
-
+            <span class="hidden-xs hidden-sm btn-group-vertical">
+              <a ng-click="typeDialog(type._id)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="New Child"><i class="fa fa-plus  fa-2x" aria-hidden="true"></i><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="deleteDial(type,$index);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+            </span>
             <div class="btn-group-xs btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl" style="vertical-align:middle;text-align:center;">
-              <a href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
-              <a href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="save(type);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="typeDialog(type)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
 
-              <a href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
-              <a href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="typeDialog(type._id)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+              <a ng-click="deleteDial(type,$index);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-child  fa-2x" aria-hidden="true"></i></a>
             </div>
-
           </td>
         </tr>
         <tr></tr>
-        <tr ng-show="type.children" ng-repeat-end>
-
+        <tr ng-show="type.children && type.showChildren" ng-repeat-end>
           <td colspan="4">
-            <strong>Children Types:</strong>
-            <!-- <div  ng-include="'/app/views/admin/reservation-types-table.html'"></div> -->
+            <strong>Children of {{type.title}}:</strong>
+            <div ng-include="'/app/views/admin/reservation-types-children-table.html'"></div>
         </tr>
     </table>
   </div>
   <div class="col-xs-1 col-sm-1  col-md-1  col-lg-1  col-xl-1" style="margin: 0 10px 0 0;">
-    <button tool-tip type="button" class="btn btn-fab btn-fab hidden-xs hidden-sm" style="margin-top:50px;" data-placement="top" title="" data-original-title="New Reservation Type">
+    <button ng-click="typeDialog()" tool-tip type="button" class="btn btn-fab btn-fab hidden-xs hidden-sm" style="margin-top:50px;" data-placement="top" title="" data-original-title="New Reservation Type">
       <i class="fa fa-plus"></i>
     </button>
   </div>
-
-
 </div>
