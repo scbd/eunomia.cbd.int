@@ -521,25 +521,21 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       $scope.roomDialog = function(room) {
-        $scope.editRoom = room;
-        var dialog = ngDialog.open({
-          template: roomDialog,
-          className: 'ngdialog-theme-default',
-          closeByDocument: true,
-          plain: true,
-          scope: $scope
-        });
-
-        dialog.closePromise.then(function(ret) {
-
-          if (ret.value == 'draft') $scope.close();
-          if (ret.value == 'publish') $scope.requestPublish().then($scope.close).catch(function onerror(response) {
-
-            $scope.onError(response);
-
+          $scope.editRoom = room;
+          var dialog = ngDialog.open({
+            template: roomDialog,
+            className: 'ngdialog-theme-default',
+            closeByDocument: true,
+            plain: true,
+            scope: $scope
           });
 
-        });
+          dialog.closePromise.then(function(ret) {
+                if (ret.value == 'draft') $scope.close();
+                if (ret.value == 'publish') $scope.requestPublish().then($scope.close).catch(function onerror(response) {
+                    $scope.onError(response);
+                });
+          });
       };
 
       //============================================================
