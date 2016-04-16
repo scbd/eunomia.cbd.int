@@ -23,35 +23,14 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
   //         path: '/',
   // //            roles:['Administrator','EunoAdministrator'],
   //       });
-  //       scbdMenuService.menus.mainMenu.push({
-  //         name: 'Schedule',
-  //         type: 'link',
-  //         faIcon: 'fa-calendar',
-  //         path: '/schedule/day',
-  // //            roles:['Administrator','EunoAdministrator'],
-  //       });
-  // scbdMenuService.menus.mainMenu.push({
-  //       name: 'Side Events',
-  //       type: 'toggle',
-  //       open:0,
-  //       faIcon: 'fa-calendar-o',
-  //       //roles:['Administrator','EunoAdministrator'],
-  //       pages: [
-  //
-  //         {
-  //           name: 'Side Events',
-  //           type: 'link',
-  //           faIcon: 'fa-calendar-o',
-  //           path: '/side-events',
-  //         },
-  //         // {
-  //         //   name: 'Post Schedule',
-  //         //   type: 'link',
-  //         //   faIcon: 'fa-bullhorn',
-  //         //   path: '/post-se-schedule',
-  //         // }
-  //         ]
-  //       });
+        scbdMenuService.menus.mainMenu.push({
+          name: 'Schedule',
+          type: 'link',
+          faIcon: 'fa-calendar',
+          path: '/schedule/day',
+          roles:['Administrator','EunoAdministrator'],
+        });
+
         scbdMenuService.menus.mainMenu.push({
           name: 'Side Events',
           type: 'link',
