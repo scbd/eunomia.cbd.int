@@ -1,0 +1,8 @@
+.room-row-base {
+  min-height:50px;
+  padding: 5px 5px 5px 5px;
+  cursor:pointer;
+}
+.room-row-base:hover {
+  background-color: #fff;
+}
