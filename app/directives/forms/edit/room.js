@@ -1,44 +1,42 @@
 define(['app', 'lodash',
   'text!./room.html',
   'moment',
-  'bs-colorpicker',
-  'css!bs-colorpicker-css'
 
+  '../../color-picker'
 
 ], function(app, _, template, moment) { //'scbd-services/utilities',
 
-  app.directive("room", ['$timeout','mongoStorage','$rootScope',//"$http", "$filter", "Thesaurus",
-    function($timeout,mongoStorage,$rootScope) {
+  app.directive("room", ['$timeout','mongoStorage','$rootScope','$location',//"$http", "$filter", "Thesaurus",
+    function($timeout,mongoStorage,$rootScope,$location) {
       return {
         restrict: 'E',
         template: template,
         replace: true,
         transclude: false,
         scope: {'doc':'=?','venue':'=?','closeThisDialog':'&'},
-        link: function($scope, $element) { //, $http, $filter, Thesaurus
-$scope.options={};
-init();
-console.log($scope.closeThisDialog);
-console.log($scope.venue);
+        controller: function($scope, $element) { //, $http, $filter, Thesaurus
+            init();
 
-$scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
             //============================================================
             //
             //============================================================
             function triggerChanges (){
 
-                 $element.find('input').trigger("change");
+                  $timeout(function(){$element.find('input').trigger("change");
+$element.find('select').trigger("change");
+                },100);
+
 
             }//triggerChanges
 
-          //============================================================
-          //
-          //============================================================
-          function updateColorSquare (){
-              $element.find('#roomColorDSquare').css('color',$scope.doc.color);
-              $timeout(function(){$element.find('#roomColorD').trigger("change");});
-          }//updateColorSquare
-          $scope.updateColorSquare=updateColorSquare;
+          // //============================================================
+          // //
+          // //============================================================
+          // function updateColorSquare (){
+          //     $element.find('#roomColorDSquare').css('color',$scope.doc.color);
+          //     $timeout(function(){$element.find('#roomColorD').trigger("change");});
+          // }//updateColorSquare
+          // $scope.updateColorSquare=updateColorSquare;
           //============================================================
           //
           //============================================================
@@ -46,7 +44,7 @@ $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{
               return mongoStorage.loadDocs('venues').then(function(venues){
                 $scope.options.venues=venues.data;
                 _.each($scope.options.venues,function(ven){
-                      if(ven._id === $scope.venue._id)
+                      if(ven._id === $scope.doc.venue)
                         ven.selected=true;
 
                 });
@@ -98,7 +96,12 @@ $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{
           //
           //============================================================
           function init() {
-              updateColorSquare();
+            $scope.options={};
+
+
+            $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
+            $scope.isSideEvents=($location.path()==='/side-events');
+              //updateColorSquare();
               triggerChanges();
               if(!$scope.doc.location)$scope.doc.location=$scope.venue._id;
               initVenues();

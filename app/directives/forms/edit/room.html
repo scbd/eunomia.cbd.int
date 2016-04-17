@@ -104,17 +104,9 @@
       </div>
     </div>
     <div class="col-xs-6">
-      <div class="form-group label-floating">
-        <div class="input-group">
-
-          <label class="control-label" for="roomColorD">Color</label>
-          <input colorpicker class="form-control" type="text" id="roomColorD" ng-model="doc.color" ng-change="updateColorSquare('roomColorDSquare')" style="z-index:1000;" />
-          <span class="input-group-addon"><i class="fa fa-2x fa-square" id="roomColorDSquare" ng-show="doc.color"></i><i class="fa fa-2x fa-square-o" ng-show="!doc.color"></i></span>
-          <p class="help-block" ng-show="valid">error</p>
-        </div>
-      </div>
+        <color-picker  binding="doc.color" float-label></color-picker>
     </div>
-    <div class="col-xs-8 col-xs-offset-2">
+    <div class="col-xs-8 col-xs-offset-2" ng-if="isSideEvents">
       <div class="form-group" style="margin-left:10px;margin-top:15px;">
         <div class="togglebutton">
           <label>
@@ -127,7 +119,6 @@
 
     </div>
   </div>
-
 <div class='row'>
   <div class="col-xs-12">
     <div class="form-group hidden-xs">
