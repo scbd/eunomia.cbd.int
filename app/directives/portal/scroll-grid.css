@@ -1,0 +1,19 @@
+.scroll-grid{
+  display:block;
+  height:100%;
+ white-space: nowrap;
+overflow: none;
+  /*overflow-y: visible;*/
+
+}
+.outer {
+  border-color: green;
+  border-style: dotted;
+  border-width: 4px;
+  float:left;
+  display:block;
+    min-height: 95%;
+  width:90%;
+      overflow-x: scroll;
+      overflow-y: none;
+    }
