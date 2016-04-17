@@ -1,0 +1,14 @@
+.scroll-grid {
+  display: block;
+  height: 100%;
+  white-space: nowrap;
+  overflow: none;
+}
+.outer {
+  float: left;
+  display: block;
+  min-height: 95%;
+  width: 90%;
+  overflow-x: scroll;
+  overflow-y: none;
+}
