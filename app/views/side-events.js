@@ -290,7 +290,6 @@ define(['app', 'lodash', 'moment',
           var chosenEnd = 0;
           var selectedKey = 0;
           _.each($scope.options.conferences, function(meet, key) {
-            var date = moment.unix(meet.end);
             if (!chosenEnd) chosenEnd = meet.end;
             if (meet.end > lowestEnd && meet.end <= chosenEnd) {
               chosenEnd = meet.end;
@@ -501,8 +500,6 @@ define(['app', 'lodash', 'moment',
           return true;
       }
 
-
-
       //============================================================
       //
       //============================================================
@@ -574,7 +571,6 @@ define(['app', 'lodash', 'moment',
               });
         });
       }// removeDropIndicators
-
 
       //============================================================
       //
@@ -677,7 +673,6 @@ define(['app', 'lodash', 'moment',
           });
         else
           res = getBagScope(source)[0];
-
 
         if (!(source.attr('id') === 'unscheduled-side-events' && container.attr('id') === 'unscheduled-side-events'))
           setTimes(res, container).then(
