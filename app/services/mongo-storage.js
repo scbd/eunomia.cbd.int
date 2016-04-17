@@ -191,6 +191,13 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
         //============================================================
         //
         //============================================================
+        function loadRooms(id){
+
+              return $http.get('/api/v2016/conferences/'+id+'/rooms',{});
+        }// loadConferenceRooms
+        //============================================================
+        //
+        //============================================================
         function loadconferences (){
 
             var params={};
@@ -243,6 +250,7 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
           deleteDoc: deleteDoc,
           //        loadDoc:loadDoc,
           save: save,
+          loadRooms:loadRooms,
           loadConferenceRooms: loadConferenceRooms,
           loadUnscheduledSideEvents: loadUnscheduledSideEvents,
           archiveDoc: archiveDoc,
