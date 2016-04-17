@@ -1,0 +1,15 @@
+.room-col-base {position: relative;
+  height:auto;
+  min-height: 95%;
+
+  display: block;
+  float: left;
+  width:10%;
+}
+.room-column-header{
+  background-color: #d7d7d7;
+}
+
+.row-stripped{
+background-color: #f9f9f9;
+}
