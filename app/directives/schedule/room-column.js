@@ -11,7 +11,7 @@ define(['app', 'lodash', 'text!./room-column.html','css!./room-column.css','./ro
         scope: {
           'venue': '=',
         },
-        controller: function($scope,scheduleService) {
+        controller: function($scope,$element,$document,scheduleService) {
 
             init();
 
@@ -20,7 +20,9 @@ define(['app', 'lodash', 'text!./room-column.html','css!./room-column.css','./ro
             //============================================================
             function init() {
                 $scope.rooms=[];
+
                 initRooms();
+
             } //init
 
             //============================================================
@@ -31,6 +33,7 @@ define(['app', 'lodash', 'text!./room-column.html','css!./room-column.css','./ro
                 scheduleService.getRooms()
                 .then(function(res){
                   $scope.rooms=res;
+                  $scope.rowHeight=scheduleService.getHeadersHeight();
                 });
             } //initRooms
 
