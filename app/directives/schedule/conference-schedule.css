@@ -1,11 +1,11 @@
-.day-schedule .control-header {
+.conference-schedule .control-header {
   min-height: 45px;
   height: 7%;
   width: 100%;
   background-color: #bbb;
   color: #fff;
 }
-.day-schedule .control-header .form-group select {
+.conference-schedule .control-header .form-group select {
   color: #fff;
 }
 .row-stripped {
