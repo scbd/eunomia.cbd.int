@@ -1,22 +1,18 @@
 <div class="day-schedule" style="height:94%;">
   <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
-  <div class="control-header" >
+  <div class="control-header">
     <div class="form-group " style="margin-top:0px;">
-      <select id="venue-select" class="form-control" ng-model="venueId" ng-change="changeVenue()" >
-        <option ng-repeat="docObj in venues" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected" >{{docObj.acronym}} </option>
+      <select id="venue-select" class="form-control" ng-model="venueId" ng-change="changeVenue()">
+        <option ng-repeat="docObj in venues" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
       </select>
       <span class="material-input"></span>
     </div>
   </div>
+
   <room-column venue="venue"></room-column>
-  <scroll-grid>
-    <time-unit-row-header></time-unit-row-header>
-    <time-unit-row></time-unit-row>
-    <time-unit-row></time-unit-row>
-    <time-unit-row></time-unit-row>
-    <time-unit-row></time-unit-row>
-    <time-unit-row></time-unit-row>
-    <time-unit-row></time-unit-row>
+  <scroll-grid start-time="startTime" end-time="endTime" day="day">
+    <time-unit-row-header start-time="startTime" end-time="endTime" day="day"></time-unit-row-header>
+    <time-unit-row ng-repeat="room in rooms" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
   </scroll-grid>
 
 </div>
