@@ -9,13 +9,13 @@ define(['app', 'lodash', 'text!./scroll-grid.html','moment','css!./scroll-grid.c
         transclude: true,
         replace: true,
         scope: {
-          'doc': '='
+          'day': '=',
+          'startTime':'=',
+          'endTime':'=',
         },
-        controller: function($scope, $element) {
+        controller: function($scope) {
 
-            $scope.oneLine = false;
-            $scope.twoLine = false;
-            $scope.threeLine = false;
+
             init();
 
             //============================================================
