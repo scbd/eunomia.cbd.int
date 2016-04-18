@@ -23,13 +23,33 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
   //         path: '/',
   // //            roles:['Administrator','EunoAdministrator'],
   //       });
+
         scbdMenuService.menus.mainMenu.push({
-          name: 'Schedule',
-          type: 'link',
-          faIcon: 'fa-calendar',
-          path: '/schedule/day',
-          roles:['Administrator','EunoAdministrator'],
-        });
+              name: 'Schedule',
+              type: 'toggle',
+              open:0,
+              faIcon: 'fa-calendar',
+              roles:['Administrator'],
+              pages: [
+                {
+                  name: 'Location Schedule',
+                  type: 'link',
+                  faIcon: 'fa-map-marker',
+                  path: '/schedule/day',
+                  roles:['Administrator','EunoAdministrator'],
+                },
+                {
+                  name: 'Conference Schedule',
+                  type: 'link',
+                  faIcon: 'fa-users',
+                  path: '/schedule/conference',
+                  roles:['Administrator','EunoAdministrator'],
+                }
+              ]
+              });
+
+
+
 
         scbdMenuService.menus.mainMenu.push({
           name: 'Side Events',
