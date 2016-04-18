@@ -1,4 +1,4 @@
 <div id="room-col" class="room-col-base">
-  <div class="room-column-header">Rooms</div>
-  <room-row ng-repeat="room in rooms" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
+  <div class="room-column-header text-center" style="height:{{rowHeight}}px;">Rooms</div>
+  <room-row ng-repeat="room in rooms | orderBy:'sort'" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
 </div>
