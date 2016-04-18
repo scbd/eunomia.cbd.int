@@ -1,26 +1,84 @@
-define(['app', 'lodash',
+define(['app', 'lodash','moment',
   '../../../services/mongo-storage',
-], function(app, _) {
+], function(app, _,moment) {
 
   app.factory("scheduleService", ['mongoStorage','$q','$document','$timeout',function(mongoStorage,$q,$document,$timeout) {
         //todovenues will be location or confrences
-        var venue,venues,rooms,headersHeight,rowHeight,headerEl,roomColumnEl;
+        var venue,venues,rooms,headersHeight,rowHeight,outerGridWidth,headerEl,roomColumnEl,scrollGridEl,
+        startTime,endTime,timeUnit,intervals,intervalKeys;
 
         init();
         //============================================================
         //
         //============================================================
         function init() {
-          headersHeight='50';
-          rowHeight='50';
-
+          headersHeight='40';
+          rowHeight='40';
+          timeUnit=900.025;//15 minutes in seconds
+          intervals = [];
+          intervalKeys = [];
           initVenues().then(function(){
               initRooms().then(function(){
                 initRowHeight();
+                initHeaderHeight();
+                initOuterGridWidth();
               });
           });
         }
+        //============================================================
+        //
+        //============================================================
+        function getTimeIntervals(start,end) {
+              if(!startTime)startTime=start;
+              if(!endTime)endTime=end;
+              var seconds = endTime.diff(startTime)/1000;
+              var hours = Math.ceil(seconds/3600);
+              intervals = [];
+              intervalKeys = [];
+              var t = moment(startTime);
+              var subIntervals = 3600/timeUnit;
+              for(var  i=0; i< hours ; i++)
+              {   var intervalObj={};
+                  intervalObj.subIntervals=[];
+                  intervalObj.interval=moment(t);
+                  for(var  j=0; j< subIntervals ; j++)
+                  {
+                     intervalObj.subIntervals.push(moment(t));
+                     t=t.add(timeUnit,'seconds');
+                  }
+                  intervalKeys.push(intervalObj);
 
+              }
+              // for(var  i=0; i< seconds; i=Math.floor(timeUnit)+i)
+              // {
+              //   intervalKeys.push(moment(t));
+              //   t=t.add(timeUnit,'seconds');
+              // }
+
+              return intervalKeys;
+
+        }//igetTimeIntervals
+
+        //============================================================
+        //
+        //============================================================
+        function getTimeIntervalsHeader(start,end) {
+              if(!startTime)startTime=start;
+              if(!endTime)endTime=end;
+              var seconds = endTime.diff(startTime)/1000;
+              var hours = Math.ceil(seconds/3600);
+              intervals = [];
+              intervalKeys = [];
+              var t = moment(startTime);
+              for(var  i=0; i< hours ; i++)
+              {
+                intervalKeys.push(moment(t));
+                t=t.add(1,'hours');
+              }
+
+              return intervalKeys;
+
+        }//igetTimeIntervals
         //============================================================
         //
         //============================================================
@@ -43,10 +101,29 @@ define(['app', 'lodash',
                 $document.ready(function(){
                   $timeout(function(){
                     roomColumnEl=$document.find('#room-col');
-                    rowHeight=Number(roomColumnEl.height())/rooms.length;
+                    rowHeight=Math.floor(Number(roomColumnEl.height())/rooms.length);
                   });
                 });
         }//initRooms
+        //============================================================
+        //
+        //============================================================
+        function initOuterGridWidth() {
+                $document.ready(function(){
+                  $timeout(function(){
+                    scrollGridEl=$document.find('#scroll-grid');
+                    outerGridWidth=Number(scrollGridEl.width());
+                  });
+                });
+        }//initRooms
+        //============================================================
+        //
+        //============================================================
+        function getOuterGridWidth() {
+
+            return outerGridWidth;
+        }// getOuterGridWidth
+
         //============================================================
         //
         //============================================================
@@ -186,6 +263,9 @@ define(['app', 'lodash',
 
 
         return {
+          getTimeIntervalsHeader:getTimeIntervalsHeader,
+          getTimeIntervals:getTimeIntervals,
+          getOuterGridWidth:getOuterGridWidth,
           getRowHeight:getRowHeight,
           getHeadersHeight:getHeadersHeight,
           getRoom: getRoom,
