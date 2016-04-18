@@ -25,13 +25,17 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
     //============================================================
     function securize(roles) {
 
-        return ['$location', '$window', '$q','authentication', function ($location, $window, $q, authentication) {
-            //return true; // TEMPORARY DISABLED SECURIZE TO PREVENT LOOPING
+        return ['$location', '$window', '$q','authentication', 'apiUrl', function ($location, $window, $q, authentication, apiUrl) {
+
             return authentication.getUser().then(function (user) {
 
                 if (!user.isAuthenticated) {
-                    var returnUrl = $window.encodeURIComponent($window.location.href);
-                    $window.location.href = 'https://accounts.cbd.int/signin?returnUrl=' + returnUrl; // force sign in
+
+                    var accountsUrl = apiUrl.devAccountsUrl() || 'https://accounts.cbd.int';
+                    var returnUrl   = $window.encodeURIComponent($window.location.href);
+
+                    $window.location.href = accountsUrl+'/signin?returnUrl=' + returnUrl; // force sign in
+
                     return $q(function () {});
                 }
                 else if (roles && !_.isEmpty(roles) && _.isEmpty(_.intersection(roles, user.roles))) {
