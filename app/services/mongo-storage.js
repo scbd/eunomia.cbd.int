@@ -1,15 +1,8 @@
 define(['app','lodash'], function (app,_) {
 
-app.factory("mongoStorage", ['$http','authentication','$q','$location', function($http,authentication,$q,$location) {
+app.factory("mongoStorage", ['$http',function($http) {
 
-        var user;
-        authentication.getUser().then(function(u){
-          user=u;
-
-        });
         var clientOrg = 0; // means cbd
-
-        var statuses=['draft','published','request','deleted','archived','canceled','rejected'];
 
         //============================================================
         //
@@ -51,36 +44,11 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                 }  //create
         }
 
-  //       //============================================================
-  //       //
-  //       //============================================================
-  //       function loadDoc (schema,_id){
-  //         //+'?q={"_id":{"$oid":"'+_id+'"},"clientOrganization":'+clientOrg+'}&f={"document":1}'
-  // //console.log(schema);
-  //           if(!schema) throw "Error: failed to indicate schema mongoStorageService.loadDocument";
-  //           if(!_id) throw "Error: failed to indicate _id mongoStorageService.loadDocument"
-  //           var params = {
-  //                         'f':{'document':1}
-  //                       };
-  //           return $q.when( $http.get('/api/v2016/'+schema+'/'+_id))//}&f={"document":1}'))
-  //                  .then(
-  //
-  //                       function(response){
-  //                           if(!_.isEmpty(response.data)){
-  //                               response.data.initialState=_.cloneDeep(response.data);
-  //                               delete(response.data.initialState.history);
-  //                               return  response.data;
-  //                           }
-  //                           else
-  //                             return false;
-  //                       }
-  //                 );
-  //       }
 
         //============================================================
         //
         //============================================================
-        function  loadReservations(start,end,venue,type){
+        function  getReservations(start,end,venue,type){
 
           var params={};
 
@@ -92,17 +60,13 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                          }
                       };
             return $http.get('/api/v2016/reservations',{'params':params});
-
-
-        }// loadDocs
-
-
+        }// getDocs
 
 
         //============================================================
         //
         //============================================================
-        function loadDocs (schema,status,cache){
+        function getDocs (schema,status,cache){
             if(!cache)cache=false;
             var params={};
             if(!schema) throw "Error: failed to indicate schema loadOwnerDocs";
@@ -126,43 +90,19 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
                           };
               return $http.get('/api/v2016/'+schema,{'params':params, 'cache':cache});
             }
-        }// loadDocs
+        }// getDocs
         //============================================================
         //
         //============================================================
-        function loadOrgs (){
+        function getAllOrgs (){
 
               var params = {
                           q:{'meta.status':'published'}
-
-
                         };
               return $http.get('/api/v2016/inde-orgs',{'params':params, 'cache':true});
 
-        }// loadDocs
-        // //============================================================
-        // //
-        // //============================================================
-        // function loadRoomsByVenue(venue){
-        //
-        //     var params={};
-        //     params = {
-        //                 q:{'meta.status':{$nin:['archived','deleted']},
-        //                    'meta.v':{$ne:0},
-        //                    'venue':{$ne:0},
-        //                   },
-        //               };
-        //     return $http.get('/api/v2015/rooms',{'params':params});
-        // }
+        }// getDocs
 
-        //=======================================================================
-        //
-        //=======================================================================
-        function archiveDoc(schema,docObj,_id){
-
-              docObj.meta.status='archived';
-              return save(schema,docObj,_id);
-        }
         //=======================================================================
         //
         //=======================================================================
@@ -172,49 +112,49 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
               return save(schema,docObj,_id);
         }
 
-        //=======================================================================
-        //
-        //=======================================================================
-        function unArchiveDoc(schema,docObj,_id){
-
-              docObj.meta.status='draft';
-              return save(schema,docObj,_id);
-        }
         //============================================================
         //
         //============================================================
-        function loadConferenceRooms(id){
+        function getConferenceRooms(id){
 
               return $http.get('/api/v2016/conferences/'+id+'/rooms',{});
-        }// loadConferenceRooms
+        }// getConferenceRooms
+
 
         //============================================================
         //
         //============================================================
-        function loadRooms(id){
-
-              return $http.get('/api/v2016/conferences/'+id+'/rooms',{});
-        }// loadConferenceRooms
-        //============================================================
-        //
-        //============================================================
-        function loadconferences (){
+        function  getConferences(){
 
             var params={};
 
-            if(!status){
               params = {
                           q:{'meta.status':{$nin:['archived','deleted']}},
                           s:{'start':-1}
                         };
               return $http.get('/api/v2016/conferences',{'params':params, 'cache':true});
-            }
+
+        }
+
+        //============================================================
+        //
+        //============================================================
+        function getVenues (){
+
+            var params={};
+
+              params = {
+                          q:{'meta.status':{$nin:['archived','deleted']}},
+                          s:{'start':-1}
+                        };
+              return $http.get('/api/v2016/venues',{'params':params, 'cache':true});
+
 
         }
         //============================================================
         //
         //============================================================
-        function loadUnscheduledSideEvents (meeting){
+        function getUnscheduledSideEvents (meeting){
 
             var params={};
 
@@ -244,20 +184,17 @@ app.factory("mongoStorage", ['$http','authentication','$q','$location', function
 
 
         return{
-          loadOrgs: loadOrgs,
+          getConferences:getConferences,
+          getVenues:getVenues,
+          getAllOrgs: getAllOrgs,
           saveRes: saveRes,
           syncSideEvents: syncSideEvents,
           deleteDoc: deleteDoc,
-          //        loadDoc:loadDoc,
           save: save,
-          loadRooms:loadRooms,
-          loadConferenceRooms: loadConferenceRooms,
-          loadUnscheduledSideEvents: loadUnscheduledSideEvents,
-          archiveDoc: archiveDoc,
-          loadReservations: loadReservations,
-          loadDocs: loadDocs,
-          loadconferences: loadconferences,
-          unArchiveDoc: unArchiveDoc
+          getConferenceRooms: getConferenceRooms,
+          getUnscheduledSideEvents: getUnscheduledSideEvents,
+          getReservations: getReservations,
+          getDocs: getDocs,
         };
 }]);
 

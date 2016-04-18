@@ -4,7 +4,7 @@ define(['app', 'lodash','moment',
 
   app.factory("scheduleService", ['mongoStorage','$q','$document','$timeout',function(mongoStorage,$q,$document,$timeout) {
         //todovenues will be location or confrences
-        var venue,venues,rooms,headersHeight,rowHeight,outerGridWidth,headerEl,roomColumnEl,scrollGridEl,
+        var venue,venues,conference,conferences,rooms,headersHeight,rowHeight,outerGridWidth,roomColumnEl,scrollGridEl,
         startTime,endTime,timeUnit,intervals,intervalKeys;
 
         init();
@@ -17,7 +17,7 @@ define(['app', 'lodash','moment',
           timeUnit=900.025;//15 minutes in seconds
           intervals = [];
           intervalKeys = [];
-          initVenues().then(function(){
+          initConferences().then(function(){
               initRooms().then(function(){
                 initRowHeight();
                 initHeaderHeight();
@@ -84,7 +84,7 @@ define(['app', 'lodash','moment',
         //============================================================
         function initRooms() {
           //todo check if id is conference or venue then load right rooms from right collection
-              return mongoStorage.loadConferenceRooms(venue._id).then(function(res) {
+              return mongoStorage.getConferenceRooms(conference._id).then(function(res) {
                 rooms = res.data;
               });
         }//initRooms
@@ -209,7 +209,57 @@ define(['app', 'lodash','moment',
                     },100);
                  });
         }//getVenue()
-
+        //============================================================
+        //
+        //============================================================
+        function getConferences() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(conferences && !_.isEmpty(conferences)){
+                            clearInterval(cancelInterval);
+                            resolve(conferences);
+                        }else if(count===20){
+                            reject('Failed to get venues, timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//getVenues()
+        //============================================================
+        //
+        //============================================================
+        function getConference() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(conference && !_.isEmpty(conference)){
+                            clearInterval(cancelInterval);
+                            resolve(conference);
+                        }else if(count===20){
+                            reject('Failed to get venue, timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//getVenue()
+        //============================================================
+        //
+        //============================================================
+        function getConferenceId() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(conference && !_.isEmpty(conference)){
+                            clearInterval(cancelInterval);
+                            resolve(conference._id);
+                        }else if(count===20){
+                            reject('Failed to get venueId, , timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//getVenues()
         //============================================================
         //
         //============================================================
@@ -231,7 +281,7 @@ define(['app', 'lodash','moment',
         //
         //============================================================
         function initVenues() {
-          return mongoStorage.loadconferences().then(function(confs) {
+          return mongoStorage.getVenues().then(function(confs) {
             venues = confs.data;
             var lowestEnd = Math.round(new Date().getTime() / 1000);
             var chosenEnd = 0;
@@ -248,7 +298,27 @@ define(['app', 'lodash','moment',
             venue = venues[selectedKey];
           });
         } //initMeeting
-
+        //============================================================
+        //
+        //============================================================
+        function initConferences() {
+          return mongoStorage.getConferences().then(function(confs) {
+            conferences = confs.data;
+            var lowestEnd = Math.round(new Date().getTime() / 1000);
+            var chosenEnd = 0;
+            var selectedKey = 0;
+            //select the next confrence by default
+            _.each(conferences, function(meet, key) {
+              if (!chosenEnd) chosenEnd = meet.end;
+              if (meet.end > lowestEnd && meet.end <= chosenEnd) {
+                chosenEnd = meet.end;
+                selectedKey = key;
+              }
+            });
+            conferences[selectedKey].selected = true;
+            conference = conferences[selectedKey];
+          });
+        } //initMeeting
         //============================================================
         //
         //============================================================
@@ -263,6 +333,9 @@ define(['app', 'lodash','moment',
 
 
         return {
+          getConferenceId:getConferenceId,
+          getConference:getConference,
+          getConferences:getConferences,
           getTimeIntervalsHeader:getTimeIntervalsHeader,
           getTimeIntervals:getTimeIntervals,
           getOuterGridWidth:getOuterGridWidth,

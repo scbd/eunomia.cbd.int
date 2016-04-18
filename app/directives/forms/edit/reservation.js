@@ -49,7 +49,7 @@ console.log($scope.doc);
           //
           //============================================================
           function initTypes() {
-            return mongoStorage.loadDocs('reservation-types', status).then(function(result) {
+            return mongoStorage.getDocs('reservation-types', status).then(function(result) {
               $scope.options.types = result.data;
               _.each($scope.types,function(type){
                   type.showChildren=true;

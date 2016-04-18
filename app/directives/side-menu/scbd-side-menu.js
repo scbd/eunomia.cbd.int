@@ -20,7 +20,6 @@ define(['app',
         template: template,
         scope: {
           sections: '=',
-
         },
         require:'^scbdSideMenu',
         transclude: true,
@@ -276,7 +275,7 @@ resizeContainer();
             function resizeContainer(){
               if(!$scope.isOpen && container.parent().width()===container.width()) return;
                   if(!resizeInProgress){
-      
+
                     resizeInProgress =true;
                     $timeout(function(){
                       if($scope.isOpen)

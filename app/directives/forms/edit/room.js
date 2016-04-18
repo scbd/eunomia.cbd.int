@@ -41,7 +41,7 @@ $element.find('select').trigger("change");
           //
           //============================================================
           function initVenues(){
-              return mongoStorage.loadDocs('venues').then(function(venues){
+              return mongoStorage.getDocs('venues').then(function(venues){
                 $scope.options.venues=venues.data;
                 _.each($scope.options.venues,function(ven){
                       if(ven._id === $scope.doc.venue)

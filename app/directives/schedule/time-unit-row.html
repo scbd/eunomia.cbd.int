@@ -1,9 +1,10 @@
 <div class="row-base" style="width:{{outerRowWidth}}px;height:{{rowHeight}}px;">
 
 
-  <div class="interval-hour" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="height:100%;width:{{colWidth}}px;">
-
-    <div class="sub-interval debug-border-thin" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="height:100%;width:25%;"><div>
+  <div class="interval-hour relative" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="height:100%;width:{{colWidth}}px;">
+    <!-- <div class="sub-interval-background" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="position:absolute;height:25%;width:25%;"><div> -->
+    <div class="sub-interval" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="height:100%;width:25%;"><div>
+    <!-- <div class="sub-interval-background" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="height:25%;width:25%;"><div> -->
   </div>
 
 </div>

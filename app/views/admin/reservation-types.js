@@ -78,7 +78,7 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
       //
       //============================================================
       function loadTypes() {
-        return mongoStorage.loadDocs('reservation-types', status).then(function(result) {
+        return mongoStorage.getDocs('reservation-types', status).then(function(result) {
           $scope.types = result.data;
                 $scope.initialState=_.cloneDeep($scope.types);
           _.each($scope.types,function(type){

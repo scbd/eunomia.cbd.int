@@ -1,8 +1,8 @@
 <div ng-controller="conference" class="container-fluid view">
   <div class="row  view-header text-center" style="position:relative;">
-    <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Day Schedule
+    <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Conference Schedule
     </div>
-    <div class="form-group pull-left" style="position:absolute;left:200px;top:-2px;margin-top:0px;width:85px;">
+    <div class="form-group pull-left" style="position:absolute;left:270px;top:-2px;margin-top:0px;width:85px;">
       <input id="day-filter" class="form-control" type="text" ng-model="day" ng-change="changeDate('day-filter')" style="color:#eee;">
     </div>
     <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
@@ -31,5 +31,5 @@
       </div>
     </div>
   </div>
-<day-schedule day="day" start-time="startTimeObj" end-time="endTimeObj" search="search"></day-schedule>
+<conference-schedule day="day" start-time="startTimeObj" end-time="endTimeObj" search="search"></conference-schedule>
 </div>

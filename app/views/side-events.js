@@ -253,11 +253,11 @@ define(['app', 'lodash', 'moment',
       function initSideEvents(meeting) {
         var allOrgs;
         $scope.sideEvent=[];
-        return mongoStorage.loadUnscheduledSideEvents(meeting).then(function(res) {
+        return mongoStorage.getUnscheduledSideEvents(meeting).then(function(res) {
           $scope.sideEvents = res.data;
         }).then(
           function() {
-            return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
+            return mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
               allOrgs = orgs.data;
 
             });
@@ -284,7 +284,7 @@ define(['app', 'lodash', 'moment',
       //
       //============================================================
       function initMeeting() {
-        return mongoStorage.loadconferences().then(function(confs) {
+        return mongoStorage.getConferences().then(function(confs) {
           $scope.options.conferences = confs.data;
           var lowestEnd = Math.round(new Date().getTime() / 1000);
           var chosenEnd = 0;
@@ -331,7 +331,7 @@ define(['app', 'lodash', 'moment',
         });
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
-        return mongoStorage.loadReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
+        return mongoStorage.getReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
             $scope.reservations = res.data;
             //set ref to models
             if (!$scope.seModels) $scope.seModels = [];
@@ -341,7 +341,7 @@ define(['app', 'lodash', 'moment',
           })
           .then( // preload orgs not one by one
             function() {
-              return mongoStorage.loadOrgs('inde-orgs', 'published').then(function(orgs) {
+              return mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
                 allOrgs = orgs.data;
               });
             }
@@ -440,7 +440,7 @@ define(['app', 'lodash', 'moment',
       //============================================================
       function loadRooms() {
 
-        return mongoStorage.loadConferenceRooms($scope.meeting).then(function(rooms) {
+        return mongoStorage.getConferenceRooms($scope.meeting).then(function(rooms) {
           $scope.options.rooms = rooms.data;
 
           _.each($scope.options.rooms, function(room) {

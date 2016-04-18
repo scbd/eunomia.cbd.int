@@ -23,7 +23,6 @@ define(['app', 'lodash', 'text!./room-row.html','text!../forms/edit/room-dialog.
             function init() {
                 $scope.rowHeight=scheduleService.getRowHeight();
                 $element.height($scope.rowHeight);
-                console.log('room row',$scope.rowHeight);
             } //init
 
             //============================================================

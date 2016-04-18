@@ -1,7 +1,7 @@
 define(['app', 'lodash','moment',
   'BM-date-picker',
   'ngDialog',
-  '../../directives/schedule/day-schedule'
+  '../../directives/schedule/conference-schedule'
 ], function(app, _,moment) {
 
   app.controller('conference',['$scope','$document','$element','scbdMenuService','$timeout',
