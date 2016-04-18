@@ -14,7 +14,8 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
             when('/schedule/conference',      { templateUrl: 'views/schedule/conference.html',         resolveController: true, resolveUser: true }).
             when('/side-events',              { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/admin/reservation/types',  { templateUrl: 'views/admin/reservation-types.html',     resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-            when('/404',                      { templateUrl: 'views/404.html',                         resolveUser: true }).
+            when('/404', { templateUrl: 'views/404.html' }).
+            when('/403', { templateUrl: 'views/403.html' }).
             otherwise({ redirectTo: '/404' });
     }]);
 
@@ -34,7 +35,7 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
                     return $q(function () {});
                 }
                 else if (roles && !_.isEmpty(roles) && _.isEmpty(_.intersection(roles, user.roles))) {
-                    $location.url('/help/403'); // not authorized
+                    $location.url('/403'); // not authorized
                 }
 
                 return user;
