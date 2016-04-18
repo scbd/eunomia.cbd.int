@@ -1,7 +1,13 @@
 .room-row-base {
-  min-height:50px;
-  padding: 5px 5px 5px 5px;
+  min-height:40px;
+  /*padding: 5px 5px 5px 5px;*/
   cursor:pointer;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #bbb;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: #bbbbbb;
 }
 .room-row-base:hover {
   background-color: #fff;
