@@ -1,7 +1,19 @@
 .header-row-base {
-  /*position: relative;*/
-  /*height: 100%;*/
-  height:20px;
-  /*display: block;*/
-  /*float: left;	*/
+  min-height: 39px;
+  background-color: #d7d7d7;
+}
+.times-row {
+  max-height: 20px;
+  background-color: #eee;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #bbb;
+}
+.interval-col {
+  max-height: 19px;
+  display: inline-block;
+  overflow: visible;
+}
+.col-stripped {
+  background-color: #f9f9f9;
 }
