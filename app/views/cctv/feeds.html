@@ -1,0 +1,38 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>CCTV - Feeds</h1>
+            <h2>{{feedsCtrl.eventGroup.Title.en}} <i>({{feedsCtrl.eventGroup.StartDate|limitTo:10}} - {{feedsCtrl.eventGroup.EndDate|limitTo:5:5}})</i></h2>
+        </div>
+
+        <div class="col-xs-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>
+                        <button class="btn btn-default btn-sm" ng-click="feedsCtrl.edit('new')"><i class="fa fa-plus"></i></button>
+                    </th>
+                </tr>
+                <tr ng-repeat="feed in feedsCtrl.feeds">
+                    <td>{{$index+1}}</td>
+                    <td>{{feed.code}}</td>
+                    <td>{{feed.title}}</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default btn-sm" ng-click="feedsCtrl.edit  (feed._id)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-default btn-sm" ng-click="feedsCtrl.delete(feed._id)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">{{feedsCtrl.feeds.length}} feeds.</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</div>

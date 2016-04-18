@@ -1,0 +1,28 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>CCTV - Feed</h1>
+        </div>
+
+        <div class="col-xs-12">
+
+            <form ng-submit="feedIdCtrl.save()">
+                <div class="form-group">
+                    <label for="code" required>Feed Code (readonly)</label>
+                    <input type="text" required class="form-control" readonly ng-model="feedIdCtrl.feed.code" id="code" name="code" placeholder="12344567890123456">
+                </div>
+                <div class="form-group">
+                    <label for="name" required>Name</label>
+                    <input type="text" required class="form-control" ng-model="feedIdCtrl.feed.title" id="title" name="title" placeholder="CEPA Fair">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" ng-model="feedIdCtrl.feed.description" id="description" name="description" placeholder="This feed is for CEPA CCTV information">
+                </div>
+                <button type="button" class="btn btn-default" ng-click="feedIdCtrl.cancel()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+
+    </div>

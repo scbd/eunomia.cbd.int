@@ -1,0 +1,71 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>CCTV - Frames</h1>
+            <h2>{{framesCtrl.eventGroup.Title.en}} <i>({{framesCtrl.eventGroup.StartDate|limitTo:10}} - {{framesCtrl.eventGroup.EndDate|limitTo:5:5}})</i></h2>
+        </div>
+
+        <form class="form">
+
+            <div class="col-xs-6 col-sm-3">
+
+                <div class="form-group">
+                    <label for="code" required>Day</label>
+                    <select class="form-control" ng-options="day for day in framesCtrl.days" ng-model="framesCtrl.selectedDay" ng-change="framesCtrl.refresh()">
+                        <option value="">All Days</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <div class="form-group">
+                    <label for="feeds" required>Feed</label>
+                    <select class="form-control" ng-options="feed._id as feed.title for feed in framesCtrl.feeds" ng-model="framesCtrl.selectedFeed" ng-change="framesCtrl.refresh()">
+                        <option value="">All feeds</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <div class="col-xs-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Type / description</th>
+                    <th>Schedule</th>
+                    <th>Feeds</th>
+                    <th>
+                        <button class="btn btn-default btn-sm" ng-click="framesCtrl.edit('new')"><i class="fa fa-plus"></i></button>
+                    </th>
+                </tr>
+                <tr ng-repeat="frame in framesCtrl.frames|orderBy:framesCtrl.buildSortKey">
+                    <td>{{$index+1}}</td>
+                    <td>
+                        <b>{{frame.content.type}}</b>
+                        <br> {{frame.content.title|limitTo:50}}
+                    </td>
+                    <td>
+                        {{frame.schedule.startDay}} <span ng-if="frame.schedule.startDay!=frame.schedule.stopDay"> - {{frame.schedule.stopDay|limitTo:5:5}}</span>
+                        <br>
+                        <i>{{frame.schedule.startTime}} - {{frame.schedule.stopTime}}<i/>
+                    </td>
+                    <td>
+                        <ul>
+                            <li ng-show="frame.feeds.length==0">All feeds</li>
+                            <li ng-repeat="feedId in frame.feeds">{{framesCtrl.feedsMap[feedId].title}}</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default btn-sm" ng-click="framesCtrl.edit  (frame._id)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-default btn-sm" ng-click="framesCtrl.delete(frame._id)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">{{framesCtrl.frames.length}} frames.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

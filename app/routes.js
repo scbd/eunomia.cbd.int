@@ -8,12 +8,16 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
         $routeProvider.
             when('/',                         { templateUrl: 'views/schedule/conference.html',                resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/home',                     { redirectTo: '/' }).
-            when('/cctv/feeds',               { templateUrl: 'views/cctv/feeds.html',                  resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-            when('/cctv/frames',              { templateUrl: 'views/cctv/frames.html',                 resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/schedule/location',        { templateUrl: 'views/schedule/location.html',           resolveController: true, resolveUser: true }).
             when('/schedule/conference',      { templateUrl: 'views/schedule/conference.html',         resolveController: true, resolveUser: true }).
             when('/side-events',              { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/admin/reservation/types',  { templateUrl: 'views/admin/reservation-types.html',     resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+
+            when('/events/:eventId/cctv/feeds',      { templateUrl: 'views/cctv/feeds.html' ,   controllerAs:"feedsCtrl",   resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) } }).
+            when('/events/:eventId/cctv/feeds/:id',  { templateUrl: 'views/cctv/feed-id.html' , controllerAs:"feedIdCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) } }).
+            when('/events/:eventId/cctv/frames',     { templateUrl: 'views/cctv/frames.html',   controllerAs:"framesCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) } }).
+            when('/events/:eventId/cctv/frames/:id', { templateUrl: 'views/cctv/frame-id.html', controllerAs:"frameIdCtrl", resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) } }).
+
             when('/404', { templateUrl: 'views/404.html' }).
             when('/403', { templateUrl: 'views/403.html' }).
             otherwise({ redirectTo: '/404' });

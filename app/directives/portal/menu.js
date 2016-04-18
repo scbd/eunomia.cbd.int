@@ -70,14 +70,14 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                 {
                   name: 'Feeds',
                   type: 'link',
-                  path: '/cctv/feeds',
+                  path: '/events/56ab766f2f4ad2ad1b885444/cctv/feeds',
               //    mdIcon: 'all_inclusive',
                   roles:['Administrator'],
                 },
                 {
                   name: 'Frames',
                   type: 'link',
-                  path: '/cctv/frames',
+                  path: '/events/56ab766f2f4ad2ad1b885444/cctv/frames',
               //    mdIcon: 'all_inclusive',
                   roles:['Administrator'],
                 }]
