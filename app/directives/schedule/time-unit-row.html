@@ -1,3 +1,9 @@
-<div class="row-base debug-border-thin" >
-time unit row
+<div class="row-base" style="width:{{outerRowWidth}}px;height:{{rowHeight}}px;">
+
+
+  <div class="interval-hour" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="height:100%;width:{{colWidth}}px;">
+
+    <div class="sub-interval debug-border-thin" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="height:100%;width:25%;"><div>
+  </div>
+
 </div>

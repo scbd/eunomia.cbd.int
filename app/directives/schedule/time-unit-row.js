@@ -1,8 +1,8 @@
-define(['app', 'lodash', 'text!./time-unit-row.html','moment','css!./time-unit-row.css'
-], function(app, _, template, moment) {
+define(['app', 'lodash', 'text!./time-unit-row.html','css!./time-unit-row.css'
+], function(app, _, template) {
 
-  app.directive("timeUnitRow", ['$timeout',
-    function($timeout) {
+  app.directive("timeUnitRow", [
+    function() {
       return {
         restrict: 'E',
         template: template,
@@ -11,20 +11,55 @@ define(['app', 'lodash', 'text!./time-unit-row.html','moment','css!./time-unit-r
         scope: {
           'doc': '='
         },
-        controller: function($scope, $element) {
+        controller: function($scope, $element,scheduleService) {
 
-            $scope.oneLine = false;
-            $scope.twoLine = false;
-            $scope.threeLine = false;
             init();
 
             //============================================================
             //
             //============================================================
             function init() {
+              var cancel = setInterval(function(){
 
+                 $scope.rowHeight=Number(scheduleService.getRowHeight())+1;// +1 hack adoodle doo
+                 $element.height($scope.rowHeight);
+                 $scope.outerRowWidth=scheduleService.getOuterGridWidth();
+                 $scope.timeIntervals=scheduleService.getTimeIntervals($scope.startTime,$scope.endTime);
 
-            } //triggerChanges
+                 $scope.hourOn=hourOn;
+                 $scope.toHour=toHour;
+                 if($scope.rowHeight && $scope.outerRowWidth && $scope.timeIntervals){
+                     clearInterval(cancel);
+                     calcColWidths();
+                 }
+              },100);
+
+            } //init
+
+$scope.test=function(sub){alert(sub);};
+            //============================================================
+            //
+            //============================================================
+            function calcColWidths() {
+
+                $scope.colWidth = Number($scope.outerRowWidth)/Number($scope.timeIntervals.length);
+
+            } //init
+
+            //============================================================
+            //
+            //============================================================
+            function hourOn(val) {
+
+                return ((Math.floor(val/4)%2)===0);
+            } //init
+            //============================================================
+            //
+            //============================================================
+            function toHour(val) {
+
+                return moment(val).format();
+            } //init
 
           } //link
       }; //return
