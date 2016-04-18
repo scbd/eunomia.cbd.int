@@ -85,7 +85,7 @@ define(['app', 'lodash','moment',
           var timeHours = Number($scope.startTime.substring(0,2));
           var timeMinutes = Number($scope.startTime.substring(3,5));
           var timeAMPM =    $scope.startTime.substring(6,8);
-          if(timeAMPM==='PM')timeHours+=12;
+          if(timeAMPM==='pm')timeHours+=12;
           return moment($scope.day).startOf('day').add(timeHours,'hours').add(timeMinutes,'minutes');
       }; //getStartTime
 
@@ -96,7 +96,7 @@ define(['app', 'lodash','moment',
           var timeHours = Number($scope.endTime.substring(0,2));
           var timeMinutes = Number($scope.endTime.substring(3,5));
           var timeAMPM =    $scope.endTime.substring(6,8);
-          if(timeAMPM==='PM')timeHours+=12;
+          if(timeAMPM==='pm')timeHours+=12;
           return moment($scope.day).startOf('day').add(timeHours,'hours').add(timeMinutes,'minutes');
       }; //getStartTime
 
@@ -123,6 +123,7 @@ define(['app', 'lodash','moment',
         $timeout(function(){$element.find('#start-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.day).startOf('day').hour(8));
               $scope.startTime=moment($scope.day).startOf('day').hour(8).format('hh:mm a');
               $scope.startTimeObj=getStartTime();
+            //  console.log('$scope.startTimeObj',$scope.startTimeObj.format());
         });
         $element.find('#end-time-filter').bootstrapMaterialDatePicker({
           time:true,
@@ -133,6 +134,7 @@ define(['app', 'lodash','moment',
         $timeout(function(){$element.find('#end-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.day).startOf('day').hour(20));
               $scope.endTime=moment($scope.day).startOf('day').hour(20).format('hh:mm a');
               $scope.endTimeObj=getEndTime();
+              //console.log('$scope.endTimeObj',$scope.endTimeObj.format());
         });
 
       });
