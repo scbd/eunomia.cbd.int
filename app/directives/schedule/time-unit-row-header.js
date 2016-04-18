@@ -12,6 +12,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
           'day': '=',
           'startTime':'=',
           'endTime':'=',
+          'conferenceDays':'=?'
         },
         controller: function($scope,$element, scheduleService) {
 
@@ -21,6 +22,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //
             //============================================================
             function init() {
+              var timeOut=0;
              var cancel = setInterval(function(){
 
                 $scope.rowHeight=scheduleService.getHeadersHeight();
@@ -33,6 +35,11 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
                     clearInterval(cancel);
                     calcColWidths();
                 }
+                if(timeOut===20){
+                    clearInterval(cancel);
+                    throw 'Error: unable to get time intervals, timeout 2 seconds';
+                }
+                timeOut++;
              },100);
             } //init
 

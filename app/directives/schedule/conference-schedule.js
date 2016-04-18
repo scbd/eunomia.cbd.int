@@ -32,7 +32,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
               $scope.conferences = [];
               $scope.changeConference = changeConference;
               initConferences().then(function() {
-                initRooms();
+                initRooms().then(function(){
+                      initConferenceDays();
+                });
               });
 
             } //init
@@ -42,7 +44,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
             //============================================================
             function initConferences() {
 
-              $scope.venueId = '';
+              $scope.conferenceId  = '';
               return scheduleService.getConferences()
                 .then(function(res) {
                   $scope.conferences = res;
@@ -51,17 +53,28 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
                     $scope.conferenceId = con._id;
                   });
                 });
-            } //initVenues
+            } //initConferences
+            //============================================================
+            //
+            //============================================================
+            function initConferenceDays() {
 
+              $scope.conferenceDays  = '';
+              return scheduleService.getConferenceDays()
+                .then(function(res) {
+                  $scope.conferenceDays = res;
+                });
+            } //initConferences
             //============================================================
             //
             //============================================================
             function initRooms() {
-              scheduleService.getRooms()
+              return scheduleService.getRooms()
                 .then(function(res) {
                   $scope.rooms = res;
                 });
             } //initRooms
+
             //============================================================
             //
             //============================================================

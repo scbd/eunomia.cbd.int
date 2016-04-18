@@ -4,7 +4,7 @@ define(['app', 'lodash','moment',
 
   app.factory("scheduleService", ['mongoStorage','$q','$document','$timeout',function(mongoStorage,$q,$document,$timeout) {
         //todovenues will be location or confrences
-        var venue,venues,conference,conferences,rooms,headersHeight,rowHeight,outerGridWidth,roomColumnEl,scrollGridEl,
+        var startDay,endDay,day,venue,venues,conference,conferences,conferenceDays,rooms,headersHeight,rowHeight,outerGridWidth,roomColumnEl,scrollGridEl,
         startTime,endTime,timeUnit,intervals,intervalKeys;
 
         init();
@@ -63,6 +63,8 @@ define(['app', 'lodash','moment',
         //
         //============================================================
         function getTimeIntervalsHeader(start,end) {
+              if(!start && !end) return;
+              
               if(!startTime)startTime=start;
               if(!endTime)endTime=end;
               var seconds = endTime.diff(startTime)/1000;
@@ -317,8 +319,99 @@ define(['app', 'lodash','moment',
             });
             conferences[selectedKey].selected = true;
             conference = conferences[selectedKey];
+            generateDays();
           });
         } //initMeeting
+
+        //============================================================
+        //
+        //============================================================
+        function generateDays() {
+          conferenceDays = [];
+
+          var numDays = Math.floor((Number(conference.end) - Number(conference.start)) / (24 * 60 * 60));
+          var seconds = Number(conference.start);
+          var date = moment.utc(seconds*1000).startOf('day');
+
+          day = date.format('YYYY-MM-DD');
+          startDay = date;
+
+          for (var i = 1; i <= numDays +1; i++) {
+            conferenceDays.push(date);
+            if (i === numDays +1) {
+              endDay = date;
+            }
+            date=date.add(1,'day');
+          }
+        }//
+        //============================================================
+        //
+        //============================================================
+        function getDay() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(day){
+                            clearInterval(cancelInterval);
+                            resolve(day);
+                        }else if(count===20){
+                            reject('Failed to get day, , timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//
+        //============================================================
+        //
+        //============================================================
+        function getConferenceDays() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(conferenceDays && !_.isEmpty(conferenceDays)){
+                            clearInterval(cancelInterval);
+                            resolve(conferenceDays);
+                        }else if(count===20){
+                            reject('Failed to get conference Days, timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//
+        //============================================================
+        //
+        //============================================================
+        function getStartDay() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(startDay && !_.isEmpty(startDay)){
+                            clearInterval(cancelInterval);
+                            resolve(startDay);
+                        }else if(count===20){
+                            reject('Failed to get conference start day, timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//
+        //============================================================
+        //
+        //============================================================
+        function getEndDay() {
+          var cancelInterval,count=0;
+          return $q(function(resolve, reject) {
+                    cancelInterval = setInterval(function(){
+                        count++;
+                        if(endDay && !_.isEmpty(endDay)){
+                            clearInterval(cancelInterval);
+                            resolve(endDay);
+                        }else if(count===20){
+                            reject('Failed to get conference end day, timed out 2 seconds');
+                        }
+                    },100);
+                 });
+        }//
         //============================================================
         //
         //============================================================
@@ -333,6 +426,10 @@ define(['app', 'lodash','moment',
 
 
         return {
+          getDay:getDay,
+          getStartDay:getStartDay,
+          getEndDay:getEndDay,
+          getConferenceDays:getConferenceDays,
           getConferenceId:getConferenceId,
           getConference:getConference,
           getConferences:getConferences,
