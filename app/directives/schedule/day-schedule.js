@@ -1,4 +1,4 @@
-define(['app', 'lodash', 'text!./day-schedule.html','css!./day-schedule.css',
+define(['app', 'lodash', 'text!./day-schedule.html', 'css!./day-schedule.css',
   '../../services/mongo-storage',
   './services/schedule-service',
   './time-unit-row',
@@ -7,8 +7,8 @@ define(['app', 'lodash', 'text!./day-schedule.html','css!./day-schedule.css',
   './scroll-grid'
 ], function(app, _, template) {
 
-  app.directive("daySchedule", ['$timeout','scheduleService',
-    function($timeout,scheduleService) {
+  app.directive("daySchedule", ['$timeout', 'scheduleService',
+    function($timeout, scheduleService) {
       return {
         restrict: 'E',
         template: template,
@@ -16,9 +16,9 @@ define(['app', 'lodash', 'text!./day-schedule.html','css!./day-schedule.css',
         transclude: false,
         scope: {
           'day': '=',
-          'startTime':'=',
-          'endTime':'=',
-          'search':'=',
+          'startTime': '=',
+          'endTime': '=',
+          'search': '=',
         },
         controller: function($scope) {
 
@@ -27,24 +27,27 @@ define(['app', 'lodash', 'text!./day-schedule.html','css!./day-schedule.css',
             //
             //============================================================
             function init() {
-              $scope.venueId='';
-              $scope.venue='';
-              $scope.venues=[];
-              $scope.changeVenue=changeVenue;
-              initVenues();
+              $scope.venueId = '';
+              $scope.venue = '';
+              $scope.venues = [];
+              $scope.changeVenue = changeVenue;
+              initVenues().then(function() {
+                initRooms();
+              });
+
             } //init
 
             //============================================================
             //
             //============================================================
             function initVenues() {
-                $scope.venueId='';
-                scheduleService.getVenues()
-                .then(function(res){
-                  $scope.venues=res;
-                  scheduleService.getVenue().then(function(ven){
-                      $scope.venue=ven;
-                      $scope.venueId=ven._id;
+              $scope.venueId = '';
+              return scheduleService.getVenues()
+                .then(function(res) {
+                  $scope.venues = res;
+                  scheduleService.getVenue().then(function(ven) {
+                    $scope.venue = ven;
+                    $scope.venueId = ven._id;
                   });
                 });
             } //initVenues
@@ -52,9 +55,20 @@ define(['app', 'lodash', 'text!./day-schedule.html','css!./day-schedule.css',
             //============================================================
             //
             //============================================================
+            function initRooms() {
+              scheduleService.getRooms()
+                .then(function(res) {
+                  $scope.rooms = res;
+                });
+            } //initRooms
+            //============================================================
+            //
+            //============================================================
             function changeVenue() {
-                $scope.venue = _.find($scope.venues,{'_id':$scope.venueId});
-                scheduleService.setVenue($scope.venue);
+              $scope.venue = _.find($scope.venues, {
+                '_id': $scope.venueId
+              });
+              scheduleService.setVenue($scope.venue);
             } //changeVenue
 
           } //controller
