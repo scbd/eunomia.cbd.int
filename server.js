@@ -35,3 +35,10 @@ app.get('/*', function (req, res) { res.render('template', { baseUrl: req.header
 app.listen(app.get('port'), function () {
 	console.log('Server listening on %j', this.address());
 });
+
+// Handle proxy errors ignore
+
+proxy.on('error', function (e,req, res) {
+    console.error('proxy error:', e);
+    res.status(502).send();
+});
