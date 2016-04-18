@@ -6,11 +6,12 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
         $locationProvider.hashPrefix('!');
 
         $routeProvider.
-            when('/',                         { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/',                         { templateUrl: 'views/schedule/conference.html',                resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/home',                     { redirectTo: '/' }).
             when('/cctv/feeds',               { templateUrl: 'views/cctv/feeds.html',                  resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/cctv/frames',              { templateUrl: 'views/cctv/frames.html',                 resolveController: true, resolveUser: true, reloadOnSearch : false, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
-            when('/schedule/day',             { templateUrl: 'views/schedule/day.html',                resolveController: true, resolveUser: true }).
+            when('/schedule/location',        { templateUrl: 'views/schedule/location.html',           resolveController: true, resolveUser: true }).
+            when('/schedule/conference',      { templateUrl: 'views/schedule/conference.html',         resolveController: true, resolveUser: true }).
             when('/side-events',              { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/admin/reservation/types',  { templateUrl: 'views/admin/reservation-types.html',     resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/404',                      { templateUrl: 'views/404.html',                         resolveUser: true }).

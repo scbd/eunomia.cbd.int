@@ -4,7 +4,7 @@ define(['app', 'lodash','moment',
   '../../directives/schedule/day-schedule'
 ], function(app, _,moment) {
 
-  app.controller('day',['$scope','$document','$element','scbdMenuService','$timeout',
+  app.controller('location',['$scope','$document','$element','scbdMenuService','$timeout',
     function($scope,$document,$element,scbdMenuService,$timeout) {
 
 
