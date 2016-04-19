@@ -42,7 +42,8 @@
                     <td>{{$index+1}}</td>
                     <td>
                         <b>{{frame.content.type}}</b>
-                        <br> {{frame.content.title|limitTo:50}}
+                        <div ng-show="frame.content.title">{{frame.content.title|limitTo:50}}</div>
+                        <div ng-show="frame.content.url"><a target="_blank" href="{{frame.content.url}}">{{frame.content.url}}</a></div>
                     </td>
                     <td>
                         {{frame.schedule.startDay}} <span ng-if="frame.schedule.startDay!=frame.schedule.stopDay"> - {{frame.schedule.stopDay|limitTo:5:5}}</span>
@@ -50,7 +51,7 @@
                         <i>{{frame.schedule.startTime}} - {{frame.schedule.stopTime}}<i/>
                     </td>
                     <td>
-                        <ul>
+                        <ul class="list-unstyled">
                             <li ng-show="frame.feeds.length==0">All feeds</li>
                             <li ng-repeat="feedId in frame.feeds">{{framesCtrl.feedsMap[feedId].title}}</li>
                         </ul>
