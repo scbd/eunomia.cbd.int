@@ -3,7 +3,7 @@
     /*.colorpicker-visible {
       z-index: 33000;
     }*/
-
+.ngdialog { z-index: 100; }
     .nav-tabs-default {
       background-color: #a7a7a7;
       color: rgba(0, 0, 0, 0.87);
@@ -42,6 +42,12 @@
         <p class="help-block" ng-show="valid">error</p>
       </div>
     </div>
+        <div class="col-xs-12">
+    <div class="form-group label-floating" >
+      <label class="control-label" for="start-time-filter">start-time-filter</label>
+      <input id="start-time-filter" class="form-control" type="text" ng-model="s" >
+    </div>
+  </div>
     <div class="col-xs-12">
         <color-picker  binding="doc.color" float-label></color-picker>
     </div>

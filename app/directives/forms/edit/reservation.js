@@ -3,8 +3,8 @@ define(['app', 'lodash',
   '../../color-picker'
 ], function(app, _, template) {
 
-  app.directive("reservation", ['$timeout','mongoStorage',
-    function($timeout,mongoStorage) {
+  app.directive("reservation", ['$timeout','mongoStorage','$document',
+    function($timeout,mongoStorage,$document) {
       return {
         restrict: 'E',
         template: template,
@@ -71,6 +71,23 @@ console.log($scope.doc);
               initTypes();
               triggerChanges();
           }//init
+
+          $document.ready(function() {
+              $.material.init();
+              $.material.input();
+              $.material.ripples();
+
+
+
+              $element.find('#start-time-filter').bootstrapMaterialDatePicker({
+                  time:true,
+                  date: false,
+                  shortTime: true,
+                  format: 'hh:mm a'
+              });
+
+
+          });
 
         } //link
       }; //return
