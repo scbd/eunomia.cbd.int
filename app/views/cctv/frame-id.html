@@ -57,7 +57,7 @@
             <div class="col-xs-12">
                 <div class="form-group">
                     <label for="name" required>Type</label>
-                    <select class="form-control" ng-model="frameIdCtrl.frame.content.type">
+                    <select class="form-control" ng-model="frameIdCtrl.frame.content.type" ng-disabled="!!frameIdCtrl.frame._id">
                         <option value="news">News</option>
                         <option value="announcement">Announcement</option>
                         <option value="schedule">Schedule</option>
@@ -66,40 +66,7 @@
             </div>
         </div>
 
-        <div ng-if="frameIdCtrl.frame.content.type=='news'" class="row">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label for="title" required>Text of the news</label>
-                    <input type="text" required class="form-control" ng-model="frameIdCtrl.frame.content.title" id="title" name="title" placeholder="CRP on item 1.2...">
-                </div>
-            </div>
-        </div>
-
-        <div ng-if="frameIdCtrl.frame.content.type=='announcement'" class="row">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label for="title" required>Title of the announcement</label>
-                    <input type="text" required class="form-control" ng-model="frameIdCtrl.frame.content.title" id="title" name="title" placeholder="Official Dinner">
-                </div>
-                <div class="form-group">
-                    <label for="html" required>Text</label>
-                    <textarea rows="10" type="text" required class="form-control" ng-model="frameIdCtrl.frame.content.html" id="html" name="html" placeholder="the Official Dinner..."></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div ng-if="frameIdCtrl.frame.content.type=='schedule'" class="row">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label for="title" required>Title of the schedule</label>
-                    <input type="text" required class="form-control" ng-model="frameIdCtrl.frame.content.title" id="title" name="title" placeholder="Schedule name">
-                </div>
-                <div class="form-group">
-                    <label for="title" required>Schedule web address</label>
-                    <input type="url" required class="form-control" ng-model="frameIdCtrl.frame.content.url" id="title" name="url" placeholder="">
-                </div>
-            </div>
-        </div>
+        <div id="frameTypeContainer" class="row"></div>
 
         <div class="row">
             <div class="col-xs-12">

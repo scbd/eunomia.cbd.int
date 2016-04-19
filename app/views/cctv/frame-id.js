@@ -1,6 +1,6 @@
-define(['lodash', 'app'], function(_) {
+define(['require', 'lodash', 'angular', 'app'], function(require, _, ng) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', function($http, $route, $location, $scope, $q) {
+    return ['$http', '$route', '$location', '$scope', '$q', '$compile', function($http, $route, $location, $scope, $q, $compile) {
 
         var _ctrl = this;
 
@@ -11,6 +11,14 @@ define(['lodash', 'app'], function(_) {
         _ctrl.changedStopDay   = function() { if( _ctrl.frame.schedule.startDay  > _ctrl.frame.schedule.stopDay)  { _ctrl.frame.schedule.startDay  = _ctrl.frame.schedule.stopDay;   } };
         _ctrl.changedStartTime = function() { if( _ctrl.frame.schedule.startTime > _ctrl.frame.schedule.stopTime) { _ctrl.frame.schedule.stopTime  = _ctrl.frame.schedule.startTime; } };
         _ctrl.changedStopTime  = function() { if( _ctrl.frame.schedule.startTime > _ctrl.frame.schedule.stopTime) { _ctrl.frame.schedule.startTime = _ctrl.frame.schedule.stopTime;  } };
+
+        $scope.$watch('frameIdCtrl.frame.content.type', function(type, oldType) {
+
+            if(type==oldType)
+                return;
+
+            instantciateFrameType(type);
+        });
 
         init();
 
@@ -69,6 +77,8 @@ define(['lodash', 'app'], function(_) {
                 };
 
                 _ctrl.selectedFeeds = {};
+
+                instantciateFrameType();
             }
             else {
 
@@ -80,6 +90,8 @@ define(['lodash', 'app'], function(_) {
                         return ret;
                     }, {});
 
+                    instantciateFrameType();
+
                 }).catch(errorHandler);
             }
         }
@@ -90,7 +102,7 @@ define(['lodash', 'app'], function(_) {
         function save() {
 
             var frame = _ctrl.frame;
-            var id   = _ctrl.frame._id;
+            var id    = _ctrl.frame._id;
 
             var savePromise = id ? $http.put ('/api/v2016/cctv-frames/'+id, frame):
                                    $http.post('/api/v2016/cctv-frames',     frame);
@@ -170,6 +182,37 @@ define(['lodash', 'app'], function(_) {
 
             return dates;
         }
+
+        //==============================
+        //
+        //==============================
+        function instantciateFrameType(type) {
+
+            var container = ng.element(document).find('#frameTypeContainer');
+
+            container.empty();
+
+            if(!type)
+                return;
+
+            require(['directives/cctv/frames/'+type], function() { //success
+
+                $scope.$applyAsync(function(){
+
+                    var linkFn    = $compile('<cctv-frame-'+type+' content="frameIdCtrl.frame.content"></cctv-frame-'+type+'>');
+                    var content   = linkFn($scope);
+
+                    container.append(content);
+                });
+
+            }, function() { //error
+
+                $scope.$applyAsync()(function() {
+                    $scope.$emit('showError', "Unable to load directive for type: "+type);
+                });
+            });
+        }
+
 
         //==============================
         //
