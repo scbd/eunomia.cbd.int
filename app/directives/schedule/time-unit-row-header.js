@@ -23,24 +23,30 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //============================================================
             function init() {
               var timeOut=0;
-             var cancel = setInterval(function(){
 
-                $scope.rowHeight=scheduleService.getHeadersHeight();
-                $scope.outerRowWidth=scheduleService.getOuterGridWidth();
-                $scope.timeIntervals=scheduleService.getTimeIntervalsHeader($scope.startTime,$scope.endTime);
-                $element.height($scope.rowHeight);
-                $scope.hourOn=hourOn;
-                $scope.toHour=toHour;
-                if($scope.rowHeight && $scope.outerRowWidth && $scope.timeIntervals){
-                    clearInterval(cancel);
-                    calcColWidths();
-                }
-                if(timeOut===20){
-                    clearInterval(cancel);
-                    throw 'Error: unable to get time intervals, timeout 2 seconds';
-                }
-                timeOut++;
-             },100);
+              // if($scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+                     var cancel = setInterval(function(){
+
+                        $scope.rowHeight=scheduleService.getHeadersHeight();
+                        if($scope.conferenceDays)
+                          $scope.outerRowWidth=scheduleService.getOuterGridWidth();
+
+                        if($scope.startTime && $scope.endTime)
+                            $scope.timeIntervals=scheduleService.getTimeIntervalsHeader($scope.startTime,$scope.endTime);
+                        $element.height($scope.rowHeight);
+                        $scope.hourOn=hourOn;
+                        $scope.toHour=toHour;
+                        if($scope.rowHeight && $scope.outerRowWidth && $scope.timeIntervals && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+                            clearInterval(cancel);
+                            calcColWidths();
+                        }
+                        if(timeOut===20){
+                            clearInterval(cancel);
+                            throw 'Error: unable to get time intervals, timeout 2 seconds';
+                        }
+                        timeOut++;
+                     },100);
+              //}
             } //init
 
             //============================================================
@@ -70,6 +76,11 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
       }; //return
     }
   ]);
+  app.filter('momentFormat', function() {
+      return function(input) {
+          return input.format('dddd [the] Do of MMMM, YYYY');
+      };
+  });
   app.filter('floor', function() {
       return function(input) {
           return Math.floor(input);
