@@ -63,6 +63,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
               return scheduleService.getConferenceDays()
                 .then(function(res) {
                   $scope.conferenceDays = res;
+console.log('$scope.conferenceDays',$scope.conferenceDays);
                 });
             } //initConferences
             //============================================================
@@ -79,10 +80,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
             //
             //============================================================
             function changeConference() {
-              $scope.venue = _.find($scope.venues, {
-                '_id': $scope.venueId
+              console.log($scope.conferenceId);
+              $scope.conference = _.find($scope.conferences, {
+                '_id': $scope.conferenceId
               });
-              scheduleService.setVenue($scope.venue);
+              scheduleService.setConference($scope.conference);
+              initConferenceDays();
+              initRooms();
             } //changeVenue
 
           } //controller
