@@ -205,10 +205,10 @@ define(['require', 'lodash', 'angular', 'app'], function(require, _, ng) {
                     container.append(content);
                 });
 
-            }, function() { //error
+            }, function(err) { //error
 
-                $scope.$applyAsync()(function() {
-                    $scope.$emit('showError', "Unable to load directive for type: "+type);
+                $scope.$applyAsync(function() {
+                    $scope.$emit('showError', "Unable to load directive for type: "+type+'\n'+err);
                 });
             });
         }
