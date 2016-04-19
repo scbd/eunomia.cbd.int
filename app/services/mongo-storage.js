@@ -56,9 +56,11 @@ app.factory("mongoStorage", ['$http',function($http) {
                         q:{'location.venue':venue,
                            'start':{'$gt':{'$date':(start*1000)}},
                            'end':{'$lt':{'$date':end*1000}},
-                           'type':type
                          }
                       };
+
+                      if(type)
+                          params.q.type=  type;
             return $http.get('/api/v2016/reservations',{'params':params});
         }// getDocs
 
