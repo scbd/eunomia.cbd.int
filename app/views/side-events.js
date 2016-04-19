@@ -331,7 +331,7 @@ define(['app', 'lodash', 'moment',
         });
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
-        return mongoStorage.getReservations(meeting.start, meeting.end, meeting.venue).then(function(res) {
+        return mongoStorage.getReservations(meeting.start, meeting.end, meeting.venue,"570fd0a52e3fa5cfa61d90ee").then(function(res) {
             $scope.reservations = res.data;
             //set ref to models
             if (!$scope.seModels) $scope.seModels = [];
