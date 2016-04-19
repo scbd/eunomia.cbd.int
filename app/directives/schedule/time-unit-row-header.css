@@ -17,3 +17,9 @@
 .col-stripped {
   background-color: #f9f9f9;
 }
+.day-stripped-on {
+  background-color: #d7d7d7;
+}
+.day-stripped-off {
+  background-color: none;
+}

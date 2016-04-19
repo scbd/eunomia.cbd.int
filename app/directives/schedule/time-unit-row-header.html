@@ -1,9 +1,9 @@
 <div class="header-row-base">
   <div>
-        <div class="text-center" style="width:{{outerRowWidth}};">{{day}}</div>
+        <div ng-repeat="d in conferenceDays track by $index" class="text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;width:{{outerRowWidth}}px;">{{d |momentFormat}}</div>
   </div>
     <div>
-        <div class="times-row" style="width:{{outerRowWidth}};">
+        <div ng-repeat="d in conferenceDays track by $index"class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
           <div class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">&nbsp;{{timeIntervals[$index]|toHour}}</div>
         </div>
     </div>
