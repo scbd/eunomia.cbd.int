@@ -88,6 +88,19 @@
             </div>
         </div>
 
+        <div ng-if="frameIdCtrl.frame.content.type=='schedule'" class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label for="title" required>Title of the schedule</label>
+                    <input type="text" required class="form-control" ng-model="frameIdCtrl.frame.content.title" id="title" name="title" placeholder="Schedule name">
+                </div>
+                <div class="form-group">
+                    <label for="title" required>Schedule web address</label>
+                    <input type="url" required class="form-control" ng-model="frameIdCtrl.frame.content.url" id="title" name="url" placeholder="">
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-xs-12">
                 <button type="button" class="btn btn-default" ng-click="frameIdCtrl.cancel()">Cancel</button>
@@ -95,7 +108,4 @@
             </div>
         </div>
     </form>
-
-    <pre>{{frameIdCtrl.frame|json}}</pre>
-
 </div>
