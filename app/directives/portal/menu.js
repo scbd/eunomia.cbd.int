@@ -31,13 +31,13 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
               faIcon: 'fa-calendar',
               roles:['Administrator'],
               pages: [
-                {
-                  name: 'Location Schedule',
-                  type: 'link',
-                  faIcon: 'fa-map-marker',
-                  path: '/schedule/day',
-                  roles:['Administrator','EunoAdministrator'],
-                },
+                // {
+                //   name: 'Location Schedule',
+                //   type: 'link',
+                //   faIcon: 'fa-map-marker',
+                //   path: '/schedule/day',
+                //   roles:['Administrator','EunoAdministrator'],
+                // },
                 {
                   name: 'Conference Schedule',
                   type: 'link',
