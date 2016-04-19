@@ -5,7 +5,7 @@ define(['app', 'lodash','moment',
   app.factory("scheduleService", ['mongoStorage','$q','$document','$timeout',function(mongoStorage,$q,$document,$timeout) {
         //todovenues will be location or confrences
         var startDay,endDay,day,venue,venues,conference,conferences,conferenceDays,rooms,headersHeight,rowHeight,outerGridWidth,roomColumnEl,scrollGridEl,
-        startTime,endTime,timeUnit,intervals,intervalKeys;
+        startTime,endTime,timeUnit,intervals,intervalKeys,intervalKeysConference;
 
         init();
         //============================================================
@@ -35,8 +35,8 @@ define(['app', 'lodash','moment',
               var hours = Math.ceil(seconds/3600);
               intervals = [];
               intervalKeys = [];
-              var t = moment(startTime);
               var subIntervals = 3600/timeUnit;
+              var t = moment(startTime);
               for(var  i=0; i< hours ; i++)
               {   var intervalObj={};
                   intervalObj.subIntervals=[];
@@ -49,14 +49,48 @@ define(['app', 'lodash','moment',
                   intervalKeys.push(intervalObj);
 
               }
-              // for(var  i=0; i< seconds; i=Math.floor(timeUnit)+i)
-              // {
-              //   intervalKeys.push(moment(t));
-              //   t=t.add(timeUnit,'seconds');
-              // }
+              return intervalKeys;
+        }//igetTimeIntervals
+
+        //============================================================
+        //
+        //============================================================
+        function getTimeIntervalsConference(start,end) {
+              if(!startTime)startTime=start;
+              if(!endTime)endTime=end;
+              if(startTime.isSame(start) && endTime.isSame(end) && intervalKeysConference && !_.isEmpty(intervalKeysConference))
+              {
+                    return intervalKeysConference;
+              }
+              var startHours = moment(startTime).hours();
+              var startMinutes = moment(startTime).minutes();
+              var diffSeconds =endTime.diff(startTime)/1000;
+              intervalKeysConference=[];
+
+              var hoursDiff = Math.ceil(diffSeconds/3600);
+              intervals = [];
+              intervalKeys = [];
+              var subIntervals = 3600/timeUnit;
+              var t ;
+              _.each(conferenceDays,function(day){
+                      t= moment(conferenceDays[0]);
+                      t = moment.utc(t.startOf(day).add(startHours,'hours').add(startMinutes,'minutes'));
+                      for(var  i=0; i< hoursDiff ; i++)
+                      {   var intervalObj={};
+                          intervalObj.subIntervals=[];
+                          intervalObj.interval=moment.utc(t);
+                          for(var  j=0; j< subIntervals ; j++)
+                          {
+                             intervalObj.subIntervals.push(moment.utc(t));
+                             t=t.add(timeUnit,'seconds');
+                          }
+                          intervalKeysConference.push(intervalObj);
+                      }
+                      t=moment.utc(moment(conferenceDays[0]).startOf(day).add(1,'day').add(startHours,'hours').add(startMinutes,'minutes'));
+              });
+
 
               return intervalKeys;
-
         }//igetTimeIntervals
 
         //============================================================
@@ -64,7 +98,7 @@ define(['app', 'lodash','moment',
         //============================================================
         function getTimeIntervalsHeader(start,end) {
               if(!start && !end) return;
-              
+
               if(!startTime)startTime=start;
               if(!endTime)endTime=end;
               var seconds = endTime.diff(startTime)/1000;
@@ -328,20 +362,20 @@ define(['app', 'lodash','moment',
         //============================================================
         function generateDays() {
           conferenceDays = [];
-
           var numDays = Math.floor((Number(conference.end) - Number(conference.start)) / (24 * 60 * 60));
           var seconds = Number(conference.start);
           var date = moment.utc(seconds*1000).startOf('day');
 
           day = date.format('YYYY-MM-DD');
-          startDay = date;
+          startDay = moment(date);
 
           for (var i = 1; i <= numDays +1; i++) {
-            conferenceDays.push(date);
+            conferenceDays.push(moment(date));
             if (i === numDays +1) {
               endDay = date;
             }
             date=date.add(1,'day');
+
           }
         }//
         //============================================================
@@ -423,9 +457,21 @@ define(['app', 'lodash','moment',
               else
                 throw 'error: setting venue without valid venue obj' ;
         } //setVenue
+        //============================================================
+        //
+        //============================================================
+        function setConference(conf) {
+              if(_.find(conferences,{'_id':conf._id})){
+                  conference=conf;
+                  generateDays();
+                  initRooms();
+              }
+              else
+                throw 'error: setting venue without valid venue obj' ;
+        } //setVenue
 
-
-        return {
+        return {setConference:setConference,
+          getTimeIntervalsConference:getTimeIntervalsConference,
           getDay:getDay,
           getStartDay:getStartDay,
           getEndDay:getEndDay,
