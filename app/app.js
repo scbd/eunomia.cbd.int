@@ -1,6 +1,6 @@
-define(['angular','dragula','toastr'], function(angular,angularDragula) { 'use strict';
+define(['angular','dragula','toastr', 'angular-sanitize'], function(angular,angularDragula) { 'use strict';
 
-    var deps = ['ngRoute',angularDragula(angular),'toastr','ngDialog','colorpicker.module'];
+    var deps = ['ngRoute','ngSanitize', angularDragula(angular),'toastr','ngDialog','colorpicker.module'];
 
     angular.defineModules(deps);
 
