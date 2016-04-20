@@ -27,7 +27,7 @@
                 <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyFull')"   title="Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
             </div>
         </div>
-        <div contenteditable="true" style="height:300px;overflow-y:scroll" id="htmlEditor" class="panel" ng-bind-html="::content.html"></div>
+        <div contenteditable="true" style="height:300px;overflow-y:scroll" id="htmlEditor" class="form-control" ng-bind-html="::content.html"></div>
     </div>
 
     <pre>{{content|json}}</pre>
