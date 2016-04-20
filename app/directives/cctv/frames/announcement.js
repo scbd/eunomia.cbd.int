@@ -10,19 +10,31 @@ define(['app', 'text!./announcement.html'], function(app, template) {
             },
             link: function($scope, element) {
 
-                var htmlEditor = element.find("#htmlEditor");
+                var htmlEditorTools = element.find("#htmlEditorTools button");
+                var htmlEditor      = element.find("#htmlEditor");
 
-                $scope.execCommand=function(cmd) {
+                htmlEditorTools.tooltip();
+                htmlEditor.keypress(function(){ console.log('press'); updateHtml();});
+                htmlEditor.keyup   (function(){ console.log('up');    updateHtml();});
+                htmlEditor.blur    (function(){ console.log('blur');  updateHtml();});
+
+                $scope.execCommand=function(evt, cmd) {
+                    evt.stopPropagation();
+
                     document.execCommand(cmd,false,null);
+
+                    updateHtml();
                 };
 
-                htmlEditor.blur(function() {
-                    $scope.$apply(function(){
+                //========================================
+                //
+                //========================================
+                function updateHtml() {
+                    $scope.$applyAsync(function(){
                         $scope.content.html = htmlEditor.html();
                     });
-                });
+                }
             }
-
         };
     }]);
 });
