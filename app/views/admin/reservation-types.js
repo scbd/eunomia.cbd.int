@@ -78,15 +78,21 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
       //
       //============================================================
       function loadTypes() {
+        var parentObj;
         return mongoStorage.getDocs('reservation-types', status).then(function(result) {
           $scope.types = result.data;
                 $scope.initialState=_.cloneDeep($scope.types);
-          _.each($scope.types,function(type){
-              type.showChildren=true;
-                        _.each(type.children,function(child){
-                            child.showChildren=true;
-                        });
+          _.each($scope.types,function(type,key){
+                type.showChildren=true;
+                 if(type.parent){
+                   parentObj= _.findWhere($scope.types,{'_id':type.parent});
+                   if(!parentObj) throw "error ref to parent res type not found.";
+                   if(!parentObj.children)parentObj.children=[];
+                   parentObj.children.push(type);
+                   delete($scope.types[key]);
+                 }
           });
+
         }).catch(function onerror(response) {
           $scope.onError(response);
         });
