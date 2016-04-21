@@ -54,8 +54,10 @@ app.factory("mongoStorage", ['$http',function($http) {
 
             params = {
                         q:{'location.venue':venue,
-                           'start':{'$gt':{'$date':(start*1000)}},
-                           'end':{'$lt':{'$date':end*1000}},
+                        "$and" : [
+                           {'start':{'$gt':{'$date':(start*1000)}}},
+                           {'end':{'$lt':{'$date':end*1000}}}],
+                           'meta.status':{$nin:['archived','deleted']}
                          }
                       };
 
@@ -64,7 +66,15 @@ app.factory("mongoStorage", ['$http',function($http) {
             return $http.get('/api/v2016/reservations',{'params':params});
         }// getDocs
 
+        //============================================================
+        //
+        //============================================================
+        function  getReservation(id){
 
+          var params={};
+
+            return $http.get('/api/v2016/reservations/'+id,{'params':params});
+        }// getDocs
         //============================================================
         //
         //============================================================
@@ -186,6 +196,7 @@ app.factory("mongoStorage", ['$http',function($http) {
 
 
         return{
+          getReservation:getReservation,
           getConferences:getConferences,
           getVenues:getVenues,
           getAllOrgs: getAllOrgs,
