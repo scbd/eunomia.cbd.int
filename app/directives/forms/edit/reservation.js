@@ -1,18 +1,19 @@
 define(['app', 'lodash',
   'text!./reservation.html',
+  'moment',
   '../../color-picker'
-], function(app, _, template) {
+], function(app, _, template,moment) {
 
-  app.directive("reservation", ['$timeout','mongoStorage','$document',
-    function($timeout,mongoStorage,$document) {
+  app.directive("reservation", ['$timeout','mongoStorage','$document','$timeout',
+    function($timeout,mongoStorage,$document,$timeout) {
       return {
         restrict: 'E',
         template: template,
         replace: true,
         transclude: false,
-        scope: {'doc':'=?','closeThisDialog':'&'},
+        scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&'},
         link: function($scope, $element) {
-console.log($scope.doc);
+//console.log($scope.startObj);
             init();
 
             //============================================================
@@ -21,15 +22,37 @@ console.log($scope.doc);
             function triggerChanges (){
 
                  $element.find('input').each(function(){
-                      $(this).trigger('change');
-                      if($(this).attr('id')!=='test')
+                      $timeout($(this).trigger('change'),100);
+                      if($(this).attr('id')!=='test'){
+
                           isEmptyModel($(this));
+
+                        }
                  });//jquery each
                  $element.find('select').each(function(){
                       $timeout(isEmptyModel($(this)));
                  });//jquery each
             }//triggerChanges
 
+            //============================================================
+            //
+            //============================================================
+            function dateChangeEffect(id) {
+              var el =$element.find('#' + id);
+              if(el.parent().hasClass('form-group')){
+                  el.parent().addClass('is-focused');
+                  $timeout(function() {
+                    el.parent().removeClass('is-focused');
+                  }, 2000);
+
+              }else if(el.parent().parent().hasClass('form-group')){
+                el.parent().parent().addClass('is-focused');
+                $timeout(function() {
+                  el.parent().parent().removeClass('is-focused');
+                }, 2000);
+
+              }
+            }; //init
             //============================================================
             // adds isEmpty css if ngModel empty
             //============================================================
@@ -49,14 +72,31 @@ console.log($scope.doc);
           //
           //============================================================
           function initTypes() {
-            return mongoStorage.getDocs('reservation-types', status).then(function(result) {
+            var parentObj,typesTemp;
+            return mongoStorage.getDocs('reservation-types', status,true).then(function(result) {
               $scope.options.types = result.data;
-              _.each($scope.types,function(type){
-                  type.showChildren=true;
-                            _.each(type.children,function(child){
-                                child.showChildren=true;
-                            });
+              _.each($scope.options.types,function(type,key){
+                    type.showChildren=true;
+                    if(type._id===$scope.doc.type)type.selected=true;
+                     if(type.parent){
+                       parentObj= _.find($scope.options.types,{'_id':type.parent});
+                       if(!parentObj) throw "error ref to parent res type not found.";
+                       if(!parentObj.children)parentObj.children=[];
+                       parentObj.children.push(type);
+                       delete($scope.options.types[key]);
+                     }
               });
+              if(isSideEvent()){
+                  typesTemp=[];
+                  var seType=_.find($scope.options.types,{'_id':'570fd0a52e3fa5cfa61d90ee'});
+                  typesTemp.push();
+
+                  typesTemp=_.sortBy(seType.children,function(o){return o.title});
+                  _.each(typesTemp,function(t){t.title='___ '+t.title;});
+                  typesTemp.unshift(seType);
+                  $scope.options.types=typesTemp;
+              }
+
             }).catch(function onerror(response) {
               $scope.onError(response);
             });
@@ -65,29 +105,70 @@ console.log($scope.doc);
           //============================================================
           //
           //============================================================
+          function isSideEvent() {
+                if($scope.doc.type==='570fd0a52e3fa5cfa61d90ee') return true;
+                var seType= _.find($scope.options.types,{'_id':'570fd0a52e3fa5cfa61d90ee'});
+                return _.find(seType.children,{'_id':$scope.doc.type});
+          }
+          //============================================================
+          //
+          //============================================================
           function init() {
               $scope.options={};
               $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
               initTypes();
+              initMaterial();
               triggerChanges();
           }//init
-
-          $document.ready(function() {
-              $.material.init();
-              $.material.input();
-              $.material.ripples();
-
-
-
-              $element.find('#start-time-filter').bootstrapMaterialDatePicker({
-                  time:true,
-                  date: false,
-                  shortTime: true,
-                  format: 'hh:mm a'
-              });
+          //============================================================
+          //
+          //============================================================
+          function initMaterial() {
+            $document.ready(function() {
+                $.material.init();
+                $.material.input();
+                $.material.ripples();
 
 
-          });
+
+                $element.find('#start').bootstrapMaterialDatePicker({
+                    time:true,
+                    date: true,
+                    shortTime: true,
+                    format: 'YYYY-MM-DD  hh:mm a'
+                });
+                $element.find('#end').bootstrapMaterialDatePicker({
+                    time:true,
+                    date: true,
+                    shortTime: true,
+                    format: 'YYYY-MM-DD  hh:mm a'
+                });
+
+
+                  $timeout(function(){
+                    if($scope.doc.start)
+                        $element.find('#start').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.start));
+                    else
+                        $element.find('#start').bootstrapMaterialDatePicker('setDate',moment($scope.startObj));
+                    $element.find('#start').trigger('change');
+                  });
+                  $timeout(function(){
+                    if($scope.doc.end)
+                      $element.find('#end').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.end));
+                    else
+                      $element.find('#end').bootstrapMaterialDatePicker('setDate',moment($scope.startObj).add(30,'minutes'));
+                    $element.find('#end').trigger('change');
+                  });
+
+                  $element.find('#start').on('change',function(e,date){
+console.log(date);
+                      // $scope.startObj=moment.utc(date);
+                      // $scope.start=moment.utc(date)
+                  });
+
+            });
+          }//init
+
 
         } //link
       }; //return
