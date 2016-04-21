@@ -9,9 +9,9 @@ define(['app', 'lodash', 'text!./room-column.html','css!./room-column.css','./ro
         replace: true,
         transclude: true,
         scope: {
-          'venue': '=',
+          'rooms': '=',
         },
-        controller: function($scope,$element,$document,scheduleService) {
+        controller: function($scope,$element,$document) {
 
             init();
 
@@ -21,21 +21,20 @@ define(['app', 'lodash', 'text!./room-column.html','css!./room-column.css','./ro
             function init() {
                 $scope.rooms=[];
 
-                initRooms();
+              //  initRooms();
 
             } //init
 
-            //============================================================
+            // //============================================================
+            // //
+            // //============================================================
+            // function initRooms() {
             //
-            //============================================================
-            function initRooms() {
-
-                scheduleService.getRooms()
-                .then(function(res){
-                  $scope.rooms=res;
-                  $scope.rowHeight=scheduleService.getHeadersHeight();
-                });
-            } //initRooms
+            //
+            //       $scope.rooms=res;
+            //       $scope.rowHeight=scheduleService.getHeadersHeight();
+            //
+            // } //initRooms
 
           } //controller
       }; //return

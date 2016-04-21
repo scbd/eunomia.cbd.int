@@ -7,6 +7,7 @@
   width: 10%;
 }
 .room-column-header {
+  min-height:40px;
   background-color: #d7d7d7;
   border-right-style: solid;
   border-right-width: 1px;
