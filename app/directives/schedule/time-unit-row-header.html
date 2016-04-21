@@ -1,10 +1,10 @@
 <div class="header-row-base">
   <div>
-        <div ng-repeat="d in conferenceDays track by $index" class="text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;width:{{outerRowWidth}}px;">{{d |momentFormat}}</div>
+        <div id="day-header-{{$index}}" ng-repeat="d in conferenceDays track by $index" class="day-header text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">{{d |momentFormat}}</div>
   </div>
     <div>
-        <div ng-repeat="d in conferenceDays track by $index"class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
-          <div class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">&nbsp;{{timeIntervals[$index]|toHour}}</div>
+        <div id="interval-header-{{$index}}" ng-repeat="d in conferenceDays track by $index"class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
+          <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">&nbsp;{{timeColumn|toHour}}</div>
         </div>
     </div>
 </div>
