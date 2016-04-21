@@ -13,17 +13,13 @@ define(['app', 'lodash', 'text!./room-row.html','text!../forms/edit/room-dialog.
         scope: {
           'room': '='
         },
-        controller: function($scope,$element,scheduleService) {
+        controller: function($scope,$element) {
 
-            init();
-
-            //============================================================
-            //
-            //============================================================
-            function init() {
-                $scope.rowHeight=scheduleService.getRowHeight();
-                $element.height($scope.rowHeight);
-            } //init
+            $scope.$watch('room.rowHeight',function(){
+              if($scope.room.rowHeight){
+                $element.height($scope.room.rowHeight);
+              }
+            });
 
             //============================================================
             //
