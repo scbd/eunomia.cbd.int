@@ -132,6 +132,7 @@ function(app,template,_) {
                             $location.url($scope.section.path);
                             return;
                           }
+                          $scope.toggle();
                     };
 
                     //============================================================

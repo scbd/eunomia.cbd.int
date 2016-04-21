@@ -17,9 +17,7 @@ function(app,template,_) {
           controller: ['$scope','$element',function ($scope,$element) {
 
               auth.getUser().then(function(user){
-
                 $scope.user = user;
-  //              console.log($scope.user);
               });
               var colorClass;
               var activeClass;
@@ -34,6 +32,7 @@ function(app,template,_) {
               $scope.isOpen = function () {
                 return $scope.section.open;
               };
+
               $scope.toggle = function () {
 //console.log($scope.scbdMenuCtrl);
                   $scope.scbdMenuCtrl[0].closeAllToggles($scope.section.name);
@@ -115,6 +114,7 @@ function(app,template,_) {
 
                 $scope.scbdMenuCtrl=ctrls;
                 $scope.section.self=ctrls[1];
+                $scope.closeMenu=$scope.scbdMenuCtrl[0].toggle;
           }//link
       };//return
     }]);//directive

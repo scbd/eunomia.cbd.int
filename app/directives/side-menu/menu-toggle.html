@@ -11,6 +11,6 @@
 
 <div id="side-menu-{{section.name}}" ng-repeat="page in section.pages" style="color:{{childrenColor}};background-color:{{childrenBackGround}};padding-left:20px;" class="menu-toggle-list" ng-show="section.open">
 
-    <menu-link section="page" user="user"></menu-link>
+    <menu-link section="page" user="user" ng-click="closeMenu()"></menu-link>
 
 </div>
