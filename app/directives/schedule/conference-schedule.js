@@ -1,14 +1,14 @@
-define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-schedule.css',
+define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conference-schedule.css',
   '../../services/mongo-storage',
-  './services/schedule-service',
-  './time-unit-row',
-  './time-unit-row-header',
+
+ './time-unit-row',
+ './time-unit-row-header',
   './room-column',
   './scroll-grid'
-], function(app, _, template) {
+], function(app, _, template,moment) {
 
-  app.directive("conferenceSchedule", ['$timeout', 'scheduleService',
-    function($timeout, scheduleService) {
+  app.directive("conferenceSchedule", ['$timeout','$document','mongoStorage',
+    function($timeout,$document,mongoStorage) {
       return {
         restrict: 'E',
         template: template,
@@ -31,51 +31,88 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'css!./conference-sc
               $scope.conference = '';
               $scope.conferences = [];
               $scope.changeConference = changeConference;
-              initConferences().then(function() {
-                initRooms().then(function(){
-                      initConferenceDays();
+              getConferences().then(function() {
+
+                getRooms().then(function(){
+
+                  initRowHeight();
+                  generateDays();
                 });
               });
 
             } //init
 
+
             //============================================================
             //
             //============================================================
-            function initConferences() {
+            function generateDays() {
+              $scope.conferenceDays = [];
+              var numDays = Math.floor((Number($scope.conference.end) - Number($scope.conference.start)) / (24 * 60 * 60));
+              $scope.conference.endObj = moment.utc(Number($scope.conference.end)*1000).startOf('day');
+              $scope.conference.startObj = moment.utc(Number($scope.conference.start)*1000).startOf('day');
 
-              $scope.conferenceId  = '';
-              return scheduleService.getConferences()
-                .then(function(res) {
-                  $scope.conferences = res;
-                  scheduleService.getConference().then(function(con) {
-                    $scope.conference = con;
-                    $scope.conferenceId = con._id;
+
+              $scope.startDay = moment($scope.conference.startObj);
+              $scope.endDay = moment($scope.conference.endObj);
+              var date = moment($scope.conference.startObj);
+              for (var i = 0; i <= numDays ; i++) {
+                $scope.conferenceDays.push(moment(date));
+
+                date.add(1,'day');
+              }
+
+            }//
+
+            //============================================================
+            //
+            //============================================================
+            function getConferences() {
+              return mongoStorage.getConferences().then(function(confs) {
+                $scope.conferences = confs.data;
+                var lowestEnd = Math.round(new Date().getTime() / 1000);
+                var chosenEnd = 0;
+                var selectedKey = 0;
+                //select the next confrence by default
+                _.each($scope.conferences, function(meet, key) {
+                  if (!chosenEnd) chosenEnd = meet.end;
+                  if (meet.end > lowestEnd && meet.end <= chosenEnd) {
+                    chosenEnd = meet.end;
+                    selectedKey = key;
+                  }
+                });
+                $scope.conference = $scope.conferences[selectedKey];
+                $scope.conferences[selectedKey].selected = true;
+                $scope.conferenceId=$scope.conference._id;
+              });
+            } //initMeeting
+
+
+
+
+            //============================================================
+            //
+            //============================================================
+            function initRowHeight() {
+                    $document.ready(function(){
+                      $timeout(function(){
+                        var roomColumnEl;
+                        roomColumnEl=$document.find('#room-col');
+                        $scope.rowHeight=Math.floor(Number(roomColumnEl.height())/$scope.rooms.length);
+                        _.each($scope.rooms,function(room){
+                            room.rowHeight=$scope.rowHeight;
+                        });
+                      });
+                    });
+            }//initRooms
+            //============================================================
+            //
+            //============================================================
+            function getRooms() {
+                  return mongoStorage.getConferenceRooms($scope.conferenceId).then(function(res) {
+                    $scope.rooms = res.data;
                   });
-                });
-            } //initConferences
-            //============================================================
-            //
-            //============================================================
-            function initConferenceDays() {
-
-              $scope.conferenceDays  = '';
-              return scheduleService.getConferenceDays()
-                .then(function(res) {
-                  $scope.conferenceDays = res;
-console.log('$scope.conferenceDays',$scope.conferenceDays);
-                });
-            } //initConferences
-            //============================================================
-            //
-            //============================================================
-            function initRooms() {
-              return scheduleService.getRooms()
-                .then(function(res) {
-                  $scope.rooms = res;
-                });
-            } //initRooms
-
+            }//initRooms
             //============================================================
             //
             //============================================================
@@ -84,9 +121,12 @@ console.log('$scope.conferenceDays',$scope.conferenceDays);
               $scope.conference = _.find($scope.conferences, {
                 '_id': $scope.conferenceId
               });
-              scheduleService.setConference($scope.conference);
-              initConferenceDays();
-              initRooms();
+              getRooms().then(function(){
+
+                initRowHeight();
+                generateDays();
+              });
+
             } //changeVenue
 
           } //controller
