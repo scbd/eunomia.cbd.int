@@ -4,10 +4,10 @@ define(['app', 'lodash','moment',
   '../../directives/schedule/conference-schedule'
 ], function(app, _,moment) {
 
-  app.controller('conference',['$scope','$document','$element','scbdMenuService','$timeout','scheduleService',
-    function($scope,$document,$element,scbdMenuService,$timeout,scheduleService) {
+  app.controller('conference',['$scope','$document','$element','scbdMenuService','$timeout',
+    function($scope,$document,$element,scbdMenuService,$timeout) {
 
-
+initDayTimeSelects();
       init();
 
       //============================================================
@@ -25,10 +25,13 @@ define(['app', 'lodash','moment',
         $scope.changeStartTime=changeStartTime;
         $scope.changeEndTime=changeEndTime;
 
-        scheduleService.getDay().then(function(day){
-            $scope.day=day;
-            initDayTimeSelects();
-        });
+        // scheduleService.getDay().then(function(day){
+        //     $scope.day=day;
+        //     initDayTimeSelects();
+        // });
+
+setStartTime();
+setEndTime();
 
         // visual effect only
         $timeout(function() {
@@ -63,47 +66,48 @@ define(['app', 'lodash','moment',
       //
       //============================================================
       function changeDate(id) {
-        $scope.startTimeObj=getStartTime();
-        $scope.endTimeObj=getEndTime();
+        // $scope.startTimeObj=getStartTime();
+        // $scope.endTimeObj=getEndTime();
         dateChangeEffect(id);
-      }; //changeDate
+      } //changeDate
 
       //============================================================
       //
       //============================================================
       function changeStartTime(id) {
-        $scope.startTimeObj=getStartTime();
+        setStartTime();
         dateChangeEffect(id);
-      }; //changeStartTime
+      } //changeStartTime
 
       //============================================================
       //
       //============================================================
       function changeEndTime(id) {
-        $scope.endTimeObj=getEndTime();
+        setEndTime();
         dateChangeEffect(id);
-      }; //changeEndTime
+      } //changeEndTime
 
       //============================================================
       //
       //============================================================
-      function getStartTime() {
+      function setStartTime() {
           var timeHours = Number($scope.startTime.substring(0,2));
           var timeMinutes = Number($scope.startTime.substring(3,5));
           var timeAMPM =    $scope.startTime.substring(6,8);
           if(timeAMPM==='pm')timeHours+=12;
-          return moment($scope.day).startOf('day').add(timeHours,'hours').add(timeMinutes,'minutes');
-      }; //getStartTime
+          $scope.startTimeObj=moment.duration({hours:timeHours,minutes:timeMinutes});
+      } //getStartTime
 
       //============================================================
       //
       //============================================================
-      function getEndTime() {
+      function setEndTime() {
           var timeHours = Number($scope.endTime.substring(0,2));
           var timeMinutes = Number($scope.endTime.substring(3,5));
           var timeAMPM =    $scope.endTime.substring(6,8);
           if(timeAMPM==='pm')timeHours+=12;
-          return moment($scope.day).startOf('day').add(timeHours,'hours').add(timeMinutes,'minutes');
+          $scope.endTimeObj=moment.duration({hours:timeHours,minutes:timeMinutes});
+
       }; //getStartTime
 
       //============================================================
@@ -128,7 +132,7 @@ define(['app', 'lodash','moment',
                   });
                   $timeout(function(){$element.find('#start-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.day).startOf('day').hour(8));
                         $scope.startTime=moment($scope.day).startOf('day').hour(8).format('hh:mm a');
-                        $scope.startTimeObj=getStartTime();
+                        setStartTime();
                       //  console.log('$scope.startTimeObj',$scope.startTimeObj.format());
                   });
                   $element.find('#end-time-filter').bootstrapMaterialDatePicker({
@@ -139,7 +143,7 @@ define(['app', 'lodash','moment',
                   });
                   $timeout(function(){$element.find('#end-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.day).startOf('day').hour(20));
                         $scope.endTime=moment($scope.day).startOf('day').hour(20).format('hh:mm a');
-                        $scope.endTimeObj=getEndTime();
+                        setEndTime();
                   });
               });
     }//initDayTimeSelects
