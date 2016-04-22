@@ -152,9 +152,10 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                           subIntervals = 3600/timeUnit;
 
                           initTypes().then(function(){
+
                                 _.each($scope.reservations,function(res){
                                     var typeFound =  _.find($scope.options.types,{'_id':res.type});
-                                    if(typeFound && typeFound.title=='Blocked'){ res.typeObj=typeFound;console.log(res);}
+                                    if(typeFound ){ res.typeObj=typeFound;}
 
                                     if(res.sideEvent  && _.isEmpty(res.sideEvent.orgs)){
                                           res.sideEvent.orgs = [];
@@ -186,6 +187,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                                 });
                           });
                           inProgress=false;
+
                         }
                       );// http
               }// if
