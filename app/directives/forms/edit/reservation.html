@@ -17,6 +17,9 @@
 
   </div>
   <div>
+    {{doc.typeObj}}
+  </div>
+  <div>
     <div class="btn-group btn-group-justified btn-group-raised hidden-xs">
       <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
       <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a>

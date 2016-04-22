@@ -42,6 +42,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 $element.height($scope.room.rowHeight);
             });
 
+            initTypes();
 
             //============================================================
             //
@@ -70,7 +71,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                   });
                   initOuterGridWidth();
-
               }
             }//initTimeIntervals
 
@@ -89,7 +89,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                         initIntervalWidth();
                       });
                     });
-
             }//initOuterGridWidth
 
             //============================================================
@@ -114,6 +113,19 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             //
             //============================================================
+            function initTypes() {
+              $scope.options={};
+              var parentObj;
+              return mongoStorage.getDocs('reservation-types', status,true).then(function(result) {
+                $scope.options.types = result.data;
+              }).catch(function onerror(response) {
+                $scope.onError(response);
+              });
+            }//initTypes()
+
+            //============================================================
+            //
+            //============================================================
             function  getReservations(){
 
               if($scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !inProgress){
@@ -133,41 +145,46 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                       return $http.get('/api/v2016/reservations',{'params':params}).then(
                         function(res){
+
+
                           $scope.reservations=res.data;
 
                           subIntervals = 3600/timeUnit;
 
-                          _.each($scope.reservations,function(res){
+                          initTypes().then(function(){
+                                _.each($scope.reservations,function(res){
+                                    var typeFound =  _.find($scope.options.types,{'_id':res.type});
+                                    if(typeFound && typeFound.title=='Blocked'){ res.typeObj=typeFound;console.log(res);}
 
-                              if(res.sideEvent  && _.isEmpty(res.sideEvent.orgs)){
-                                    res.sideEvent.orgs = [];
-                                    _.each(res.sideEvent.hostOrgs, function(org) {
-                                      res.sideEvent.orgs.push(_.find(allOrgs, {
-                                        '_id': org
-                                      }));
-                                    });
-                              }
-                                for(var  i=0; i< $scope.timeIntervals.length; i++)
-                                {
-                                      for(var  j=0; j< subIntervals ; j++)
+                                    if(res.sideEvent  && _.isEmpty(res.sideEvent.orgs)){
+                                          res.sideEvent.orgs = [];
+                                          _.each(res.sideEvent.hostOrgs, function(org) {
+                                            res.sideEvent.orgs.push(_.find(allOrgs, {
+                                              '_id': org
+                                            }));
+                                          });
+                                    }
+                                      for(var  i=0; i< $scope.timeIntervals.length; i++)
                                       {
-                                            var interval = $scope.timeIntervals[i].subIntervals[j];
-                                            var resStart = moment.utc(res.start).format('X');
-                                            var intervalStart = moment.utc(interval.time).format('X');
-                                            var intervalEnd = moment.utc(interval.time).add(timeUnit,'seconds').format('X');
+                                            for(var  j=0; j< subIntervals ; j++)
+                                            {
+                                                  var interval = $scope.timeIntervals[i].subIntervals[j];
+                                                  var resStart = moment.utc(res.start).format('X');
+                                                  var intervalStart = moment.utc(interval.time).format('X');
+                                                  var intervalEnd = moment.utc(interval.time).add(timeUnit,'seconds').format('X');
 
 
-                                            if( resStart >= intervalStart && resStart < intervalEnd){
-                                              interval.res=res;
-                                              interval.res.resWidth=calcResWidth (res);
-                                            }else if(!_.isEmpty(interval.res) && interval.res.meta && interval.res.meta==='deleted'){
-                                              delete(interval.res);
+                                                  if( resStart >= intervalStart && resStart < intervalEnd){
+                                                    interval.res=res;
+                                                    interval.res.resWidth=calcResWidth (res);
+                                                  }else if(!_.isEmpty(interval.res) && interval.res.meta && interval.res.meta==='deleted'){
+                                                    delete(interval.res);
 
+                                                  }
                                             }
-                                      }
-                                 }
+                                       }
+                                });
                           });
-
                           inProgress=false;
                         }
                       );// http
@@ -193,6 +210,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 delete(objClone.test);
                 delete(objClone.startDisp);
                 delete(objClone.endDisp);
+                delete(objClone.typeObj);
                 if(!objClone.location){
                     objClone.location={};
                     objClone.location.venue='56d76c787e893e40650e4170';

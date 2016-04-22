@@ -20,9 +20,9 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
             $scope.twoLine = false;
             $scope.threeLine = false;
             init();
-            $element.width($scope.doc.resWidth);
+            $element.css('width',$scope.doc.resWidth+'px');
             $scope.$watch('doc.resWidth',function(){
-              $element.width($scope.doc.resWidth);
+              $element.css('width',$scope.doc.resWidth+'px');
             });
             $scope.$watch('doc.meta.status',function(){
               if($scope.doc.meta && $scope.doc.meta.status ==='deleted'){
