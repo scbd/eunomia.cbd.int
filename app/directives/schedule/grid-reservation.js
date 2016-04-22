@@ -20,7 +20,7 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
             $scope.twoLine = false;
             $scope.threeLine = false;
             init();
-            $element.css('width',$scope.doc.resWidth+'px');
+            // $element.css('width',$scope.doc.resWidth+'px');
             $scope.$watch('doc.resWidth',function(){
               $element.css('width',$scope.doc.resWidth+'px');
             });
