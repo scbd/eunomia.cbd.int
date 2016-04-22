@@ -79,7 +79,7 @@
       <div class="form-group label-floating">
         <label class="control-label" for="roomList">Room</label>
 
-        <select id="roomList" class="form-control" ng-model="doc.room">
+        <select id="roomList" class="form-control" ng-model="doc.location.room">
           <option ng-repeat="room in rooms track by $index" value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.title}}</option>
         </select>
         <span class="material-input"></span>
