@@ -4,8 +4,8 @@ define(['app', 'lodash','moment',
   '../../directives/schedule/conference-schedule'
 ], function(app, _,moment) {
 
-  app.controller('conference',['$scope','$document','$element','scbdMenuService','$timeout',
-    function($scope,$document,$element,scbdMenuService,$timeout) {
+  app.controller('conference',['$scope','$document','$element','scbdMenuService','$timeout','mongoStorage',
+    function($scope,$document,$element,scbdMenuService,$timeout,mongoStorage) {
 
 initDayTimeSelects();
       init();
@@ -14,6 +14,7 @@ initDayTimeSelects();
       //
       //============================================================
       function init() {
+        mongoStorage.getAllOrgs('inde-orgs', 'published');// load cache
         $scope.toggle = scbdMenuService.toggle;
 
         $scope.startTime ='';//display
