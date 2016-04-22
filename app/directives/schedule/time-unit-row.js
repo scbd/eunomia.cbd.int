@@ -20,7 +20,11 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
         controller: function($scope, $element) {
 
             var timeUnit =900.025;//15 minutes in seconds
-            var subIntervals;// number on sub time intervals in a col, now a colomm is houw
+            var subIntervals,allOrgs ;// number on sub time intervals in a col, now a colomm is houw
+            mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
+              allOrgs = orgs.data;
+
+            });
             $scope.$watch('conferenceDays',function(){
                 getReservations();
                 initTimeIntervals();
@@ -111,8 +115,9 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function  getReservations(){
+
               if($scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !inProgress){
-                    var start = moment($scope.conferenceDays).startOf('day').format('X');
+                    var start = moment($scope.conferenceDays[0]).startOf('day').format('X');
                     var end = moment($scope.conferenceDays[$scope.conferenceDays.length-1]).endOf('day').format('X');
                     inProgress=true;
 
@@ -122,16 +127,26 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                                   q:{'location.room':$scope.room._id,
                                      'start':{'$gt':{'$date':(start*1000)}},
                                      'end':{'$lt':{'$date':end*1000}},
+                                      'meta.status':{$nin:['archived','deleted']},
                                    }
                                 };
 
                       return $http.get('/api/v2016/reservations',{'params':params}).then(
                         function(res){
                           $scope.reservations=res.data;
-console.log($scope.reservations);
+
                           subIntervals = 3600/timeUnit;
 
                           _.each($scope.reservations,function(res){
+
+                              if(res.sideEvent  && _.isEmpty(res.sideEvent.orgs)){
+                                    res.sideEvent.orgs = [];
+                                    _.each(res.sideEvent.hostOrgs, function(org) {
+                                      res.sideEvent.orgs.push(_.find(allOrgs, {
+                                        '_id': org
+                                      }));
+                                    });
+                              }
                                 for(var  i=0; i< $scope.timeIntervals.length; i++)
                                 {
                                       for(var  j=0; j< subIntervals ; j++)
@@ -141,13 +156,18 @@ console.log($scope.reservations);
                                             var intervalStart = moment.utc(interval.time).format('X');
                                             var intervalEnd = moment.utc(interval.time).add(timeUnit,'seconds').format('X');
 
+
                                             if( resStart >= intervalStart && resStart < intervalEnd){
                                               interval.res=res;
                                               interval.res.resWidth=calcResWidth (res);
+                                            }else if(!_.isEmpty(interval.res) && interval.res.meta && interval.res.meta==='deleted'){
+                                              delete(interval.res);
+
                                             }
                                       }
                                  }
                           });
+
                           inProgress=false;
                         }
                       );// http
@@ -171,16 +191,22 @@ console.log($scope.reservations);
                 var objClone = _.cloneDeep(obj);
 
                 delete(objClone.test);
+                delete(objClone.startDisp);
+                delete(objClone.endDisp);
                 if(!objClone.location){
                     objClone.location={};
                     objClone.location.venue='56d76c787e893e40650e4170';
                     objClone.location.room=$scope.room._id;
                 }
                 return mongoStorage.save('reservations',objClone,objClone._id).then(function(res){
-                    getReservations();
-
-                            
-                            $rootScope.$broadcast("showInfo","Reservation '"+objClone.title+"' Successfully Updated.");
+                    $timeout(function(){
+                    if(objClone.meta && objClone.meta.status==='deleted'){
+                        var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);//_.findKey($scope.reservations,{'_.id':objClone._id});
+                        delete($scope.reservations[deleted]);
+                        if(deleted===0 || deleted) $scope.reservations.splice(deleted,1);
+                    }
+                    getReservations();},500);
+                    $rootScope.$broadcast("showInfo","Reservation '"+objClone.title+"' Successfully Updated.");
                 }).catch(function(error){
                     console.log(error);
                     $rootScope.$broadcast("showError","There was an error saving your Reservation: '"+objClone.title+"' to the server.");
@@ -200,7 +226,6 @@ console.log($scope.reservations);
                   scope: $scope
                 });
                 dialog.closePromise.then(function(ret) {
-                  console.log(doc);
                       if (ret.value == 'save') $scope.save(doc).then($scope.close).catch(function onerror(response) {
                           $scope.onError(response);
                       });
