@@ -1,4 +1,4 @@
-define(['lodash', 'app'], function(_) {
+define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q', function($http, $route, $location, $scope, $q) {
 
@@ -32,14 +32,11 @@ define(['lodash', 'app'], function(_) {
                     return ret;
                 }, {});
 
-                var days = buildDates(eventGroup.StartDate, eventGroup.EndDate);
-                var selectedDay = $route.current.params.day || "";
-
                 _ctrl.eventGroup   = eventGroup;
                 _ctrl.feeds        = feeds;
                 _ctrl.feedsMap     = feedsMap;
-                _ctrl.days         = days;
-                _ctrl.selectedDay  = selectedDay;
+                _ctrl.days         = buildDates(eventGroup.StartDate, eventGroup.EndDate);
+                _ctrl.selectedDay  = $route.current.params.day || "";
                 _ctrl.selectedFeed = '';
 
             }).then(function () {
@@ -57,8 +54,16 @@ define(['lodash', 'app'], function(_) {
             var query = { eventGroup : $route.current.params.eventId };
 
             if(_ctrl.selectedDay) {
-                query['schedule.startDay'] = { $lte: _ctrl.selectedDay };
-                query['schedule.stopDay' ] = { $gte: _ctrl.selectedDay };
+
+                var startOfDay = moment.tz(_ctrl.selectedDay, _ctrl.eventGroup.timezone);
+                var endOfDay   = moment.tz(_ctrl.selectedDay, _ctrl.eventGroup.timezone).add(1, 'days');
+
+                query.schedules = {
+                    $elemMatch : {
+                        start: { $lt:  endOfDay  .toDate() },
+                        end  : { $gt:  startOfDay.toDate() }
+                    }
+                };
             }
 
             if(_ctrl.selectedFeed) {
@@ -71,6 +76,23 @@ define(['lodash', 'app'], function(_) {
             return $http.get('/api/v2016/cctv-frames', { params : { q : query }}).then(function (res) {
 
                 _ctrl.frames = res.data;
+
+                _ctrl.frames.forEach(function(frame){
+
+                    var start = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone);
+                    var end   = moment.tz(_.last (frame.schedules).end,   _ctrl.eventGroup.timezone);
+
+                    frame.localSchedule = {
+                        startDay  : start.format("YYYY-MM-DD"),
+                        startTime : start.format("HH:mm"),
+                        endDay    : end  .format("YYYY-MM-DD"),
+                        endTime   : end  .format("HH:mm")
+                    }
+                });
+
+
+
+
 
             }).catch(errorHandler);
         }
@@ -108,10 +130,17 @@ define(['lodash', 'app'], function(_) {
         //==============================
         function sortKey(frame) {
 
-            if(_ctrl.selectedDay) // when display a single day => sort by start time first
-                return frame.schedule.startTime + frame.schedule.stopDay + frame.schedule.startDay + frame.schedule.stopTime;
+            if(_ctrl.selectedDay) {
+                var start = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone);
+                var end   = moment.tz(_.last (frame.schedules).end,   _ctrl.eventGroup.timezone);
 
-            return frame.schedule.startDay + frame.schedule.startTime + frame.schedule.stopDay + frame.schedule.stopTime;
+                return start.format("HH:mm")      + end.format("YYYY-MM-DD") +
+                       start.format("YYYY-MM-DD") + end.format("HH:mm");
+
+            } // when display a single day => sort by start time first
+
+
+            return _.first(frame.schedules).start + _.last(frame.schedules).end;
 
         }
 
@@ -120,16 +149,13 @@ define(['lodash', 'app'], function(_) {
         //==============================
         function buildDates(startDate, endDate) {
 
-            startDate = new Date(startDate);
-            endDate   = new Date(endDate);
-
             var dates = [];
-            var date  = new Date(startDate);
+            var date  = moment.tz(startDate, _ctrl.eventGroup.timezone);
 
-            while(date <= endDate) {
+            while(date.isBefore(endDate)) {
 
-                dates.push(date.toISOString().substr(0,10));//just take the date part;
-                date.setDate(date.getDate()+1);
+                dates.push(date.format("YYYY-MM-DD"));//just take the date part;
+                date.add(1, 'days');
 
                 // detect infinit-loop
                 if(dates.length>120)

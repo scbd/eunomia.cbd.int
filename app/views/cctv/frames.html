@@ -2,8 +2,9 @@
 
     <div class="row">
         <div class="col-xs-12">
+            <div class="pull-right">Event timezone: {{framesCtrl.eventGroup.timezone}}</div>
             <h1>CCTV - Frames</h1>
-            <h2>{{framesCtrl.eventGroup.Title.en}} <i>({{framesCtrl.eventGroup.StartDate|limitTo:10}} - {{framesCtrl.eventGroup.EndDate|limitTo:5:5}})</i></h2>
+            <h2>{{framesCtrl.eventGroup.Title.en}} <i>({{framesCtrl.eventGroup.StartDate|limitTo:10}} - {{framesCtrl.eventGroup.EndDate|limitTo:5:5}})***</i></h2>
         </div>
 
         <form class="form">
@@ -46,9 +47,9 @@
                         <div ng-show="frame.content.url"><a target="_blank" href="{{frame.content.url}}">{{frame.content.url}}</a></div>
                     </td>
                     <td>
-                        {{frame.schedule.startDay}} <span ng-if="frame.schedule.startDay!=frame.schedule.stopDay"> - {{frame.schedule.stopDay|limitTo:5:5}}</span>
+                        {{frame.localSchedule.startDay}} <span ng-if="frame.localSchedule.startDay!=frame.localSchedule.endDay"> - {{frame.localSchedule.endDay|limitTo:5:5}}</span>
                         <br>
-                        <i>{{frame.schedule.startTime}} - {{frame.schedule.stopTime}}<i/>
+                        <i>{{frame.localSchedule.startTime}} - {{frame.localSchedule.endTime}}<i/>
                     </td>
                     <td>
                         <ul class="list-unstyled">

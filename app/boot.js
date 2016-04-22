@@ -29,6 +29,7 @@ require.config({
         'linqjs'                   : 'libs/linqjs/linq.min',
         'lodash'                   : 'libs/lodash/lodash',
         'moment'                   : 'libs/moment/moment',
+        'moment-timezone'          : 'libs/moment-timezone/builds/moment-timezone-with-data.min',
         'ngDialog'                 : 'libs/ng-dialog/js/ngDialog',
         'ngDialog-css'             : 'libs/ng-dialog/css/ngDialog',
         'ngDialog-css-theme'       : 'libs/ng-dialog/css/ngDialog-theme-default.min',

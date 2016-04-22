@@ -15,11 +15,11 @@
 
                 <div class="form-group">
                     <label for="code" required>First Day</label>
-                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.frame.schedule.startDay" ng-change="frameIdCtrl.changedStartDay()"></select>
+                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.startDay" ng-change="frameIdCtrl.changedStartDay()"></select>
                 </div>
                 <div class="form-group">
                     <label for="code" required>Start Time</label>
-                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.frame.schedule.startTime" ng-change="frameIdCtrl.changedStartTime()"></select>
+                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.startTime" ng-change="frameIdCtrl.changedStartTime()"></select>
                 </div>
 
             </div>
@@ -28,12 +28,12 @@
 
                 <div class="form-group">
                     <label for="code" required>Last Day</label>
-                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.frame.schedule.stopDay" ng-change="frameIdCtrl.changedStopDay()"></select>
+                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.endDay" ng-change="frameIdCtrl.changedEndDay()"></select>
                 </div>
 
                 <div class="form-group">
                     <label for="code" required>Stop Time</label>
-                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.frame.schedule.stopTime" ng-change="frameIdCtrl.changedStopTime()"></select>
+                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.endTime" ng-change="frameIdCtrl.changedEndTime()"></select>
                 </div>
             </div>
 
