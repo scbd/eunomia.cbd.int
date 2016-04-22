@@ -11,7 +11,7 @@ define(['app', 'lodash',
         template: template,
         replace: true,
         transclude: false,
-        scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&'},
+        scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','rooms':'=?'},
         link: function($scope, $element) {
 //console.log($scope.startObj);
             init();
@@ -30,6 +30,7 @@ define(['app', 'lodash',
 
                         }
                  });//jquery each
+                 console.log($element.find('select'));
                  $element.find('select').each(function(){
                       $timeout(isEmptyModel($(this)));
                  });//jquery each
@@ -123,6 +124,10 @@ define(['app', 'lodash',
               initTypes();
               initMaterial();
               triggerChanges();
+              console.log($scope.rooms);
+              console.log($scope.doc.location.room);
+              _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
+
           }//init
 
           //============================================================

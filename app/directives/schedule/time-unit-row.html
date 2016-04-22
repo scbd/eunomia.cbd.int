@@ -5,7 +5,7 @@
     <!-- <div class="sub-interval-background" ng-repeat="sub in timeColumn.subIntervals" ng-click="test(sub)"  style="position:absolute;height:25%;width:25%;"><div> -->
 
     <div class="sub-interval" ng-repeat="sub in timeColumn.subIntervals" ng-click="resDialog(sub.res,sub.time);"  style="position:relative;height:100%;width:25%;">
-<grid-reservation ng-if="sub.res._id" doc="sub.res" ></grid-reservation>
+<grid-reservation ng-if="sub.res._id" rooms="rooms" doc="sub.res" ></grid-reservation>
         <!-- <div ng-if="sub.res"  style="position:absolute;height:100%;overflow:hidden;background-color:#a7a7a7;z-index:10;width:{{sub.res.resWidth}}px;" >{{sub.res.title}}</div> -->
       </div>
   </div>

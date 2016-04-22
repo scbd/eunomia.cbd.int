@@ -15,7 +15,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
           'startTime':'=',
           'endTime':'=',
           'conferenceDays':'=',
-          'room':'='
+          'room':'=',
+          'rooms':'=?'
         },
         controller: function($scope, $element) {
 
