@@ -124,8 +124,8 @@ define(['app', 'lodash',
               initTypes();
               initMaterial();
               triggerChanges();
-              console.log($scope.rooms);
-              console.log($scope.doc.location.room);
+
+              if($scope.doc.location)
               _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
 
           }//init
