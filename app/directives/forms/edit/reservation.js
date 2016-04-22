@@ -16,6 +16,7 @@ define(['app', 'lodash',
 //console.log($scope.startObj);
             init();
 
+
             //============================================================
             //
             //============================================================
@@ -53,6 +54,7 @@ define(['app', 'lodash',
 
               }
             }; //init
+
             //============================================================
             // adds isEmpty css if ngModel empty
             //============================================================
@@ -115,11 +117,54 @@ define(['app', 'lodash',
           //============================================================
           function init() {
               $scope.options={};
-              $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
+              $scope.tabs={'details':{'active':true},'recurrence':{'active':false},'sideEvent':{'active':false}};
+              $scope.doc.repeat=5;
+              $scope.doc.repeatDay=1;
               initTypes();
               initMaterial();
               triggerChanges();
           }//init
+
+          //============================================================
+          //
+          //============================================================
+          function generateSeries() {
+              if(_.isEmpty($scope.series)) $scope.series= [];
+              // for(var i = 0; i<= $scope.doc.repeat; i++){
+              //
+              // }
+          }//init
+
+          //============================================================
+          //
+          //============================================================
+          function getSeries(){
+            var params={};
+
+              params = {
+                          q:{'location.room':$scope.room._id,
+                             'meta.status':{$nin:['archived','deleted']},
+                             'parent':$scope.doc._id
+                           }
+                        };
+
+              return $http.get('/api/v2016/reservations',{'params':params}).then(function(res){
+                $scope.series=res.data;
+                console.log($scope.series);
+              });
+          }//getSeries
+
+          //============================================================
+          //
+          //============================================================
+          function deleteRes() {
+              if(confirm('Are you sure you would like to perminetly delete this reservation?')){
+                  if(!$scope.doc.meta)$scope.doc.meta={};
+                  $scope.doc.meta.status='deleted';
+                  $scope.closeThisDialog({value:'save'});
+              }
+          }//init
+          $scope.deleteRes=deleteRes;
           //============================================================
           //
           //============================================================
@@ -131,13 +176,13 @@ define(['app', 'lodash',
 
 
 
-                $element.find('#start').bootstrapMaterialDatePicker({
+                $element.find('#startT').bootstrapMaterialDatePicker({
                     time:true,
                     date: true,
                     shortTime: true,
                     format: 'YYYY-MM-DD  hh:mm a'
                 });
-                $element.find('#end').bootstrapMaterialDatePicker({
+                $element.find('#endT').bootstrapMaterialDatePicker({
                     time:true,
                     date: true,
                     shortTime: true,
@@ -147,28 +192,43 @@ define(['app', 'lodash',
 
                   $timeout(function(){
                     if($scope.doc.start)
-                        $element.find('#start').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.start));
+                        $element.find('#startT').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.start));
                     else
-                        $element.find('#start').bootstrapMaterialDatePicker('setDate',moment($scope.startObj));
-                    $element.find('#start').trigger('change');
+                        $element.find('#startT').bootstrapMaterialDatePicker('setDate',moment($scope.startObj));
+                    $element.find('#startT').trigger('change');
                   });
                   $timeout(function(){
                     if($scope.doc.end)
-                      $element.find('#end').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.end));
+                      $element.find('#endT').bootstrapMaterialDatePicker('setDate',moment.utc($scope.doc.end));
                     else
-                      $element.find('#end').bootstrapMaterialDatePicker('setDate',moment($scope.startObj).add(30,'minutes'));
-                    $element.find('#end').trigger('change');
+                      $element.find('#endT').bootstrapMaterialDatePicker('setDate',moment($scope.startObj).add(30,'minutes'));
+                    $element.find('#endT').trigger('change');
                   });
 
-                  $element.find('#start').on('change',function(e,date){
-console.log(date);
-                      // $scope.startObj=moment.utc(date);
-                      // $scope.start=moment.utc(date)
+                  $element.find('#startT').on('change',function(e,date){
+                    if(moment($scope.doc.startDisp,'YYYY-MM-DD  hh:mm a').isValid())
+                     $scope.doc.start=moment.utc($scope.doc.startDisp,'YYYY-MM-DD  hh:mm a').format();
                   });
+                  $element.find('#endT').on('change',function(e,date){
+                      if(moment($scope.doc.endDisp,'YYYY-MM-DD  hh:mm a').isValid())
+                      $scope.doc.end=moment.utc($scope.doc.endDisp,'YYYY-MM-DD  hh:mm a').format();
+                  });
+                  // $element.find('#end').on('change',function(e,date){
+                  //     $scope.doc.end=moment(date).format();
+                  //
+                  // });
 
             });
           }//init
-
+          //============================================================
+          //
+          //============================================================
+          $scope.changeTab = function(tabName){
+              _.each($scope.tabs,function(tab){
+                  tab.active=false;
+              });
+              $scope.tabs[tabName].active=true;
+          }//initVunues
 
         } //link
       }; //return
