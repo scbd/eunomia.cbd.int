@@ -3,7 +3,7 @@
   <div class="control-header">
     <div class="form-group " style="margin-top:0px;">
       <select id="conference-select" class="form-control" ng-model="conferenceId" ng-change="changeConference()">
-        <option ng-repeat="docObj in conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected">{{docObj.acronym}} </option>
+        <option ng-repeat="docObj in conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected" style="color:#000;"><span style="color:#000;">{{docObj.acronym}}</span> </option>
       </select>
       <span class="material-input"></span>
     </div>
