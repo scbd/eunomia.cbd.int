@@ -8,8 +8,8 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
         $routeProvider.
             when('/',                         { templateUrl: 'views/schedule/conference.html',                resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/home',                     { redirectTo: '/' }).
-            when('/schedule/location',        { templateUrl: 'views/schedule/location.html',           resolveController: true, resolveUser: true }).
-            when('/schedule/conference',      { templateUrl: 'views/schedule/conference.html',         resolveController: true, resolveUser: true }).
+            when('/schedule/location',        { templateUrl: 'views/schedule/location.html',           resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
+            when('/schedule/conference',      { templateUrl: 'views/schedule/conference.html',         resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/side-events',              { templateUrl: 'views/side-events.html',                 resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
             when('/admin/reservation/types',  { templateUrl: 'views/admin/reservation-types.html',     resolveController: true, resolveUser: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) } }).
 
