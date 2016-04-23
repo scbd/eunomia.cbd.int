@@ -48,8 +48,8 @@ console.log($scope.doc.resWidth);
               if (!$scope.ignoreMinHeight)
                 var cancelMinHeight = setInterval(function() {
                   count++;
-                  if (count===6){ clearInterval(cancelMinHeight);
-                      throw "run array set intercal in grid reservation";
+                  if (count===10){ clearInterval(cancelMinHeight);
+                      throw "run awat set interval in grid reservation";
                   }
                   if (!$scope.doc) clearInterval(cancelMinHeight);
                   if ($scope.doc.resWidth) {

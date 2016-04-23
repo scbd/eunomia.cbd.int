@@ -32,16 +32,18 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
             });
             $scope.$watch('conferenceDays',function(){
-                getReservations();
+
                 initTimeIntervals();
+
             });
             $scope.$watch('startTime',function(){
-                getReservations();
+
                 initTimeIntervals();
             });
             $scope.$watch('endTime',function(){
-                getReservations();
+
                 initTimeIntervals();
+
             });
             $scope.$watch('room.rowHeight',function(){
               if($scope.room.rowHeight)
@@ -77,6 +79,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                   });
                   initOuterGridWidth();
+                  getReservations();
               }
             }//initTimeIntervals
 
