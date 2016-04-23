@@ -56,7 +56,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function initTimeIntervals(){
-              if($scope.startTime.hours() && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !_.isEmpty($scope.conferenceDays)){
+              if($scope.startTime.hours() && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) ){
 
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   var subIntervals = 3600/timeUnit;
@@ -79,7 +79,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                   });
                   initOuterGridWidth();
-                  getReservations();
+
               }
             }//initTimeIntervals
 
@@ -96,6 +96,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                         calcColWidths();
                         initIntervalWidth();
+                        getReservations();
                       });
                     });
             }//initOuterGridWidth
