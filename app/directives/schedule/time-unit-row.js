@@ -160,6 +160,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                           initTypes().then(function(){
 
                                 _.each($scope.reservations,function(res){
+                                  res.resWidth=calcResWidth(res);
                                     var typeFound =  _.find($scope.options.types,{'_id':res.type});
                                     if(typeFound ){ res.typeObj=typeFound;}
 
