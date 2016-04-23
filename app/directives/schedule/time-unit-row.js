@@ -154,13 +154,15 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
 
                           $scope.reservations=res.data;
-
+                          _.each($scope.reservations,function(res){
+                          res.resWidth=calcResWidth(res);
+                        });
                           subIntervals = 3600/timeUnit;
 
                           initTypes().then(function(){
 
                                 _.each($scope.reservations,function(res){
-                                  res.resWidth=calcResWidth(res);
+
                                     var typeFound =  _.find($scope.options.types,{'_id':res.type});
                                     if(typeFound ){ res.typeObj=typeFound;}
 
@@ -205,6 +207,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             function calcResWidth (res) {
                   var resStart = moment.utc(res.start).format('X');
                   var resEnd = moment.utc(res.end).format('X');
+
                   var resWidth = Math.ceil((resEnd - resStart)/timeUnit)*($scope.colWidth/subIntervals);
                   return Number(resWidth);
             };//calcResWidth
@@ -244,11 +247,12 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                     console.log(error);
                     $rootScope.$broadcast("showError","There was an error saving your Reservation: '"+objClone.title+"' to the server.");
                 });
-            }//save
+            };//save
             //============================================================
             //
             //============================================================
             $scope.resDialog = function(doc,start) {
+
                 $scope.editRes = doc || {};
                 $scope.editStart = start;
                 var dialog = ngDialog.open({

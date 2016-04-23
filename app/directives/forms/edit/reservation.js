@@ -11,7 +11,7 @@ define(['app', 'lodash',
         template: template,
         replace: true,
         transclude: false,
-        scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','rooms':'=?'},
+        scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','room':'=?','rooms':'=?'},
         link: function($scope, $element) {
 //console.log($scope.startObj);
             init();
@@ -117,17 +117,25 @@ define(['app', 'lodash',
           //
           //============================================================
           function init() {
+    console.log($scope.room);
               $scope.options={};
               $scope.tabs={'details':{'active':true},'recurrence':{'active':false},'sideEvent':{'active':false}};
               $scope.doc.repeat=5;
               $scope.doc.repeatDay=1;
               initTypes();
               initMaterial();
-              triggerChanges();
 
+              _.each($scope.rooms,function(r){r.selected=false;});
               if($scope.doc.location)
-              _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
+                _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
 
+
+                else if($scope.room){
+                      $scope.doc.location=[];
+                      $scope.doc.location.room=$scope.room._id;
+                      _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
+                }
+                triggerChanges();
           }//init
 
           //============================================================
