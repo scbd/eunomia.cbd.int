@@ -112,6 +112,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conf
                         var roomColumnEl;
                         roomColumnEl=$document.find('#room-col');
                         $scope.rowHeight=Math.floor(Number(roomColumnEl.height())/$scope.rooms.length);
+                        if($scope.rowHeight<60)$scope.rowHeight=60;
                         _.each($scope.rooms,function(room){
                             room.rowHeight=$scope.rowHeight;
                         });
