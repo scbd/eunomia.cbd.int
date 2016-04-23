@@ -16,7 +16,12 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
           'endTime':'=',
           'conferenceDays':'=',
           'room':'=',
-          'rooms':'=?'
+          'rooms':'='
+
+        },
+        require: '^conferenceSchedule',
+        link: function($scope, $element, $attr, schedule) { // jshint ignore:line
+                $scope.schedule=schedule;
         },
         controller: function($scope, $element) {
 
@@ -31,11 +36,11 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 initTimeIntervals();
             });
             $scope.$watch('startTime',function(){
-
+                getReservations();
                 initTimeIntervals();
             });
             $scope.$watch('endTime',function(){
-
+                getReservations();
                 initTimeIntervals();
             });
             $scope.$watch('room.rowHeight',function(){
@@ -221,6 +226,12 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 }
                 return mongoStorage.save('reservations',objClone,objClone._id).then(function(res){
                     $timeout(function(){
+                      console.log(objClone.location.room);
+                      console.log($scope.room._id);
+                      if(objClone.location.room!==$scope.room._id)
+                              $scope.schedule.resetSchedule();//falseWatchTrigger();
+
+
                     if(objClone.meta && objClone.meta.status==='deleted'){
                         var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);//_.findKey($scope.reservations,{'_.id':objClone._id});
                         delete($scope.reservations[deleted]);
