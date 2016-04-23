@@ -15,7 +15,7 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
         },
         controller: function($scope, $element) {
 
-
+console.log($scope.doc.resWidth);
 
             $scope.oneLine = false;
             $scope.twoLine = false;
@@ -23,7 +23,7 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
             init();
             // $element.css('width',$scope.doc.resWidth+'px');
             $scope.$watch('doc.resWidth',function(){
-              if($scope.doc.resWidth > 50)
+              if($scope.doc.resWidth &&  $scope.doc.resWidth > 0)
               $element.css('max-width',$scope.doc.resWidth+'px');
             });
             $scope.$watch('doc.meta.status',function(){
@@ -44,36 +44,18 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
                   return $element.find('#pop-title').html();
                 }
               });
+              var count = 0;
               if (!$scope.ignoreMinHeight)
                 var cancelMinHeight = setInterval(function() {
-
+                  count++;
+                  if (count===6){ clearInterval(cancelMinHeight);
+                      throw "run array set intercal in grid reservation";
+                  }
                   if (!$scope.doc) clearInterval(cancelMinHeight);
-                  if ($scope.rowMinHeight) {
-                    clearInterval(cancelMinHeight);
+                  if ($scope.doc.resWidth) {
 
-                    $timeout(function() {
-                      if ($scope.rowMinHeight <= 42)
-                        $scope.oneLine = true;
-                      else
-                        $scope.oneLine = false;
-
-                      if ($scope.rowMinHeight > 42 && $scope.rowMinHeight <= 61)
-                        $scope.twoLine = true;
-                      else
-                        $scope.twoLine = false;
-
-                      if ($scope.rowMinHeight > 61)
-                        $scope.threeLine = true;
-                      else
-                        $scope.threeLine = false;
-                    });
-
-                    if ($element.height() > $scope.rowMinHeight)
-                      $element.height($scope.rowMinHeight);
-
-                    if($scope.doc.resWidth)
                       $element.css('max-width',$scope.doc.resWidth+'px');
-
+                      clearInterval(cancelMinHeight);
                   }
                 }, 500);
 
