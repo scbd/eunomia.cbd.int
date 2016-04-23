@@ -70,9 +70,9 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
 
                     if ($element.height() > $scope.rowMinHeight)
                       $element.height($scope.rowMinHeight);
+
                     if($scope.doc.resWidth)
                       $element.css('max-width',$scope.doc.resWidth+'px');
-
 
                   }
                 }, 500);
