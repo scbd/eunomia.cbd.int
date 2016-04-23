@@ -15,6 +15,8 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
         },
         controller: function($scope, $element) {
 
+
+
             $scope.oneLine = false;
             $scope.twoLine = false;
             $scope.threeLine = false;
@@ -68,7 +70,8 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
 
                     if ($element.height() > $scope.rowMinHeight)
                       $element.height($scope.rowMinHeight);
-
+                    if($scope.doc.resWidth)
+                      $element.css('max-width',$scope.doc.resWidth+'px');
 
 
                   }
