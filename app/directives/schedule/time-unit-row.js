@@ -180,8 +180,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                                                   var resStart = moment.utc(res.start).format('X');
                                                   var intervalStart = moment.utc(interval.time).format('X');
                                                   var intervalEnd = moment.utc(interval.time).add(timeUnit,'seconds').format('X');
-
-
+// console.log(calcResWidth(res));
+// interval.res.resWidth=calcResWidth(res);
                                                   if( resStart >= intervalStart && resStart < intervalEnd){
                                                     interval.res=res;
                                                     interval.res.resWidth=calcResWidth (res);
