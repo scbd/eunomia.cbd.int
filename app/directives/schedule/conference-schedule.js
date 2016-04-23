@@ -18,11 +18,22 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conf
           'day': '=',
           'startTime': '=',
           'endTime': '=',
-          'search': '=',
+          'search': '='
+
         },
         controller: function($scope) {
 
             init();
+
+
+            //============================================================
+            //
+            //============================================================
+          this.resetSchedule = function() {
+
+              initRowHeight();
+              generateDays();
+            } //init
             //============================================================
             //
             //============================================================
@@ -31,13 +42,15 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conf
               $scope.conference = '';
               $scope.conferences = [];
               $scope.changeConference = changeConference;
+              $scope.rooms=[];
               getConferences().then(function() {
 
-                getRooms().then(function(){
-
-                  initRowHeight();
-                  generateDays();
-                });
+                $scope.getRooms();
+                // .then(function(){
+                //
+                //   initRowHeight();
+                //   generateDays();
+                // });
               });
 
             } //init
@@ -108,9 +121,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conf
             //============================================================
             //
             //============================================================
-            function getRooms() {
+            $scope.getRooms =function() {
                   return mongoStorage.getConferenceRooms($scope.conferenceId).then(function(res) {
                     $scope.rooms = res.data;
+                  }).then(function(){
+                            initRowHeight();
+                            generateDays();
                   });
             }//initRooms
             //============================================================
@@ -121,11 +137,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment', 'css!./conf
               $scope.conference = _.find($scope.conferences, {
                 '_id': $scope.conferenceId
               });
-              getRooms().then(function(){
-
-                initRowHeight();
-                generateDays();
-              });
+              $scope.getRooms();
 
             } //changeVenue
 

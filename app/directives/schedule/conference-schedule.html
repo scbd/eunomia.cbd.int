@@ -12,7 +12,7 @@
   <room-column  rooms="rooms"></room-column>
   <scroll-grid start-time="startTime" end-time="endTime" day="day">
     <time-unit-row-header start-time="startTime" end-time="endTime" day="day" conference-days="conferenceDays"></time-unit-row-header>
-    <time-unit-row start-time="startTime" end-time="endTime" conference-days="conferenceDays" ng-repeat="room in rooms |orderBy: 'sort'" room="room" rooms="rooms" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+    <time-unit-row start-time="startTime" rooms="rooms" getRooms="getRooms" end-time="endTime" conference="conference" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room"  ng-class="{'row-stripped':($index%2)}"></time-unit-row>
   </scroll-grid>
 
 </div>

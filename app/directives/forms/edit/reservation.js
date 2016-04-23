@@ -30,7 +30,7 @@ define(['app', 'lodash',
 
                         }
                  });//jquery each
-                 console.log($element.find('select'));
+                //  console.log($element.find('select'));
                  $element.find('select').each(function(){
                       $timeout(isEmptyModel($(this)));
                  });//jquery each
