@@ -103,11 +103,11 @@ $element.find('select').trigger("change");
             $scope.isSideEvents=($location.path()==='/side-events');
               //updateColorSquare();
               triggerChanges();
-              if(!$scope.doc.location)$scope.doc.location=$scope.venue._id;
+
               initVenues();
               $timeout(function(){$element.find('#roomNameD').focus();},500);
               initVal();
-
+  ///if(!$scope.doc.location)$scope.doc.location=$scope.venue._id;
           }//triggerChanges
 
         } //link
