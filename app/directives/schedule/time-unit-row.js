@@ -4,8 +4,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 './grid-reservation'
 ], function(app, _, template,resDialog,moment) {
 
-  app.directive("timeUnitRow", ['ngDialog','$timeout','$document','$http','mongoStorage','$rootScope',
-    function(ngDialog,$timeout,$document,$http,mongoStorage,$rootScope) {
+  app.directive("timeUnitRow", ['ngDialog','$timeout','$document','$http','mongoStorage','$rootScope','$q',
+    function(ngDialog,$timeout,$document,$http,mongoStorage,$rootScope,$q) {
       return {
         restrict: 'E',
         template: template,
@@ -17,7 +17,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
           'conferenceDays':'=',
           'room':'=',
           'rooms':'='
-
         },
         require: '^conferenceSchedule',
         link: function($scope, $element, $attr, schedule) { // jshint ignore:line
@@ -80,7 +79,9 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                         }
 
                   });
-                  initOuterGridWidth();
+                  initOuterGridWidth().then(function(){
+                    calcColWidths();
+                  });
 
               }
             }//initTimeIntervals
@@ -90,16 +91,34 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             function initOuterGridWidth() {
               var scrollGridEl;
-                    $document.ready(function(){
-                      $timeout(function(){
-                        scrollGridEl=$document.find('#scroll-grid');
 
-                        $scope.outerGridWidth=Number(scrollGridEl.width());
+                      // $timeout(function(){
+                      //   scrollGridEl=$document.find('#scroll-grid');
+                      //   $scope.outerGridWidth=Number(scrollGridEl.width());
+                      //   calcColWidths();
+                      //   initIntervalWidth();
+                      // });
 
-                        calcColWidths();
-                        initIntervalWidth();
-                      });
-                    });
+              var deferred = $q.defer();
+              var countInterval = 0;
+              var cancInterval = setInterval(function() {
+                  $document.ready(function(){
+                      scrollGridEl=$document.find('#scroll-grid');
+                      $scope.outerGridWidth=Number(scrollGridEl.width());
+
+                      countInterval++;
+
+                      if ($scope.outerGridWidth && countInterval!==25) {
+                        clearInterval(cancInterval);
+                        deferred.resolve(scrollGridEl);
+                      } else
+                        deferred.reject('time out');
+
+                      if(countInterval>24)clearInterval(cancInterval);
+                  });
+                }, 100);
+
+              return deferred.promise;
             }//initOuterGridWidth
 
             //============================================================
@@ -107,7 +126,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             function initIntervalWidth(){
                   $element.width($scope.outerGridWidth*$scope.conferenceDays.length);
-
             }//initDayWidth
 
 
@@ -115,7 +133,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function calcColWidths() {
-
                 $scope.colWidth = Number($scope.outerGridWidth)/Number(($scope.timeIntervals.length/$scope.conferenceDays.length));
                 initIntervalWidth();
             } //init
