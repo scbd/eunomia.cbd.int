@@ -34,15 +34,17 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             $scope.$watch('conferenceDays',function(){
 
                 initTimeIntervals();
-
+                getReservations();
             });
             $scope.$watch('startTime',function(){
 
                 initTimeIntervals();
+                getReservations();
             });
             $scope.$watch('endTime',function(){
 
                 initTimeIntervals();
+                getReservations();
 
             });
             $scope.$watch('room.rowHeight',function(){
@@ -96,7 +98,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                         calcColWidths();
                         initIntervalWidth();
-                        getReservations();
                       });
                     });
             }//initOuterGridWidth
@@ -200,7 +201,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                                 });
                           });
                           inProgress=false;
-
                         }
                       );// http
               }// if
@@ -211,7 +211,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             function calcResWidth (res) {
                   var resStart = moment.utc(res.start).format('X');
                   var resEnd = moment.utc(res.end).format('X');
-
                   var resWidth = Math.ceil((resEnd - resStart)/timeUnit)*($scope.colWidth/subIntervals);
                   return Number(resWidth);
             };//calcResWidth
