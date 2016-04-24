@@ -39,9 +39,6 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
                 }
               });
 
-              if (!$scope.doc.resWidth)
-               $element.css('max-width',$scope.doc.resWidth+'px');
-
               titleEl.on('mouseenter', function() {
                 titleEl.popover('show');
               });
