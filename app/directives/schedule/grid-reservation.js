@@ -15,17 +15,11 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
         },
         controller: function($scope, $element) {
 
-console.log($scope.doc.resWidth);
-
             $scope.oneLine = false;
             $scope.twoLine = false;
             $scope.threeLine = false;
             init();
-            // $element.css('width',$scope.doc.resWidth+'px');
-            $scope.$watch('doc.resWidth',function(){
-              if($scope.doc.resWidth &&  $scope.doc.resWidth > 0)
-              $element.css('max-width',$scope.doc.resWidth+'px');
-            });
+
             $scope.$watch('doc.meta.status',function(){
               if($scope.doc.meta && $scope.doc.meta.status ==='deleted'){
                   $scope.doc={};

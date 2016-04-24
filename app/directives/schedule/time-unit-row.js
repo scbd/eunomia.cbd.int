@@ -91,16 +91,9 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             function initOuterGridWidth() {
               var scrollGridEl;
-
-                      // $timeout(function(){
-                      //   scrollGridEl=$document.find('#scroll-grid');
-                      //   $scope.outerGridWidth=Number(scrollGridEl.width());
-                      //   calcColWidths();
-                      //   initIntervalWidth();
-                      // });
-
               var deferred = $q.defer();
               var countInterval = 0;
+
               var cancInterval = setInterval(function() {
                   $document.ready(function(){
                       scrollGridEl=$document.find('#scroll-grid');
@@ -108,13 +101,17 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
                       countInterval++;
 
-                      if ($scope.outerGridWidth && countInterval!==25) {
+                      if ($scope.outerGridWidth && countInterval<25) {
                         clearInterval(cancInterval);
                         deferred.resolve(scrollGridEl);
-                      } else
+                      } else{
+                        clearInterval(cancInterval);
                         deferred.reject('time out');
-
-                      if(countInterval>24)clearInterval(cancInterval);
+                      }
+                      if(countInterval>24){
+                        deferred.reject('time out');
+                        clearInterval(cancInterval);
+                      }
                   });
                 }, 100);
 
