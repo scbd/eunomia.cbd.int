@@ -27,7 +27,7 @@
   </style>
 
   <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" style="border:none;background-color:{{doc.typeObj.color}};" data-toggle="popover" data-placement="top" style="margin:0 0 0 0;">
-    <span  style="font-weight:500;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
+    <span  style="font-weight:500;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.resWidth}}--{{doc.title}}</span>
     <span ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
     <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
       <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs">
