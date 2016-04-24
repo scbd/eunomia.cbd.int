@@ -44,14 +44,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 $element.height($scope.room.rowHeight);
             });
 
-$scope.$watch('reservations',function(){
-
-  console.log('$scope.reservations',$scope.reservations);
-  _.each($scope.reservations,function(res){
-    console.log('res.resWidth',res.resWidth);
-  });
-
-});
             initTypes();
 
             //============================================================
