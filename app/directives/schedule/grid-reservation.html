@@ -1,4 +1,4 @@
-<div ng-style="{'width':doc.resWidth+'px'}" style="position:absolute;height:100%;overflow:hidden;background-color:#a7a7a7;z-index:10;">
+<div ng-style="{'width':doc.resWidth+'px'}" style="position:absolute;height:100%;background-color:#a7a7a7;z-index:10;">
   <style>
     .grid-slot-row {
       display: block;
@@ -14,8 +14,8 @@
 
     .grid-slot-dir {
       height: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      /*overflow: hidden;
+      text-overflow: ellipsis;*/
       background-color: #ddd;
       padding: 2px 4px 2px 4px;
       margin: 0 0 0 0;
@@ -26,9 +26,10 @@
     }
   </style>
 
-  <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" style="border:none;background-color:{{doc.typeObj.color}};" data-toggle="popover" data-placement="top" style="margin:0 0 0 0;">
-    <span  style="font-weight:500;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
-    <span ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
+  <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" ng-style="{'background-color':doc.typeObj.color}" style="border:none;margin:0 0 0 0;" data-toggle="popover" data-placement="top" >
+    <div  ng-if="!doc.sideEvent" ng-style="{'width':doc.resWidth+'px'}" style="font-weight:500;display:block;white-space:normal;" >{{doc.title}}</div>
+    <span  ng-if="doc.sideEvent" style="font-weight:500;" >#{{doc.sideEvent.id}}</span>
+    <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
     <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
       <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs">
         <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}}
