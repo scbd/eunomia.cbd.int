@@ -13,9 +13,8 @@ define(['app', 'lodash',
         transclude: false,
         scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','room':'=?','rooms':'=?'},
         link: function($scope, $element) {
-//console.log($scope.startObj);
-            init();
 
+            init();
 
             //============================================================
             //
@@ -24,13 +23,10 @@ define(['app', 'lodash',
 
                  $element.find('input').each(function(){
                       $timeout($(this).trigger('change'),100);
-                      if($(this).attr('id')!=='test'){
-
+                      if($(this).attr('id')!=='test')
                           isEmptyModel($(this));
-
-                        }
                  });//jquery each
-                //  console.log($element.find('select'));
+
                  $element.find('select').each(function(){
                       $timeout(isEmptyModel($(this)));
                  });//jquery each
@@ -52,7 +48,6 @@ define(['app', 'lodash',
                 $timeout(function() {
                   el.parent().parent().removeClass('is-focused');
                 }, 2000);
-
               }
             }; //init
 
@@ -64,7 +59,7 @@ define(['app', 'lodash',
               ngModel= el.attr('ng-model');
               if(ngModel && ngModel!=='binding'){
                 ngModelSub=ngModel.substring(ngModel.indexOf('.')+1,ngModel.length);
-                   if(!$scope.doc[ngModelSub]){
+                   if(!_.get($scope.doc,ngModelSub)){
                      $formGroup = el.closest(".form-group");
                       $formGroup.addClass("is-empty");
                     }//
@@ -117,7 +112,6 @@ define(['app', 'lodash',
           //
           //============================================================
           function init() {
-    console.log($scope.room);
               $scope.options={};
               $scope.tabs={'details':{'active':true},'recurrence':{'active':false},'sideEvent':{'active':false}};
               $scope.doc.repeat=5;
@@ -143,9 +137,6 @@ define(['app', 'lodash',
           //============================================================
           function generateSeries() {
               if(_.isEmpty($scope.series)) $scope.series= [];
-              // for(var i = 0; i<= $scope.doc.repeat; i++){
-              //
-              // }
           }//init
 
           //============================================================
@@ -163,7 +154,6 @@ define(['app', 'lodash',
 
               return $http.get('/api/v2016/reservations',{'params':params}).then(function(res){
                 $scope.series=res.data;
-                console.log($scope.series);
               });
           }//getSeries
 
@@ -226,11 +216,6 @@ define(['app', 'lodash',
                       if(moment($scope.doc.endDisp,'YYYY-MM-DD  hh:mm a').isValid())
                       $scope.doc.end=moment.utc($scope.doc.endDisp,'YYYY-MM-DD  hh:mm a').format();
                   });
-                  // $element.find('#end').on('change',function(e,date){
-                  //     $scope.doc.end=moment(date).format();
-                  //
-                  // });
-
             });
           }//init
           //============================================================
