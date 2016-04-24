@@ -31,26 +31,27 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
             });
             $scope.$watch('conferenceDays',function(){
-
                 initTimeIntervals();
-                getReservations();
             });
             $scope.$watch('startTime',function(){
-
                 initTimeIntervals();
-                getReservations();
             });
             $scope.$watch('endTime',function(){
-
                 initTimeIntervals();
-                getReservations();
-
             });
             $scope.$watch('room.rowHeight',function(){
               if($scope.room.rowHeight)
                 $element.height($scope.room.rowHeight);
             });
 
+$scope.$watch('reservations',function(){
+
+  console.log('$scope.reservations',$scope.reservations);
+  _.each($scope.reservations,function(res){
+    console.log('res.resWidth',res.resWidth);
+  });
+
+});
             initTypes();
 
             //============================================================
@@ -81,6 +82,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                   });
                   initOuterGridWidth().then(function(){
                     calcColWidths();
+                    getReservations();
+
                   });
 
               }
@@ -173,7 +176,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
 
 
                           $scope.reservations=res.data;
-                          _.each($scope.reservations,function(res){
+                        _.each($scope.reservations,function(res){
                           res.resWidth=calcResWidth(res);
                         });
                           subIntervals = 3600/timeUnit;
