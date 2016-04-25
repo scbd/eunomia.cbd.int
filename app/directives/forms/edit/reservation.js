@@ -13,7 +13,7 @@ define(['app', 'lodash',
         transclude: false,
         scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','room':'=?','rooms':'=?'},
         link: function($scope, $element) {
-console.log($scope.doc);
+
             init();
 
             //============================================================
