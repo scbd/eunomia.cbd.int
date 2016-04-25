@@ -1,18 +1,70 @@
-<div class="conference-schedule" style="height:94%;">
-  <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
-  <div class="control-header">
-    <div class="form-group " style="margin-top:0px;">
-      <select id="conference-select" class="form-control" ng-model="conferenceId" ng-change="changeConference()">
-        <option ng-repeat="docObj in conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected" style="color:#000;"><span style="color:#000;">{{docObj.acronym}}</span> </option>
-      </select>
-      <span class="material-input"></span>
+<div>
+  <style>
+    .conference-schedule .control-header {
+      min-height: 45px;
+
+      width: 100%;
+      background-color: #bbb;
+      color: #fff;
+    }
+
+    .conference-schedule .control-header .form-group select {
+      color: #fff;
+    }
+    .form-group{
+        margin-top:0px;
+    }
+    .row-stripped {
+      background-color: #f9f9f9;
+    }
+  </style>
+  <div class="conference-schedule" style="height:94%;">
+    <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
+    <div class="control-header">
+      <div class="row">
+        <div class="col-xs-1 debug-border-thin">
+          <div class="form-group" >
+            <select id="conference-select" class="form-control" ng-model="conferenceId" ng-change="changeConference()">
+              <option ng-repeat="docObj in conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected" style="color:#000;">
+                <span style="color:#000;">{{docObj.acronym}}</span>
+              </option>
+            </select>
+            <span class="material-input"></span>
+          </div>
+        </div>
+
+
+        <div class="col-xs-1 debug-border-thin">
+          <div class="form-group">
+            <input id="day-filter" class="form-control" type="text" ng-model="day" ng-change="changeDay()" style="color:#eee;">
+          </div>
+        </div>
+
+        <div class="col-xs-3 debug-border-thin">
+          <div class="col-xs-5 debug-border-thin">
+            <div class="form-group">
+              <input id="start-time-filter" class="form-control" type="text" ng-model="startTime" ng-change="changeStartTime('start-time-filter')" style="color:#eee;">
+            </div>
+          </div>
+          <div class="col-xs-2 debug-border-thin">
+            <div>&nbsp;</div>
+            <div>to</div>
+          </div>
+          <div class="col-xs-5 debug-border-thin">
+            <div class="form-group">
+              <input id="end-time-filter" class="form-control" type="text" ng-model="endTime" ng-change="changeEndTime('end-time-filter')" style="color:#eee;">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div >
+      <room-column rooms="rooms"></room-column>
+      <scroll-grid start-time="startTime" end-time="endTime" day="day">
+        <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="day" conference-days="conferenceDays"></time-unit-row-header>
+        <time-unit-row start-time="startTimeObj" rooms="rooms" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+      </scroll-grid>
     </div>
   </div>
-
-  <room-column  rooms="rooms"></room-column>
-  <scroll-grid start-time="startTime" end-time="endTime" day="day">
-    <time-unit-row-header start-time="startTime" end-time="endTime" day="day" conference-days="conferenceDays"></time-unit-row-header>
-    <time-unit-row start-time="startTime" rooms="rooms"  end-time="endTime"  conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room"  ng-class="{'row-stripped':($index%2)}"></time-unit-row>
-  </scroll-grid>
-
 </div>

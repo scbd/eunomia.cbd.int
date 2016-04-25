@@ -20,11 +20,12 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
         },
         require: '^conferenceSchedule',
         link: function($scope, $element, $attr, schedule) { // jshint ignore:line
+
                 $scope.schedule=schedule;
         },
         controller: function($scope, $element) {
 
-            var timeUnit =900.025;//15 minutes in seconds
+            var timeUnit = 900.025;//15 minutes in seconds
             var subIntervals,allOrgs ;// number on sub time intervals in a col, now a colomm is houw
             mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
               allOrgs = orgs.data;
@@ -50,7 +51,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function initTimeIntervals(){
-              if($scope.startTime.hours() && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) ){
+              if($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) ){
 
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   var subIntervals = 3600/timeUnit;
@@ -75,9 +76,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                   initOuterGridWidth().then(function(){
                     calcColWidths();
                     getReservations();
-
                   });
-
               }
             }//initTimeIntervals
 
@@ -246,7 +245,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                       console.log($scope.room._id);
                       if(objClone.location.room!==$scope.room._id)
                               $scope.schedule.resetSchedule();//falseWatchTrigger();
-
 
                     if(objClone.meta && objClone.meta.status==='deleted'){
                         var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);//_.findKey($scope.reservations,{'_.id':objClone._id});

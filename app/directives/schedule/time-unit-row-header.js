@@ -32,7 +32,8 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //
             //============================================================
             function initTimeIntervals(){
-              if($scope.startTime.hours() && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+          
+              if($scope.startTime && $scope.startTime.hours() && $scope.endTime && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
 
                   $scope.timeIntervals = [];
@@ -71,11 +72,9 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             function initDayWidth(){
                   _.each($scope.conferenceDays,function(con,key){
                         $timeout(function(){$element.find('#day-header-'+key).width($scope.outerGridWidth);});
-
                   });
                   _.each($scope.conferenceDays,function(con,key){
                         $timeout(function(){$element.find('#interval-header-'+key).width($scope.outerGridWidth);});
-
                   });
             }//initDayWidth
 
