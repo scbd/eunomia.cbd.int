@@ -13,7 +13,7 @@ define(['app', 'lodash',
         transclude: false,
         scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','room':'=?','rooms':'=?'},
         link: function($scope, $element) {
-
+console.log($scope.doc);
             init();
 
             //============================================================
@@ -119,13 +119,14 @@ define(['app', 'lodash',
               initTypes();
               initMaterial();
 
+
               _.each($scope.rooms,function(r){r.selected=false;});
               if($scope.doc.location)
                 _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
 
 
                 else if($scope.room){
-                      $scope.doc.location=[];
+                      $scope.doc.location={};
                       $scope.doc.location.room=$scope.room._id;
                       _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
                 }
