@@ -19,8 +19,10 @@ define(['app', 'text!./schedule.html', 'lodash'], function(app, template, _) {
                     });
                 }
 
-                $http.get('/api/v2016/reservation-types').then(function(res) {
-                    $scope.reservationTypes = res.data;
+                $http.get('/api/v2016/reservation-types', { params : { q: { "meta.status": { $ne: "deleted" } } } }).then(function(res) {
+                    $scope.reservationTypes = _.filter(res.data, function(t){
+                        return !t.parent;
+                    });
                 });
 
                 //========================================
