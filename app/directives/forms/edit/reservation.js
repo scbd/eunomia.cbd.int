@@ -163,7 +163,7 @@ define(['app', 'lodash',
           //
           //============================================================
           function deleteRes() {
-              if(confirm('Are you sure you would like to perminetly delete this reservation?')){
+              if(confirm('Are you sure you would like to permanently delete this reservation?')){
                   if(!$scope.doc.meta)$scope.doc.meta={};
                   $scope.doc.meta.status='deleted';
                   $scope.closeThisDialog({value:'save'});
