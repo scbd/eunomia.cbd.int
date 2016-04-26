@@ -39,6 +39,7 @@ define(['app', 'lodash',
                 }
                 triggerChanges();
                 $scope.levelChangeSquare();
+
           }//init
             //============================================================
             //
@@ -237,13 +238,33 @@ define(['app', 'lodash',
               var levelColor={};
               levelColor.warning='#ff9999';
               levelColor.alert='#e81e25';
-              if($scope.doc.message.level)
+              if($scope.doc && $scope.doc.message && $scope.doc.message.level)
                 $element.find('#levelChangeSquare').css('color',levelColor[$scope.doc.message.level]);
 
           }//initVunues
           $scope.levelChangeSquare=levelChangeSquare;
 
+          //============================================================
+          //
+          //============================================================
+          function initTypeColors(){
+              $timeout(function(){
+                var foundType;
+                console.log($element.find('option'));
+                $element.find('option').each(function(){
 
+                    foundType= _.find($scope.options.types,{'_id':$(this).attr('value')});
+
+                    if(foundType && foundType.color){
+
+                      $(this).css('background-color', 'rgb(232,30,37)');
+                      console.log($(this).css('background-color'));
+                    }
+                });
+              },1000);
+
+          }//initVunues
+          $scope.levelChangeSquare=levelChangeSquare;
 
           init();
         } //link

@@ -22,7 +22,7 @@
       <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
       <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a>
       <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recurrence</a>
-      <a  href="javascript:void(0)" class="btn" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV {{tabs.cctv.active}}</a>
+      <a  href="javascript:void(0)" class="btn" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
     </div>
     <div class="btn-group btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl">
       <a href="javascript:void(0)" class="btn btn-xs btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
@@ -70,7 +70,7 @@
         <label class="control-label" for="parent">Type</label>
 
         <select id="parent" class="form-control" ng-model="doc.type">
-          <option ng-repeat="parent in options.types track by $index" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+          <option   ng-repeat="parent in options.types track by $index" ng-style = "{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
         </select>
         <span class="material-input"></span>
         <p class="help-block" ng-show="valid">error</p>

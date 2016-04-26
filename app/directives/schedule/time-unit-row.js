@@ -270,7 +270,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                     objClone.location={};
                     objClone.location.venue='56d76c787e893e40650e4170';
                     objClone.location.room=$scope.room._id;
-                }
+                }else if(!objClone.location.venue)
+                    objClone.location.venue='56d76c787e893e40650e4170';
 
                 return mongoStorage.save('reservations',objClone,objClone._id).then(function(res){
                     $timeout(function(){
