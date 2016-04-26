@@ -9,6 +9,6 @@
   display: block;
   min-height: 95%;
   width: 90%;
-  overflow-x: scroll;
+  overflow-x: none;
   overflow-y: none;
 }

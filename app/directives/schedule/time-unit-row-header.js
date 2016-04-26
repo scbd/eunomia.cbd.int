@@ -21,22 +21,26 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             });
             $scope.$watch('startTime',function(){
 
-              initTimeIntervals();
+              if($scope.startTime)
+                initTimeIntervals();
             });
             $scope.$watch('endTime',function(){
-
-              initTimeIntervals();
+              if($scope.endTime)
+                initTimeIntervals();
             });
-
+            $scope.$watch('day',function(){
+              if($scope.day)
+                initTimeIntervals();
+            });
             //============================================================
             //
             //============================================================
             function initTimeIntervals(){
-              if($scope.startTime.hours() && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
-                  var hours = $scope.endTime.hours()-$scope.startTime.hours();
 
+              if($scope.startTime && $scope.startTime.hours() && $scope.endTime && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+                  var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   $scope.timeIntervals = [];
-                  var t = moment($scope.conferenceDays[0]).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
+                  var t = moment.utc($scope.day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
                   for(var  i=0; i< hours ; i++)
                   {
                     $scope.timeIntervals.push(moment(t));
@@ -45,6 +49,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
                   initOuterGridWidth();
 
               }
+
             }//initTimeIntervals
 
             //============================================================
@@ -56,7 +61,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
                       $timeout(function(){
                         scrollGridEl=$document.find('#scroll-grid');
 
-                        $scope.outerGridWidth=Number(scrollGridEl.width());
+                        $scope.outerGridWidth=Number(scrollGridEl.width()-1);
                         initDayWidth();
                         calcColWidths();
 
@@ -69,13 +74,14 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //
             //============================================================
             function initDayWidth(){
-                  _.each($scope.conferenceDays,function(con,key){
+              $scope.selectedConfDays =[];
+              $scope.selectedConfDays.push($scope.day);
+
+                  _.each($scope.selectedConfDays,function(con,key){
                         $timeout(function(){$element.find('#day-header-'+key).width($scope.outerGridWidth);});
-
                   });
-                  _.each($scope.conferenceDays,function(con,key){
+                  _.each($scope.selectedConfDays,function(con,key){
                         $timeout(function(){$element.find('#interval-header-'+key).width($scope.outerGridWidth);});
-
                   });
             }//initDayWidth
 
@@ -93,11 +99,9 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //
             //============================================================
             function calcColWidths() {
-
                 $scope.colWidth = Number($scope.outerGridWidth)/Number($scope.timeIntervals.length);
                 initIntervalWidth();
             } //init
-
           } //calcColWidths
       }; //return
     }
@@ -107,11 +111,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
           return input.format('dddd [the] Do of MMMM, YYYY');
       };
   });
-  // app.filter('floor', function() {
-  //     return function(input) {
-  //         return Math.floor(input);
-  //     };
-  // });
+
   app.filter('toHour', function() {
       return function(input) {
           //if(input.minutes()===0)

@@ -2,23 +2,12 @@
   <div class="row  view-header text-center" style="position:relative;">
     <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Conference Schedule
     </div>
-    <div class="form-group pull-left" style="position:absolute;left:270px;top:-2px;margin-top:0px;width:85px;">
-      <input id="day-filter" class="form-control" type="text" ng-model="day" ng-change="changeDate('day-filter')" style="color:#eee;">
-    </div>
-    <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
 
-      <div class="form-group" style="position:absolute;left:1px;top:-2px;margin-top:0px;width:85px;">
-        <input id="start-time-filter" class="form-control" type="text" ng-model="startTime" ng-change="changeStartTime('start-time-filter')" style="color:#eee;">
-      </div>
-      <span style="position:absolute;right:48%;top:25%;font-size:16px;">to</span>
-      <div class="form-group" style="position:absolute;right:1px;top:-2px;margin-top:0px;width:85px;">
-        <input id="end-time-filter" class="form-control" type="text" ng-model="endTime" ng-change="changeEndTime('end-time-filter')" style="color:#eee;">
-      </div>
-    </div>
-    <div style="position:absolute;top:-30px;right:1px;width:210px;">
+
+    <div style="position:absolute;right:1px;width:210px;">
       <div class="relative">
         <div class="form-group label-floating">
-          <div class="input-group">
+          <!-- <div class="input-group">
             <label class="control-label" for="search">Search Reservations</label>
             <input type="text" id="search" class="form-control" ng-model="search">
             <span class="input-group-btn small">
@@ -26,7 +15,7 @@
                 <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
               </button>
             </span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
