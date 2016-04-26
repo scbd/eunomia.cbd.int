@@ -154,7 +154,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             //
             //============================================================
-            function  getReservations(){
+            function  getReservations(resId){
 
               if($scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !inProgress){
                     var start = moment($scope.conferenceDays[0]).startOf('day').format('X');
@@ -174,7 +174,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                       return $http.get('/api/v2016/reservations',{'params':params}).then(
                         function(res){
 
-
+                          cleanSchedule (resId);
                           $scope.reservations=res.data;
                         _.each($scope.reservations,function(res){
                           res.resWidth=calcResWidth(res);
@@ -204,8 +204,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                                                   var resStart = moment.utc(res.start).format('X');
                                                   var intervalStart = moment.utc(interval.time).format('X');
                                                   var intervalEnd = moment.utc(interval.time).add(timeUnit,'seconds').format('X');
-// console.log(calcResWidth(res));
-// interval.res.resWidth=calcResWidth(res);
+
                                                   if( resStart >= intervalStart && resStart < intervalEnd){
                                                     interval.res=res;
                                                     interval.res.resWidth=calcResWidth (res);
@@ -222,6 +221,30 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                       );// http
               }// if
             }// getDocs
+
+
+
+            //============================================================
+            //
+            //============================================================
+            function cleanSchedule (res) {
+
+                    if(!_.isObject(res)){
+                      res={'_id':res};
+                    }
+                    for(var  i=0; i< $scope.timeIntervals.length; i++)
+                    {
+                          for(var  j=0; j< subIntervals ; j++)
+                          {
+                                var interval = $scope.timeIntervals[i].subIntervals[j];
+
+                                if(res._id===interval.res._id)
+                                  interval.res={};
+                          }
+                     }
+          }//calcResWidth
+
+
             //============================================================
             //
             //============================================================
@@ -248,10 +271,10 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                     objClone.location.venue='56d76c787e893e40650e4170';
                     objClone.location.room=$scope.room._id;
                 }
+
                 return mongoStorage.save('reservations',objClone,objClone._id).then(function(res){
                     $timeout(function(){
-                      console.log(objClone.location.room);
-                      console.log($scope.room._id);
+
                       if(objClone.location.room!==$scope.room._id)
                               $scope.schedule.resetSchedule();//falseWatchTrigger();
 
@@ -260,7 +283,9 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                         delete($scope.reservations[deleted]);
                         if(deleted===0 || deleted) $scope.reservations.splice(deleted,1);
                     }
-                    getReservations();},500);
+
+                    getReservations(objClone._id);
+                  },500);
                     $rootScope.$broadcast("showInfo","Reservation '"+objClone.title+"' Successfully Updated.");
                 }).catch(function(error){
                     console.log(error);
