@@ -16,7 +16,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
           'endTime':'=',
           'conferenceDays':'=',
           'room':'=',
-          'rooms':'='
+          'rooms':'=',
+          'day':'='
         },
         require: '^conferenceSchedule',
         link: function($scope, $element, $attr, schedule) { // jshint ignore:line
@@ -29,17 +30,24 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             var subIntervals,allOrgs ;// number on sub time intervals in a col, now a colomm is houw
             mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
               allOrgs = orgs.data;
-
             });
             $scope.$watch('conferenceDays',function(){
                 initTimeIntervals();
             });
             $scope.$watch('startTime',function(){
+
                 initTimeIntervals();
             });
             $scope.$watch('endTime',function(){
+
                 initTimeIntervals();
             });
+
+            $scope.$watch('day',function(){
+              if($scope.day)
+                initTimeIntervals();
+            });
+
             $scope.$watch('room.rowHeight',function(){
               if($scope.room.rowHeight)
                 $element.height($scope.room.rowHeight);
@@ -56,8 +64,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   var subIntervals = 3600/timeUnit;
                   $scope.timeIntervals = [];
-                  _.each($scope.conferenceDays,function(day){
-                        var t = moment(day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
+                //  _.each($scope.conferenceDays,function(day){
+                        var t = moment($scope.day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
 
                         for(var  i=0; i< hours ; i++)
                         {
@@ -72,7 +80,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                           $scope.timeIntervals.push(intervalObj);
                         }
 
-                  });
+                //  });
                   initOuterGridWidth().then(function(){
                     calcColWidths();
                     getReservations();
@@ -91,7 +99,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
               var cancInterval = setInterval(function() {
                   $document.ready(function(){
                       scrollGridEl=$document.find('#scroll-grid');
-                      $scope.outerGridWidth=Number(scrollGridEl.width());
+                      $scope.outerGridWidth=Number(scrollGridEl.width()-1);
 
                       countInterval++;
 
@@ -116,7 +124,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function initIntervalWidth(){
-                  $element.width($scope.outerGridWidth*$scope.conferenceDays.length);
+                  $element.width($scope.outerGridWidth);
+                  //$element.width($scope.outerGridWidth*$scope.conferenceDays.length);
             }//initDayWidth
 
 
@@ -124,7 +133,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //
             //============================================================
             function calcColWidths() {
-                $scope.colWidth = Number($scope.outerGridWidth)/Number(($scope.timeIntervals.length/$scope.conferenceDays.length));
+                $scope.colWidth = Number($scope.outerGridWidth)/Number($scope.timeIntervals.length);
                 initIntervalWidth();
             } //init
             var inProgress=false;
