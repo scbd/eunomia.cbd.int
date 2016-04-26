@@ -14,8 +14,32 @@ define(['app', 'lodash',
         scope: {'doc':'=?','startObj':'=?','closeThisDialog':'&','room':'=?','rooms':'=?'},
         link: function($scope, $element) {
 
-            init();
 
+          //============================================================
+          //
+          //============================================================
+          function init() {
+              $scope.options={};
+              $scope.tabs={'details':{'active':true},'recurrence':{'active':false},'sideEvent':{'active':false},'cctv':{'active':false}};
+              $scope.doc.repeat=5;
+              $scope.doc.repeatDay=1;
+              initTypes();
+              initMaterial();
+
+
+              _.each($scope.rooms,function(r){r.selected=false;});
+              if($scope.doc.location)
+                _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
+
+
+                else if($scope.room){
+                      $scope.doc.location={};
+                      $scope.doc.location.room=$scope.room._id;
+                      _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
+                }
+                triggerChanges();
+                $scope.levelChangeSquare();
+          }//init
             //============================================================
             //
             //============================================================
@@ -108,30 +132,7 @@ define(['app', 'lodash',
                 var seType= _.find($scope.options.types,{'_id':'570fd0a52e3fa5cfa61d90ee'});
                 return _.find(seType.children,{'_id':$scope.doc.type});
           }
-          //============================================================
-          //
-          //============================================================
-          function init() {
-              $scope.options={};
-              $scope.tabs={'details':{'active':true},'recurrence':{'active':false},'sideEvent':{'active':false}};
-              $scope.doc.repeat=5;
-              $scope.doc.repeatDay=1;
-              initTypes();
-              initMaterial();
 
-
-              _.each($scope.rooms,function(r){r.selected=false;});
-              if($scope.doc.location)
-                _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
-
-
-                else if($scope.room){
-                      $scope.doc.location={};
-                      $scope.doc.location.room=$scope.room._id;
-                      _.find($scope.rooms,{'_id':$scope.doc.location.room}).selected=true;
-                }
-                triggerChanges();
-          }//init
 
           //============================================================
           //
@@ -227,8 +228,24 @@ define(['app', 'lodash',
                   tab.active=false;
               });
               $scope.tabs[tabName].active=true;
-          }//initVunues
+          };//initVunues
 
+          //============================================================
+          //
+          //============================================================
+          function levelChangeSquare(){
+              var levelColor={};
+              levelColor.warning='#ff9999';
+              levelColor.alert='#e81e25';
+              if($scope.doc.message.level)
+                $element.find('#levelChangeSquare').css('color',levelColor[$scope.doc.message.level]);
+
+          }//initVunues
+          $scope.levelChangeSquare=levelChangeSquare;
+
+
+
+          init();
         } //link
       }; //return
     }
