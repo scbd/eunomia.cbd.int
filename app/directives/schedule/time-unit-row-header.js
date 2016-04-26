@@ -20,11 +20,11 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
               initTimeIntervals();
             });
             $scope.$watch('startTime',function(){
-
               if($scope.startTime)
                 initTimeIntervals();
             });
             $scope.$watch('endTime',function(){
+
               if($scope.endTime)
                 initTimeIntervals();
             });
@@ -37,11 +37,20 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
             //============================================================
             function initTimeIntervals(){
 
-              if($scope.startTime && $scope.startTime.hours() && $scope.endTime && $scope.endTime.hours() && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+
+              if($scope.startTime  && $scope.endTime &&  $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)){
+
+   console.log('$scope.startTime.hours()`````',$scope.startTime.hours());
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   $scope.timeIntervals = [];
                   var t = moment.utc($scope.day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
-                  for(var  i=0; i< hours ; i++)
+console.log('-----------',$scope.startTime.hours());
+// if($scope.startTime.hours()===0){
+//    t = moment.utc($scope.day).add($scope.startTime.minutes(),'minutes');
+//    console.log('$scope.startTime.hours()-------------',$scope.startTime.hours());
+//     $scope.timeIntervals.push(moment(t));
+//   }
+                  for(var  i=0; i<hours ; i++)
                   {
                     $scope.timeIntervals.push(moment(t));
                     t=t.add(1,'hours');

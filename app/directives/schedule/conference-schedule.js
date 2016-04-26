@@ -303,7 +303,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
               var timeHours = Number($scope.startTime.substring(0,2));
               var timeMinutes = Number($scope.startTime.substring(3,5));
               var timeAMPM =    $scope.startTime.substring(6,8);
-              if(timeAMPM==='pm')timeHours+=12;
+              if(timeAMPM==='pm' && timeHours!==12)timeHours+=12;
+
+              if(timeAMPM==='am' && timeHours===12){
+                $scope.startTimeObj=moment.duration({hours:0,minutes:timeMinutes,seconds:1});
+                return;
+              }
               $scope.startTimeObj=moment.duration({hours:timeHours,minutes:timeMinutes});
             }
           } //getStartTime
@@ -316,7 +321,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
               var timeHours = Number($scope.endTime.substring(0,2));
               var timeMinutes = Number($scope.endTime.substring(3,5));
               var timeAMPM =    $scope.endTime.substring(6,8);
-              if(timeAMPM==='pm')timeHours+=12;
+              if(timeAMPM==='pm' && timeHours!==12)timeHours+=12;
+              if(timeAMPM==='am' && timeHours===12)timeHours=0;
               $scope.endTimeObj=moment.duration({hours:timeHours,minutes:timeMinutes});
             }
           } //getStartTime
