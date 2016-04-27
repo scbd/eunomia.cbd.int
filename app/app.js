@@ -1,38 +1,35 @@
-define(['angular','dragula','toastr', 'angular-sanitize'], function(angular,angularDragula) { 'use strict';
+define(['angular', 'dragula', 'toastr', 'angular-sanitize'], function(angular, angularDragula) {
+  'use strict';
 
-    var deps = ['ngRoute','ngSanitize', angularDragula(angular),'toastr','ngDialog','colorpicker.module'];
+  var deps = ['ngRoute', 'ngSanitize', angularDragula(angular), 'toastr', 'ngDialog', 'colorpicker.module'];
 
-    angular.defineModules(deps);
+  angular.defineModules(deps);
 
-    var app = angular.module('app', deps);
+  var app = angular.module('app', deps);
 
-    app.config(function(toastrConfig) {
-        angular.extend(toastrConfig, {
-            autoDismiss: true,
-            containerId: 'toast-container',
-  //          maxOpened: 1,
-            newestOnTop: true,
-            closeButton: true,
-            positionClass: 'toast-top-right',
-  //          preventDuplicates: true,
-  //          preventOpenDuplicates:false,
-              iconClasses: {
-              error: 'alert-danger',
-              info: 't-info',
-              success: 'alert-success',
-              warning: 'alert-warning'
-            },
-            target: 'body',
-            timeOut: 5000,
-            progressBar:true,
+  app.config(['toastrConfig', '$httpProvider', function(toastrConfig, $httpProvider) {
+    angular.extend(toastrConfig, {
+      autoDismiss: true,
+      containerId: 'toast-container',
+      newestOnTop: true,
+      closeButton: true,
+      positionClass: 'toast-top-right',
+      iconClasses: {
+        error: 'alert-danger',
+        info: 't-info',
+        success: 'alert-success',
+        warning: 'alert-warning'
+      },
+      target: 'body',
+      timeOut: 5000,
+      progressBar: true,
+    });
 
-            });
-        });
+    $httpProvider.useApplyAsync(true);
+    $httpProvider.interceptors.push('authenticationHttpIntercepter');
+  }]);
 
+  app.value('realm', 'EUNO');
 
-    app.value('realm', 'EUNO');
-
-
-
-    return app;
+  return app;
 });

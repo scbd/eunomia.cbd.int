@@ -3,6 +3,7 @@ require.config({
     baseUrl : 'app/',
     IESelectorLimit: true,
     paths: {
+            'authentication'      : 'services/authentication',
         'angular'                  : 'libs/angular-flex/angular-flex',
         'angular-animate'          : 'libs/angular-animate/angular-animate.min',
         'angular-loading-bar'      : 'libs/angular-loading-bar/src/loading-bar',
@@ -24,12 +25,13 @@ require.config({
         'font-awsome-css'          : 'libs/font-awesome/css/font-awesome.min',
         'iconate'                  : 'libs/iconate/dist/iconate',
         'iconateCSS'               : 'libs/iconate/dist/iconate.min',
-        'ionsound'                 : 'libs/ionsound/js/ion.sound.min',
+        // 'ionsound'                 : 'libs/ionsound/js/ion.sound.min',
         'jquery'                   : 'libs/jquery/dist/jquery',
         'linqjs'                   : 'libs/linqjs/linq.min',
         'lodash'                   : 'libs/lodash/lodash',
         'moment'                   : 'libs/moment/moment',
         'moment-timezone'          : 'libs/moment-timezone/builds/moment-timezone-with-data.min',
+        'ngRoute'             : 'libs/angular-route/angular-route.min',
         'ngDialog'                 : 'libs/ng-dialog/js/ngDialog',
         'ngDialog-css'             : 'libs/ng-dialog/css/ngDialog',
         'ngDialog-css-theme'       : 'libs/ng-dialog/css/ngDialog-theme-default.min',
@@ -60,18 +62,19 @@ require.config({
         'dragula'                   : { deps: ['angular','jquery'] },
         'app-css'                   : { deps: ['toastr-css'] },
         'ngDialog'                  :{ deps: ['css!ngDialog-css','css!ngDialog-css-theme'] },
+              'ngRoute'                  : { deps: ['angular'] },
 
         // 'text-angular'                  : { 'deps': ['text-angular-sanitize', 'angular'] },
         // 'text-angular-sanitize'         : { 'deps': ['angular', 'angular-sanitize']},
-    },
-    packages: [
-      { name: 'scbd-angularjs-services', location : 'libs/scbd-angularjs-services/services' },
-      { name: 'scbd-branding', location : 'libs/scbd-branding/directives' },
-      { name: 'scbd-filters',  location : 'libs/scbd-filters/filters' },
-      { name: 'scbd-angularjs-filters',  location : 'libs/scbd-angularjs-services/filters' },
-      { name: 'scbd-angularjs-controls', location : 'libs/scbd-angularjs-controls/form-control-directives' },
-
-    ]
+    }
+    // packages: [
+    //   // { name: 'scbd-angularjs-services', location : 'libs/scbd-angularjs-services/services' },
+    //   // { name: 'scbd-branding', location : 'libs/scbd-branding/directives' },
+    //   // { name: 'scbd-filters',  location : 'libs/scbd-filters/filters' },
+    //   // { name: 'scbd-angularjs-filters',  location : 'libs/scbd-angularjs-services/filters' },
+    //   // { name: 'scbd-angularjs-controls', location : 'libs/scbd-angularjs-controls/form-control-directives' },
+    //
+    // ]
 });
 
 // BOOT

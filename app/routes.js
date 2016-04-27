@@ -1,4 +1,4 @@
-define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angularjs-services/authentication'], function(app, _) { 'use strict';
+define(['app', 'lodash', 'services/extended-route',  'services/authentication'], function(app, _) { 'use strict';
 
     app.config(['extendedRouteProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
@@ -29,16 +29,16 @@ define(['app', 'lodash', 'scbd-angularjs-services/extended-route',  'scbd-angula
     //============================================================
     function securize(roles) {
 
-        return ['$location', '$window', '$q','authentication', 'apiUrl', function ($location, $window, $q, authentication, apiUrl) {
+        return ['$location', '$window', '$q','authentication', function ($location, $window, $q, authentication) {
 
             return authentication.getUser().then(function (user) {
 
                 if (!user.isAuthenticated) {
 
-                    var accountsUrl = apiUrl.devAccountsUrl() || 'https://accounts.cbd.int';
+                    var accountsUrl ='https://accounts.cbd.int';
                     var returnUrl   = $window.encodeURIComponent($window.location.href);
 
-                    $window.location.href = accountsUrl+'/signin?returnUrl=' + returnUrl; // force sign in
+                  $window.location.href = accountsUrl+'/signin?returnUrl=' + returnUrl; // force sign in
 
                     return $q(function () {});
                 }
