@@ -29,7 +29,7 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
               type: 'toggle',
               open:0,
               faIcon: 'fa-calendar',
-              roles:['Administrator'],
+              roles:['Administrator','EunoAdministrator'],
               pages: [
                 // {
                 //   name: 'Location Schedule',
@@ -72,14 +72,14 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                   type: 'link',
                   path: '/events/56ab766f2f4ad2ad1b885444/cctv/feeds',
               //    mdIcon: 'all_inclusive',
-                  roles:['Administrator'],
+                  roles:['Administrator','EunoAdministrator'],
                 },
                 {
                   name: 'Frames',
                   type: 'link',
                   path: '/events/56ab766f2f4ad2ad1b885444/cctv/frames',
               //    mdIcon: 'all_inclusive',
-                  roles:['Administrator'],
+                  roles:['Administrator','EunoAdministrator'],
                 }]
               });
         //
