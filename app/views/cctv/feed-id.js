@@ -1,6 +1,6 @@
 define(['app'], function() {
 
-    return ['$http', '$route', '$location', '$scope', function($http, $route, $location, $scope) {
+    return ['$http', '$route', '$location', '$scope','scbdMenuService', function($http, $route, $location, $scope,scbdMenuService) {
 
         var _ctrl = this;
 
@@ -17,6 +17,8 @@ define(['app'], function() {
         function load() {
 
             var id = $route.current.params.id;
+
+            $scope.toggle = scbdMenuService.toggle;
 
             if(id=='new') {
 

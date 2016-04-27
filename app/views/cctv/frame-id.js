@@ -1,6 +1,6 @@
 define(['require', 'lodash', 'angular', 'moment-timezone', 'app'], function(require, _, ng, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', '$compile', function($http, $route, $location, $scope, $q, $compile) {
+    return ['$http', '$route', '$location', '$scope', '$q', '$compile','scbdMenuService', function($http, $route, $location, $scope, $q, $compile,scbdMenuService) {
 
         var _ctrl = this;
 
@@ -33,6 +33,8 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app'], function(requ
 
             var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
             var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
+
+            $scope.toggle = scbdMenuService.toggle;
 
             return $q.all([qEvents, qFeeds]).then(function(res) {
 

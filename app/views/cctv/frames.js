@@ -1,6 +1,6 @@
 define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', function($http, $route, $location, $scope, $q) {
+    return ['$http', '$route', '$location', '$scope', '$q','scbdMenuService', function($http, $route, $location, $scope, $q,scbdMenuService) {
 
         var _ctrl = this;
 
@@ -22,7 +22,8 @@ define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
 
             var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
             var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
-
+            $scope.toggle = scbdMenuService.toggle;
+            
             return $q.all([qEvents, qFeeds]).then(function(res) {
 
                 var eventGroup = res[0].data;
