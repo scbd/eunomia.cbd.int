@@ -5,7 +5,7 @@ define(['app',
   'css!./menu-link',
   '../scbd-button',
   './scbd-menu-service',
-  'scbd-angularjs-services/authentication'
+  'services/authentication'
 ],
 function(app,template,_) {
         app.directive('menuLink', ['$window','$location','$timeout','scbdMenuService','authentication',function ($window,$location,$timeout,scbdMenuService,auth) {
