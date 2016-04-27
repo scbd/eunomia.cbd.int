@@ -26,7 +26,7 @@ define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(a
                     if(options && options.useCss)
                         document.execCommand('styleWithCSS', false, true);
 
-                    document.execCommand(cmd,false, null);
+                    document.execCommand(cmd,false, (options && options.arg)||null);
 
                     if(options && options.useCss)
                         document.execCommand('styleWithCSS', false, false);

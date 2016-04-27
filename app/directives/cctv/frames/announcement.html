@@ -1,6 +1,6 @@
 <div class="col-xs-12">
     <div class="form-group">
-        <label for="title" required>Title of the announcement</label>
+        <label for="title" required>Title of the announcement <small class="text-warning">(not visible on CCTV)</small></label>
         <input type="text" required class="form-control" ng-model="content.title" id="title" name="title" placeholder="Official Dinner">
     </div>
     <div class="form-group">
@@ -14,10 +14,10 @@
                   <i class="fa fa-text-height" aria-hidden="true"></i>
               </button>
               <ul class="dropdown-menu">
-                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h1')" title="Heading 1" style="font-size:140%">Heading 1</a></li>
-                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h2')" title="Heading 2" style="font-size:130%">Heading 2</a></li>
-                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h3')" title="Heading 3" style="font-size:120%">Heading 3</a></li>
-                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h4')" title="Heading 4" style="font-size:110%">Heading 4</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', { arg : 'h1' })" title="Heading 1" style="font-size:140%">Heading 1</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', { arg : 'h2' })" title="Heading 2" style="font-size:130%">Heading 2</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', { arg : 'h3' })" title="Heading 3" style="font-size:120%">Heading 3</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', { arg : 'h4' })" title="Heading 4" style="font-size:110%">Heading 4</a></li>
               </ul>
             </div>
 
@@ -50,5 +50,4 @@
         </div>
         <div contenteditable="true" style="height:300px;overflow-y:scroll" id="htmlEditor" class="form-control" ng-bind-html="html | sanitizeHtml | safeHtml"></div>
     </div>
-{{content.html}}
 </div>
