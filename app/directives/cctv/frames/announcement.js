@@ -1,6 +1,6 @@
-define(['app', 'text!./announcement.html'], function(app, template) {
+define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(app, template) {
 
-    app.directive("cctvFrameAnnouncement", [function() {
+    app.directive("cctvFrameAnnouncement", ['$filter', function($filter) {
         return {
             restrict: 'E',
             template: template,
@@ -10,6 +10,8 @@ define(['app', 'text!./announcement.html'], function(app, template) {
             },
             link: function($scope, element) {
 
+                $scope.html = $scope.content.html;
+
                 var htmlEditorTools = element.find("#htmlEditorTools button");
                 var htmlEditor      = element.find("#htmlEditor");
 
@@ -18,10 +20,16 @@ define(['app', 'text!./announcement.html'], function(app, template) {
                 htmlEditor.keyup   (function(){ console.log('up');    updateHtml();});
                 htmlEditor.blur    (function(){ console.log('blur');  updateHtml();});
 
-                $scope.execCommand=function(evt, cmd) {
-                    evt.stopPropagation();
+                $scope.execCommand=function(evt, cmd, options) {
+                //    evt.stopPropagation();
 
-                    document.execCommand(cmd,false,null);
+                    if(options && options.useCss)
+                        document.execCommand('styleWithCSS', false, true);
+
+                    document.execCommand(cmd,false, null);
+
+                    if(options && options.useCss)
+                        document.execCommand('styleWithCSS', false, false);
 
                     updateHtml();
                 };
@@ -31,7 +39,13 @@ define(['app', 'text!./announcement.html'], function(app, template) {
                 //========================================
                 function updateHtml() {
                     $scope.$applyAsync(function(){
-                        $scope.content.html = htmlEditor.html();
+                        var html         = htmlEditor.html();
+                        var sanitizeHtml = $filter('sanitizeHtml')(htmlEditor.html());
+
+                        if(html!=sanitizeHtml)
+                            $scope.html = sanitizeHtml;
+
+                        $scope.content.html = sanitizeHtml;
                     });
                 }
             }

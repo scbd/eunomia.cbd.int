@@ -8,9 +8,30 @@
 
         <div id="htmlEditorTools">
             <div class="btn-group" role="group">
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'bold')"      title="Bold"><i class="fa fa-bold" aria-hidden="true"></i></button>
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'italic')"    title="Italic"><i class="fa fa-italic" aria-hidden="true"></i></button>
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'underline')" title="Underline"><i class="fa fa-underline" aria-hidden="true"></i></button>
+            <!-- Single button -->
+            <div class="btn-group">
+              <button type="button" class="btn btn-default btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Text Size">
+                  <i class="fa fa-text-height" aria-hidden="true"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h1')" title="Heading 1" style="font-size:140%">Heading 1</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h2')" title="Heading 2" style="font-size:130%">Heading 2</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h3')" title="Heading 3" style="font-size:120%">Heading 3</a></li>
+                <li><a href="#" ng-click="execCommand($event, 'formatBlock', 'h4')" title="Heading 4" style="font-size:110%">Heading 4</a></li>
+              </ul>
+            </div>
+
+            <div class="btn-group" role="group">
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'undo')" title="Undo"><i class="fa fa-undo" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'redo')" title="Redo"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+            </div>
+
+            <div class="btn-group" role="group">
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'Bold')"          title="Bold"><i class="fa fa-bold" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'italic')"        title="Italic"><i class="fa fa-italic" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'underline')"     title="Underline"><i class="fa fa-underline" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'strikeThrough')" title="Strike Through"><i class="fa fa-strikethrough" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'removeFormat')"  title="Clear format"><i class="fa fa-eraser" aria-hidden="true"></i></button>
             </div>
 
             <div class="btn-group" role="group">
@@ -21,13 +42,13 @@
             </div>
 
             <div class="btn-group" role="group">
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyLeft')"   title="Align Left"><i class="fa fa-align-left" aria-hidden="true"></i></button>
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyCenter')" title="Align Center"><i class="fa fa-align-center" aria-hidden="true"></i></button>
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyRight')"  title="Align Right"><i class="fa fa-align-right" aria-hidden="true"></i></button>
-                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyFull')"   title="Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyLeft',   { useCss : true })"   title="Align Left"><i class="fa fa-align-left" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyCenter', { useCss : true })" title="Align Center"><i class="fa fa-align-center" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyRight',  { useCss : true })"  title="Align Right"><i class="fa fa-align-right" aria-hidden="true"></i></button>
+                <button class='btn btn-default btn-sm' type='button' ng-click="execCommand($event, 'justifyFull',   { useCss : true })"   title="Justify"><i class="fa fa-align-justify" aria-hidden="true"></i></button>
             </div>
         </div>
-        <div contenteditable="true" style="height:300px;overflow-y:scroll" id="htmlEditor" class="form-control" ng-bind-html="::content.html"></div>
+        <div contenteditable="true" style="height:300px;overflow-y:scroll" id="htmlEditor" class="form-control" ng-bind-html="html | sanitizeHtml | safeHtml"></div>
     </div>
-
+{{content.html}}
 </div>
