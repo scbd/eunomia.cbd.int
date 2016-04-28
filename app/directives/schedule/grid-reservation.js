@@ -45,6 +45,9 @@ define(['app', 'lodash', 'text!./grid-reservation.html','moment'
               titleEl.on('mouseleave', function() {
                 titleEl.popover('hide');
               });
+              $element.on('$destroy', function() {
+                titleEl.popover('destroy');
+              });
 
             } //triggerChanges
 
