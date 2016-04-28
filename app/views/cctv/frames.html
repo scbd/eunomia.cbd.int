@@ -7,19 +7,21 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="pull-right">Event timezone: {{framesCtrl.eventGroup.timezone}}</div>
-            <!-- <h1>CCTV - Frames</h1> -->
+
             <h2>{{framesCtrl.eventGroup.Title.en}} <i>({{framesCtrl.eventGroup.StartDate|limitTo:10}} - {{framesCtrl.eventGroup.EndDate|limitTo:5:5}})***</i></h2>
         </div>
 
         <form class="form">
 
             <div class="col-xs-6 col-sm-3">
-
                 <div class="form-group">
-                    <label for="code" required>Day</label>
-                    <select class="form-control" ng-options="day for day in framesCtrl.days" ng-model="framesCtrl.selectedDay" ng-change="framesCtrl.refresh()">
-                        <option value="">All Days</option>
-                    </select>
+                    <div class="form-group">
+                      <label for="code" required>Day</label>
+                      <input type="text" class="form-control" name="code" ng-model="framesCtrl.selectedDay" ng-change="framesCtrl.refresh()"
+                             date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD', clearButton: true }" 
+                             date-picker-min-date="framesCtrl.eventGroup.StartDate"
+                             date-picker-max-date="framesCtrl.eventGroup.EndDate">
+                    </div>
                 </div>
             </div>
             <div class="col-xs-6 col-sm-3">

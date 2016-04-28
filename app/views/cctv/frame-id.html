@@ -6,24 +6,21 @@
 
     <form ng-submit="frameIdCtrl.save()">
 
-        <!-- <div class="row">
-            <div class="col-xs-12">
-                <h1>CCTV - Frame</h1>
-            </div>
-
-        </div> -->
-
         <div class="row">
 
             <div class="col-sm-3 col-xs-6">
 
                 <div class="form-group">
-                    <label for="code" required>First Day</label>
-                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.startDay" ng-change="frameIdCtrl.changedStartDay()"></select>
+                  <label for="code" required>First Day</label>
+                  <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.startDay" ng-change="frameIdCtrl.changedStartDay()"
+                         date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD' }"
+                         date-picker-min-date="frameIdCtrl.eventGroup.StartDate"
+                         date-picker-max-date="frameIdCtrl.eventGroup.EndDate">
                 </div>
                 <div class="form-group">
                     <label for="code" required>Start Time</label>
-                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.startTime" ng-change="frameIdCtrl.changedStartTime()"></select>
+                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.startTime" ng-change="frameIdCtrl.changedStartTime()"
+                           date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm' }" >
                 </div>
 
             </div>
@@ -32,12 +29,16 @@
 
                 <div class="form-group">
                     <label for="code" required>Last Day</label>
-                    <select class="form-control" ng-options="day for day in frameIdCtrl.days" ng-model="frameIdCtrl.endDay" ng-change="frameIdCtrl.changedEndDay()"></select>
+                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.endDay" ng-change="frameIdCtrl.changedEndDay()"
+                           date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD' }"
+                           date-picker-min-date="frameIdCtrl.eventGroup.StartDate"
+                           date-picker-max-date="frameIdCtrl.eventGroup.EndDate">
                 </div>
 
                 <div class="form-group">
                     <label for="code" required>Stop Time</label>
-                    <select class="form-control" ng-options="time for time in frameIdCtrl.times" ng-model="frameIdCtrl.endTime" ng-change="frameIdCtrl.changedEndTime()"></select>
+                    <input type="text" class="form-control" name="code"  ng-model="frameIdCtrl.endTime" ng-change="frameIdCtrl.changedEndTime()"
+                           date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm' }" >
                 </div>
             </div>
 

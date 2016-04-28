@@ -1,4 +1,4 @@
-define(['require', 'lodash', 'angular', 'moment-timezone', 'app'], function(require, _, ng, moment) {
+define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker'], function(require, _, ng, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q', '$compile','scbdMenuService', function($http, $route, $location, $scope, $q, $compile,scbdMenuService) {
 
@@ -43,8 +43,6 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app'], function(requ
 
                 _ctrl.eventGroup   = eventGroup;
                 _ctrl.feeds        = feeds;
-                _ctrl.days         = buildDates(eventGroup.StartDate, eventGroup.EndDate);;
-                _ctrl.times        = buildTimes();
 
             }).then(function () {
 
@@ -198,44 +196,6 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app'], function(requ
 
             if($route.current.params.day)
                 $location.search({day: $route.current.params.day});
-        }
-
-        //==============================
-        //
-        //==============================
-        function buildTimes() {
-
-            var times = [];
-
-            for(var h=0; h<24; ++h) {
-                for(var m=0; m<60; m+=15){
-                    var HH = ("0"+h).slice(-2);
-                    var MM = ("0"+m).slice(-2);
-                    times.push(HH+':'+MM);
-                }
-            }
-            return times;
-        }
-
-        //==============================
-        //
-        //==============================
-        function buildDates(startDate, endDate) {
-
-            var dates = [];
-            var date  = moment.tz(startDate, _ctrl.eventGroup.timezone);
-
-            while(date.isBefore(endDate)) {
-
-                dates.push(date.format("YYYY-MM-DD"));//just take the date part;
-                date.add(1, 'days');
-
-                // detect infinit-loop
-                if(dates.length>120)
-                    throw "Loop detected";
-            }
-
-            return dates;
         }
 
         //==============================

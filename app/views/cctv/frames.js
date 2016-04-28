@@ -1,4 +1,4 @@
-define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
+define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(_, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q','scbdMenuService', function($http, $route, $location, $scope, $q,scbdMenuService) {
 
@@ -23,7 +23,7 @@ define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
             var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
             var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
             $scope.toggle = scbdMenuService.toggle;
-            
+
             return $q.all([qEvents, qFeeds]).then(function(res) {
 
                 var eventGroup = res[0].data;
@@ -36,7 +36,6 @@ define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
                 _ctrl.eventGroup   = eventGroup;
                 _ctrl.feeds        = feeds;
                 _ctrl.feedsMap     = feedsMap;
-                _ctrl.days         = buildDates(eventGroup.StartDate, eventGroup.EndDate);
                 _ctrl.selectedDay  = $route.current.params.day || "";
                 _ctrl.selectedFeed = '';
 
@@ -91,10 +90,6 @@ define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
                     }
                 });
 
-
-
-
-
             }).catch(errorHandler);
         }
 
@@ -143,27 +138,6 @@ define(['lodash', 'moment-timezone', 'app'], function(_, moment) {
 
             return _.first(frame.schedules).start + _.last(frame.schedules).end;
 
-        }
-
-        //==============================
-        //
-        //==============================
-        function buildDates(startDate, endDate) {
-
-            var dates = [];
-            var date  = moment.tz(startDate, _ctrl.eventGroup.timezone);
-
-            while(date.isBefore(endDate)) {
-
-                dates.push(date.format("YYYY-MM-DD"));//just take the date part;
-                date.add(1, 'days');
-
-                // detect infinit-loop
-                if(dates.length>120)
-                    throw "Loop detected";
-            }
-
-            return dates;
         }
 
         //==============================
