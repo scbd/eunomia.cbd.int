@@ -27,9 +27,9 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
         scbdMenuService.menus.mainMenu.push({
               name: 'Schedule',
               type: 'toggle',
-              open:0,
+              open:1,
               faIcon: 'fa-calendar',
-              roles:['Administrator','EunoAdministrator'],
+
               pages: [
                 // {
                 //   name: 'Location Schedule',
@@ -43,7 +43,7 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                   type: 'link',
                   faIcon: 'fa-users',
                   path: '/schedule/conference',
-                  roles:['Administrator','EunoAdministrator'],
+
                 }
               ]
               });
@@ -56,15 +56,15 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
           type: 'link',
           faIcon: 'fa-calendar-o',
           path: '/side-events',
-              roles:['Administrator','EunoAdministrator'],
+
         });
         //
         scbdMenuService.menus.mainMenu.push({
               name: 'CCTV',
               type: 'toggle',
-              open:0,
+              open:1,
               faIcon: 'fa-cc',
-              roles:['Administrator'],
+
               pages: [
 
                 {
@@ -72,23 +72,23 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                   type: 'link',
                   path: '/events/56ab766f2f4ad2ad1b885444/cctv/feeds',
               //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','EunoAdministrator'],
+
                 },
                 {
                   name: 'Frames',
                   type: 'link',
                   path: '/events/56ab766f2f4ad2ad1b885444/cctv/frames',
               //    mdIcon: 'all_inclusive',
-                  roles:['Administrator','EunoAdministrator'],
+
                 }]
               });
         //
         scbdMenuService.menus.mainMenu.push({
               name: 'Admin',
               type: 'toggle',
-              open:0,
+              open:1,
               faIcon: 'fa-gears',
-              roles:['Administrator','EunoAdministrator'],
+
               pages: [
 
         //         {
@@ -124,7 +124,7 @@ app.factory("mainMenu", ['scbdMenuService', function(scbdMenuService) {
                   type: 'link',
                   path: '/admin/reservation/types',
                   faIcon: 'fa-cubes',
-                  roles:['Administrator','EunoAdministrator'],
+
                 },
         //         {
         //           name: 'Meeting Groupes',
