@@ -183,15 +183,17 @@ define(['app', 'lodash',
 
 
                 $element.find('#startT').bootstrapMaterialDatePicker({
+                  switchOnClick:true,
                     time:true,
                     date: true,
-                    shortTime: true,
+                    shortTime: false,
                     format: 'YYYY-MM-DD  hh:mm a'
                 });
                 $element.find('#endT').bootstrapMaterialDatePicker({
+                  switchOnClick:true,
                     time:true,
-                    date: true,
-                    shortTime: true,
+                    date: false,
+                    shortTime: false,
                     format: 'YYYY-MM-DD  hh:mm a'
                 });
 

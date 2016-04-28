@@ -39,6 +39,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
             //
             //============================================================
             function init() {
+
               $scope.conferenceId = '';
               $scope.conference = '';
               $scope.conferences = [];
@@ -53,9 +54,11 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
               $scope.changeDay=changeDay; // update times and effects on day change
               $scope.changeStartTime=changeStartTime;
               $scope.changeEndTime=changeEndTime;
-              initDayTimeSelects();
-              getConferences().then(function() {
 
+
+              getConferences().then(function() {
+                initDay();
+                initDayTimeSelects();
                 $scope.getRooms();
               });
 
@@ -176,7 +179,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
             //
             //============================================================
             function initDay() {
-                  $scope.dayObj = moment.utc($scope.conference.start).startOf('day');
+                  $scope.dayObj = moment.utc($scope.conference.start*1000).startOf('day');
             }; //init
 
             //============================================================
@@ -211,6 +214,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                     $scope.day=moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                   },100);
             } //changeStartTime
+
             //============================================================
             //
             //============================================================
@@ -223,6 +227,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                     $scope.day=moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                   },100);
             } //changeStartTime
+
             //============================================================
             //
             //============================================================
@@ -254,27 +259,30 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                     $document.ready(function() {
 
                         $timeout(function(){
-                          initDay();
+
                           $.material.init();
                           $.material.input();
                           $.material.ripples();
 
                           $element.find('#day-filter').bootstrapMaterialDatePicker({
+                            switchOnClick:true,
                             weekStart: 0,
                             time: false
                           });
 
                           $element.find('#start-time-filter').bootstrapMaterialDatePicker({
                               time:true,
+                              switchOnClick:true,
+                              shortTime: false,
                               date: false,
-                              shortTime: true,
                               format: 'hh:mm a'
                           });
 
                           $element.find('#end-time-filter').bootstrapMaterialDatePicker({
                             time:true,
+                            switchOnClick:true,
+                            shortTime: false,
                             date: false,
-                            shortTime: true,
                             format: 'hh:mm a'
                           });
 
