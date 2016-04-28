@@ -266,6 +266,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                 delete(objClone.startDisp);
                 delete(objClone.endDisp);
                 delete(objClone.typeObj);
+                delete(objClone.repeat);
+                delete(objClone.repeatDay);
                 if(!objClone.location){
                     objClone.location={};
                     objClone.location.venue='56d76c787e893e40650e4170';

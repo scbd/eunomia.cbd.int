@@ -57,7 +57,8 @@ app.factory("mongoStorage", ['$http',function($http) {
                         "$and" : [
                            {'start':{'$gt':{'$date':(start*1000)}}},
                            {'end':{'$lt':{'$date':end*1000}}}],
-                           'meta.status':{$nin:['archived','deleted']}
+                           'meta.status':{$nin:['archived','deleted']},
+                           'sideEvent.meta.status':{$nin:['archived','deleted']}
                          }
                       };
 
