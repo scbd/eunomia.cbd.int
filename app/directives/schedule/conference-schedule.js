@@ -1,7 +1,7 @@
 define(['app', 'lodash', 'text!./conference-schedule.html','moment',
-  'BM-date-picker',
+  'directives/date-picker',
   'ngDialog',
-  '../../services/mongo-storage',
+  'services/mongo-storage',
   './time-unit-row',
   './time-unit-row-header',
   './room-column',
@@ -33,7 +33,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
 
               initRowHeight();
               generateDays();
-            } //init
+            }; //init
 
             //============================================================
             //
@@ -149,7 +149,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                             initRowHeight();
                             generateDays();
                   });
-            }//initRooms
+            };//initRooms
             //============================================================
             //
             //============================================================
@@ -180,7 +180,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
             //============================================================
             function initDay() {
                   $scope.dayObj = moment.utc($scope.conference.start*1000).startOf('day');
-            }; //init
+            } //init
 
             //============================================================
             //
@@ -200,7 +200,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                 }, 2000);
 
               }
-            }; //init
+            } //init
 
             //============================================================
             //
@@ -213,7 +213,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                     $element.find('#day-filter').bootstrapMaterialDatePicker('setDate',$scope.dayObj);
                     $scope.day=moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                   },100);
-            } //changeStartTime
+            }; //changeStartTime
 
             //============================================================
             //
@@ -226,7 +226,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                     $element.find('#day-filter').bootstrapMaterialDatePicker('setDate',$scope.dayObj);
                     $scope.day=moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                   },100);
-            } //changeStartTime
+            }; //changeStartTime
 
             //============================================================
             //
@@ -260,15 +260,15 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
 
                         $timeout(function(){
 
-                          $.material.init();
-                          $.material.input();
-                          $.material.ripples();
+                          // $.material.init();
+                          // $.material.input();
+                          // $.material.ripples();
 
-                          $element.find('#day-filter').bootstrapMaterialDatePicker({
-                            switchOnClick:true,
-                            weekStart: 0,
-                            time: false
-                          });
+                          // $element.find('#day-filter').bootstrapMaterialDatePicker({
+                          //   switchOnClick:true,
+                          //   weekStart: 0,
+                          //   time: false
+                          // });
 
                           $element.find('#start-time-filter').bootstrapMaterialDatePicker({
                               time:true,
@@ -286,12 +286,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html','moment',
                             format: 'hh:mm a'
                           });
 
-                          $element.find('#day-filter').bootstrapMaterialDatePicker('setDate',moment($scope.dayObj).startOf('day').hour(8));
+                          //$element.find('#day-filter').bootstrapMaterialDatePicker('setDate',moment($scope.dayObj).startOf('day').hour(8));
                           $scope.day=moment($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
-                          setEndTime();
 
-                          $element.find('#end-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.dayObj).startOf('day').hour(20));
-                          $scope.endTime=moment($scope.dayObj).startOf('day').hour(20).format('hh:mm a');
+
+                          $element.find('#end-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.dayObj).startOf('day').hour(23));
+                          $scope.endTime=moment($scope.dayObj).startOf('day').hour(23).format('hh:mm a');
                           setEndTime();
 
                           $element.find('#start-time-filter').bootstrapMaterialDatePicker('setDate',moment($scope.dayObj).startOf('day').hour(8));

@@ -1,6 +1,6 @@
 define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(_, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q','scbdMenuService', function($http, $route, $location, $scope, $q,scbdMenuService) {
+    return ['$http', '$route', '$location', '$scope', '$q', function($http, $route, $location, $scope, $q) {
 
         var _ctrl = this;
 
@@ -22,7 +22,6 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
 
             var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
             var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
-            $scope.toggle = scbdMenuService.toggle;
 
             return $q.all([qEvents, qFeeds]).then(function(res) {
 
@@ -87,7 +86,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
                         startTime : start.format("HH:mm"),
                         endDay    : end  .format("YYYY-MM-DD"),
                         endTime   : end  .format("HH:mm")
-                    }
+                    };
                 });
 
             }).catch(errorHandler);

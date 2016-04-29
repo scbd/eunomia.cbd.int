@@ -1,20 +1,9 @@
-define(['app', 'lodash',
-  '../../directives/schedule/conference-schedule'
-], function(app, _,moment) {
+define(['app', 'directives/schedule/conference-schedule'
+], function() {
 
-  app.controller('conference',['$scope','scbdMenuService','mongoStorage',
-    function($scope,scbdMenuService,mongoStorage) {
+  return ['mongoStorage', function(mongoStorage) {
 
-      init();
-
-      //============================================================
-      //
-      //============================================================
-      function init() {
         mongoStorage.getAllOrgs('inde-orgs', 'published');// load cache
-        $scope.toggle = scbdMenuService.toggle;
-        $scope.search='';
-      } //init
 
-  }]);
+  }];
 });

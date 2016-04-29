@@ -44,12 +44,19 @@
           </div>
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
-              <input id="day-filter" class="form-control" type="text" ng-model="day" ng-change="changeDay('day-filter')" style="color:#eee;">
+              <input type="text" class="form-control" name="code" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
+                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: true,weekStart: 0 }"
+                     date-picker-min-date="framesCtrl.eventGroup.StartDate"
+                     date-picker-max-date="framesCtrl.eventGroup.EndDate">
             </div>
           </div>
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
               <input id="start-time-filter" class="form-control" type="text" ng-model="startTime" ng-change="changeStartTime('start-time-filter')" style="color:#eee;">
+              <!-- <input type="text" class="form-control" name="code" ng-model="startTime" style="color:#eee;" ng-change="changeDay('day-filter')"
+                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: true,weekStart: 0 }"
+                     date-picker-min-date="framesCtrl.eventGroup.StartDate"
+                     date-picker-max-date="framesCtrl.eventGroup.EndDate"> -->
             </div>
           </div>
           <div class="col-xs-1">

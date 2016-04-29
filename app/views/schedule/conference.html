@@ -1,24 +1,3 @@
-<div ng-controller="conference" class="container-fluid" style="height:95%;">
-  <div class="row  view-header text-center" style="position:relative;">
-    <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Conference Schedule
-    </div>
-
-
-    <div style="position:absolute;right:1px;width:210px;">
-      <div class="relative">
-        <div class="form-group label-floating">
-          <!-- <div class="input-group">
-            <label class="control-label" for="search">Search Reservations</label>
-            <input type="text" id="search" class="form-control" ng-model="search">
-            <span class="input-group-btn small">
-              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
-                <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
-              </button>
-            </span>
-          </div> -->
-        </div>
-      </div>
-    </div>
-  </div>
-<conference-schedule day="day" start-time="startTimeObj" end-time="endTimeObj" search="search"></conference-schedule>
+<div style="height:95%;">
+    <conference-schedule day="day" start-time="startTimeObj" end-time="endTimeObj" search="search"></conference-schedule>
 </div>

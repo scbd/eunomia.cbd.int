@@ -1,6 +1,6 @@
 define(['app'], function() {
 
-    return ['$http', '$route', '$location', '$scope','scbdMenuService', function($http, $route, $location, $scope,scbdMenuService) {
+    return ['$http', '$route', '$location', '$scope',function($http, $route, $location, $scope) {
 
         var _ctrl = this;
 
@@ -18,7 +18,6 @@ define(['app'], function() {
         function init() {
 
             var eventGroupId = $route.current.params.eventId;
-            $scope.toggle = scbdMenuService.toggle;
 
             $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true }).then(function(res) {
 
