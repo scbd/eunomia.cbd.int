@@ -1,45 +1,79 @@
 <!DOCTYPE html>
-<html lang="en" ng-controller="TemplateController">
+<html lang="en" ng-controller="TemplateController as templateCtrl">
 
-<head>
-  <base href="<%=baseUrl%>">
-  <title>Eunomia - Meeting Room Scheduling</title>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="shortcut icon" href="app/images/favicon.ico">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
+  <head>
+    <base href="<%=baseUrl%>">
+    <title>Eunomia - Meeting Room Scheduling</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="app/images/favicon.ico">
+    <style>[ng\:cloak], [ng-cloak], .ng-cloak {display: none !important; }</style>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="app/libs/bootstrap-material-design/dist/css/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="app/libs/bootstrap-material-design/dist/css/ripples.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="app/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="app/libs/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+    <link href="app/libs/angular-toastr/dist/angular-toastr.min.css" rel="stylesheet">
+    <link href="app/libs/ng-dialog/css/ngDialog.css" rel="stylesheet">
+    <link href="app/libs/ng-dialog/css/ngDialog-theme-default.min.css" rel="stylesheet">
+    <link href="app/css/main.css" rel="stylesheet">
 
-<body class="ltr" id="top">
-  <iframe id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
+  </head>
 
-  <!-- <iframe id="authenticationFrame" src="" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
+  <body class="ltr" id="top">
+    <iframe id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
 
-  <script>
-    var domain = document.location.hostname.replace(/[^\.]+\./, '');
-    if (domain == 'localhost') domain = 'cbddev.xyz';
-    document.getElementById('authenticationFrame').src = 'https://accounts.' + domain + '/app/authorize.html';
-  </script> -->
+    <!-- <iframe id="authenticationFrame" src="" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
 
-  <div class="view">
-    <!-- <scbd-header>  </scbd-header> -->
-    <div class="relative" style="height:100%;">
+    <script>
+      var domain = document.location.hostname.replace(/[^\.]+\./, '');
+      if (domain == 'localhost') domain = 'cbddev.xyz';
+      document.getElementById('authenticationFrame').src = 'https://accounts.' + domain + '/app/authorize.html';
+    </script> -->
+    <nav class="navbar navbar-default" style="margin-bottom:0px">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Eunomia</a>
+        </div>
 
-      <portal-nav ></portal-nav>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li ng-class="{ active : templateCtrl.menu=='schedule' }"   ><a href="/schedule/conference">Schedule</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='side-events' }"><a href="/schedule/side-events">Side-Events</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }"><a href="/events/56ab766f2f4ad2ad1b885444/cctv/frames">CCTV</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown" ng-class="{ active : templateCtrl.menu=='admin' }">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/admin/reservation/types">Reservation types</a></li>
+                <li><a href="/events/56ab766f2f4ad2ad1b885444/cctv/feeds">CCTV Feeds</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class="view">
 
-      <div id="main" style="height:100%;">
-
-        <ng-view> </ng-view>
+      <div class="relative" style="height:100%;">
+        <div id="main" style="height:100%;">
+          <ng-view></ng-view>
+        </div>
       </div>
 
     </div>
-  </div>
 
-
-  <script src="app/libs/requirejs/require.js" data-main="app/boot.js"></script>
-
-</body>
-
+    <script src="app/libs/requirejs/require.js" data-main="app/boot.js"></script>
+  </body>
 </html>
