@@ -1,10 +1,42 @@
 <div class="header-row-base">
+  <style>
+    .header-row-base {
+      min-height: 39px;
+      background-color: #d7d7d7;
+    }
+
+    .times-row {
+      max-height: 20px;
+      background-color: #eee;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-color: #bbb;
+    }
+
+    .interval-col {
+      max-height: 19px;
+      display: inline-block;
+      overflow: visible;
+    }
+
+    .col-stripped {
+      background-color: #f9f9f9;
+    }
+
+    .day-stripped-on {
+      background-color: #d7d7d7;
+    }
+
+    .day-stripped-off {
+      background-color: none;
+    }
+  </style>
   <div>
-        <div id="day-header-{{$index}}" ng-repeat="d in selectedConfDays track by $index" class="day-header text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">{{d |momentFormat}}</div>
+    <div id="day-header-{{$index}}" ng-repeat="d in selectedConfDays track by $index" class="day-header text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">{{d |momentFormat}}</div>
   </div>
-    <div>
-        <div id="interval-header-{{$index}}" ng-repeat="d in selectedConfDays track by $index"class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
-          <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">&nbsp;{{timeColumn|toHour}}</div>
-        </div>
+  <div>
+    <div id="interval-header-{{$index}}" ng-repeat="d in selectedConfDays track by $index" class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
+      <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">&nbsp;{{timeColumn|toHour}}</div>
     </div>
+  </div>
 </div>

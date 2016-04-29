@@ -17,6 +17,20 @@
     .row-stripped {
       background-color: #f9f9f9;
     }
+    .scroll-grid {
+      display: block;
+      height: 100%;
+      white-space: nowrap;
+      overflow: none;
+    }
+    .outer {
+      float: left;
+      display: block;
+      min-height: 95%;
+      width: 90%;
+      overflow-x: none;
+      overflow-y: none;
+    }
   </style>
   <div class="conference-schedule" style="height:94%;">
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
@@ -74,10 +88,13 @@
     </div>
     <div >
       <room-column rooms="rooms"></room-column>
-      <scroll-grid start-time="startTime" end-time="endTime" day="day">
+
+        <div id="scroll-grid" class="outer">
+          <div class="scroll-grid">
         <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="dayObj" conference-days="conferenceDays"></time-unit-row-header>
         <time-unit-row start-time="startTimeObj" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
-      </scroll-grid>
+      </div>
+    </div>
     </div>
   </div>
 </div>

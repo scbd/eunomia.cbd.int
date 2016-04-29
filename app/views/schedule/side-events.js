@@ -324,7 +324,7 @@ define(['app', 'lodash', 'moment',
         });
         var time, tier, allOrgs;
         $scope.venue = meeting.venue;
-        return mongoStorage.getReservations(meeting.start, meeting.end, meeting.venue,"570fd0a52e3fa5cfa61d90ee").then(function(res) {
+        return mongoStorage.getReservations(meeting.start, meeting.end, {venue:meeting.venue},"570fd0a52e3fa5cfa61d90ee").then(function(res) {
             $scope.reservations = res.data;
             //set ref to models
             if (!$scope.seModels) $scope.seModels = [];
@@ -730,6 +730,8 @@ define(['app', 'lodash', 'moment',
         var temp = JSON.stringify(se);
         return (temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0);
       };
+
+
       //============================================================
       // Load select with users choices of prefered date times
       //============================================================
@@ -795,7 +797,7 @@ define(['app', 'lodash', 'moment',
 
     }
   ]);
-  
+
   app.filter('ucf', function()
   {
       return function(word)
