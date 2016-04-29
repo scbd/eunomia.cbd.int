@@ -1,58 +1,46 @@
-define(['app', 'lodash', 'text!./grid-reservation.html','moment'
-], function(app, _, template, moment) {
+define(['app', 'text!./grid-reservation.html'], function(app, template) {
+    app.directive("gridReservation", [
+        function() {
+            return {
+                restrict: 'E',
+                template: template,
+                replace: true,
+                transclude: false,
+                priority: -100,
+                scope: {
+                    'doc': '=',
+                },
+                link: function($scope, $element) {
 
-  app.directive("gridReservation", ['$timeout',
-    function($timeout) {
-      return {
-        restrict: 'E',
-        template: template,
-        replace: true,
-        transclude: false,
-        priority: -100,
-        scope: {
-          'doc': '=',
+                        init();
 
-        },
-        controller: function($scope, $element) {
+                        //============================================================
+                        //
+                        //============================================================
+                        function init() {
+                            var titleEl = $element.find("#res-el").popover({
+                                placement: 'top',
+                                html: 'true',
+                                container: 'body',
+                                content: function() {
+                                    return $element.find('#pop-title').html();
+                                }
+                            });
 
-            $scope.oneLine = false;
-            $scope.twoLine = false;
-            $scope.threeLine = false;
-            init();
+                            titleEl.on('mouseenter', function() {
+                                titleEl.popover('show');
+                            });
+                            titleEl.on('mouseleave', function() {
+                                titleEl.popover('hide');
+                            });
+                            $element.on('$destroy', function() {
+                                titleEl.popover('destroy');
+                            });
 
-            $scope.$watch('doc.meta.status',function(){
-              if($scope.doc.meta && $scope.doc.meta.status ==='deleted'){
-                  $scope.doc={};
-                  $element.remove();
-              }
-            });
-            //============================================================
-            //
-            //============================================================
-            function init() {
-              var titleEl = $element.find("#res-el").popover({
-                placement: 'top',
-                html: 'true',
-                container: 'body',
-                content: function() {
-                  return $element.find('#pop-title').html();
-                }
-              });
+                        } //triggerChanges
 
-              titleEl.on('mouseenter', function() {
-                titleEl.popover('show');
-              });
-              titleEl.on('mouseleave', function() {
-                titleEl.popover('hide');
-              });
-              $element.on('$destroy', function() {
-                titleEl.popover('destroy');
-              });
-
-            } //triggerChanges
-
-          } //link
-      }; //return
-    }
-  ]);
+                    } //link
+            }; //return
+        }
+    ]);
 });

@@ -73,7 +73,7 @@ define(['app',
                         //============================================================
                         $scope.$watch('room.rowHeight', function() {
                             if ($scope.room.rowHeight)
-                                $element.height($scope.room.rowHeight);
+                                $element.css('height',$scope.room.rowHeight);
                         });
 
                         initTypes();
@@ -147,7 +147,7 @@ define(['app',
                         //
                         //============================================================
                         function initIntervalWidth() {
-                            $element.width($scope.outerGridWidth);
+                            $element.css('width',$scope.outerGridWidth);
                         } //initDayWidth
 
                         //============================================================

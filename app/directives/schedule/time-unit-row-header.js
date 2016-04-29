@@ -119,7 +119,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment'], function
 
     app.filter('toHour', function() {
         return function(input) {
-            return input.format('hh:mm a');
+            return input.format('HH:mm');
         };
     });
 });

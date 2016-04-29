@@ -31,6 +31,42 @@
       overflow-x: none;
       overflow-y: none;
     }
+
+    .room-row-base {
+      min-height:40px;
+      /*padding: 5px 5px 5px 5px;*/
+      cursor:pointer;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-color: #bbb;
+      border-right-style: solid;
+      border-right-width: 1px;
+      border-right-color: #bbbbbb;
+    }
+    .room-row-base:hover {
+      background-color: #fff;
+    }
+    .room-col-base {
+      position: relative;
+      height: auto;
+      min-height: 90%;
+      display: block;
+      float: left;
+      width: 10%;
+    }
+    .room-column-header {
+      min-height:40px;
+      background-color: #d7d7d7;
+      border-right-style: solid;
+      border-right-width: 1px;
+      border-right-color: #bbbbbb;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-color: #bbb;
+    }
+    .row-stripped {
+      background-color: #f9f9f9;
+    }
   </style>
   <div class="conference-schedule" style="height:94%;">
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
@@ -64,7 +100,8 @@
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
               <input type="text" class="form-control"  ng-model="startTime" style="color:#eee;" ng-change="changeStartTime('start-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'hh:mm a', clearButton: true}">
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: true}"
+                     date-picker-max-date="endTimeObj.format()">
             </div>
           </div>
           <div class="col-xs-1">
@@ -74,7 +111,7 @@
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
               <input type="text" class="form-control"  ng-model="endTime" style="color:#eee;" ng-change="changeEndTime('end-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'hh:mm a', clearButton: true}">
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: true}">
             </div>
           </div>
           <div class="col-xs-1">
@@ -87,8 +124,10 @@
       </div>
     </div>
     <div >
-      <room-column rooms="rooms"></room-column>
-
+      <div id="room-col" class="room-col-base">
+        <div class="room-column-header text-center" style="height:40px;">Rooms</div>
+        <room-row ng-repeat="room in rooms | orderBy:'sort'" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
+      </div>
         <div id="scroll-grid" class="outer">
           <div class="scroll-grid">
         <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="dayObj" conference-days="conferenceDays"></time-unit-row-header>

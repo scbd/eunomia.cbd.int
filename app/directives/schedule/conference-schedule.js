@@ -4,8 +4,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     'services/mongo-storage',
     './time-unit-row',
     './time-unit-row-header',
-    './room-column',
-    './scroll-grid'
+    './room-row'
 ], function(app, _, template, moment) {
 
     app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage',
@@ -70,7 +69,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function initRowHeight() {
-                          
+
                             $document.ready(function() {
                                 $timeout(function() {
                                     var roomColumnEl;
@@ -91,10 +90,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                             $scope.day = moment($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
 
-                            $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('hh:mm a');
+                            $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
                             setEndTime(); // creates passes moment object for children directives
 
-                            $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('hh:mm a');
+                            $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
                             setStartTime(); // creates passes moment object for children directives
 
                         } //initDayTimeSelects

@@ -1,6 +1,6 @@
 define(['app', 'lodash', 'moment',
   'text!directives/forms/edit/room-dialog.html',
-  'BM-date-picker',
+  'directives/date-picker',
   'css!libs/angular-dragula/dist/dragula.css',
   'services/mongo-storage',
   'directives/forms/edit/room',
@@ -125,7 +125,7 @@ define(['app', 'lodash', 'moment',
             var seScroll = $element.find('div.se-scroll');
             var yLabels = $element.find('div.ng-binding.ng-scope');
             var numSlot =0;
-            seScroll.height(roomHolder.height()-120);
+            seScroll.css('height',roomHolder.height()-120);
             $scope.resized=0;
             var cancelHeight = setInterval(function(){
               if(!_.isEmpty(slotElements)){
@@ -134,11 +134,11 @@ define(['app', 'lodash', 'moment',
                             numSlot = room.bookings.length*room.bookings[0].tiers.length;
                         _.each(slotElements[key],function(slot){
                           if(slot.height()<(roomHolder.height()-47-(numSlot*3))/numSlot)
-                              slot.height((roomHolder.height()-47-(numSlot*3))/numSlot);
+                              slot.css('height',(roomHolder.height()-47-(numSlot*3))/numSlot);
                         });
                     });
                     yLabels.each(function(){
-                        $(this).height((roomHolder.height()-47-(numSlot*3))/numSlot);
+                        $(this).css('height',(roomHolder.height()-47-(numSlot*3))/numSlot);
                     });
                     clearInterval(cancelHeight);
                     var roomWidth,numRooms=0,roomEl;
@@ -150,7 +150,7 @@ define(['app', 'lodash', 'moment',
                           roomWidth = roomHolder.width()/numRooms;
                           if(roomWidth>100){
                             roomEl=$element.find('#'+room._id).css('max-width',roomWidth);
-                             roomEl.children().children().children().children().find('grid-reservation-se').width(roomWidth);
+                             roomEl.children().children().children().children().find('grid-reservation-se').css('width',roomWidth);
                           }
                   });
                   $scope.resized=1;
@@ -200,13 +200,12 @@ define(['app', 'lodash', 'moment',
       //============================================================
       $scope.dateChange = function(id) {
         var dayTS;
-        var startDatTS = moment($scope.startDate).unix();
-        var endDatTS = moment($scope.endDate).unix();
+        var startDatTS = moment.utc($scope.startDate).format('X');
+        var endDatTS = moment.utc($scope.endDate).format('X');
 
         if (id === 'start-filter') {
-          $element.find('#end-filter').bootstrapMaterialDatePicker('setMinDate', $scope.startDate);
           _.each($scope.days, function(day, key) {
-            dayTS = moment(day.date).unix();
+            dayTS = moment.utc(day.date).format('X');
             if (dayTS < startDatTS) {
               day.selected = false;
               _.each($scope.options.rooms, function(room) {
@@ -221,9 +220,9 @@ define(['app', 'lodash', 'moment',
           });
         }
         if (id === 'end-filter') {
-          $element.find('#start-filter').bootstrapMaterialDatePicker('setMaxDate', $scope.endDate);
+        //  $element.find('#start-filter').bootstrapMaterialDatePicker('setMaxDate', $scope.endDate);
           _.each($scope.days, function(day, key) {
-            dayTS = moment(day.date).unix();
+            dayTS = moment.utc(day.date).format('X');
             if (dayTS > endDatTS || dayTS < startDatTS) {
               day.selected = false;
               _.each($scope.options.rooms, function(room) {
@@ -237,7 +236,7 @@ define(['app', 'lodash', 'moment',
             }
           });
         }
-        dateChangeEffect(id);
+        //dateChangeEffect(id);
       }; //init
 
       //============================================================
@@ -634,8 +633,8 @@ define(['app', 'lodash', 'moment',
         if (container[0].id === 'unscheduled-side-events') {
           siblings = source.find('div.se-dragable-wrapper.grabbible.ng-scope');
           if (source[0].id !== 'unscheduled-side-events' || el.width() < 200) {
-            el.height(164);
-            el.width(254);
+            el.css('height',164);
+            el.css('width',254);
           }
 
         } else if(source[0].id === 'unscheduled-side-events') {
@@ -643,11 +642,11 @@ define(['app', 'lodash', 'moment',
           el.children('div.drag-view.text-center').show();
            siblings = $element.find('#res-el');
           if (siblings.length > 0) {
-            el.height(siblings.height());
-            el.width(siblings.width());
+            el.css('height',siblings.height());
+            el.css('width',siblings.width());
           } else {
-            el.height(16);
-            el.width(50);
+            el.css('height',16);
+            el.css('width',50);
           }
         }//else
       });

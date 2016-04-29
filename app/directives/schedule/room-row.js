@@ -1,7 +1,7 @@
-define(['app', 'lodash', 'text!./room-row.html','text!../forms/edit/room-dialog.html','css!./room-row.css',
+define(['app', 'text!./room-row.html','text!../forms/edit/room-dialog.html',
   'ngDialog',
   '../forms/edit/room',
-], function(app, _, template,roomDialog) {
+], function(app, template,roomDialog) {
 
   app.directive("roomRow", ['ngDialog',
     function(ngDialog) {
@@ -13,12 +13,14 @@ define(['app', 'lodash', 'text!./room-row.html','text!../forms/edit/room-dialog.
         scope: {
           'room': '='
         },
-        controller: function($scope,$element) {
+        link: function($scope,$element) {
 
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('room.rowHeight',function(){
-              if($scope.room.rowHeight){
-                $element.height($scope.room.rowHeight);
-              }
+              if($scope.room.rowHeight)
+                $element.css('height',$scope.room.rowHeight);
             });
 
             //============================================================
