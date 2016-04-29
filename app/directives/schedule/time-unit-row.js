@@ -1,4 +1,8 @@
-define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reservation-dialog.html','moment','css!./time-unit-row.css',
+define(['app',
+'lodash',
+'text!./time-unit-row.html',
+'text!../forms/edit/reservation-dialog.html',
+'moment',
  'ngDialog',
  '../forms/edit/reservation',
 './grid-reservation'
@@ -20,34 +24,52 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
           'day':'='
         },
         require: '^conferenceSchedule',
-        link: function($scope, $element, $attr, schedule) { // jshint ignore:line
+        link: function($scope, $element, $attr, schedule) {
 
                 $scope.schedule=schedule;
-        },
-        controller: function($scope, $element) {
+
 
             var timeUnit = 900.025;//15 minutes in seconds
             var subIntervals,allOrgs ;// number on sub time intervals in a col, now a colomm is houw
+
             mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
               allOrgs = orgs.data;
             });
+
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('conferenceDays',function(){
                 initTimeIntervals();
             });
+
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('startTime',function(){
 
                 initTimeIntervals();
             });
+
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('endTime',function(){
 
                 initTimeIntervals();
             });
 
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('day',function(){
               if($scope.day)
                 initTimeIntervals();
             });
 
+            //============================================================
+            //
+            //============================================================
             $scope.$watch('room.rowHeight',function(){
               if($scope.room.rowHeight)
                 $element.height($scope.room.rowHeight);
@@ -125,7 +147,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             function initIntervalWidth(){
                   $element.width($scope.outerGridWidth);
-                  //$element.width($scope.outerGridWidth*$scope.conferenceDays.length);
             }//initDayWidth
 
 
@@ -143,7 +164,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
             //============================================================
             function initTypes() {
               $scope.options={};
-              var parentObj;
               return mongoStorage.getDocs('reservation-types', status,true).then(function(result) {
                 $scope.options.types = result.data;
               }).catch(function onerror(response) {
@@ -222,10 +242,8 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
               }// if
             }// getDocs
 
-
-
             //============================================================
-            //
+            //ensure deleted res do not remain
             //============================================================
             function cleanSchedule (res) {
 
@@ -244,7 +262,6 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                      }
           }//calcResWidth
 
-
             //============================================================
             //
             //============================================================
@@ -253,7 +270,7 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                   var resEnd = moment.utc(res.end).format('X');
                   var resWidth = Math.ceil((resEnd - resStart)/timeUnit)*($scope.colWidth/subIntervals);
                   return Number(resWidth);
-            };//calcResWidth
+            }//calcResWidth
 
             //============================================================
             //
@@ -315,7 +332,9 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                       });
                 });
             };//$scope.roomDialog
+
           } //link
+
       }; //return
     }
   ]);
