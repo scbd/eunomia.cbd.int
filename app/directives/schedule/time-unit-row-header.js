@@ -42,7 +42,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html','moment','css!./time
                   $scope.timeIntervals = [];
                   var t = moment.utc($scope.day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
 
-                  for(var  i=0; i<hours ; i++)
+                  for(var  i=0; i<hours+1 ; i++)
                   {
                     $scope.timeIntervals.push(moment(t));
                     t=t.add(1,'hours');

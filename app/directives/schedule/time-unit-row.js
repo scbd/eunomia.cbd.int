@@ -64,10 +64,10 @@ define(['app', 'lodash', 'text!./time-unit-row.html','text!../forms/edit/reserva
                   var hours = $scope.endTime.hours()-$scope.startTime.hours();
                   var subIntervals = 3600/timeUnit;
                   $scope.timeIntervals = [];
-                //  _.each($scope.conferenceDays,function(day){
+
                         var t = moment($scope.day).add($scope.startTime.hours(),'hours').add($scope.startTime.minutes(),'minutes');
 
-                        for(var  i=0; i< hours ; i++)
+                        for(var  i=0; i<= hours+1 ; i++)
                         {
                               var intervalObj={};
                               intervalObj.subIntervals=[];
