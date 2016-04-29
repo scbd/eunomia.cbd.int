@@ -33,9 +33,6 @@
           </div>
         </div>
 
-
-
-
         <div class="col-xs-6 col-xs-offset-2">
           <div class="col-xs-1">
             <button ng-click="prevDay()" style="margin-top:5px;" tool-tip type="button" class="btn btn-fab btn-fab-mini"  data-placement="top" title="" data-original-title="Prev Day">
@@ -44,19 +41,16 @@
           </div>
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
-              <input type="text" class="form-control" name="code" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
+              <input id="#day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
                      date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: true,weekStart: 0 }"
-                     date-picker-min-date="framesCtrl.eventGroup.StartDate"
-                     date-picker-max-date="framesCtrl.eventGroup.EndDate">
+                     date-picker-min-date="conference.startObj"
+                     date-picker-max-date="conference.endObj">
             </div>
           </div>
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
-              <input id="start-time-filter" class="form-control" type="text" ng-model="startTime" ng-change="changeStartTime('start-time-filter')" style="color:#eee;">
-              <!-- <input type="text" class="form-control" name="code" ng-model="startTime" style="color:#eee;" ng-change="changeDay('day-filter')"
-                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: true,weekStart: 0 }"
-                     date-picker-min-date="framesCtrl.eventGroup.StartDate"
-                     date-picker-max-date="framesCtrl.eventGroup.EndDate"> -->
+              <input type="text" class="form-control"  ng-model="startTime" style="color:#eee;" ng-change="changeStartTime('start-time-filter')"
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'hh:mm a', clearButton: true}">
             </div>
           </div>
           <div class="col-xs-1">
@@ -65,7 +59,8 @@
           </div>
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
-              <input id="end-time-filter" class="form-control" type="text" ng-model="endTime" ng-change="changeEndTime('end-time-filter')" style="color:#eee;">
+              <input type="text" class="form-control"  ng-model="endTime" style="color:#eee;" ng-change="changeEndTime('end-time-filter')"
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'hh:mm a', clearButton: true}">
             </div>
           </div>
           <div class="col-xs-1">
