@@ -1,27 +1,20 @@
-define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
-  'text!../../directives/forms/edit/reservation-type-dialog.html',
-  '../../services/mongo-storage',
-  '../../directives/tool-tip',
-
-  '../../directives/forms/edit/reservation-type',
+define(['app', 'lodash','text!directives/forms/edit/delete-dialog.html',
+  'text!directives/forms/edit/reservation-type-dialog.html',
+  'services/mongo-storage',
+  'directives/tool-tip',
+  'directives/forms/edit/reservation-type',
   'ngDialog',
-  'css!libs/ng-dialog/css/ngDialog.css',
-  'css!libs/ng-dialog/css/ngDialog-theme-default.min.css',
-  // 'bs-colorpicker',
-  // 'css!bs-colorpicker-css',
-  '../../directives/color-picker'
+  'directives/color-picker'
 ], function(app, _,deleteDialog,resTypeDialog) {
 
-  app.controller("reservationType", ['$scope', '$element', 'scbdMenuService', 'mongoStorage', '$timeout', '$rootScope', 'ngDialog', '$document',
-    function($scope, $element, scbdMenuService, mongoStorage, $timeout, $rootScope, ngDialog, $document) {
-
+return  ['$scope','mongoStorage', '$timeout', '$rootScope', 'ngDialog', '$document',
+    function($scope, mongoStorage, $timeout, $rootScope, ngDialog, $document) {
+      var $element = $document.find('#reservation-types');
       $scope.sideEvents = [];
       $scope.days = [];
       $scope.meeting = 0;
       $scope.search = '';
       $scope.rooms = {};
-
-  //    $scope.updateColorSquare = updateColorSquare;
 
       init();
 
@@ -30,8 +23,6 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
       //============================================================
       function init() {
         $scope.options = {};
-        $scope.toggle = scbdMenuService.toggle;
-  //      updateColorSquare();
         triggerChanges();
         loadTypes();
       } //init
@@ -104,15 +95,7 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
       $scope.hasError = function() {
         return !!$scope.error;
       };
-      // //============================================================
-      // //
-      // //============================================================
-      // function updateColorSquare(id, color) {
-      //   $timeout(function() {
-      //     $element.find('#' + id).css('color', color);
-      //     $element.find('#roomColor').trigger("change");
-      //   });
-      // } //updateColorSquare
+
       //============================================================
       //
       //============================================================
@@ -164,7 +147,7 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
               console.log(error);
               $rootScope.$broadcast("showError","There was an error saving your Reservation Type: '"+objClone.title+"' to the server.");
           });
-      }//save
+      };//save
       //============================================================
       //
       //============================================================
@@ -172,7 +155,7 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
           var initObj = _.find($scope.initialState,{'_id':obj._id});
           if(initObj[propertyName] !== obj[propertyName]) $scope.save(obj);
 
-      }//save
+      };//save
       //============================================================
       //
       //============================================================
@@ -206,7 +189,7 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
               console.log(error);
               $rootScope.$broadcast("showError","There was an error deleting your Reservation Type: '"+objClone.title+"' to the server.");
           });
-      }//save
+      };//save
 
       //============================================================
       //
@@ -247,6 +230,6 @@ define(['app', 'lodash','text!../../directives/forms/edit/delete-dialog.html',
         $.material.ripples();
       });
     }
-  ]);
+  ];
 
 });

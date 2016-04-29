@@ -1,79 +1,13 @@
+<div id="reservation-types" class="container-fluid" style="height:100%;width:100%">
 
-<style>
-  .small {
-    transform: scale(0.8, 0.8);
-    -ms-transform: scale(0.8, 0.8);
-    /* IE 9 */
-    -webkit-transform: scale(0.8, 0.8);
-    /* Safari and Chrome */
-    -o-transform: scale(0.8, 0.8);
-    /* Opera */
-    -moz-transform: scale(0.8, 0.8);
-    /* Firefox */
-  }
-.form-group{margin-top:10px;}
-.btn-group-vertical a i {z-index:-1;}
-@media
-only screen and (max-width: 760px),
-(min-device-width: 768px) and (max-device-width: 1024px)  {
-
-	/* Force table to not be like tables anymore */
-	table, thead, tbody, th, td, tr {
-		display: block;
-	}
-
-	/* Hide table headers (but not display: none;, for accessibility) */
-	thead tr {
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
-
-	tr { border: 1px solid #ccc; }
-
-	td {
-		/* Behave  like a "row" */
-		border: none;
-		border-bottom: 1px solid #eee;
-		position: relative;
-		padding-left: 50%;
-	}
-}
-</style>
-<div ng-controller="reservationType" class="container-fluid" style="height:100%;width:100%">
-<!-- header -->
-<div class="row  view-header text-center" style="position:relative;">
-  <div class="view-title pull-left"><i class="fa fa-bars" aria-hidden="true" ng-click="toggle('mainMenu')"></i> Reservation Types
-    <span class="badge" style="position:absolute;top:3px;left:250px;">{{reservations.length}}</span>
+  <div class="alert alert-danger" ng-show="hasError()">
+    <strong>Error as occured...</strong>
+    <div>{{error}}</div>
   </div>
-  <div class="hidden-xs" style="position:absolute;top:-12px;right:1px;width:260px;" >
-    <div class="relative">
-      <div class="form-group label-floating">
-        <div class="input-group">
-          <label class="control-label" for="searchSe">Search Reservation Types</label>
-          <input type="text" id="searchSe" class="form-control" ng-model="search">
-          <span class="input-group-btn small">
-            <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';">
-              <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
-            </button>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
+
+  <div ng-include="'/app/views/admin/reservation-types-table.html'"></div>
+
+  <button ng-click="typeDialog()" tool-tip type="button" class="btn btn-fab btn-fab hidden-md hidden-lg hidden-xl" style="position:fixed;bottom:10px; right:10px" data-placement="top" title="" data-original-title="New Reservation Type">
+    <i class="fa fa-plus"></i>
+  </button>
 </div>
-<div class="alert alert-danger" ng-show="hasError()">
-  <strong>Error as occured...</strong>
-  <div>{{error}}</div>
-</div>
-
-<div  ng-include="'/app/views/admin/reservation-types-table.html'"></div>
-
-<button ng-click="typeDialog()"  tool-tip type="button" class="btn btn-fab btn-fab hidden-md hidden-lg hidden-xl" style="position:fixed;bottom:10px; right:10px"  data-placement="top" title="" data-original-title="New Reservation Type">
-  <i class="fa fa-plus"></i>
-</button>
-
-</div>
-
-
-
