@@ -28,8 +28,8 @@
   </style>
 
   <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir" style="border:none;" data-toggle="popover" data-placement="top" style="margin:0 0 0 0;">
-    <span class="text-center" style="font-weight:500;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
-    <span ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
+    <span class="text-center" style="font-weight:500;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">#{{doc.sideEvent.id}}</span>
+    <span ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
     <span class="text-center" ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
       <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs">
         <img src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym}}
@@ -38,11 +38,11 @@
     </span>
     <div id="pop-title" style="display: none;">
       <div class="text-center">
-        <span>{{doc.title}}</span>
+        <span>#{{doc.sideEvent.id}}</span>
       </div>
       <br>
       <div>
-        <span>{{doc.sideEvent.title}}</span>
+        <span>{{doc.title}}</span>
       </div>
       <br>
       <div>
