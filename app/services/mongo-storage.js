@@ -16,16 +16,20 @@ define(['app', 'lodash'], function(app, _) {
 
             if(!doc.start || !doc.end || !location) throw "Error missing start or end time or location.";
 
-            if (doc._id) {
-                params.id = doc._id;
-                url = url + '/' + doc._id;
+                      if (doc._id) {
+                          params.id = doc._id;
+                          url = url + '/' + doc._id;
 
-                return $http.patch(url, doc, {
-                    'params': params
-                });
-            } else {
-                return $http.post(url, doc, params);
-            } //create
+                          return $http.patch(url, doc, {
+                              'params': params
+                          });
+                      } else {
+                          return $http.post(url, doc, params);
+                      } //create
+
+
+
+
         }
 
         //============================================================
@@ -80,20 +84,21 @@ define(['app', 'lodash'], function(app, _) {
             };
 
             //TODO search if parent and if yes search for parent or children
-            if (type && _.isString(type)){
-              return getChildrenTypes(type).then(function(typeArr){
-                      params.q.$and.push({
-                          'type': {'$in':typeArr}
-                      });
+            if (type && _.isString(type)) {
+                return getChildrenTypes(type).then(function(typeArr) {
+                    params.q.$and.push({
+                        'type': {
+                            '$in': typeArr
+                        }
+                    });
                     return $http.get('/api/v2016/reservations', {
                         'params': params
                     });
-              });
-
-            }else
-            return $http.get('/api/v2016/reservations', {
-                'params': params
-            });
+                });
+            } else
+                return $http.get('/api/v2016/reservations', {
+                    'params': params
+                });
         } // getDocs
 
         //============================================================
@@ -212,7 +217,6 @@ define(['app', 'lodash'], function(app, _) {
             return $http.get('/api/v2016/conferences/' + id + '/rooms', {});
         } // getConferenceRooms
 
-
         //============================================================
         //
         //============================================================
@@ -257,29 +261,27 @@ define(['app', 'lodash'], function(app, _) {
             });
         }
 
-
         //============================================================
         //
         //============================================================
         function getChildrenTypes(type) {
-              var types = [];
-              types.push(type);
-              var     params = {
-                    q: {
-                      'parent': type
-                    }
-                  };
-                  return $http.get('/api/v2016/reservation-types', {
-                    'params': params
-                  }).then(function(responce) {
-                        _.each(responce.data,function(t){
-                              types.push(t._id);
-                        });
-                        return types;
-                  });
+            var types = [];
+            types.push(type);
+            var params = {
+                q: {
+                    'parent': type
+                }
+            };
+            return $http.get('/api/v2016/reservation-types', {
+                'params': params
+            }).then(function(responce) {
+                _.each(responce.data, function(t) {
+                    types.push(t._id);
+                });
+                return types;
+            });
 
-        }//loadSideEventTypes
-
+        } //loadSideEventTypes
 
         //============================================================
         //
@@ -289,7 +291,10 @@ define(['app', 'lodash'], function(app, _) {
             return $http.get('/api/v2016/reservations/sync/side-events/' + conferenceId);
         }
 
+
+
         return {
+            getRecurrences:getRecurrences,
             getReservation: getReservation,
             getConferences: getConferences,
             getAllOrgs: getAllOrgs,
@@ -301,7 +306,6 @@ define(['app', 'lodash'], function(app, _) {
             getUnscheduledSideEvents: getUnscheduledSideEvents,
             getReservations: getReservations,
             getDocs: getDocs,
-        };
-    }]);
-
-});
+        }; //return
+    }]); //factory
+}); //require
