@@ -7,23 +7,55 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     './room-row'
 ], function(app, _, template, moment) {
 
-    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage',
-        function($timeout, $document, mongoStorage) {
+    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope',
+        function($timeout, $document, mongoStorage,$rootScope) {
             return {
                 restrict: 'E',
                 template: template,
                 replace: true,
                 transclude: false,
+                require:'conferenceSchedule',
                 scope: {
-                    'day': '=',
-                    'startTime': '=',
-                    'endTime': '=',
                     'search': '='
                 },
-                controller: function($scope, $element) {
+                link: function($scope, $element,$attr,ctrl) {
 
                         init();
 
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.$watch('startTimeObj', function(val,prevVal) {
+                            if (val && val !==prevVal){
+                                  if($scope.startTimeObj.as('seconds')>=$scope.endTimeObj.as('seconds')){
+
+
+                                      $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
+                                      setEndTime(); // creates passes moment object for children directives
+
+                                      $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
+                                      setStartTime(); // creates passes moment object for children directives
+                                      $rootScope.$broadcast("showError", "Start time cannot be after or equal to the end time.");
+                                  }
+                            }
+                        });
+
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.$watch('endTimeObj', function(val,prevVal) {
+
+                          if (val && val !==prevVal){
+                                if($scope.startTimeObj.as('seconds')>=$scope.endTimeObj.as('seconds')){
+                                    $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
+                                    setEndTime(); // creates passes moment object for children directives
+
+                                    $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
+                                    setStartTime(); // creates passes moment object for children directives
+                                    $rootScope.$broadcast("showError", "End time cannot be  before or equal to the start time.");
+                                }
+                          }
+                        });
 
                         //============================================================
                         //
