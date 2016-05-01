@@ -98,7 +98,7 @@ define(['app', 'lodash',
                                     $scope.doc.recurrence=false;
                                     $scope.save($scope.doc);
                                   }
-console.log('after children $scope.doc.',$scope.doc);
+
                               });
                             }
                         } //init
@@ -315,14 +315,12 @@ console.log('after children $scope.doc.',$scope.doc);
                         function saveRecurrences(doc) {
                           var docClone;
                           if(!doc.children)doc.children=[];
-        console.log('$scope.reccurrence',$scope.recurrence);
+
                           if(!_.isEmpty($scope.recurrence)){
 
                               _.each($scope.recurrence,function(v,k){
                                     var isSame = (moment.utc(doc.start).startOf('day').isSame(moment.utc($scope.conferenceDays[0]).startOf('day').add(k,'days')));
-                                    if(v && !doc.children.length>0 && !isSame ){ // create
-                                      console.log('doc.children',doc.children);
-                                        console.log('k',k);
+                                    if(v && doc.children.length===0 && !isSame ){ // create
                                         docClone = cleanReservation(doc);
                                         delete(docClone._id);
                                         var resStartSeconds = moment.utc(doc.start).format('X')-moment.utc(doc.start).startOf('day').format('X');
@@ -332,7 +330,6 @@ console.log('after children $scope.doc.',$scope.doc);
                                         delete(docClone.recurrence);
                                         delete(docClone.meta);
                                         docClone.parent=doc._id;
-                                        console.log('saving repeat  -----',docClone);
                                         mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
                                             console.log(error);
                                             $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
@@ -367,9 +364,7 @@ console.log('after children $scope.doc.',$scope.doc);
                                     if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day'))
                                         $scope.timeUnitRowCtrl.setDay(moment.utc($scope.doc.start).startOf('day'));
 
-console.log('$scope.doc.reccurence',$scope.doc.recurrence);
                                     if($scope.doc.recurrence){
-            console.log(res.data);
                                         saveRecurrences(obj);
                                     }
                                 }, 500);
