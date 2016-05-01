@@ -23,11 +23,11 @@ define(['app',
                     'rooms': '=',
                     'day': '='
                 },
-                require: '^conferenceSchedule',
+                require: ['^conferenceSchedule','timeUnitRow'],
                 link: function($scope, $element, $attr, schedule) {
 
-                        $scope.schedule = schedule;
-
+                        $scope.schedule = schedule[0];
+                        $scope.timeUnitRowCtrl = schedule[1];
 
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
@@ -106,7 +106,7 @@ define(['app',
 
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
-                                    getReservations();
+                                    $scope.getReservations();
                                 });
                             }
                         } //initTimeIntervals
@@ -175,7 +175,7 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        function getReservations(resId) {
+                        $scope.getReservations = function (resId) {
                             cleanSchedule(resId);
                             if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
 
@@ -193,22 +193,22 @@ define(['app',
                                         initTypes().then(function() {
                                             calcAllResWidths($scope.reservations);
                                             _.each($scope.reservations, function(res) {
-
                                                 embedTypeInRes(res);
                                                 embedOrgsSideEvent(res);
-                                                loadReservationInRow(res);
+                                                loadReservationsInRow(res);
                                             });
                                         });
                                         inProgress = false;
                                     }
                                 ); // mongoStorage.getReservations
                             } // if
-                        } // getReservations
+                        }; // getReservations
+
 
                         //============================================================
                         //
                         //============================================================
-                        function loadReservationInRow(res) {
+                        function loadReservationsInRow(res) {
 
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
                                 for (var j = 0; j < intervalDuration; j++) {
@@ -310,48 +310,6 @@ define(['app',
                         } //calcResWidth
 
 
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.save = function(obj) {
-
-                            var objClone = _.cloneDeep(obj);
-
-                            delete(objClone.test);
-                            delete(objClone.startDisp);
-                            delete(objClone.endDisp);
-                            delete(objClone.typeObj);
-                            delete(objClone.repeat);
-                            delete(objClone.repeatDay);
-                            if (!objClone.location) {
-                                objClone.location = {};
-                                objClone.location.venue = '56d76c787e893e40650e4170';
-                                objClone.location.room = $scope.room._id;
-                            } else if (!objClone.location.venue)
-                                objClone.location.venue = '56d76c787e893e40650e4170';
-
-                            return mongoStorage.save('reservations', objClone, objClone._id).then(function() {
-                                $timeout(function() {
-
-                                    if (objClone.location.room !== $scope.room._id)
-                                        $scope.schedule.resetSchedule();
-
-                                    if (objClone.meta && objClone.meta.status === 'deleted') {
-                                        var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id); //_.findKey($scope.reservations,{'_.id':objClone._id});
-                                        delete($scope.reservations[deleted]);
-                                        if (deleted === 0 || deleted) $scope.reservations.splice(deleted, 1);
-                                    }
-
-                                    getReservations(objClone._id);
-                                }, 500);
-                                $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
-                            }).catch(function(error) {
-                                console.log(error);
-                                $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + objClone.title + "' to the server.");
-                            });
-                        }; //save
-
                         //============================================================
                         //
                         //============================================================
@@ -359,21 +317,54 @@ define(['app',
 
                             $scope.editRes = doc || {};
                             $scope.editStart = start;
-                            var dialog = ngDialog.open({
+                            ngDialog.open({
                                 template: resDialog,
                                 className: 'ngdialog-theme-default',
                                 closeByDocument: true,
                                 plain: true,
                                 scope: $scope
                             });
-                            dialog.closePromise.then(function(ret) {
-                                if (ret.value == 'save') $scope.save(doc).then($scope.close).catch(function onerror(response) {
-                                    $scope.onError(response);
-                                });
-                            });
+
                         }; //$scope.roomDialog
 
-                    } //link
+                    }, //link
+
+                    controller:function($scope){
+
+                      $scope.getReservations='';
+                      //============================================================
+                      //
+                      //===========================================================
+                      this.resetSchedule= function() {
+                          $scope.schedule.resetSchedule();
+                      }; //resetSchedule
+
+                      //============================================================
+                      //
+                      //===========================================================
+                      this.setDay= function(day) {
+                          $scope.schedule.setDay(day);
+                      }; //resetSchedule
+
+                      //============================================================
+                      //
+                      //===========================================================
+                      this.deleteRes= function(objClone) {
+                            if (objClone.meta && objClone.meta.status === 'deleted') {
+                                var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);
+                                delete($scope.reservations[deleted]);
+                                if (deleted === 0 || deleted) $scope.reservations.splice(deleted, 1);
+                            }
+                      };//deleteRes
+
+                      //============================================================
+                      //
+                      //===========================================================
+                      this.getReservations= function(objId) {
+                          $scope.getReservations(objId);
+                      }; //resetSchedule
+
+                    }
 
             }; //return
         }
