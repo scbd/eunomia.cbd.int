@@ -92,7 +92,7 @@
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
               <input id="#day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
-                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: true,weekStart: 0 }"
+                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
                      date-picker-min-date="conference.startObj"
                      date-picker-max-date="conference.endObj">
             </div>
@@ -100,7 +100,7 @@
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
               <input type="text" class="form-control"  ng-model="startTime" style="color:#eee;" ng-change="changeStartTime('start-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: true}"
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false}"
                      date-picker-max-date="endTimeObj.format()">
             </div>
           </div>
@@ -111,7 +111,7 @@
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
               <input type="text" class="form-control"  ng-model="endTime" style="color:#eee;" ng-change="changeEndTime('end-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: true}">
+                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false}">
             </div>
           </div>
           <div class="col-xs-1">
