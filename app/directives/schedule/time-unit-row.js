@@ -314,8 +314,12 @@ define(['app',
                         //
                         //============================================================
                         $scope.resDialog = function(doc, start) {
+                            if(!doc._id)
+                              $scope.editRes = {};
+                              else
+                              $scope.editRes=doc;
 
-                            $scope.editRes = doc || {};
+
                             $scope.editStart = start;
                             ngDialog.open({
                                 template: resDialog,
