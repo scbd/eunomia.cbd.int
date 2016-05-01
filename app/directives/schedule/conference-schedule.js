@@ -79,9 +79,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
 
                             getConferences().then(function() {
-                                initDay();
+
                                 initDayTimeSelects();
                                 $scope.getRooms();
+                                initDay();
                             });
 
                             setStartTime();
@@ -94,26 +95,21 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function initDay() {
-                            $scope.dayObj = moment.utc($scope.conference.start * 1000).startOf('day');
+                            var start = moment.utc($scope.conference.start* 1000).startOf('day');
+                            var end =  moment.utc($scope.conference.end * 1000).startOf('day');
+
+                            $scope.dayObj = moment.utc().startOf('day');
+                            if($scope.dayObj.isSameOrAfter(start) && $scope.dayObj.isSameOrBefore(end))
+                            {
+                              $timeout(function() {
+                                  $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
+                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
+                                  $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                              }, 100);
+                            }
                         } //init
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function initRowHeight() {
 
-                            $document.ready(function() {
-                                $timeout(function() {
-                                    var roomColumnEl;
-                                    roomColumnEl = $document.find('#room-col');
-                                    $scope.rowHeight = Math.floor(Number(roomColumnEl.height()) / $scope.rooms.length);
-                                    if ($scope.rowHeight < 60) $scope.rowHeight = 60;
-                                    _.each($scope.rooms, function(room) {
-                                        room.rowHeight = $scope.rowHeight;
-                                    });
-                                });
-                            });
-                        } //initRooms
 
                         //============================================================
                         //
@@ -242,26 +238,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.dayObj = moment.utc($scope.day, 'dddd YYYY-MM-DD').startOf('day');
                         } //getStartTime
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function generateDays() {
 
-                            $scope.conferenceDays = [];
-                            var numDays = Math.floor((Number($scope.conference.end) - Number($scope.conference.start)) / (24 * 60 * 60));
-                            $scope.conference.endObj = moment.utc(Number($scope.conference.end) * 1000).startOf('day');
-                            $scope.conference.startObj = moment.utc(Number($scope.conference.start) * 1000).startOf('day');
-
-
-                            $scope.startDay = moment($scope.conference.startObj);
-                            $scope.endDay = moment($scope.conference.endObj);
-                            var date = moment($scope.conference.startObj);
-                            for (var i = 0; i <= numDays; i++) {
-                                $scope.conferenceDays.push(moment(date));
-                                date.add(1, 'day');
-                            }
-
-                        } //generateDays
 
                         //============================================================
                         //
@@ -298,22 +275,69 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             return mongoStorage.getConferenceRooms($scope.conferenceId).then(function(res) {
                                 $scope.rooms = res.data;
                             }).then(function() {
-                                initRowHeight();
-                                generateDays();
+                                ctrl.initRowHeight();
+                                ctrl.generateDays();
                             });
                         }; //initRooms
 
-                        //============================================================
-                        // used by child dir, timeRow
-                        //============================================================
-                        this.resetSchedule = function() {
 
-                            initRowHeight();
-                            generateDays();
-                        }; //this.resetSchedule
+                    }, //link
+                    controller: function($scope) {
+                      //============================================================
+                      // used by child dir, timeRow
+                      //============================================================
+                      this.resetSchedule = function() {
 
-                    } //controller
-            }; //return
-        }
-    ]);
+                          this.initRowHeight();
+                          this.generateDays();
+                      }; //this.resetSchedule
+                      //============================================================
+                      // used by child dir, timeRow
+                      //============================================================
+                      this.setDay = function(day) {
+
+                          $scope.dayObj = day;
+                          $scope.day = moment.utc($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
+                      }; //this.resetSchedule
+                      //============================================================
+                      //
+                      //============================================================
+                      this.generateDays= function() {
+
+                          $scope.conferenceDays = [];
+                          var numDays = Math.floor((Number($scope.conference.end) - Number($scope.conference.start)) / (24 * 60 * 60));
+                          $scope.conference.endObj = moment.utc(Number($scope.conference.end) * 1000).startOf('day');
+                          $scope.conference.startObj = moment.utc(Number($scope.conference.start) * 1000).startOf('day');
+
+
+                          $scope.startDay = moment($scope.conference.startObj);
+                          $scope.endDay = moment($scope.conference.endObj);
+                          var date = moment($scope.conference.startObj);
+                          for (var i = 0; i <= numDays; i++) {
+                              $scope.conferenceDays.push(moment(date));
+                              date.add(1, 'day');
+                          }
+
+                      }; //generateDays
+
+                      //============================================================
+                      //
+                      //============================================================
+                      this.initRowHeight = function() {
+
+                          $document.ready(function() {
+                              $timeout(function() {
+                                  var roomColumnEl;
+                                  roomColumnEl = $document.find('#room-col');
+                                  $scope.rowHeight = Math.floor(Number(roomColumnEl.height()) / $scope.rooms.length);
+                                  if ($scope.rowHeight < 60) $scope.rowHeight = 60;
+                                  _.each($scope.rooms, function(room) {
+                                      room.rowHeight = $scope.rowHeight;
+                                  });
+                              });
+                          });
+                      }; //this.initRowHeight
+            } //return
+        };
+    }]);
 });
