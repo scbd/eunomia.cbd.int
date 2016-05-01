@@ -1,6 +1,6 @@
 define(['app', 'lodash'], function(app, _) {
 
-    app.factory("mongoStorage", ['$http', function($http) {
+    app.factory("mongoStorage", ['$http','$rootScope', function($http,$rootScope) {
 
         var clientOrg = 0; // means cbd
 
@@ -10,10 +10,12 @@ define(['app', 'lodash'], function(app, _) {
         function saveRes(res) {
             var url = '/api/v2016/reservations';
             var doc = _.cloneDeep(res);
-            delete(doc.sideEvent);
+            if (doc.sideEvent) delete(doc.sideEvent);
             var params = {};
             if (!doc.clientOrg) doc.clientOrg = clientOrg;
-            if (doc.sideEvent) delete(doc.sideEvent);
+
+            if(!doc.start || !doc.end || !location) throw "Error missing start or end time or location.";
+
             if (doc._id) {
                 params.id = doc._id;
                 url = url + '/' + doc._id;
@@ -105,6 +107,30 @@ define(['app', 'lodash'], function(app, _) {
                 'params': params
             });
         } // getDocs
+        //============================================================
+        //
+        //============================================================
+        function getRecurrences(parent) {
+
+            var params = {};
+            if(!parent) throw "Error: no parent id passed to getReccurences.";
+            params ={ q: {
+                'meta.status': {
+                    $nin: ['archived', 'deleted']
+                },
+                'sideEvent.meta.status': {
+                    $nin: ['archived', 'deleted']
+                }
+            }};
+
+
+            params.q.parent=parent;
+
+
+            return   $http.get('/api/v2016/reservations/', {
+                  'params': params
+              });
+        } // getReccurences
 
         //============================================================
         //
