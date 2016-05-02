@@ -1,6 +1,6 @@
 define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(app, template) {
 
-    app.directive("cctvFrameAnnouncement", ['$filter', function($filter) {
+    app.directive("cctvFrameAnnouncement", ['$filter', '$window', function($filter, $window) {
         return {
             restrict: 'E',
             template: template,
@@ -25,6 +25,13 @@ define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(a
 
                     if(options && options.useCss)
                         document.execCommand('styleWithCSS', false, true);
+
+                    if(!options.arg && options.prompt) {
+                        options.arg = $window.prompt(options.prompt);
+
+                        if(!options.arg)
+                            return;
+                    }
 
                     document.execCommand(cmd,false, (options && options.arg)||null);
 
