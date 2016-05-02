@@ -284,8 +284,14 @@ define(['app',
                             var typeFound = _.find($scope.options.types, {
                                 '_id': res.type
                             });
+                            var subFound = _.find($scope.options.types, {
+                                '_id': res.subType
+                            });
                             if (typeFound) {
                                 res.typeObj = typeFound;
+                            }
+                            if (subFound ) {
+                                res.subTypeObj = subFound;
                             }
                         } //embedTypeInRes
 

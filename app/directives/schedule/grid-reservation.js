@@ -36,6 +36,11 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
                             $element.on('$destroy', function() {
                                 titleEl.popover('destroy');
                             });
+                            
+                            if($scope.doc.typeObj)
+                                $scope.color=$scope.doc.typeObj.color;
+                            if($scope.doc.subTypeObj)
+                              $scope.color=$scope.doc.subTypeObj.color;
 
                         } //triggerChanges
 
