@@ -26,10 +26,6 @@ define(['app', 'lodash'], function(app, _) {
                       } else {
                           return $http.post(url, doc, params);
                       } //create
-
-
-
-
         }
 
         //============================================================
@@ -44,7 +40,7 @@ define(['app', 'lodash'], function(app, _) {
                 params.id = doc._id;
                 url = url + '/' + doc._id;
 
-                return $http.put(url, doc, params);
+                return $http.patch(url, doc, params);
             } else {
                 return $http.post(url, doc, params);
             } //create
