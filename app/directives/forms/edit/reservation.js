@@ -190,16 +190,6 @@ define(['app', 'lodash',
                             });
                         }
 
-
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function generateSeries() {
-                        //     if(_.isEmpty($scope.series)) $scope.series= [];
-                        // }//init
-
-
-
                         //============================================================
                         //
                         //============================================================
@@ -218,11 +208,6 @@ define(['app', 'lodash',
                         //============================================================
                         function initMaterial() {
                             $document.ready(function() {
-                                // $.material.init();
-                                // $.material.input();
-                                // $.material.ripples();
-                                // $.material.checkbox();
-
                                 $timeout(function() {
                                     if ($scope.doc.startT)
                                         $scope.doc.start = moment.utc($scope.doc.start).format('YYYY-MM-DD HH:mm');
@@ -238,6 +223,7 @@ define(['app', 'lodash',
                                 });
                             });
                         } //init
+
                         //============================================================
                         //
                         //============================================================
@@ -247,7 +233,6 @@ define(['app', 'lodash',
                             });
                             $scope.tabs[tabName].active = true;
                         }; //initVunues
-
 
                         //============================================================
                         //
@@ -313,6 +298,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         function saveRecurrences(doc) {
+                          if($scope.doc.recurrence){
                           var docClone;
                           if(!doc.children)doc.children=[];
 
@@ -345,6 +331,7 @@ define(['app', 'lodash',
                                     }
                               });
                             }else throw"Error thrying to update reccurences but reccurrence is empty.";
+                          }
                         } //initVunues
                         //============================================================
                         //
@@ -356,17 +343,17 @@ define(['app', 'lodash',
                             return mongoStorage.save('reservations', objClone, objClone._id).then(function(res) {
                                 $timeout(function() {
                                     if(res.data.id)obj._id=res.data.id;
-                                    if (objClone.location.room !== $scope.room._id)
+                                    if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
                                         $scope.timeUnitRowCtrl.resetSchedule();
 
                                     $scope.timeUnitRowCtrl.deleteRes(objClone);
-                                    $scope.timeUnitRowCtrl.getReservations(objClone._id);
-                                    if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day'))
+                                    $scope.timeUnitRowCtrl.getReservations(objClone._id); // reload row to show changes by save
+                                    if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day')) // if user changes the day change view to that day
                                         $scope.timeUnitRowCtrl.setDay(moment.utc($scope.doc.start).startOf('day'));
 
-                                    if($scope.doc.recurrence){
-                                        saveRecurrences(obj);
-                                    }
+
+                                    saveRecurrences(obj);
+
                                 }, 500);
                                 $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
                                 $scope.closeThisDialog();
