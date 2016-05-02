@@ -59,15 +59,15 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                 if(frameId=='new') {
 
                     var day;
+                    var minDay = moment.tz(_ctrl.eventGroup.StartDate, _ctrl.eventGroup.timezone);
 
-                    if($route.current.params.day)
-                        day = moment.tz($route.current.params.day, _ctrl.eventGroup.timezone);
+                    day = moment.tz($route.current.params.day || new Date(), _ctrl.eventGroup.timezone);
 
-                    if(!day || !day.isValid())
-                        day = moment.tz(_ctrl.eventGroup.StartDate, _ctrl.eventGroup.timezone);
+                    if(!day.isValid() || day.isBefore(minDay))
+                        day = new moment(minDay);
 
-                    var start = day.startOf('day').hour( 8).toDate(); //  8:00
-                    var end   = day.startOf('day').hour(21).toDate(); // 21:00
+                    var start = moment(day).startOf('day').toDate(); //  0:00
+                    var end   = moment(day).startOf('day').hour(23).minute(55).toDate(); // 23:55
 
                     return {
                         eventGroup : _ctrl.eventGroup._id,
@@ -188,12 +188,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         //
         //==============================
         function close() {
-
             $location.url($location.path().replace(/(.*)\/[a-z0-9]*/i, '$1'));
-            $location.search({day: moment.tz(_.first(_ctrl.frame.schedules).start, _ctrl.eventGroup.timezone).format("YYYY-MM-DD") });
-
-            if($route.current.params.day)
-                $location.search({day: $route.current.params.day});
         }
 
         //==============================

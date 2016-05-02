@@ -10,8 +10,8 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
             when('/schedule/conference',   { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'schedule'}).
             when('/schedule/side-events',  { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
 
-            when('/events/:eventId/cctv/frames',     { templateUrl: 'views/cctv/frames.html',   controllerAs:"framesCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
             when('/events/:eventId/cctv/frames/:id', { templateUrl: 'views/cctv/frame-id.html', controllerAs:"frameIdCtrl", resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
+            when('/events/:eventId/cctv/frames',     { templateUrl: 'views/cctv/frames.html',   controllerAs:"framesCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
 
             when('/admin/reservation/types',         { templateUrl: 'views/admin/reservation-types.html', resolveController: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
             when('/events/:eventId/cctv/feeds',      { templateUrl: 'views/cctv/feeds.html' ,   controllerAs:"feedsCtrl",   resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).

@@ -11,12 +11,21 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
 
         init();
 
+        $scope.$watch(function() { return _ctrl.selectedDay;      }, function(day){ $location.search('day', day||undefined); });
+        $scope.$watch(function() { return $location.search().day; }, function(day){ _ctrl.selectedDay =     day||undefined;  });
+
+        $scope.$watch(function() { return _ctrl.selectedFeed;      }, function(feed){ $location.search('feed', feed||undefined); });
+        $scope.$watch(function() { return $location.search().feed; }, function(feed){ _ctrl.selectedFeed =     feed||undefined;  });
+
         return this;
 
         //==============================
         //
         //==============================
         function init() {
+
+            _ctrl.selectedDay  = $location.search().day;
+            _ctrl.selectedFeed = $location.search().feed;
 
             var eventGroupId = $route.current.params.eventId;
 
@@ -35,8 +44,6 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
                 _ctrl.eventGroup   = eventGroup;
                 _ctrl.feeds        = feeds;
                 _ctrl.feedsMap     = feedsMap;
-                _ctrl.selectedDay  = $route.current.params.day || "";
-                _ctrl.selectedFeed = '';
 
             }).then(function () {
 
@@ -97,7 +104,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
         //==============================
         function edit(id) {
 
-            $location.url($location.path()+'/'+id);
+            $location.path($location.path()+'/'+id);
 
             if(_ctrl.selectedDay)
                 $location.search({day: _ctrl.selectedDay});
