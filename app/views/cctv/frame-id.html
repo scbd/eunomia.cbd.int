@@ -45,7 +45,7 @@
                     <br>
 
                     <div ng-repeat="feed in frameIdCtrl.feeds">
-                        <label>
+                        <label style="color:inherit">
                             <input type="checkbox" ng-model="frameIdCtrl.selectedFeeds[feed._id]" ng-change="frameIdCtrl.updateFeeds()"> {{feed.title}}
                         </label>
                     </div>

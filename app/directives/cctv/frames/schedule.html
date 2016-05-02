@@ -8,7 +8,7 @@
         <div class="form-group">
             <label for="feeds">Reservation Types</label>
             <div ng-repeat="type in reservationTypes | orderBy:'title'">
-                <label>
+                <label style="color:inherit">
                     <input type="checkbox" ng-model="selectedTypes[type._id]" ng-change="updateTypes()"> {{type.title}}
                 </label>
             </div>
