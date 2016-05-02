@@ -33,6 +33,10 @@ define(['app', 'lodash',
                                     var t = moment.utc($scope.doc.end);
                                     $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
                                 }
+                                if(moment.utc($scope.doc.start).isSameOrAfter(moment.utc($scope.doc.end)) && $scope.doc.end){
+                                  var e = moment.utc($scope.doc.start);
+                                  $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
+                                }
                             }
                         });
 
