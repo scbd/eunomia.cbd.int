@@ -20,7 +20,7 @@ define(['app', 'lodash'], function(app, _) {
                           params.id = doc._id;
                           url = url + '/' + doc._id;
 
-                          return $http.patch(url, doc, {
+                          return $http.put(url, doc, {
                               'params': params
                           });
                       } else {
