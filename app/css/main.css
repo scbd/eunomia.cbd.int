@@ -69,3 +69,10 @@ html,body {
   font-size: 1.5em;
 }
 
+input[type="text"][date-picker] {
+    cursor:pointer;
+}
+
+input[type="text"][date-picker][disabled] {
+    cursor:not-allowed;
+}
