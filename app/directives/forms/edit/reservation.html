@@ -63,11 +63,11 @@
            date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }">
   </div>
 </div>
-<div class="col-xs-12" ng-if="!doc.recurrence && !doc.parent">
+<div class="col-xs-12" ng-if="!doc.parent">
   <div class="form-group" style="margin-left:10px;margin-top:15px;">
     <div class="togglebutton">
       <label>
-        <input ng-change="changeTab('recurrence')" type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true">Would you like this reservation to recur?
+        <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
       </label>
     </div>
   </div>
