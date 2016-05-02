@@ -10,7 +10,8 @@
     }
   </style>
   <div style="background-color:#a7a7a7;height:60px;position:absolute;top:0px;left:0px;width:100%;text-align:center;color:#eee;">
-    <h2 style="margin-top:13px;" ng-if="doc._id">Reservation</h2>
+    <h2 style="margin-top:13px;" ng-if="doc._id && !doc.sideEvent">Reservation</h2>
+    <h2 style="margin-top:13px;" ng-if="doc._id && doc.sideEvent">Side Event #{{doc.sideEvent.id}}</h2>
     <h2 style="margin-top:13px;" ng-if="!doc._id">New Reservation</h2>
   </div>
   <div class="form-group label-floating">
@@ -33,6 +34,7 @@
   </div>
 
   <div class="row" ng-show="tabs.details.active">
+
     <div class="col-xs-12">
       <!-- dirty dirty hack jquery change removing value from first input fix-->
       <div class="form-group label-floating" ng-show="false">
@@ -52,7 +54,7 @@
       <input id="startT" type="text" class="form-control" ng-model="doc.start"
              date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }"
              date-picker-min-date="conferenceDays[0]"
-             date-picker-max-date="conferenceDays[conferenceDays.length-1]">
+             date-picker-max-date="conferenceDays[conferenceDays.length-1]" ng-disabled="doc.sideEvent">
     </div>
   </div>
   <div class="col-xs-6">
@@ -60,10 +62,10 @@
     <label class="control-label" for="endT">End Time</label>
     <!-- <input id="endT" class="form-control" type="text" ng-model="doc.endDisp" > -->
     <input id="endT" type="text" class="form-control" ng-model="doc.end"
-           date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }">
+           date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" ng-disabled="doc.sideEvent">
   </div>
 </div>
-<div class="col-xs-12" ng-if="!doc.parent">
+<div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
   <div class="form-group" style="margin-left:10px;margin-top:15px;">
     <div class="togglebutton">
       <label>
@@ -76,8 +78,19 @@
       <div class="form-group label-floating">
         <label class="control-label" for="parent">Type</label>
 
-        <select id="parent" class="form-control" ng-model="doc.type">
+        <select id="parent" class="form-control" ng-model="doc.type" ng-change="loadSubTypes(doc.type)" ng-disabled="isSideEvent()">
           <option   ng-repeat="parent in options.types track by $index" ng-style = "{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+        </select>
+        <span class="material-input"></span>
+        <p class="help-block" ng-show="valid">error</p>
+      </div>
+    </div>
+    <div class="col-xs-6" ng-show="options.type.children">
+      <div class="form-group label-floating">
+        <label class="control-label" for="parent">Sub Type</label>
+
+        <select id="parent" class="form-control" ng-model="doc.subType">
+          <option   ng-repeat="subType in options.type.children track by $index" ng-style = "{'background-color':parent.color}" value="{{subType._id}}" ng-if="subType._id" ng-selected="subType.selected">{{subType.title}}</option>
         </select>
         <span class="material-input"></span>
         <p class="help-block" ng-show="valid">error</p>

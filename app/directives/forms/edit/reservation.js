@@ -88,24 +88,23 @@ define(['app', 'lodash',
                                 $scope.recurrence[k] = true;
                             });
                             //init reccurence
-                            if($scope.doc.recurrence)
-                            {
-                              mongoStorage.getRecurrences($scope.doc._id).then(function(res){
-                                if(!_.isEmpty(res.data)){
-                                  $scope.doc.children=res.data;
+                            if ($scope.doc.recurrence) {
+                                mongoStorage.getRecurrences($scope.doc._id).then(function(res) {
+                                    if (!_.isEmpty(res.data)) {
+                                        $scope.doc.children = res.data;
 
-                                  _.each(res.data,function(c,k){
-                                      $scope.recurrence[k]=true;
-                                  });
-                                }else
-                                  {
-                                    $scope.doc.recurrence=false;
-                                    $scope.save($scope.doc);
-                                  }
+                                        _.each(res.data, function(c, k) {
+                                            $scope.recurrence[k] = true;
+                                        });
+                                    } else {
+                                        $scope.doc.recurrence = false;
+                                        $scope.save($scope.doc);
+                                    }
 
-                              });
+                                });
                             }
                         } //init
+
                         //============================================================
                         //
                         //============================================================
@@ -121,8 +120,6 @@ define(['app', 'lodash',
                                 $timeout(isEmptyModel($(this)));
                             }); //jquery each
                         } //triggerChanges
-
-
 
                         //============================================================
                         // adds isEmpty css if ngModel empty
@@ -143,7 +140,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         function initTypes() {
-                            var parentObj, typesTemp;
+                            var parentObj;
                             return mongoStorage.getDocs('reservation-types', status, true).then(function(result) {
                                 $scope.options.types = result.data;
                                 _.each($scope.options.types, function(type, key) {
@@ -159,23 +156,10 @@ define(['app', 'lodash',
                                         delete($scope.options.types[key]);
                                     }
                                 });
-                                if (isSideEvent()) {
-                                    typesTemp = [];
-                                    var seType = _.find($scope.options.types, {
-                                        '_id': '570fd0a52e3fa5cfa61d90ee'
+                                if ($scope.doc.type)
+                                    $scope.options.type = _.find($scope.options.types, {
+                                        '_id': $scope.doc.type
                                     });
-                                    typesTemp.push();
-
-                                    typesTemp = _.sortBy(seType.children, function(o) {
-                                        return o.title;
-                                    });
-                                    _.each(typesTemp, function(t) {
-                                        t.title = '___ ' + t.title;
-                                    });
-                                    typesTemp.unshift(seType);
-                                    $scope.options.types = typesTemp;
-                                }
-
                             }).catch(function onerror(response) {
                                 $scope.onError(response);
                             });
@@ -184,7 +168,8 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        function isSideEvent() {
+                        $scope.isSideEvent = function() {
+
                             if ($scope.doc.type === '570fd0a52e3fa5cfa61d90ee') return true;
                             var seType = _.find($scope.options.types, {
                                 '_id': '570fd0a52e3fa5cfa61d90ee'
@@ -192,7 +177,7 @@ define(['app', 'lodash',
                             return _.find(seType.children, {
                                 '_id': $scope.doc.type
                             });
-                        }
+                        }; //$scope.isSideEvent
 
                         //============================================================
                         //
@@ -242,8 +227,8 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.deleteRec = function(val) {
-                          if(!val)
-                            confirm("Are you sure you want to delete this Recurrence?");
+                            if (!val)
+                                confirm("Are you sure you want to delete this Recurrence?");
                         }; //initVunues
 
                         //============================================================
@@ -270,6 +255,7 @@ define(['app', 'lodash',
                             delete(objClone.endDisp);
                             delete(objClone.typeObj);
                             delete(objClone.children);
+                            delete(objClone.subTypeObj);
                             objClone.start = moment.utc(objClone.start, 'YYYY-MM-DD HH:mm').format();
                             objClone.end = moment.utc(objClone.end, 'YYYY-MM-DD HH:mm').format();
                             addLocation(objClone);
@@ -289,64 +275,103 @@ define(['app', 'lodash',
                                 objClone.location.venue = '56d76c787e893e40650e4170';
 
                         } //initVunues
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.loadSubType = function(type) {
+                            $scope.options.type = _.find($scope.options.types, {
+                                '_id': type
+                            });
+                        }; //loadSubType
 
                         //============================================================
                         //
                         //============================================================
-                        $scope.hideCurrentDay = function(doc,day) {
+                        function saveRec(doc, k) {
+                            var docClone = cleanReservation(doc);
+                            delete(docClone._id);
+                            var resStartSeconds = moment.utc(doc.start).format('X') - moment.utc(doc.start).startOf('day').format('X');
+                            var resLengthSeconds = moment.utc(doc.end).format('X') - moment.utc(doc.start).format('X');
+                            docClone.start = moment.utc($scope.conferenceDays[0]).startOf('day').add(k, 'days').add(resStartSeconds, 'seconds').format();
+                            docClone.end = moment.utc(docClone.start).add(resLengthSeconds, 'seconds').format();
+                            delete(docClone.recurrence);
+                            delete(docClone.meta);
+                            docClone.parent = doc._id;
+                            mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
+                                console.log(error);
+                                $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
+                            });
+                        } //initVunues
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function deleteRec(doc, k) {
+                            var docClone = cleanReservation(doc.children[k]);
+                            docClone.meta.status = 'deleted';
+
+                            mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
+                                console.log(error);
+                                $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
+                            });
+                        } //initVunues
+
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.hideCurrentDay = function(doc, day) {
 
                             return !(moment.utc(doc.start).startOf('day').isSame(moment.utc(day).startOf('day')));
 
                         }; //initVunues
+
                         //============================================================
                         //
                         //============================================================
                         function saveRecurrences(doc) {
-                          if($scope.doc.recurrence){
-                          var docClone;
-                          if(!doc.children)doc.children=[];
+                            if ($scope.doc.recurrence) {
+                                if (!doc.children) doc.children = [];
+                                if (!_.isEmpty($scope.recurrence)) {
+                                    _.each($scope.recurrence, function(v, k) {
+                                        var isSame = (moment.utc(doc.start).startOf('day').isSame(moment.utc($scope.conferenceDays[0]).startOf('day').add(k, 'days')));
+                                        if (v && doc.children.length === 0 && !isSame) { // create
+                                            saveRec(doc, k);
+                                        } else if (!v && doc.children[k]) { //delete
+                                            deleteRec(doc, k);
+                                        }
+                                    });
+                                } else throw "Error thrying to update reccurences but reccurrence is empty.";
+                            }
+                        } //
 
-                          if(!_.isEmpty($scope.recurrence)){
+                        //============================================================
+                        //
+                        //============================================================
+                        function saveSideEvent(doc) {
+                            if ($scope.isSideEvent()) {
+                                mongoStorage.save('inde-side-events', doc.sideEvent).catch(function(error) {
+                                    console.log(error);
+                                    $rootScope.$broadcast("showError", "There was an error saving your Side Event: #'" + doc.sideEvent.id + "' to the server.");
+                                });
+                            }
+                        } //saveSideEvent
 
-                              _.each($scope.recurrence,function(v,k){
-                                    var isSame = (moment.utc(doc.start).startOf('day').isSame(moment.utc($scope.conferenceDays[0]).startOf('day').add(k,'days')));
-                                    if(v && doc.children.length===0 && !isSame ){ // create
-                                        docClone = cleanReservation(doc);
-                                        delete(docClone._id);
-                                        var resStartSeconds = moment.utc(doc.start).format('X')-moment.utc(doc.start).startOf('day').format('X');
-                                        var resLengthSeconds = moment.utc(doc.end).format('X')-moment.utc(doc.start).format('X');
-                                        docClone.start= moment.utc($scope.conferenceDays[0]).startOf('day').add(k,'days').add(resStartSeconds,'seconds').format();
-                                        docClone.end= moment.utc(docClone.start).add(resLengthSeconds,'seconds').format();
-                                        delete(docClone.recurrence);
-                                        delete(docClone.meta);
-                                        docClone.parent=doc._id;
-                                        mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
-                                            console.log(error);
-                                            $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
-                                        });
-                                    } else if(!v &&  doc.children[k]){ //delete
-                                       docClone = cleanReservation(doc.children[k]);
-                                       docClone.meta.status='deleted';
-
-                                        mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
-                                            console.log(error);
-                                            $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
-                                        });
-                                    }
-                              });
-                            }else throw"Error thrying to update reccurences but reccurrence is empty.";
-                          }
-                        } //initVunues
                         //============================================================
                         //
                         //============================================================
                         $scope.save = function(obj) {
 
+                            if ($scope.isSideEvent()) {
+                                obj.sideEvent.title = obj.title;
+                                obj.sideEvent.description = obj.description;
+                            }
                             var objClone = cleanReservation(obj);
 
                             return mongoStorage.save('reservations', objClone, objClone._id).then(function(res) {
                                 $timeout(function() {
-                                    if(res.data.id)obj._id=res.data.id;
+                                    if (res.data.id) obj._id = res.data.id;
+                                    saveSideEvent(objClone);
+
                                     if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
                                         $scope.timeUnitRowCtrl.resetSchedule();
 
