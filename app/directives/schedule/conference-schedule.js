@@ -105,6 +105,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                   $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
                                   $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                   $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                  prevNextRestrictions();
                               }, 100);
                             }
                         } //init
@@ -123,7 +124,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                             $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
                             setStartTime(); // creates passes moment object for children directives
-
+                            prevNextRestrictions();
                         } //initDayTimeSelects
 
                         //============================================================
@@ -167,7 +168,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                 $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                             });
                             $scope.dayObj = $scope.conference.startObj;
-
+                            $timeout(function(){prevNextRestrictions();},1000);
                         } //changeConference
 
                         //============================================================
@@ -176,6 +177,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         function changeStartTime() {
 
                             setStartTime();
+                            prevNextRestrictions();
                         } //changeStartTime
 
                         //============================================================
@@ -184,6 +186,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         function changeEndTime() {
 
                             setEndTime();
+                            prevNextRestrictions();
                         } //changeEndTime
 
                         //============================================================
@@ -192,6 +195,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         function changeDay() {
 
                             setDay();
+                            prevNextRestrictions();
                         } //changeEndTime
 
                         //============================================================
@@ -210,6 +214,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                     minutes: timeMinutes
                                 });
                             }
+                            prevNextRestrictions();
                         } //getStartTime
 
                         //============================================================
@@ -228,6 +233,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                     minutes: timeMinutes
                                 });
                             }
+                            prevNextRestrictions();
                         } //getStartTime
 
                         //============================================================
@@ -236,10 +242,27 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         function setDay() {
 
                             $scope.dayObj = moment.utc($scope.day, 'dddd YYYY-MM-DD').startOf('day');
+                            prevNextRestrictions();
                         } //getStartTime
 
+                        //============================================================
+                        //
+                        //============================================================
+                        function prevNextRestrictions() {
 
+                            if(_.isEmpty($scope.conferenceDays) || !$scope.dayObj) return;
 
+                            if(moment.utc($scope.dayObj).subtract(1, 'day').isBefore(moment.utc($scope.conferenceDays[0]).startOf('day')))
+                                $scope.isPrevDay = true;
+                            else
+                                $scope.isPrevDay = false;
+
+                            if(moment.utc($scope.dayObj).add(1, 'day').isAfter(moment.utc($scope.conferenceDays[$scope.conferenceDays.length-1]).startOf('day')))
+                                $scope.isNextDay = true;
+                            else
+                                $scope.isNextDay = false;
+                        } //getStartTime
+                        $scope.prevNextRestrictions=prevNextRestrictions;
                         //============================================================
                         //
                         //============================================================
@@ -247,10 +270,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                             $scope.dayObj = $scope.dayObj.add(1, 'day');
 
+
                             $timeout(function() {
                                 $scope.dayObj = moment.utc($scope.dayObj);
                                 $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                 $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                prevNextRestrictions();
                             }, 100);
                         }; //changeStartTime
 
@@ -265,8 +290,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                 $scope.dayObj = moment.utc($scope.dayObj);
                                 $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                 $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                prevNextRestrictions();
                             }, 100);
                         }; //changeStartTime
+
                         //============================================================
                         //
                         //============================================================
@@ -298,6 +325,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           $scope.dayObj = day;
                           $scope.day = moment.utc($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
+
+                          $scope.prevNextRestrictions();
                       }; //this.resetSchedule
                       //============================================================
                       //
@@ -306,7 +335,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           $scope.conferenceDays = [];
                           var numDays = Math.floor((Number($scope.conference.end) - Number($scope.conference.start)) / (24 * 60 * 60));
-                          $scope.conference.endObj = moment.utc(Number($scope.conference.end) * 1000).startOf('day');
+                          $scope.conference.endObj = moment.utc(Number($scope.conference.end) * 1000).add(1,'day').startOf('day');
                           $scope.conference.startObj = moment.utc(Number($scope.conference.start) * 1000).startOf('day');
 
 
@@ -317,7 +346,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                               $scope.conferenceDays.push(moment(date));
                               date.add(1, 'day');
                           }
-
+                          $scope.lastConfDay=moment.utc(date.add(1, 'day'));
                       }; //generateDays
 
                       //============================================================
