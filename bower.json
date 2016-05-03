@@ -6,7 +6,7 @@
     "angular-sanitize": "1.5",
     "angular-flex": "git://github.com/scbd/angular-flex.git#1.0.1",
     "angular-route": "1.4.8",
-    "bootstrap": "3.1.1",
+    "bootstrap": "3.3.6",
     "font-awesome": "4.5.0",
     "flag-icon-css": "https://github.com/lipis/flag-icon-css.git#1.1.0",
     "iconate": "https://github.com/bitshadow/iconate.git",
@@ -27,9 +27,7 @@
   },
   "resolutions": {
     "angular": "1.5",
-    "bootstrap": "3.3.6",
-    "angular-animate": "1.5",
-    "jquery": "2.2.0",
-    "bootstrap-material-design": "v0.5.9"
+    "jquery": "2.2",
+    "bootstrap-material-design": "v0.5"
   }
 }
