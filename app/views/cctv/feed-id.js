@@ -1,4 +1,4 @@
-define(['app'], function() {
+define(['lodash'], function(_) {
 
     return ['$http', '$route', '$location', '$scope', 'eventGroup', function($http, $route, $location, $scope, eventGroup) {
 
@@ -43,11 +43,12 @@ define(['app'], function() {
         //==============================
         function save() {
 
-            var feed = _ctrl.feed;
             var id   = _ctrl.feed._id;
+            var feed = id ? _.pick(_ctrl.feed, 'title', 'description') :
+                            _.pick(_ctrl.feed, 'title', 'description', 'code', 'eventGroup');
 
-            var savePromise = id ? $http.put ('/api/v2016/cctv-feeds/'+id, feed):
-                                   $http.post('/api/v2016/cctv-feeds',     feed);
+            var savePromise = id ? $http.patch('/api/v2016/cctv-feeds/'+id, feed):
+                                   $http.post ('/api/v2016/cctv-feeds',     feed);
 
             return savePromise.then(function(res) {
 
@@ -64,7 +65,7 @@ define(['app'], function() {
         //
         //==============================
         function close() {
-            $location.url($location.path().replace(/(.*)\/[a-z0-9]*/i, '$1'));
+            $location.path($location.path().replace(/(.*)\/[a-z0-9]*/i, '$1'));
         }
 
         //==============================
