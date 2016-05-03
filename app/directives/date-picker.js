@@ -47,10 +47,10 @@ define(['app', 'moment', 'BM-date-picker'], function(app, moment) {
                 //============================================================
                 //
                 //============================================================
-                $element.bootstrapMaterialDatePicker('change', function() {
+                $element.change(function() {
 
                     $scope.$applyAsync(function() {
-                        var val = $element.value();
+                        var val = $element.val();
                         ngModelCtrl.$setViewValue(val);
                     });
                 });
