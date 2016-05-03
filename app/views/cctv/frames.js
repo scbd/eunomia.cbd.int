@@ -1,12 +1,13 @@
 define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(_, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', function($http, $route, $location, $scope, $q) {
+    return ['$http', '$route', '$location', '$scope', '$q', 'eventGroup', function($http, $route, $location, $scope, $q, eventGroup) {
 
         var _ctrl = this;
 
-        _ctrl.refresh = load;
-        _ctrl.edit    = edit;
-        _ctrl.delete  = del;
+        _ctrl.eventGroup = eventGroup;
+        _ctrl.refresh    = load;
+        _ctrl.edit       = edit;
+        _ctrl.delete     = del;
         _ctrl.buildSortKey = sortKey;
 
         init();
@@ -27,21 +28,14 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
             _ctrl.selectedDay  = $location.search().day;
             _ctrl.selectedFeed = $location.search().feed;
 
-            var eventGroupId = $route.current.params.eventId;
+            return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
-            var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
-            var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
-
-            return $q.all([qEvents, qFeeds]).then(function(res) {
-
-                var eventGroup = res[0].data;
-                var feeds      = res[1].data;
+                var feeds      = res.data;
                 var feedsMap   = _.reduce(feeds, function(ret, feed) {
                     ret[feed._id] = feed;
                     return ret;
                 }, {});
 
-                _ctrl.eventGroup   = eventGroup;
                 _ctrl.feeds        = feeds;
                 _ctrl.feedsMap     = feedsMap;
 
@@ -57,12 +51,12 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
         //==============================
         function load() {
 
-            var query = { eventGroup : $route.current.params.eventId };
+            var query = { eventGroup : eventGroup._id };
 
             if(_ctrl.selectedDay) {
 
-                var startOfDay = moment.tz(_ctrl.selectedDay, _ctrl.eventGroup.timezone);
-                var endOfDay   = moment.tz(_ctrl.selectedDay, _ctrl.eventGroup.timezone).add(1, 'days');
+                var startOfDay = moment(_ctrl.selectedDay);
+                var endOfDay   = moment(_ctrl.selectedDay).add(1, 'days');
 
                 query.schedules = {
                     $elemMatch : {
@@ -85,8 +79,8 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
 
                 _ctrl.frames.forEach(function(frame){
 
-                    var start = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone);
-                    var end   = moment.tz(_.last (frame.schedules).end,   _ctrl.eventGroup.timezone);
+                    var start = moment(_.first(frame.schedules).start);
+                    var end   = moment(_.last (frame.schedules).end);
 
                     frame.localSchedule = {
                         startDay  : start.format("YYYY-MM-DD"),
@@ -133,8 +127,8 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(
         function sortKey(frame) {
 
             if(_ctrl.selectedDay) {
-                var start = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone);
-                var end   = moment.tz(_.last (frame.schedules).end,   _ctrl.eventGroup.timezone);
+                var start = moment(_.first(frame.schedules).start);
+                var end   = moment(_.last (frame.schedules).end);
 
                 return start.format("HH:mm")      + end.format("YYYY-MM-DD") +
                        start.format("YYYY-MM-DD") + end.format("HH:mm");

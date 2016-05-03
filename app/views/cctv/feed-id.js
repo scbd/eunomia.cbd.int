@@ -1,6 +1,6 @@
 define(['app'], function() {
 
-    return ['$http', '$route', '$location', '$scope', function($http, $route, $location, $scope) {
+    return ['$http', '$route', '$location', '$scope', 'eventGroup', function($http, $route, $location, $scope, eventGroup) {
 
         var _ctrl = this;
 
@@ -24,7 +24,7 @@ define(['app'], function() {
                     code : genarateCode(),
                     title : '',
                     description : '',
-                    eventGroup : $route.current.params.eventId
+                    eventGroup : eventGroup._id
                 };
 
             }

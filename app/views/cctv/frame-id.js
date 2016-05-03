@@ -1,17 +1,22 @@
 define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker'], function(require, _, ng, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', '$compile', function($http, $route, $location, $scope, $q, $compile) {
+    return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup', function($http, $route, $location, $scope, $q, $compile, eventGroup) {
 
         var _ctrl = this;
 
         _ctrl.save   = save;
         _ctrl.cancel = close;
         _ctrl.updateFeeds = updateFeeds;
+        _ctrl.eventGroup  = eventGroup;
+
         _ctrl.changedStartDay  = function() { if( _ctrl.startDay  > _ctrl.endDay)  { _ctrl.endDay    = _ctrl.startDay;  } updateSchedules(); };
         _ctrl.changedEndDay    = function() { if( _ctrl.startDay  > _ctrl.endDay)  { _ctrl.startDay  = _ctrl.endDay;    } updateSchedules(); };
         _ctrl.changedStartTime = function() { if( _ctrl.startTime > _ctrl.endTime) { _ctrl.endTime   = _ctrl.startTime; } updateSchedules(); };
         _ctrl.changedEndTime   = function() { if( _ctrl.startTime > _ctrl.endTime) { _ctrl.startTime = _ctrl.endTime;   } updateSchedules(); };
 
+        //==============================
+        //
+        //==============================
         $scope.$watch('frameIdCtrl.frame.content.type', function(type, oldType) {
 
             if(type==oldType)
@@ -29,18 +34,9 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         //==============================
         function init() {
 
-            var eventGroupId = $route.current.params.eventId;
+            return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
-            var qEvents = $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true });
-            var qFeeds  = $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }});
-
-            return $q.all([qEvents, qFeeds]).then(function(res) {
-
-                var eventGroup = res[0].data;
-                var feeds      = res[1].data;
-
-                _ctrl.eventGroup   = eventGroup;
-                _ctrl.feeds        = feeds;
+                _ctrl.feeds = res.data;
 
             }).then(function () {
 
@@ -59,9 +55,9 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                 if(frameId=='new') {
 
                     var day;
-                    var minDay = moment.tz(_ctrl.eventGroup.StartDate, _ctrl.eventGroup.timezone);
+                    var minDay = moment(eventGroup.StartDate);
 
-                    day = moment.tz($route.current.params.day || new Date(), _ctrl.eventGroup.timezone);
+                    day = moment.tz($route.current.params.day || new Date(), eventGroup.timezone);
 
                     if(!day.isValid() || day.isBefore(minDay))
                         day = new moment(minDay);
@@ -87,10 +83,10 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
                 _ctrl.frame = frame;
 
-                _ctrl.startDay  = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone).format("YYYY-MM-DD");
-                _ctrl.startTime = moment.tz(_.first(frame.schedules).start, _ctrl.eventGroup.timezone).format("HH:mm");
-                _ctrl.endDay    = moment.tz(_.last (frame.schedules).end  , _ctrl.eventGroup.timezone).format("YYYY-MM-DD");
-                _ctrl.endTime   = moment.tz(_.last (frame.schedules).end  , _ctrl.eventGroup.timezone).format("HH:mm");
+                _ctrl.startDay  = moment(_.first(frame.schedules).start).format("YYYY-MM-DD");
+                _ctrl.startTime = moment(_.first(frame.schedules).start).format("HH:mm");
+                _ctrl.endDay    = moment(_.last (frame.schedules).end  ).format("YYYY-MM-DD");
+                _ctrl.endTime   = moment(_.last (frame.schedules).end  ).format("HH:mm");
 
                 _ctrl.selectedFeeds = _.reduce(frame.feeds, function(ret, id){
                     ret[id] = true;
@@ -131,8 +127,8 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         //==============================
         function updateSchedules() {
 
-            var start = moment.tz(_ctrl.startDay + ' ' + _ctrl.startTime, _ctrl.eventGroup.timezone).toDate();
-            var end   = moment.tz(_ctrl.endDay   + ' ' + _ctrl.endTime,   _ctrl.eventGroup.timezone).toDate();
+            var start = moment(_ctrl.startDay + ' ' + _ctrl.startTime).toDate();
+            var end   = moment(_ctrl.endDay   + ' ' + _ctrl.endTime  ).toDate();
 
             _ctrl.frame.schedules = buildDailySchedules(start, end);
         }

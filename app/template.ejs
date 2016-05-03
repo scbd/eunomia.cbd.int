@@ -35,6 +35,7 @@
     <nav class="navbar navbar-default" style="margin-bottom:0px">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
+
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
@@ -42,7 +43,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
+
+          <a class="navbar-brand pull-right visible-xs" style="font-size:16px">
+            <select style="color:inherit;background-color:inherit;border:none;max-width:200px" ng-model="templateCtrl.selectEventGroupId" ng-options="o._id as o.Title.en for o in templateCtrl.eventGroups"  ng-change="templateCtrl.eventGroupChange(true)">
+            </select>
+          </a>
+
           <a class="navbar-brand" href="/">Eunomia</a>
+
+
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -50,14 +59,20 @@
           <ul class="nav navbar-nav">
             <li ng-class="{ active : templateCtrl.menu=='schedule' }"   ><a href="/schedule/conference">Schedule</a></li>
             <li ng-class="{ active : templateCtrl.menu=='side-events' }"><a href="/schedule/side-events">Side-Events</a></li>
-            <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }"><a href="/events/56ab766f2f4ad2ad1b885444/cctv/frames">CCTV</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }"><a href="/cctv/frames">CCTV</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+            <li class="hidden-xs">
+                <a>
+                  <select style="color:inherit;background-color:inherit;border:none" ng-model="templateCtrl.selectEventGroupId" ng-options="o._id as o.Title.en for o in templateCtrl.eventGroups"  ng-change="templateCtrl.eventGroupChange(true)">
+                  </select>
+                </a>
+            </li>
             <li class="dropdown" ng-class="{ active : templateCtrl.menu=='admin' }">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="/admin/reservation/types">Reservation types</a></li>
-                <li><a href="/events/56ab766f2f4ad2ad1b885444/cctv/feeds">CCTV Feeds</a></li>
+                <li><a href="/admin/cctv/feeds">CCTV Feeds</a></li>
               </ul>
             </li>
           </ul>

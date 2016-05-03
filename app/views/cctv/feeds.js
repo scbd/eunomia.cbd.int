@@ -1,13 +1,12 @@
 define(['app'], function() {
 
-    return ['$http', '$route', '$location', '$scope',function($http, $route, $location, $scope) {
+    return ['$http', '$route', '$location', '$scope', 'eventGroup', function($http, $route, $location, $scope, eventGroup) {
 
         var _ctrl = this;
 
         _ctrl.edit   = edit;
         _ctrl.delete = del;
 
-        init();
         load();
 
         return this;
@@ -15,25 +14,9 @@ define(['app'], function() {
         //==============================
         //
         //==============================
-        function init() {
-
-            var eventGroupId = $route.current.params.eventId;
-
-            $http.get('/api/v2016/event-groups/'+eventGroupId, { cache : true }).then(function(res) {
-
-                _ctrl.eventGroup = res.data;
-
-            }).catch(errorHandler);
-        }
-
-        //==============================
-        //
-        //==============================
         function load() {
 
-            var eventGroupId = $route.current.params.eventId;
-
-            $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroupId } }}).then(function (res) {
+            $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function (res) {
 
                 _ctrl.feeds = res.data;
 
@@ -53,7 +36,7 @@ define(['app'], function() {
         function del(id) {
 
             var query = {
-                eventGroup: $route.current.params.eventId,
+                eventGroup: eventGroup._id,
                 $or: [
                     { feeds : id },
                     { feeds: { $size: 0 } }

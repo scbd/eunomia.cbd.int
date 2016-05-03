@@ -7,20 +7,30 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
 
         $routeProvider.
             when('/',                      { redirectTo: '/schedule/conference' }).
-            when('/schedule/conference',   { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'schedule'}).
-            when('/schedule/side-events',  { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
+            when('/schedule/conference',   { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'schedule'}).
+            when('/schedule/side-events',  { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
 
-            when('/events/:eventId/cctv/frames/:id', { templateUrl: 'views/cctv/frame-id.html', controllerAs:"frameIdCtrl", resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
-            when('/events/:eventId/cctv/frames',     { templateUrl: 'views/cctv/frames.html',   controllerAs:"framesCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
+            when('/cctv/frames',           { templateUrl: 'views/cctv/frames.html',   controllerAs:"framesCtrl",  resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
+            when('/cctv/frames/:id',       { templateUrl: 'views/cctv/frame-id.html', controllerAs:"frameIdCtrl", resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
 
-            when('/admin/reservation/types',         { templateUrl: 'views/admin/reservation-types.html', resolveController: true, resolve : { securized : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
-            when('/events/:eventId/cctv/feeds',      { templateUrl: 'views/cctv/feeds.html' ,   controllerAs:"feedsCtrl",   resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
-            when('/events/:eventId/cctv/feeds/:id',  { templateUrl: 'views/cctv/feed-id.html' , controllerAs:"feedIdCtrl",  resolveController: true, resolve : { user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
+            when('/admin/reservation/types',         { templateUrl: 'views/admin/reservation-types.html',                   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
+            when('/admin/cctv/feeds',                { templateUrl: 'views/cctv/feeds.html' ,   controllerAs:"feedsCtrl",   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
+            when('/admin/cctv/feeds/:id',            { templateUrl: 'views/cctv/feed-id.html' , controllerAs:"feedIdCtrl",  resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
 
             when('/404', { templateUrl: 'views/404.html' }).
             when('/403', { templateUrl: 'views/403.html' }).
             otherwise({ redirectTo: '/404' });
         }]);
+
+    //============================================================
+    //
+    //
+    //============================================================
+    function currentEventGroup() {
+        return ['$rootScope', '$q', function ($rootScope, $q) {
+            return $q.when($rootScope.eventGroup);
+        }];
+    }
 
     //============================================================
     //
