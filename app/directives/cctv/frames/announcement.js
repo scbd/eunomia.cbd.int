@@ -16,9 +16,9 @@ define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(a
                 var htmlEditor      = element.find("#htmlEditor");
 
                 htmlEditorTools.tooltip();
-                htmlEditor.keypress(function(){ console.log('press'); updateHtml();});
-                htmlEditor.keyup   (function(){ console.log('up');    updateHtml();});
-                htmlEditor.blur    (function(){ console.log('blur');  updateHtml();});
+                htmlEditor.keypress(function(){ updateHtml();});
+                htmlEditor.keyup   (function(){ updateHtml();});
+                htmlEditor.blur    (function(){ updateHtml();});
 
                 $scope.execCommand=function(evt, cmd, options) {
                 //    evt.stopPropagation();
