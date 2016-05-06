@@ -21,7 +21,8 @@ define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(a
                 htmlEditor.blur    (function(){ updateHtml();});
 
                 $scope.execCommand=function(evt, cmd, options) {
-                //    evt.stopPropagation();
+
+                    options = options || {};
 
                     if(options && options.useCss)
                         document.execCommand('styleWithCSS', false, true);
