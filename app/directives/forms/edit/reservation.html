@@ -40,6 +40,7 @@
       <div class="form-group label-floating" ng-show="false">
         <input class="form-control" id="test" type="text" ng-model="doc.test">
       </div>
+
       <!-- dirty dirty hack-->
       <div class="form-group label-floating">
         <label class="control-label" for="title">Title</label>
@@ -54,7 +55,7 @@
       <input id="startT" type="text" class="form-control" ng-model="doc.start"
              date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }"
              date-picker-min-date="conferenceDays[0]"
-             date-picker-max-date="conferenceDays[conferenceDays.length-1]" ng-disabled="doc.sideEvent">
+             date-picker-max-date="conferenceDays[conferenceDays.length-1]" >
     </div>
   </div>
   <div class="col-xs-6">
@@ -62,7 +63,7 @@
     <label class="control-label" for="endT">End Time</label>
     <!-- <input id="endT" class="form-control" type="text" ng-model="doc.endDisp" > -->
     <input id="endT" type="text" class="form-control" ng-model="doc.end"
-           date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" ng-disabled="doc.sideEvent">
+           date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" >
   </div>
 </div>
 <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
