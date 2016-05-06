@@ -1,4 +1,4 @@
-define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker'], function(require, _, ng, moment) {
+define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment'], function(require, _, ng, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup', function($http, $route, $location, $scope, $q, $compile, eventGroup) {
 
@@ -9,10 +9,21 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         _ctrl.updateFeeds = updateFeeds;
         _ctrl.eventGroup  = eventGroup;
 
-        _ctrl.changedStartDay  = function() { if( _ctrl.startDay  > _ctrl.endDay)  { _ctrl.endDay    = _ctrl.startDay;  } updateSchedules(); };
-        _ctrl.changedEndDay    = function() { if( _ctrl.startDay  > _ctrl.endDay)  { _ctrl.startDay  = _ctrl.endDay;    } updateSchedules(); };
-        _ctrl.changedStartTime = function() { if( _ctrl.startTime > _ctrl.endTime) { _ctrl.endTime   = _ctrl.startTime; } updateSchedules(); };
-        _ctrl.changedEndTime   = function() { if( _ctrl.startTime > _ctrl.endTime) { _ctrl.startTime = _ctrl.endTime;   } updateSchedules(); };
+        _ctrl.dateChanged  = function(field) {
+
+            var start = moment(_ctrl.start);
+            var end   = moment(_ctrl.end  );
+
+            if(start.isAfter(end)) {
+                if(field=='start') end   = moment(start).add( 1, 'hours');
+                else               start = moment(end)  .add(-1, 'hours');
+            }
+
+            _ctrl.start = moment(start).format("YYYY-MM-DD HH:mm");
+            _ctrl.end   = moment(end  ).format("YYYY-MM-DD HH:mm");
+
+            updateSchedules()
+        };
 
         //==============================
         //
@@ -55,7 +66,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                 if(frameId=='new') {
 
                     var day;
-                    var minDay = moment(eventGroup.StartDate);
+                    var minDay = moment(eventGroup.schedule.start);
 
                     day = moment.tz($route.current.params.day || new Date(), eventGroup.timezone);
 
@@ -67,14 +78,16 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
                     return {
                         eventGroup : _ctrl.eventGroup._id,
-                        content: { type: 'news' },
-                        schedules : buildDailySchedules(start, end),
+                        content: { type: 'announcement' },
+                        scheduleType : 'continuous',
+                        schedules : buildDailySchedules(start, end, 'continuous'),
                         feeds : [],
                     };
                 }
                 else {
 
                     return $http.get('/api/v2016/cctv-frames/'+frameId).then(function (res) {
+                        res.data.scheduleType = res.data.scheduleType || 'daily'; // TMP patch
                         return res.data;
                     });
                 }
@@ -83,10 +96,8 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
                 _ctrl.frame = frame;
 
-                _ctrl.startDay  = moment(_.first(frame.schedules).start).format("YYYY-MM-DD");
-                _ctrl.startTime = moment(_.first(frame.schedules).start).format("HH:mm");
-                _ctrl.endDay    = moment(_.last (frame.schedules).end  ).format("YYYY-MM-DD");
-                _ctrl.endTime   = moment(_.last (frame.schedules).end  ).format("HH:mm");
+                _ctrl.start = moment(_.first(frame.schedules).start).format("YYYY-MM-DD HH:mm");
+                _ctrl.end   = moment(_.last (frame.schedules).end  ).format("YYYY-MM-DD HH:mm");
 
                 _ctrl.selectedFeeds = _.reduce(frame.feeds, function(ret, id){
                     ret[id] = true;
@@ -95,9 +106,6 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
                 instantciateFrameType();
             });
-
-
-
         }
 
         //==============================
@@ -127,16 +135,16 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         //==============================
         function updateSchedules() {
 
-            var start = moment(_ctrl.startDay + ' ' + _ctrl.startTime).toDate();
-            var end   = moment(_ctrl.endDay   + ' ' + _ctrl.endTime  ).toDate();
+            var start = moment(_ctrl.start).toDate();
+            var end   = moment(_ctrl.end  ).toDate();
 
-            _ctrl.frame.schedules = buildDailySchedules(start, end);
+            _ctrl.frame.schedules = buildDailySchedules(start, end, _ctrl.frame.scheduleType);
         }
 
         //==============================
         //
         //==============================
-        function buildDailySchedules(start, end) {
+        function buildDailySchedules(start, end, scheduleType) {
 
             start = moment(start).utc();
             end   = moment(end)  .utc();
@@ -145,24 +153,40 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                 throw "bad schedule dates";
 
             var schedules = [];
-            var loopGuard=64;
 
-            while(start.isSameOrBefore(end)) {
-
-                var dailyStart = moment(start).utc();
-                var dailyEnd   = moment(start).utc().hour(end.hour()).minute(end.minute());
-
-                if(dailyEnd.isBefore(dailyStart))
-                    dailyEnd.add(1, 'days');
+            if(scheduleType=="continuous") {
 
                 schedules.push({
-                    start : dailyStart.toDate(),
-                    end   : dailyEnd  .toDate()
+                    start : start.toDate(),
+                    end   : end  .toDate()
                 });
 
-                start = start.add(1, 'days');
+            }
+            else if(scheduleType=="daily") {
 
-                if(--loopGuard<0) throw "loop detected";
+                var loopGuard=64;
+
+                while(start.isSameOrBefore(end)) {
+
+                    var dailyStart = moment(start).utc();
+                    var dailyEnd   = moment(start).utc().hour(end.hour()).minute(end.minute());
+
+                    if(dailyEnd.isBefore(dailyStart))
+                        dailyEnd.add(1, 'days');
+
+                    schedules.push({
+                        start : dailyStart.toDate(),
+                        end   : dailyEnd  .toDate()
+                    });
+
+                    start = start.add(1, 'days');
+
+                    if(--loopGuard<0) throw "loop detected";
+                }
+            }
+            else {
+                throw "Unknown scheduleType: " + scheduleType;
+
             }
 
             return schedules;

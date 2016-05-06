@@ -13,8 +13,8 @@
                       <label for="code" required>Day</label>
                       <input type="text" class="form-control" name="code" ng-model="framesCtrl.selectedDay" ng-change="framesCtrl.refresh()"
                              date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD', clearButton: true }"
-                             date-picker-min-date="framesCtrl.eventGroup.StartDate"
-                             date-picker-max-date="framesCtrl.eventGroup.EndDate">
+                             date-picker-min-date="framesCtrl.eventGroup.schedule.start"
+                             date-picker-max-date="framesCtrl.eventGroup.schedule.end">
                     </div>
                 </div>
             </div>
@@ -40,21 +40,51 @@
                     </th>
                 </tr>
                 <tr ng-repeat="frame in framesCtrl.frames|orderBy:framesCtrl.buildSortKey">
-                    <td>{{$index+1}}</td>
+                    <td>{{::$index+1}}</td>
                     <td>
-                        <b>{{frame.content.type}}</b>
-                        <div ng-show="frame.content.title">{{frame.content.title|limitTo:50}}</div>
-                        <div ng-show="frame.content.url"><a target="_blank" href="{{frame.content.url}}">{{frame.content.url}}</a></div>
+                        <b ng-switch="frame.content.type">
+                            <span ng-switch-when="news">News</span>
+                            <span ng-switch-when="announcement">Announcement</span>
+                            <span ng-switch-when="schedule">Schedule</span>
+                            <span ng-switch-default="schedule">{{::frame.content.type}}</span>
+                        </b>
+                        <div ng-show="frame.content.title">{{::frame.content.title|limitTo:50}}</div>
+                        <div ng-show="frame.content.url"><a target="_blank" href="{{::frame.content.url}}">{{::frame.content.url}}</a></div>
                     </td>
-                    <td>
-                        {{frame.localSchedule.startDay}} <span ng-if="frame.localSchedule.startDay!=frame.localSchedule.endDay"> - {{frame.localSchedule.endDay|limitTo:5:5}}</span>
-                        <br>
-                        <i>{{frame.localSchedule.startTime}} - {{frame.localSchedule.endTime}}<i/>
+                    <td ng-init="::singleDay=frame.schedules.length==1 && (frame.schedules[0].start|moment:'format':'YYYY-MM-DD') == (frame.schedules[0].end|moment:'format':'YYYY-MM-DD')">
+
+                        <div ng-if="singleDay">
+                            {{::frame.schedules[0].start | moment:'format':'MMM Do'}}
+                            <br>
+                            between {{::frame.schedules[0].start | moment:'format':'HH:mm'}} -
+                            {{::frame.schedules[0].end   | moment:'format':'HH:mm'}}
+                        </div>
+
+                        <div ng-if="!singleDay" ng-switch="frame.scheduleType">
+                            <span ng-switch-when="continuous">
+                                <em>Non stop</em>
+                                <br>
+                                from {{::frame.schedules[0].start | moment:'format':'MMM Do'}} at
+                                     {{::frame.schedules[0].start | moment:'format':'HH:mm'}}
+                                <br>
+                                to   {{::frame.schedules[0].end   | moment:'format':'MMM Do'}} at
+                                     {{::frame.schedules[0].end   | moment:'format':'HH:mm'}}
+                            </span>
+                            <span ng-switch-default>
+                                <em>Every day</em>
+                                <br>
+                                from {{::frame.schedules[0].start              | moment:'format':'MMM Do'}}
+                                to   {{::(frame.schedules|limitTo:1:-1)[0].end | moment:'format':'MMM Do'}}
+                                <br>
+                                between {{::frame.schedules[0].start | moment:'format':'HH:mm'}} -
+                                {{::frame.schedules[0].end   | moment:'format':'HH:mm'}}
+                            </span>
+                        </div>
                     </td>
                     <td>
                         <ul class="list-unstyled">
                             <li ng-show="frame.feeds.length==0">All feeds</li>
-                            <li ng-repeat="feedId in frame.feeds">{{framesCtrl.feedsMap[feedId].title}}</li>
+                            <li ng-repeat="feedId in frame.feeds">{{::framesCtrl.feedsMap[feedId].title}}</li>
                         </ul>
                     </td>
                     <td>

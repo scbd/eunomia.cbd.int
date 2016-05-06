@@ -1,27 +1,29 @@
 <div class="container">
 
-    <div class="row">
-        <div class="col-xs-12">
-            <h1>Frame <small>{{frameIdCtrl.frame.content.type}}</small><h1>
-        </div>
-
     <form ng-submit="frameIdCtrl.save()">
+
+        <div class="row">
+
+            <div class="col-xs-12">
+                <h1><select style="background:inherit;border:none" ng-model="frameIdCtrl.frame.content.type" ng-disabled="!!frameIdCtrl.frame._id">
+                        <option value="announcement">Announcement</option>
+                        <option value="news">News</option>
+                        <option value="schedule">Schedule</option>
+                    </select>
+                </h1>
+            </div>
+        </div>
 
         <div class="row">
 
             <div class="col-sm-3 col-xs-6">
 
                 <div class="form-group">
-                  <label for="code" required>First Day</label>
-                  <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.startDay" ng-change="frameIdCtrl.changedStartDay()"
-                         date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD' }"
-                         date-picker-min-date="frameIdCtrl.eventGroup.StartDate"
-                         date-picker-max-date="frameIdCtrl.eventGroup.EndDate">
-                </div>
-                <div class="form-group">
-                    <label for="code" required>Start Time</label>
-                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.startTime" ng-change="frameIdCtrl.changedStartTime()"
-                           date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm' }" >
+                  <label for="code" required>Start</label>
+                  <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.start" ng-change="frameIdCtrl.dateChanged('start')"
+                         date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
+                         date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
+                         date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
                 </div>
 
             </div>
@@ -29,21 +31,62 @@
             <div class="col-sm-3 col-xs-6">
 
                 <div class="form-group">
-                    <label for="code" required>Last Day</label>
-                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.endDay" ng-change="frameIdCtrl.changedEndDay()"
-                           date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD' }"
-                           date-picker-min-date="frameIdCtrl.eventGroup.StartDate"
-                           date-picker-max-date="frameIdCtrl.eventGroup.EndDate">
+                    <label for="code" required>End</label>
+                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.end" ng-change="frameIdCtrl.dateChanged('end')"
+                           date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
+                           date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
+                           date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
                 </div>
 
+            </div>
+
+            <div class="col-sm-3 col-xs-6">
+
                 <div class="form-group">
-                    <label for="code" required>Stop Time</label>
-                    <input type="text" class="form-control" name="code"  ng-model="frameIdCtrl.endTime" ng-change="frameIdCtrl.changedEndTime()"
-                           date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm' }" >
+                    <label for="name" required>Schedule Type</label>
+                    <select class="form-control" ng-model="frameIdCtrl.frame.scheduleType" ng-change="frameIdCtrl.dateChanged()">
+                        <option value="continuous">Continuous</option>
+                        <option value="daily">Daily</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="col-sm-6 col-xs-12">
+            <div class="col-sm-3 col-xs-6">
+                <div  ng-if="frameIdCtrl.frame.scheduleType=='daily'">
+                    <div class="form-group">
+                        <label for="name">Daily schedule</label>
+                    </div>
+
+                    <em>Every day</em>
+                    <br>
+                    Between
+                    {{frameIdCtrl.frame.schedules[0].start | moment:'format':'HH:mm'}} -
+                    {{frameIdCtrl.frame.schedules[0].end   | moment:'format':'HH:mm'}} on
+
+                    <ul class="list-inline">
+                        <li ng-repeat="s in frameIdCtrl.frame.schedules">
+                            {{s.start | moment:'format':'MMM Do'}}
+                        </li>
+                    </ul>
+                </div>
+
+                <div  ng-if="frameIdCtrl.frame.scheduleType=='continuous'">
+                    <div class="form-group">
+                        <label for="name">Continuous schedule</label>
+                    </div>
+                    <em>Non stop</em>
+                    <br>
+                    From  {{frameIdCtrl.frame.schedules[0].start | moment:'format':'MMM Do'}}
+                    at    {{frameIdCtrl.frame.schedules[0].start | moment:'format':'HH:mm'}}
+                    <br>
+                    Until {{frameIdCtrl.frame.schedules[0].end | moment:'format':'MMM Do'}}
+                    at    {{frameIdCtrl.frame.schedules[0].end | moment:'format':'HH:mm'}}
+
+                </div>
+
+            </div>
+
+            <div class="col-sm-12 col-xs-6">
 
                 <div class="form-group">
                     <label for="feeds">Feeds</label>
@@ -55,20 +98,7 @@
                         </label>
                     </div>
                 </div>
-            </div>
 
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label for="name" required>Type</label>
-                    <select class="form-control" ng-model="frameIdCtrl.frame.content.type" ng-disabled="!!frameIdCtrl.frame._id">
-                        <option value="news">News</option>
-                        <option value="announcement">Announcement</option>
-                        <option value="schedule">Schedule</option>
-                    </select>
-                </div>
             </div>
         </div>
 

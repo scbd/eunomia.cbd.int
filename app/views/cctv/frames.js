@@ -1,4 +1,4 @@
-define(['lodash', 'moment-timezone', 'app', 'directives/date-picker'], function(_, moment) {
+define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment'], function(_, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q', 'eventGroup', function($http, $route, $location, $scope, $q, eventGroup) {
 
