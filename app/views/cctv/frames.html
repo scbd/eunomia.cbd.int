@@ -7,7 +7,7 @@
 
         <form class="form">
 
-            <div class="col-xs-6 col-sm-3">
+            <div class="col-xs-4 col-sm-3">
                 <div class="form-group">
                     <div class="form-group">
                       <label for="code" required>Day</label>
@@ -18,11 +18,22 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-6 col-sm-3">
+            <div class="col-xs-4 col-sm-3">
                 <div class="form-group">
                     <label for="feeds" required>Feed</label>
                     <select class="form-control" ng-options="feed._id as feed.title for feed in framesCtrl.feeds" ng-model="framesCtrl.selectedFeed" ng-change="framesCtrl.refresh()">
                         <option value="">All feeds</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-3">
+                <div class="form-group">
+                    <label for="feeds" required>Type</label>
+                    <select class="form-control" ng-model="framesCtrl.selectedType" ng-change="framesCtrl.refresh()">
+                        <option value="">All Types</option>
+                        <option value="announcement">Announcement</option>
+                        <option value="news">News</option>
+                        <option value="schedule">Schedule</option>
                     </select>
                 </div>
             </div>

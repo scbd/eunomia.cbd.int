@@ -12,6 +12,9 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
 
         init();
 
+        $scope.$watch(function() { return _ctrl.selectedType;      }, function(type){ $location.search('type', type||undefined); });
+        $scope.$watch(function() { return $location.search().type; }, function(type){ _ctrl.selectedType =     type||undefined;  });
+
         $scope.$watch(function() { return _ctrl.selectedDay;      }, function(day){ $location.search('day', day||undefined); });
         $scope.$watch(function() { return $location.search().day; }, function(day){ _ctrl.selectedDay =     day||undefined;  });
 
@@ -27,6 +30,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
 
             _ctrl.selectedDay  = $location.search().day;
             _ctrl.selectedFeed = $location.search().feed;
+            _ctrl.selectedType = $location.search().type;
 
             return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
@@ -71,6 +75,10 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
                     { feeds : _ctrl.selectedFeed },
                     { feeds: { $size: 0 } }
                 ];
+            }
+
+            if(_ctrl.selectedType) {
+                query['content.type'] = _ctrl.selectedType;
             }
 
             return $http.get('/api/v2016/cctv-frames', { params : { q : query }}).then(function (res) {
