@@ -11,10 +11,9 @@
     "morgan": "1.6.1",
     "serve-static": "1.10.0"
   },
-  "engine": "node >= 0.10.36",
+  "engine": "node >= 4.2",
   "devDependencies": {},
   "scripts": {
-    "start": "node server.js",
     "postinstall": "./node_modules/.bin/bower install --allow-root"
   },
   "repository": {
