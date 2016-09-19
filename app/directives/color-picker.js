@@ -14,7 +14,7 @@ define(['app', 'lodash',
         scope: {'binding':'=binding'},
         link: function($scope, $element,$attr) {
           init();
-
+          $scope.$watch('binding',function(){updateColorSquare ();});
           if($attr.hasOwnProperty('floatLabel'))$scope.floatLabel=true;
           if(!$attr.hasOwnProperty('label'))
             $scope.label='Color';
