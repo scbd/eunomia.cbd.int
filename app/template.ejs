@@ -23,15 +23,7 @@
   </head>
 
   <body class="ltr" id="top">
-    <iframe id="authenticationFrame" src="https://accounts.cbd.int/app/authorize.html" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
 
-    <!-- <iframe id="authenticationFrame" src="" style="display:none" onload="(event.target || event.srcElement).ready = true"></iframe>
-
-    <script>
-      var domain = document.location.hostname.replace(/[^\.]+\./, '');
-      if (domain == 'localhost') domain = 'cbddev.xyz';
-      document.getElementById('authenticationFrame').src = 'https://accounts.' + domain + '/app/authorize.html';
-    </script> -->
     <nav class="navbar navbar-default" style="margin-bottom:0px">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -59,6 +51,7 @@
           <ul class="nav navbar-nav">
             <li ng-class="{ active : templateCtrl.menu=='schedule' }"   ><a href="/schedule/conference">Schedule</a></li>
             <li ng-class="{ active : templateCtrl.menu=='side-events' }"><a href="/schedule/side-events">Side-Events</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='side-events2' }"><a href="/schedule/side-events2">Side-Events 2</a></li>
             <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }"><a href="/cctv/frames">CCTV</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -71,8 +64,11 @@
             <li class="dropdown" ng-class="{ active : templateCtrl.menu=='admin' }">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="/admin/reservation/types">Reservation types</a></li>
                 <li><a href="/admin/cctv/feeds">CCTV Feeds</a></li>
+                <li><a href="/admin/rooms">Rooms</a></li>
+                <li><a href="/admin/types/reservations">Reservation types</a></li>
+                <li><a href="/admin/types/venue-rooms">Room Types</a></li>
+                <!-- <li><a href="/admin/venues">Venues</a></li> -->
               </ul>
             </li>
           </ul>
