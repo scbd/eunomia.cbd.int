@@ -35,7 +35,7 @@
     .room-row-base {
       min-height:40px;
       /*padding: 5px 5px 5px 5px;*/
-      cursor:pointer;
+      cursor: -webkit-grab;
       border-bottom-style: solid;
       border-bottom-width: 1px;
       border-bottom-color: #bbb;
@@ -71,15 +71,9 @@
   <div class="conference-schedule" style="height:94%;">
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
     <div class="control-header">
-      <div class="row">
+      <div class="row" style="background-color:#a7a7a7;">
         <div class="col-xs-1">
-          <div class="form-group" style="margin-top:0px;">
-            <select id="conference-select" class="form-control" ng-model="conferenceId" ng-change="changeConference()">
-              <option ng-repeat="docObj in conferences" value="{{docObj._id}}" ng-if="docObj._id" ng-selected="docObj.selected" style="color:#000;">
-                <span style="color:#000;">{{docObj.acronym}}</span>
-              </option>
-            </select>
-            <span class="material-input"></span>
+          <div class="view-title text-nowrap"> <span style="margin-left:20px;">Room Reservations</span>
           </div>
         </div>
 
@@ -91,7 +85,7 @@
           </div>
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
-              <input id="#day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
+              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
                      date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
                      date-picker-min-date="conference.startObj"
                      date-picker-max-date="conference.endObj">
@@ -127,12 +121,19 @@
     <div >
       <div id="room-col" class="room-col-base">
         <div class="room-column-header text-center" style="height:40px;">Rooms</div>
-        <room-row ng-repeat="room in rooms | orderBy:'sort'" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
+        <section dragula='"all-rooms-bag"' dragula-model="rooms">
+            <room-row ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
+        </section>
       </div>
         <div id="scroll-grid" class="outer">
           <div class="scroll-grid">
+<!-- time heard row -->
         <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="dayObj" conference-days="conferenceDays"></time-unit-row-header>
-        <time-unit-row start-time="startTimeObj" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+<!-- room rows start -->
+
+        <time-unit-row  start-time="startTimeObj" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+
+<!-- room rows end -->
       </div>
     </div>
     </div>

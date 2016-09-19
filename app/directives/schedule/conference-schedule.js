@@ -4,11 +4,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     'services/mongo-storage',
     './time-unit-row',
     './time-unit-row-header',
-    './room-row'
+    './room-row',
+    'css!libs/angular-dragula/dist/dragula.css',
 ], function(app, _, template, moment) {
 
-    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope',
-        function($timeout, $document, mongoStorage,$rootScope) {
+    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q',
+        function($timeout, $document, mongoStorage,$rootScope,$q) {
             return {
                 restrict: 'E',
                 template: template,
@@ -16,11 +17,20 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                 transclude: false,
                 require:'conferenceSchedule',
                 scope: {
-                    'search': '='
+                    'search': '=',
+                    'conference':'='
+
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
+                        $scope.$watch('conference',function(){
+                          if($scope.conference)
+                            changeConference();
+                        });
                         init();
+                        $scope.$parent.$on('all-rooms-bag.drop-model', function() {
+                          $timeout(moveRoom,1000);
+                        });
 
                         //============================================================
                         //
@@ -62,10 +72,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         function init() {
 
-                            $scope.conferenceId = '';
-                            $scope.conference = '';
-                            $scope.conferences = [];
-                            $scope.changeConference = changeConference;
+                            // $scope.changeConference = changeConference;
                             $scope.rooms = [];
 
                             $scope.startTime = ''; //display
@@ -78,95 +85,90 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.changeEndTime = changeEndTime;
 
 
-                            getConferences().then(function() {
 
-                                initDayTimeSelects();
-                                $scope.getRooms();
-                                initDay();
-                            });
+                            initDayTimeSelects();
+                            getRooms();
+                            initDay();
 
                             setStartTime();
                             setEndTime();
 
                         } //init
 
+                        //============================================================
+                        //
+                        //============================================================
+                        function moveRoom() {
+                            var allP=[];
+                            if(!_.isEmpty($scope.rooms)){
+                                _.each( $scope.rooms,function(item,index){
+                                  item.sort=index;
+                                  allP.push(mongoStorage.save('venue-rooms',{'_id':item._id,'sort':item.sort,'venue':item.venue}));
+                                });
+                            }
+                            //$q.all(allP).then(getRooms);
+                        } //init
 
                         //============================================================
                         //
                         //============================================================
                         function initDay() {
-                            var start = moment.utc($scope.conference.start* 1000).startOf('day');
-                            var end =  moment.utc($scope.conference.end * 1000).startOf('day');
 
-                            $scope.dayObj = moment.utc().startOf('day');
-                            if($scope.dayObj.isSameOrAfter(start) && $scope.dayObj.isSameOrBefore(end))
-                            {
+                            var start =   moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
+                            var end =    moment.tz($scope.conference.schedule.end,$scope.conference.timezone).startOf('day');
+
+                            $scope.dayObj = moment.tz(moment(),$scope.conference.timezone).startOf('day');
+
+
                               $timeout(function() {
-                                  $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
-                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
-                                  $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                  if($scope.dayObj.isSameOrAfter(start) && $scope.dayObj.isSameOrBefore(end)){
+                                      $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
+                                      $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
+                                  }else {
+                                      $scope.dayObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
+                                      $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
+                                      $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
+                                  }
+
+                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setMaxDate', start);
+                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setMinDate', end);
+                                  $scope.day = $scope.dayObj.startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                                   prevNextRestrictions();
-                              }, 100);
-                            }
+                              }, 1000);
+
                         } //init
-
-
 
                         //============================================================
                         //
                         //============================================================
                         function initDayTimeSelects() {
 
-                            $scope.day = moment($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
+                            $scope.day = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format('dddd YYYY-MM-DD');
 
-                            $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
+                            $scope.endTime = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').hour(23).format('HH:mm');
                             setEndTime(); // creates passes moment object for children directives
 
-                            $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
+                            $scope.startTime = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').hour(8).format('HH:mm');
                             setStartTime(); // creates passes moment object for children directives
                             prevNextRestrictions();
                         } //initDayTimeSelects
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function getConferences() {
-
-                            return mongoStorage.getConferences().then(function(confs) {
-                                $scope.conferences = confs.data;
-                                var lowestEnd = Math.round(new Date().getTime() / 1000);
-                                var chosenEnd = 0;
-                                var selectedKey = 0;
-                                //select the next confrence by default
-                                _.each($scope.conferences, function(meet, key) {
-                                    if (!chosenEnd) chosenEnd = meet.end;
-                                    if (meet.end > lowestEnd && meet.end <= chosenEnd) {
-                                        chosenEnd = meet.end;
-                                        selectedKey = key;
-                                    }
-                                });
-                                $scope.conference = $scope.conferences[selectedKey];
-                                $scope.conferences[selectedKey].selected = true;
-                                $scope.conferenceId = $scope.conference._id;
-                            });
-                        } //initMeeting
 
                         //============================================================
                         //
                         //============================================================
                         function changeConference() {
 
-                            $scope.conference = _.find($scope.conferences, {
-                                '_id': $scope.conferenceId
-                            });
-                            $scope.getRooms();
+                            getRooms();
 
-                            $scope.conference.startObj = moment.utc($scope.conference.start * 1000).startOf('day');
-                            $scope.conference.endObj = moment.utc($scope.conference.end * 1000).startOf('day');
-                            $timeout(function() {
-                                $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', moment.utc($scope.dayObj).startOf('day').hour(Number($scope.startTime.substring(0, 2))));
-                                $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
-                            });
+                            $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
+                            $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
+//TODO
+          $timeout(function() {
+
+              $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj.startOf('day').hour(Number($scope.startTime.substring(0, 2))));
+              $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
+          });
                             $scope.dayObj = $scope.conference.startObj;
                             $timeout(function(){prevNextRestrictions();},1000);
                         } //changeConference
@@ -241,7 +243,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         function setDay() {
 
-                            $scope.dayObj = moment.utc($scope.day, 'dddd YYYY-MM-DD').startOf('day');
+                            $scope.dayObj = moment.tz($scope.day,$scope.conference.timezone).startOf('day');
                             prevNextRestrictions();
                         } //getStartTime
 
@@ -252,12 +254,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                             if(_.isEmpty($scope.conferenceDays) || !$scope.dayObj) return;
 
-                            if(moment.utc($scope.dayObj).subtract(1, 'day').isBefore(moment.utc($scope.conferenceDays[0]).startOf('day')))
+                            if($scope.dayObj.subtract(1, 'day').isBefore($scope.conferenceDays[0].startOf('day')))
                                 $scope.isPrevDay = true;
                             else
                                 $scope.isPrevDay = false;
 
-                            if(moment.utc($scope.dayObj).add(1, 'day').isAfter(moment.utc($scope.conferenceDays[$scope.conferenceDays.length-1]).startOf('day')))
+                            if($scope.dayObj.add(1, 'day').isAfter($scope.conferenceDays[$scope.conferenceDays.length-1].startOf('day')))
                                 $scope.isNextDay = true;
                             else
                                 $scope.isNextDay = false;
@@ -272,9 +274,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
 
                             $timeout(function() {
-                                $scope.dayObj = moment.utc($scope.dayObj);
+                                $scope.dayObj = moment.tz($scope.dayObj,$scope.conference.timezone);
                                 $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
-                                $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
                                 prevNextRestrictions();
                             }, 100);
                         }; //changeStartTime
@@ -287,9 +289,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.dayObj = $scope.dayObj.subtract(1, 'day');
 
                             $timeout(function() {
-                                $scope.dayObj = moment.utc($scope.dayObj);
+                                $scope.dayObj = moment.tz($scope.dayObj,$scope.conference.timezone);
                                 $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
-                                $scope.day = moment.utc($scope.dayObj).startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                $scope.day =$scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
                                 prevNextRestrictions();
                             }, 100);
                         }; //changeStartTime
@@ -297,15 +299,15 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         //
                         //============================================================
-                        $scope.getRooms = function() {
+                        function getRooms() {
 
-                            return mongoStorage.getConferenceRooms($scope.conferenceId).then(function(res) {
+                            return mongoStorage.getConferenceRooms($scope.conference._id).then(function(res) {
                                 $scope.rooms = res.data;
                             }).then(function() {
                                 ctrl.initRowHeight();
                                 ctrl.generateDays();
                             });
-                        }; //initRooms
+                        } //initRooms
 
 
                     }, //link
@@ -324,7 +326,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                       this.setDay = function(day) {
 
                           $scope.dayObj = day;
-                          $scope.day = moment.utc($scope.dayObj).startOf('day').format('dddd YYYY-MM-DD');
+                          $scope.day = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format('dddd YYYY-MM-DD');
 
                           $scope.prevNextRestrictions();
                       }; //this.resetSchedule
@@ -334,19 +336,19 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                       this.generateDays= function() {
 
                           $scope.conferenceDays = [];
-                          var numDays = Math.floor((Number($scope.conference.end) - Number($scope.conference.start)) / (24 * 60 * 60));
-                          $scope.conference.endObj = moment.utc(Number($scope.conference.end) * 1000).add(1,'day').startOf('day');
-                          $scope.conference.startObj = moment.utc(Number($scope.conference.start) * 1000).startOf('day');
 
+                          var numDays = moment($scope.conference.schedule.end).diff($scope.conference.schedule.start,'days');//Math.floor((Number($scope.conference.schedule.end) - Number($scope.conference.start)) / (24 * 60 * 60));
 
-                          $scope.startDay = moment($scope.conference.startObj);
-                          $scope.endDay = moment($scope.conference.endObj);
-                          var date = moment($scope.conference.startObj);
+                          $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
+                          $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
+                          $scope.startDay = $scope.conference.startObj;
+                          $scope.endDay = $scope.conference.endObj;
+                          var date = $scope.conference.startObj;
                           for (var i = 0; i <= numDays; i++) {
-                              $scope.conferenceDays.push(moment(date));
+                              $scope.conferenceDays.push(moment.tz(date,$scope.conference.timezone));
                               date.add(1, 'day');
                           }
-                          $scope.lastConfDay=moment.utc(date.add(1, 'day'));
+                          $scope.lastConfDay=moment.tz(date.add(1, 'day'),$scope.conference.timezone);
                       }; //generateDays
 
                       //============================================================
