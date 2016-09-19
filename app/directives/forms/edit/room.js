@@ -4,7 +4,7 @@ define(['app', 'lodash',
 
   '../../color-picker'
 
-], function(app, _, template, moment) { //'scbd-services/utilities',
+], function(app, _, template) { //'scbd-services/utilities',
 
   app.directive("room", ['$timeout','mongoStorage','$rootScope','$location',//"$http", "$filter", "Thesaurus",
     function($timeout,mongoStorage,$rootScope,$location) {
@@ -14,29 +14,24 @@ define(['app', 'lodash',
         replace: true,
         transclude: false,
         scope: {'doc':'=?','venue':'=?','closeThisDialog':'&'},
-        controller: function($scope, $element) { //, $http, $filter, Thesaurus
-            init();
+        require:'room',
+        link: function($scope, $element,$atrbs,ctrl){
+            ctrl.init();
 
+        },
+        controller: function($scope, $element) { //, $http, $filter, Thesaurus
+
+            this.init=init;
             //============================================================
             //
             //============================================================
             function triggerChanges (){
-
-                  $timeout(function(){$element.find('input').trigger("change");
-$element.find('select').trigger("change");
-                },100);
-
-
+                $timeout(function(){$element.find('input').trigger("change");
+                    $element.find('select').trigger("change");
+                },200);
             }//triggerChanges
 
-          // //============================================================
-          // //
-          // //============================================================
-          // function updateColorSquare (){
-          //     $element.find('#roomColorDSquare').css('color',$scope.doc.color);
-          //     $timeout(function(){$element.find('#roomColorD').trigger("change");});
-          // }//updateColorSquare
-          // $scope.updateColorSquare=updateColorSquare;
+
           //============================================================
           //
           //============================================================
@@ -51,6 +46,30 @@ $element.find('select').trigger("change");
 
               });
           }//initVunues
+
+          //============================================================
+          //
+          //============================================================
+          function initTypes(){
+            var q = {schema:'venue-rooms'};
+            return mongoStorage.loadDocs('types',q,0,100000,false).then(function(result) {
+                     $scope.options.types =result.data;
+
+                     $scope.initialState=_.cloneDeep($scope.options.types);
+                     _.each($scope.options.types,function(type,key){
+                            var parentObj;
+                            type.showChildren=true;
+                            if(type.parent){
+                              parentObj= _.find($scope.options.types,{'_id':type.parent});
+                              if(!parentObj) throw "error ref to parent res type not found.";
+                              if(!parentObj.children)parentObj.children=[];
+                              parentObj.children.push(type);
+                              delete($scope.options.types[key]);
+                            }
+                     });
+            });
+          }//
+
           //============================================================
           //
           //============================================================
@@ -58,6 +77,8 @@ $element.find('select').trigger("change");
               var room = _.cloneDeep($scope.doc);
               //_.each(venue.rooms, function(room){
                   delete(room.bookings);
+                  delete(room.changed);
+                  delete(room.history);
             //  });
               return mongoStorage.save('venue-rooms',room,room._id).then(function(){
                           $rootScope.$broadcast("showInfo","Room Successfully Updated.");
@@ -65,7 +86,7 @@ $element.find('select').trigger("change");
                   console.log(error);
                   $rootScope.$broadcast("showError","There was an error saving your data to the server.");
               });
-          }//initVunues
+          };//initVunues
           //============================================================
           //
           //============================================================
@@ -74,7 +95,7 @@ $element.find('select').trigger("change");
                   tab.active=false;
               });
               $scope.tabs[tabName].active=true;
-          }//initVunues
+          };//initVunues
 
           //============================================================
           //
@@ -84,10 +105,14 @@ $element.find('select').trigger("change");
                 $scope.doc.atTable = $scope.doc.atTable || 0;
                 $scope.doc.capacity = $scope.doc.capacity || 0;
                 $scope.doc.sort = $scope.doc.sort || 0;
+                if(!$scope.meta)$scope.meta={};
+                if(!$scope.meta.clinetOrg)
+                  $scope.meta.clinetOrg=0;
                 $timeout(function(){
+                  $element.find('#roomSort').trigger("change");
                   $element.find('#roomAtTableD').trigger("change");
                   $element.find('#roomCapacityD').trigger("change");
-                  $element.find('#roomSortD').trigger("change");
+
                 });
               },200);
 
@@ -96,21 +121,21 @@ $element.find('select').trigger("change");
           //
           //============================================================
           function init() {
-            $scope.options={};
+              $scope.options={};
 
-
-            $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
-            $scope.isSideEvents=($location.path()==='/side-events');
+              $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
+              $scope.isSideEvents=($location.path()==='/side-events');
               //updateColorSquare();
               triggerChanges();
 
               initVenues();
+              initTypes();
               $timeout(function(){$element.find('#roomNameD').focus();},500);
               initVal();
-  ///if(!$scope.doc.location)$scope.doc.location=$scope.venue._id;
+
           }//triggerChanges
 
-        } //link
+        } //controlledr
       }; //return
     }
   ]);
