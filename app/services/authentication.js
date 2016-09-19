@@ -1,274 +1,369 @@
 /* jshint sub:true */
 
-define(['app', 'angular'], function (app, ng) { 'use strict';
+define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
+    'use strict';
 
-	app.factory('apiToken', ["$q", "$rootScope", "$window", "$document", "$timeout", function($q, $rootScope, $window, $document, $timeout) {
+    app.factory('apiToken', ['$q', '$rootScope', '$window', '$document', '$timeout','devRouter', function($q, $rootScope, $window, $document, $timeout,devRouter) {
 
-		var pToken;
-		//============================================================
-		//
-		//
-		//============================================================
-		function getToken() {
-			//incase of iframe not found in $document object search the $ object (for Firefox)
-			var authenticationFrame = $document.find('#authenticationFrame')[0]||$('#authenticationFrame')[0];
+        var authenticationFrameQ = $q(function(resolve, reject) {
+console.log(devRouter.ACCOUNTS_URI);
+            var frame = $('<iframe src="' + devRouter.ACCOUNTS_URI + '/app/authorize.html" style="display:none"></iframe>');
 
-			if(!authenticationFrame) {
-				pToken = pToken || null;
-			}
+            $('body').prepend(frame);
 
-			if(pToken!==undefined) {
-				return $q.when(pToken || null);
-			}
+            var timeout = $timeout(function() {
+                reject('operation timed out (5000ms)');
+            }, 5000);
 
-			pToken = null;
+            frame.load(function(evt) {
+                $timeout.cancel(timeout);
+                resolve(evt.target || evt.srcElement);
+            });
+        });
 
-			var defer = $q.defer();
-			var unauthorizedTimeout = $timeout(function(){
-				console.error('accounts.cbd.int is not available / call is made from an unauthorized domain');
-				defer.resolve(null);
-			}, 1000);
+        var pToken;
 
-			var receiveMessage = function(event)
-			{
-				$timeout.cancel(unauthorizedTimeout);
+        //============================================================
+        //
+        //
+        //============================================================
+        function getToken() {
 
-				if(event.origin!='https://accounts.cbd.int')
-					return;
+            return $q.when(authenticationFrameQ).then(function(authenticationFrame) {
 
-				var message = JSON.parse(event.data);
+                if (!authenticationFrame) {
+                    pToken = pToken || null;
+                }
 
-				if(message.type=='authenticationToken') {
-					defer.resolve(message.authenticationToken || null);
+                if (pToken !== undefined) {
+                    return $q.when(pToken || null);
+                }
 
-					if(message.authenticationEmail)
-						$rootScope.lastLoginEmail = message.authenticationEmail;
-				}
-				else {
-					defer.reject('unsupported message type');
-				}
-			};
+                pToken = null;
 
-			$window.addEventListener('message', receiveMessage);
+                var defer = $q.defer();
+                var unauthorizedTimeout = $timeout(function() {
+                    console.error('accounts.cbd.int is not available / call is made from an unauthorized domain');
+                    defer.resolve(null);
+                }, 1000);
 
-			pToken = defer.promise.then(function(t){
+                var receiveMessage = function(event) {
+                    $timeout.cancel(unauthorizedTimeout);
 
-				pToken = t;
+                    if (event.origin != devRouter.ACCOUNTS_URI)
+                        return;
 
-				return t;
+                    var message = JSON.parse(event.data);
 
-			}).catch(function(error){
+                    if (message.type == 'authenticationToken') {
+                        defer.resolve(message.authenticationToken || null);
 
-				pToken = null;
+                        if (message.authenticationEmail)
+                            $rootScope.lastLoginEmail = message.authenticationEmail;
+                    } else {
+                        defer.reject('unsupported message type');
+                    }
+                };
 
-				console.error(error);
+                $window.addEventListener('message', receiveMessage);
 
-				throw error;
+                pToken = defer.promise.then(function(t) {
 
-			}).finally(function(){
+                    pToken = t;
 
-				$window.removeEventListener('message', receiveMessage);
+                    return t;
 
-			});
+                }).finally(function() {
 
-			authenticationFrame.contentWindow.postMessage(JSON.stringify({ type : 'getAuthenticationToken' }), 'https://accounts.cbd.int');
+                    $window.removeEventListener('message', receiveMessage);
 
-			return pToken;
-		}
+                });
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function setToken(token, email) { // remoteUpdate:=true
+                authenticationFrame.contentWindow.postMessage(JSON.stringify({
+                    type: 'getAuthenticationToken'
+                }), devRouter.ACCOUNTS_URI);
 
-			pToken = token || undefined;
+                return pToken;
 
-			var authenticationFrame = $document.find('#authenticationFrame')[0]||$('#authenticationFrame')[0];
+            }).catch(function(error) {
 
-			if(authenticationFrame) {
+                pToken = null;
 
-				var msg = {
-					type : "setAuthenticationToken",
-					authenticationToken : token,
-					authenticationEmail : email
-				};
+                console.error(error);
 
-				authenticationFrame.contentWindow.postMessage(JSON.stringify(msg), 'https://accounts.cbd.int');
-			}
+                throw error;
+            });
+        }
 
-			if(email) {
-				$rootScope.lastLoginEmail = email;
-			}
-		}
+        //============================================================
+        //
+        //
+        //============================================================
+        function setToken(token, email) { // remoteUpdate:=true
 
-		return {
-			get : getToken,
-			set : setToken
-		};
-	}]);
+            return $q.when(authenticationFrameQ).then(function(authenticationFrame) {
 
+                pToken = token || undefined;
 
-	app.factory('authentication', ["$http", "$rootScope", "$q", "apiToken", function($http, $rootScope, $q, apiToken) {
+                if (authenticationFrame) {
 
-		var currentUser = null;
+                    var msg = {
+                        type: 'setAuthenticationToken',
+                        authenticationToken: token,
+                        authenticationEmail: email
+                    };
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function anonymous() {
-			return { userID: 1, name: 'anonymous', email: 'anonymous@domain', government: null, userGroups: null, isAuthenticated: false, isOffline: true, roles: [] };
-		}
+                    authenticationFrame.contentWindow.postMessage(JSON.stringify(msg), devRouter.ACCOUNTS_URI);
+                }
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function getUser() {
+                if (email) {
+                    $rootScope.lastLoginEmail = email;
+                }
+            });
+        }
 
-			if(currentUser)
-				return $q.when(currentUser);
+        return {
+            get: getToken,
+            set: setToken
+        };
+    }]);
 
-			return $q.when(apiToken.get()).then(function(token) {
+    app.factory('authentication', ["$http", "$rootScope", "$q", "apiToken", "$window", "$location","devRouter", function($http, $rootScope, $q, apiToken, $window, $location,devRouter) {
 
-				if(!token) {
-					return anonymous();
-				}
+        var currentUser = null;
 
-				return $http.get('/api/v2013/authentication/user', { headers: { Authorization: "Ticket " + token } }).then(function(r){
-					return r.data;
-				});
+        //============================================================
+        //
+        //
+        //============================================================
+        function anonymous() {
+            return {
+                userID: 1,
+                name: 'anonymous',
+                email: 'anonymous@domain',
+                government: null,
+                userGroups: null,
+                isAuthenticated: false,
+                isOffline: true,
+                roles: []
+            };
+        }
 
-			}).catch(function() {
 
-				return anonymous();
+        var inProgress = false;
+        //============================================================
+        //
+        //
+        //============================================================
+        function getUser() {
 
-			}).then(function(user){
+            if (currentUser)
+                return $q.when(currentUser);
 
-				setUser(user);
+            return $q.when(apiToken.get()).then(function(token) {
 
-				return user;
-			});
-		}
+                if (!token)
+                    return anonymous();
 
-		//==============================
-		//
-		//==============================
-		function LEGACY_user() {
+                if (!inProgress) {
 
-		    console.warn("authentication.user() is DEPRECATED. Use: getUser()");
+                    inProgress = $http.get('/api/v2013/authentication/user', {
+                        headers: {
+                            Authorization: "Ticket " + token
+                        }
+                    }).then(function(r) {
 
-			return $rootScope.user;
-		}
+                        return r.data;
+                    });
+                    return inProgress;
+                } else {
+                    return inProgress;
+                }
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function signIn(email, password) {
+            }).catch(function() {
 
-			return $http.post("/api/v2013/authentication/token", {
+                return anonymous();
 
-				"email": email,
-				"password": password
+            }).then(function(user) {
 
-			}).then(function(res) {
+                setUser(user);
+                return user;
+            });
+        }
 
-				var token  = res.data;
 
-				return $q.all([token, $http.get('/api/v2013/authentication/user', { headers: { Authorization: "Ticket " + token.authenticationToken } })]);
+        //============================================================
+        //
+        //
+        //============================================================
+        function signIn(email, password) {
 
-			}).then(function(res) {
+            return $http.post(devRouter.ACCOUNTS_URI + '/api/v2013/authentication/token', {
 
-				var token = res[0];
-				var user  = res[1].data;
+                "email": email,
+                "password": password
 
-				email = (email||"").toLowerCase();
+            }).then(function(res) {
 
-				apiToken.set(token.authenticationToken, email);
-				setUser (user);
+                var token = res.data;
 
-				$rootScope.$broadcast('signIn', user);
+                return $q.all([token, $http.get('https://api.' + devRouter.DOMAIN + '/api/v2013/authentication/user', {
+                    headers: {
+                        Authorization: "Ticket " + token.authenticationToken
+                    }
+                })]);
 
-				return user;
+            }).then(function(res) {
 
-			}).catch(function(error) {
+                var token = res[0];
+                var user = res[1].data;
 
-				throw { error:error.data, errorCode : error.status };
+                email = (email || "").toLowerCase();
 
-			});
-		}
+                apiToken.set(token.authenticationToken, email);
+                setUser(user);
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function signOut () {
+                $rootScope.$broadcast('signIn', user);
 
-			apiToken.set(null);
+                return user;
 
-			setUser(null);
+            }).catch(function(error) {
 
-			return $q.when(getUser()).then(function(user) {
+                throw {
+                    error: error.data,
+                    errorCode: error.status
+                };
+            });
+        }
 
-				$rootScope.$broadcast('signOut', user);
 
-				return user;
-			});
-		}
+        //============================================================
+        //
+        //
+        //============================================================
+        function signOut() {
 
-		//============================================================
-	    //
-	    //
-	    //============================================================
-		function setUser(user) {
+            apiToken.set(null);
+
+            setUser(null);
+
+            return $q.when(getUser()).then(function(user) {
+
+                $rootScope.$broadcast('signOut', user);
+
+                return user;
+            });
+        }
+
+
+        //============================================================
+        //
+        //
+        //============================================================
+        function setUser(user) {
             if (user && user.isAuthenticated && !user.isEmailVerified) {
                 $rootScope.$broadcast('event:auth-emailVerification', {
                     message: 'Email verification pending. Please verify you email before submitting any data.'
                 });
             }
 
-			currentUser     = user || undefined;
-			$rootScope.user = user || anonymous();
-		}
+            currentUser = user || undefined;
+            $rootScope.user = user || anonymous();
+        }
 
-		return {
-			getUser  : getUser,
-			signIn   : signIn,
-			signOut  : signOut,
-			user     : LEGACY_user,
-		};
 
-	}]);
+        //============================================================
+        //
+        //
+        //============================================================
+        function encodedReturnUrl() {
 
-	app.factory('authenticationHttpIntercepter', ["$q", "apiToken", '$rootScope', function($q, apiToken, $rootScope) {
+            return encodeURIComponent($location.absUrl());
+        }
 
-		return {
-			request: function(config) {
 
-				var trusted = /^https:\/\/api.cbd.int\//i.test(config.url) ||
-							  /^\/api\//i                .test(config.url);
+        //============================================================
+        //
+        //
+        //============================================================
+        function goToSignIn() {
+            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signin?&returnUrl=' + encodedReturnUrl();
+        }
 
-				var hasAuthorization = (config.headers||{}).hasOwnProperty('Authorization') ||
-							  		   (config.headers||{}).hasOwnProperty('authorization');
 
-				if(!trusted || hasAuthorization) // no need to alter config
-					return config;
+        //============================================================
+        //
+        //
+        //============================================================
+        function goToSignOut() {
+            document.cookie = 'authenticationToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signout?returnUrl=' + encodedReturnUrl();
+        }
 
-				//Add token to http headers
+        //============================================================
+        //
+        //
+        //============================================================
+        function signUp() {
+            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signup?returnUrl=' +  encodedReturnUrl();
+        }
 
-				return $q.when(apiToken.get()).then(function(token) {
+        //============================================================
+        //
+        //
+        //============================================================
+        function passwordReset() {
+            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/password?returnUrl=' +  encodedReturnUrl();
+        }
 
-					if(token) {
-						config.headers = ng.extend(config.headers||{}, {
-							Authorization : "Ticket " + token
-						});
-					}
+        //============================================================
+        //
+        //
+        //============================================================
+        function editProfile() {
+            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/profile?returnUrl='+  encodedReturnUrl();
+        }
 
-					return config;
-				});
-			},
+
+        return {
+            signIn: signIn,
+            signOut: signOut,
+            goToSignIn: goToSignIn,
+            goToSignOut: goToSignOut,
+            signUp: signUp,
+            passwordReset: passwordReset,
+            editProfile: editProfile,
+            getUser: getUser,
+        };
+    }]);
+
+    app.factory('authenticationHttpIntercepter', ["$q", "apiToken", '$rootScope', function($q, apiToken, $rootScope) {
+
+        return {
+            request: function(config) {
+
+                var trusted = /^https:\/\/api.cbd.int\//i.test(config.url) ||
+                    /^\/api\//i.test(config.url);
+
+                var hasAuthorization = (config.headers || {}).hasOwnProperty('Authorization') ||
+                    (config.headers || {}).hasOwnProperty('authorization');
+
+                if (!trusted || hasAuthorization) // no need to alter config
+                    return config;
+
+                //Add token to http headers
+
+                return $q.when(apiToken.get()).then(function(token) {
+
+                    if (token) {
+                        config.headers = ng.extend(config.headers || {}, {
+                            Authorization: "Ticket " + token
+                        });
+                    }
+
+                    return config;
+                });
+            },
             responseError: function(rejection) {
 
                 if (rejection.data && rejection.data.statusCode == 401) {
@@ -281,6 +376,8 @@ define(['app', 'angular'], function (app, ng) { 'use strict';
                 // otherwise, default behaviour
                 return $q.reject(rejection);
             }
-		};
-	}]);
+        };
+    }]);
+
+
 });
