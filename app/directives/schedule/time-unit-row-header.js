@@ -42,7 +42,7 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment'], function
                             if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
                                 var hours = $scope.endTime.hours() - $scope.startTime.hours();
                                 $scope.timeIntervals = [];
-                                var t = moment.utc($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
+                                var t = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
 
                                 for (var i = 0; i < hours + 1; i++) {
                                     $scope.timeIntervals.push(moment(t));

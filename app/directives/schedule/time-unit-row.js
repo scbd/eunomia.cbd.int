@@ -21,7 +21,8 @@ define(['app',
                     'conferenceDays': '=',
                     'room': '=',
                     'rooms': '=',
-                    'day': '='
+                    'day': '=',
+                    'conference':'='
                 },
                 require: ['^conferenceSchedule','timeUnitRow'],
                 link: function($scope, $element, $attr, schedule) {
@@ -33,9 +34,9 @@ define(['app',
                         var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
 
-                        mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
-                            allOrgs = orgs.data;
-                        });
+                        // mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
+                        //     allOrgs = orgs.data;
+                        // });
 
                         //============================================================
                         //
@@ -82,6 +83,7 @@ define(['app',
                         //
                         //============================================================
                         function initTimeIntervals() {
+
                             if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
 
                                 var hours = $scope.endTime.hours() - $scope.startTime.hours();
@@ -93,10 +95,10 @@ define(['app',
                                 for (var i = 0; i <= hours; i++) {
                                     var intervalObj = {};
                                     intervalObj.subIntervals = [];
-                                    intervalObj.interval = moment.utc(t);
+                                    intervalObj.interval = moment(t);
                                     for (var j = 0; j < intervalDuration; j++) {
                                         intervalObj.subIntervals.push({
-                                            time: moment.utc(t).startOf('minute'),
+                                            time: moment(t).startOf('minute'),
                                             res: {}
                                         });
                                         t = t.add(timeUnit, 'seconds');
@@ -164,11 +166,9 @@ define(['app',
                         //============================================================
                         function initTypes() {
 
-                            $scope.options = {};
-                            return mongoStorage.getDocs('reservation-types', status, true).then(function(result) {
-                                $scope.options.types = result.data;
-                            }).catch(function onerror(response) {
-                                $scope.onError(response);
+                            return mongoStorage.loadTypes('reservations').then(function(result) {
+                                if(!$scope.options)$scope.options={};
+                                $scope.options.types = result;
                             });
                         } //initTypes()
 
@@ -180,8 +180,8 @@ define(['app',
                             if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
 
                                 inProgress = true;
-                                var start = moment($scope.conferenceDays[0]).startOf('day').format('X');
-                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day').format('X');
+                                var start = moment($scope.conferenceDays[0]).startOf('day');
+                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
 
                                 mongoStorage.getReservations(start, end, {
                                     room: $scope.room._id
@@ -194,7 +194,7 @@ define(['app',
                                             calcAllResWidths($scope.reservations);
                                             _.each($scope.reservations, function(res) {
                                                 embedTypeInRes(res);
-                                                embedOrgsSideEvent(res);
+                                                //embedOrgsSideEvent(res);
                                                 loadReservationsInRow(res);
                                             });
                                         });
@@ -227,9 +227,9 @@ define(['app',
                         //============================================================
                         function isResInTimeInterval(timeInterval, res) {
 
-                            var resStart = moment.utc(res.start).format('X');
-                            var intervalStart = moment.utc(timeInterval.time).format('X');
-                            var intervalEnd = moment.utc(timeInterval.time).add(timeUnit, 'seconds').format('X');
+                            var resStart = moment(res.start).format('X');
+                            var intervalStart = moment(timeInterval.time).format('X');
+                            var intervalEnd = moment(timeInterval.time).add(timeUnit, 'seconds').format('X');
 
                             return (resStart >= intervalStart && resStart < intervalEnd);
 
@@ -256,8 +256,8 @@ define(['app',
                         //
                         //============================================================
                         function calcResWidth(res) {
-                            var resStart = moment.utc(res.start).format('X');
-                            var resEnd = moment.utc(res.end).format('X');
+                            var resStart = moment(res.start).format('X');
+                            var resEnd = moment(res.end).format('X');
                             if (!$scope.colWidth) throw "Error: column width not set timming issue";
                             var resWidth = Math.ceil((resEnd - resStart) / timeUnit) * ($scope.colWidth / intervalDuration);
                             return Number(resWidth);
