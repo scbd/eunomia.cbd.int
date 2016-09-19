@@ -1,16 +1,18 @@
 define(['app', 'lodash',
-  'text!./reservation-type.html',
+  'text!./type.html',
   '../../color-picker'
 ], function(app, _, template) {
 
-  app.directive("reservationType", ['$timeout','mongoStorage',
+  app.directive("type", ['$timeout','mongoStorage',
     function($timeout,mongoStorage) {
       return {
         restrict: 'E',
         template: template,
         replace: true,
         transclude: false,
-        scope: {'doc':'=?','closeThisDialog':'&'},
+        scope: {'doc':'=?',
+        'schema':'=?',
+        'closeThisDialog':'&'},
         link: function($scope, $element) {
 
             init();
@@ -49,7 +51,13 @@ define(['app', 'lodash',
           //
           //============================================================
           function initTypes() {
-            return mongoStorage.getDocs('reservation-types', status).then(function(result) {
+            var q={
+              parent:{$exists:false},
+              schema:$scope.doc.schema || $scope.schema,
+              'meta.status':{'$nin':['deleted','archived']}
+            };
+
+            return mongoStorage.loadDocs('types',q,0,10000,false ).then(function(result) {
               $scope.options.types = result.data;
               _.each($scope.types,function(type){
                   type.showChildren=true;
@@ -57,9 +65,10 @@ define(['app', 'lodash',
                                 child.showChildren=true;
                             });
               });
-            }).catch(function onerror(response) {
-              $scope.onError(response);
             });
+            // .catch(function onerror(response) {
+            //   $scope.onError(response);
+            // });
           }
 
           //============================================================
