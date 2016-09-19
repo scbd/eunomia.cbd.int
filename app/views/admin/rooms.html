@@ -1,0 +1,156 @@
+<div id="rooms" class="container-fluid" style="height:100%;width:100%">
+
+    <div class="alert alert-danger" ng-show="hasError()">
+        <strong>Error as occured...</strong>
+        <div>{{error}}</div>
+    </div>
+
+    <div class="row">
+        <style>
+            .pointer {
+                cursor: pointer;
+            }
+        </style>
+
+        <div class="col-xs-10 col-sm-10 ">
+            <h1>            <div class="form-group label-floating" >
+                  <select class="form-control" ng-model="roomsCtrl.venueId" style="height:70px;line-height:70px;font-size:36px;" ng-change="roomsCtrl.load()">
+                    <option   ng-repeat="venue in roomsCtrl.options.venues track by $index"  value="{{venue._id}}"  ng-selected="roomsCtrl.venueId===venue._id">{{venue.acronym}} Rooms  </option>
+                  </select>
+                </div></h1>
+            <div class="table-responsive">
+              <table class="table">
+                          <thead>
+                              <tr>
+                                  <th width="5%">
+                                      <sorter label-name="Order" ng-model="roomsCtrl.sort" property="sort" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="5%">
+                                      <sorter label-name="Acronym" ng-model="roomsCtrl.sort" property="acronym" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="15%">
+                                      <sorter label-name="Name" ng-model="roomsCtrl.sort" property="title" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="5%">
+                                      <sorter label-name="Capacity" ng-model="roomsCtrl.sort" property="capacity" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="7%">
+                                      <sorter label-name="At Table" ng-model="roomsCtrl.sort" property="atTable" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="10%">Type</th>
+
+                                  <th width="10%">Location</th>
+
+                                  <th width="10%">Local Name</th>
+                                  <th width="10%" ng-show="false">venue</th>
+                                  <th width="10%">
+                                      <sorter label-name="Color" ng-model="roomsCtrl.sort" property="color" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
+                                  </th>
+                                  <th width="15%">Actions</th>
+                              </tr>
+                          </thead>
+                        </table>
+                <table class="table table-striped table-hover container"  >
+                    <tbody dragula='"list-bag"' dragula-model="roomsCtrl.docs">
+                        <!-- | filter:searchType |orderBy:'title' -->
+                        <!-- ng-repeat="doc in docs  track by $index" -->
+                        <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat="doc in roomsCtrl.docs  track by $index" >
+                            <td width="5%">
+                                <div class="form-group label-floating" style="margin-top:10px;" ng-init="doc.sort=$index;">
+                                    <input class="form-control" id="sort" type="number" ng-model="doc.sort" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+                            <td width="5%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <!-- <label class="control-label" for="acronym">Acronym</label> -->
+                                    <input class="form-control" id="acronym" type="text" ng-model="doc.acronym" ng-change="doc.changed=true;">
+                                    <!-- <p class="help-block" ng-show="valid">error</p> -->
+                                </div>
+                            </td>
+
+                            <td width="15%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <input class="form-control" id="roomNameD" type="text" ng-model="doc.title" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+
+                            <td width="5%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <input class="form-control" id="capacity" type="number" ng-model="doc.capacity" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+
+
+                            <td width="7%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <input class="form-control" id="atTable" type="number" ng-model="doc.atTable" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+                            <td width="10%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <select class="form-control" ng-model="doc.type" ng-change="doc.changed=true;">
+
+                                        <option ng-repeat="parent in roomsCtrl.options.types track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="10%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <input class="form-control" id="location" type="text" ng-model="doc.location" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+
+                            <td width="10%">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <input class="form-control" id="llocalName" type="text" ng-model="doc.localName" ng-change="doc.changed=true;">
+                                </div>
+                            </td>
+                            <td width="10%" ng-show="false">
+                                <div class="form-group label-floating" style="margin-top:10px;">
+                                    <select class="form-control" ng-model="doc.venue" ng-change="doc.changed=true;">
+                                        <option ng-repeat="venue in roomsCtrl.options.venues track by $index" value="{{venue._id}}" ng-selected="doc.venue===venue._id">{{venue.acronym}}</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td width="10%">
+                                <color-picker class="hidden-xs hidden-sm" binding="doc.color" style="margin-bottom:20px;"></color-picker>
+                            </td>
+                            <td width="10%">
+                                <span class="hidden-xs hidden-sm btn-group-vertical" ng-if="doc.changed">
+              <a  ng-click="roomsCtrl.save(doc)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="Save"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+
+            </span>
+                                <span class="hidden-xs hidden-sm btn-group-vertical">
+              <a ng-click="roomsCtrl.edit(doc)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="edit"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
+              <a  ng-click="roomsCtrl.delete(doc)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+            </span>
+                                <div class="btn-group-xs btn-group-vertical btn-group-raised hidden-md hidden-lg hidden-xl " style="vertical-align:middle;text-align:center;">
+                                    <a ng-if="doc.changed" ng-click="roomsCtrl.save(doc);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+                                    <a ng-click="roomsCtrl.edit(doc)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
+                                    <a ng-if="!doc.system" ng-click="roomsCtrl.delete(doc)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+
+                      </tbody>
+                </table>
+                <table  ng-if="roomsCtrl.docs.length===0">
+                  <tr>
+                      <td colspan="11">
+                          &nbsp; There are 0 rooms for this venue.
+                      </td>
+                  </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-xs-1 col-sm-1  col-md-1  col-lg-1  col-xl-1" style="margin: 0 10px 0 0;">
+            <button ng-click="roomsCtrl.edit()" tool-tip type="button" class="btn btn-fab btn-fab hidden-xs hidden-sm" style="margin-top:50px;" data-placement="top" title="" data-original-title="New Room">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+
+
+</div>
