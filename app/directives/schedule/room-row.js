@@ -11,7 +11,8 @@ define(['app', 'text!./room-row.html','text!../forms/edit/room-dialog.html',
         replace: true,
         transclude: false,
         scope: {
-          'room': '='
+          'room': '=',
+          'index':'='
         },
         link: function($scope,$element) {
 
@@ -21,6 +22,14 @@ define(['app', 'text!./room-row.html','text!../forms/edit/room-dialog.html',
             $scope.$watch('room.rowHeight',function(){
               if($scope.room.rowHeight)
                 $element.css('height',$scope.room.rowHeight);
+            });
+            
+            //============================================================
+            //
+            //============================================================
+            $scope.$watch('index',function(){
+              if($scope.index)
+                $scope.room.sort=$scope.index;
             });
 
             //============================================================
