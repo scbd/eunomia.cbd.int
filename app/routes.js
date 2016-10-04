@@ -9,7 +9,6 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
             when('/',                                { redirectTo: '/schedule/conference' }).
             when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'schedule'}).
             when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
-            when('/schedule/side-events2',           { templateUrl: 'views/schedule/side-events2.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
 
             when('/cctv/frames',                     { templateUrl: 'views/cctv/frames.html',   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
             when('/cctv/frames/:id',                 { templateUrl: 'views/cctv/frame-id.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
