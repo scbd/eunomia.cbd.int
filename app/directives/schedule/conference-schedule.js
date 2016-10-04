@@ -19,7 +19,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                 scope: {
                     'search': '=',
                     'conference':'='
-
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
