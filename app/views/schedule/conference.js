@@ -3,7 +3,7 @@ define(['app', 'directives/schedule/conference-schedule'
 
   return ['mongoStorage','eventGroup','$scope', function(mongoStorage,conf,$scope) {
         $scope.conf=conf;
-        mongoStorage.getAllOrgs('inde-orgs', 'published');// load cache
+        mongoStorage.loadOrgs();// load cache
 
   }];
 });
