@@ -34,14 +34,16 @@ define(['app',
                         var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
 
-                        // mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
-                        //     allOrgs = orgs.data;
-                        // });
+
+                        mongoStorage.loadOrgs().then(function(orgs) {
+                            allOrgs = orgs;
+                        });
 
                         //============================================================
                         //
                         //============================================================
                         $scope.$watch('conferenceDays', function() {
+                          if(!_.isEmpty($scope.conferenceDays))
                             initTimeIntervals();
                         });
 
@@ -49,7 +51,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('startTime', function() {
-
+                          if($scope.startTime)
                             initTimeIntervals();
                         });
 
@@ -57,7 +59,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('endTime', function() {
-
+                          if($scope.endTime)
                             initTimeIntervals();
                         });
 
@@ -79,13 +81,14 @@ define(['app',
 
                         initTypes();
 
+                        var inProgress = false;
                         //============================================================
                         //
                         //============================================================
                         function initTimeIntervals() {
 
-                            if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
-
+                            if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !inProgress) {
+inProgress =true
                                 var hours = $scope.endTime.hours() - $scope.startTime.hours();
 
                                 $scope.timeIntervals = [];
@@ -108,7 +111,7 @@ define(['app',
 
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
-                                    $scope.getReservations();
+                                    $scope.getReservations().then(function(){ inProgress =false;});
                                 });
                             }
                         } //initTimeIntervals
@@ -159,7 +162,7 @@ define(['app',
                             $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
                             initIntervalWidth();
                         } //init
-                        var inProgress = false;
+
 
                         //============================================================
                         //
@@ -172,18 +175,20 @@ define(['app',
                             });
                         } //initTypes()
 
+                        // var inProgress = false;
                         //============================================================
                         //
                         //============================================================
                         $scope.getReservations = function (resId) {
                             cleanSchedule(resId);
-                            if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
+                            if (!_.isEmpty($scope.conferenceDays) ) {
 
-                                inProgress = true;
-                                var start = moment($scope.conferenceDays[0]).startOf('day');
-                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
-
-                                mongoStorage.getReservations(start, end, {
+                                // inProgress = true;
+                                // var start = moment($scope.conferenceDays[0]).startOf('day');
+                                // var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
+var start =moment($scope.day).add($scope.startTime);
+var end=moment($scope.day).add($scope.endTime);
+                                return mongoStorage.getReservations(start, end, {
                                     room: $scope.room._id
                                 }).then(
                                     function(responce) {
@@ -194,11 +199,11 @@ define(['app',
                                             calcAllResWidths($scope.reservations);
                                             _.each($scope.reservations, function(res) {
                                                 embedTypeInRes(res);
-                                                //embedOrgsSideEvent(res);
+                                                embedOrgsSideEvent(res);
                                                 loadReservationsInRow(res);
                                             });
                                         });
-                                        inProgress = false;
+                                        // inProgress = false;
                                     }
                                 ); // mongoStorage.getReservations
                             } // if
