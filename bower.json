@@ -27,7 +27,7 @@
     "ng-infinite-scroll": "^0.0.1"
   },
   "resolutions": {
-    "angular": "1.5.5",
+    "angular": "1.5.8",
     "jquery": "2.2",
     "bootstrap-material-design": "v0.5",
     "flag-icon-css": "^2.5.0"
