@@ -1,6 +1,6 @@
 define(['app', 'lodash'], function(app, _) {
 
-    app.factory("mongoStorage", ['$http','$rootScope','$q','$timeout', function($http,$rootScope,$q,$timeout) {
+    app.factory("mongoStorage", ['$http','$rootScope','$q','$timeout','$filter', function($http,$rootScope,$q,$timeout,$filter) {
 
         var clientOrg = 0; // means cbd
 
@@ -14,6 +14,7 @@ define(['app', 'lodash'], function(app, _) {
             var params = {};
             if (!doc.meta) doc.meta ={};
             if (!doc.meta.clientOrg) doc.meta.clientOrg = clientOrg;
+            if (!doc.clientOrg) doc.clientOrg = clientOrg;
             if (doc._id) {
                 params.id = doc._id;
                 url = url + '/' + doc._id;
@@ -33,10 +34,10 @@ define(['app', 'lodash'], function(app, _) {
 
             params = {
                 q: {
-'location.room': location.room,
+                    'location.room': location.room,
                     '$and': [{
                         'start': {
-                            '$gt': {
+                            '$gte': {
                                 '$date': start
                             }
                         }
@@ -50,9 +51,7 @@ define(['app', 'lodash'], function(app, _) {
                     'meta.status': {
                         $nin: ['archived', 'deleted']
                     },
-                    'sideEvent.meta.status': {
-                        $nin: ['archived', 'deleted']
-                    }
+                    'type':type
                 }
             };
 
@@ -78,7 +77,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function getRecurrences(parent) {
+        function getRecurrences(seriesId) {
 
             var params = {};
             if(!parent) throw "Error: no parent id passed to getReccurences.";
@@ -86,14 +85,10 @@ define(['app', 'lodash'], function(app, _) {
                 'meta.status': {
                     $nin: ['archived', 'deleted']
                 },
-                'sideEvent.meta.status': {
-                    $nin: ['archived', 'deleted']
-                }
-            }};
+                //
+            },s:{'start':1}};
 
-
-            params.q.parent=parent;
-
+            params.q.seriesId=seriesId;
 
             return   $http.get('/api/v2016/reservations/', {
                   'params': params
@@ -154,7 +149,6 @@ define(['app', 'lodash'], function(app, _) {
                     });
                   else
                     res[0].facits[params.q['meta.status']]=res[1].data.count;
-
 
                   return res[0];
             });
@@ -222,6 +216,74 @@ define(['app', 'lodash'], function(app, _) {
 
         } // getDocs
 
+        var loadOrgsInProgress=null;
+        var allOrgs = [];
+        //============================================================
+        //
+        //============================================================
+        function loadOrgs(force) {
+
+            if(loadOrgsInProgress) return loadOrgsInProgress;
+
+            loadOrgsInProgress = isModified('inde-orgs').then(
+                function(isModified) {
+                    var params = {};
+                    if (!localStorage.getItem('allOrgs') || isModified || force) {
+                        params = {
+                            q: {
+                                'meta.status': 'published'
+                            }
+                        };
+
+                        return $q.all([countries(),$http.get('/api/v2016/inde-orgs', {'params': params})]).then(function(data) {
+                            var orgsAndParties = _.union(data[0], data[1].data);
+                            allOrgs = orgsAndParties;
+                            localStorage.setItem('allOrgs', JSON.stringify(orgsAndParties));
+                            return allOrgs;
+                        });
+
+                    } else {
+                        loadOrgsInProgress = null;
+                        if(_.isEmpty(allOrgs))
+                          allOrgs= JSON.parse(localStorage.getItem('allOrgs'));
+                        return allOrgs;
+                    }
+
+                });
+
+                return loadOrgsInProgress;
+        } // loadDocs
+
+        var countriesData;
+        //============================================================
+        //
+        //============================================================
+        function countries() {
+            if (countriesData) return $q(function(resolve) {
+                return resolve(countriesData);
+            });
+
+            if (!localStorage.getItem('countries'))
+                return $http.get("https://api.cbd.int/api/v2015/countries", {
+                    cache: true
+                }).then(function(o) {
+                    var countries = $filter("orderBy")(o.data, "name.en");
+
+                    _.each(countries, function(c) {
+                        c.title = c.name.en;
+                        c.identifier = c.code.toLowerCase();
+                        c._id = c.identifier;
+                    });
+                    countriesData =countries;
+                    localStorage.setItem('countries', JSON.stringify(countries));
+                    return countries;
+                });
+            else
+                return $q(function(resolve) {
+                    return resolve(JSON.parse(localStorage.getItem('countries')));
+                });
+        }
+
         //=======================================================================
         //
         //=======================================================================
@@ -269,14 +331,9 @@ define(['app', 'lodash'], function(app, _) {
             var params = {};
             params = {
                 q: {
-                    'link.meeting': meeting,
-                    'sideEvent.meta.status': 'published',
-                    'start': {
-                        '$exists': 0
-                    }
+                    'link.conference': meeting,
+                    'start':null
                 }
-
-
             };
             return $http.get('/api/v2016/reservations', {
                 'params': params
@@ -354,6 +411,7 @@ define(['app', 'lodash'], function(app, _) {
                                               }
                                           }
                                       }).then(function(m) {
+                                        console.log(m.data);
                                           conf.meetings = m.data;
                                       }));
                               });
@@ -397,8 +455,8 @@ define(['app', 'lodash'], function(app, _) {
 
             allPromises[0] = isModified('types').then(
                 function(isModified) {
-                    modified = Boolean(!localStorage.getItem(schema+'-types') | isModified | force);
 
+                    modified = Boolean(!localStorage.getItem(schema+'-types') | isModified | force);
                     var params = {};
                     if (modified) {
                         params = {
@@ -502,6 +560,7 @@ define(['app', 'lodash'], function(app, _) {
             getReservations: getReservations,
             getDocs: getDocs,
             loadDocs:loadDocs,
+            loadOrgs:loadOrgs
         }; //return
     }]); //factory
 }); //require
