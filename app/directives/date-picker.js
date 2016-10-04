@@ -7,6 +7,7 @@ define(['app', 'moment', 'BM-date-picker'], function(app, moment) {
             scope: {
                 minDate: "=?datePickerMinDate",
                 maxDate: "=?datePickerMaxDate",
+                currentDate:"=?",
                 options: "=datePicker"
             },
             link: function($scope, $element, attr, ngModelCtrl) {
@@ -15,23 +16,35 @@ define(['app', 'moment', 'BM-date-picker'], function(app, moment) {
                 //============================================================
                 //
                 //============================================================
-                $scope.$watch('minDate', function() {
+                var minDate = $scope.$watch('minDate', function() {
 
                     if ($scope.minDate)
                     $scope.$applyAsync(function() {
                         $element.bootstrapMaterialDatePicker('setMinDate', $scope.minDate);
+                        minDate();
                       });
                 });
 
                 //============================================================
                 //
                 //============================================================
-                $scope.$watch('maxDate', function() {
-                    if ($scope.maxDate)
+                var maxDate = $scope.$watch('maxDate', function() {
+                    if ($scope.maxDate){
                         $element.bootstrapMaterialDatePicker('setMaxDate', $scope.maxDate);
+                        maxDate();
+                    }
 
                 });
+                //============================================================
+                //
+                //============================================================
+                var currDate = $scope.$watch('currentDate', function() {
+                    if ($scope.currentDate){
+                        $element.bootstrapMaterialDatePicker('currentDate', $scope.currentDate);
+                        currDate();
+                    }
 
+                });
                 //============================================================
                 //
                 //============================================================
@@ -39,7 +52,7 @@ define(['app', 'moment', 'BM-date-picker'], function(app, moment) {
 
                     if (val && (val !== prevVal)) {
                         dateChangeEffect();
-                        $element.bootstrapMaterialDatePicker('setDate', moment(val, $scope.options.format));
+                        $element.bootstrapMaterialDatePicker('setDate', val);
                         $element.trigger('change');
                     }
                 });
