@@ -1,9 +1,7 @@
-define(['app',
-    'lodash',
-  ],
-  function(app,_) {
+define(['app'],
+  function(app) {
 
-    app.directive('toolTip', [function() {
+    app.directive('toolTip', ['$timeout',function($timeout) {
       return {
         restrict: 'A',
         replace: false,
@@ -19,6 +17,9 @@ define(['app',
 
            $element.on('mouseenter', function() {
                  $element.tooltip('show');
+                 $timeout(function(){
+                    $element.tooltip('hide');
+                 },5000);
            });
            $element.on('mouseleave', function() {
                  $element.tooltip('hide');
