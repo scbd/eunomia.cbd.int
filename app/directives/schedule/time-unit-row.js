@@ -88,7 +88,7 @@ define(['app',
                         function initTimeIntervals() {
 
                             if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays) && !inProgress) {
-inProgress =true
+                                inProgress =true;
                                 var hours = $scope.endTime.hours() - $scope.startTime.hours();
 
                                 $scope.timeIntervals = [];
@@ -175,7 +175,6 @@ inProgress =true
                             });
                         } //initTypes()
 
-                        // var inProgress = false;
                         //============================================================
                         //
                         //============================================================
@@ -183,9 +182,6 @@ inProgress =true
                             cleanSchedule(resId);
                             if (!_.isEmpty($scope.conferenceDays) ) {
 
-                                // inProgress = true;
-                                // var start = moment($scope.conferenceDays[0]).startOf('day');
-                                // var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
 var start =moment($scope.day).add($scope.startTime);
 var end=moment($scope.day).add($scope.endTime);
                                 return mongoStorage.getReservations(start, end, {
@@ -203,7 +199,6 @@ var end=moment($scope.day).add($scope.endTime);
                                                 loadReservationsInRow(res);
                                             });
                                         });
-                                        // inProgress = false;
                                     }
                                 ); // mongoStorage.getReservations
                             } // if

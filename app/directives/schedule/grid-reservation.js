@@ -17,7 +17,7 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
                         //============================================================
                         //
                         //============================================================
-                        function init() {
+                            function init() {
                             var titleEl = $element.find("#res-el").popover({
                                 placement: 'top',
                                 html: 'true',
@@ -30,15 +30,18 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
                             titleEl.on('mouseenter', function() {
                                 titleEl.popover('show');
                             });
+
                             titleEl.on('mouseleave', function() {
                                 titleEl.popover('hide');
                             });
+
                             $element.on('$destroy', function() {
                                 titleEl.popover('destroy');
                             });
-                            
+
                             if($scope.doc.typeObj)
                                 $scope.color=$scope.doc.typeObj.color;
+                                
                             if($scope.doc.subTypeObj)
                               $scope.color=$scope.doc.subTypeObj.color;
 

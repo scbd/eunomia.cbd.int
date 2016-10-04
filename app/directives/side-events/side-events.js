@@ -2,7 +2,6 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
     'directives/date-picker',
     'ngDialog',
     'services/mongo-storage',
-    'services/dragula-fix-service',
     './se-time-unit-row',
     './tier-row-header',
     './se-room-row',
@@ -17,59 +16,31 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                 replace: true,
                 transclude: false,
                 require:'sideEvents',
-                // scope: {
-                //     'search': '=',
-                //     'conference':'=',
-                //     'conferenceDays':'=',
-                //     'isOpen':'='
-                // },
                 link: function($scope, $element,$attr,ctrl) {
 
-                  $scope.$watch('isOpen', function() {
-                      //initTimeIntervals();
-
-                  });
-
-  
+                        //============================================================
+                        //
+                        //============================================================
                         $scope.$watch('conference',function(){
-                          if($scope.conference)
-                            changeConference();
+                            if($scope.conference)
+                              changeConference();
                         });
 
+                        //============================================================
+                        //
+                        //============================================================
                         $scope.$parent.$on('all-rooms-bag.drop-model', function() {
-                          $timeout(moveRoom,1000);
+                              $timeout(moveRoom,1000);
                         });
-
 
                         init();
+
                         //============================================================
                         //
                         //============================================================
                         function init() {
-                            $scope.rooms = [];
-                            //getRooms();
+                              $scope.rooms = [];
                         } //init
-
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // dragulaService.options($scope, 'se-bag', {
-                        //   mirrorAnchor: 'top',
-                        //   accepts: sEBagAccepts
-                        // });
-                        //
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function sEBagAccepts(el, target) {
-                        //
-                        //   target = angular.element(target);
-                        //   if (_.isArray(getBagScope(target)) && getBagScope(target).length !== 0 && target.attr('id') !== 'unscheduled-side-events')
-                        //     return false;
-                        //   else
-                        //     return true;
-                        // }
-
 
                         //============================================================
                         //
@@ -82,7 +53,6 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                   allP.push(mongoStorage.save('venue-rooms',{'_id':item._id,'sort':item.sort,'venue':item.venue}));
                                 });
                             }
-                            //$q.all(allP).then(getRooms);
                         } //init
 
                         //============================================================
@@ -96,7 +66,6 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                             $scope.conference.startObj = moment.tz($scope.conference.StartDate,$scope.conference.timezone).startOf('day');
                         } //changeConference
 
-
                         //============================================================
                         //
                         //============================================================
@@ -106,9 +75,8 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                 $scope.rooms = res.data;
                             }).then(function() {
                                 ctrl.initRowHeight();
-                                //ctrl.generateDays();
                             });
-                        } //initRooms
+                        } //getRooms
 
                         //============================================================
                         //
@@ -118,8 +86,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                             return handle.className === 'grabbible room-title ng-binding';
                           },
 
-                        });
-
+                        });// rooms-bag
 
                         //============================================================
                         //
@@ -131,15 +98,13 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                             });
                             room.sort = $(this).index();
                             var roomClone = _.cloneDeep(room);
-                      //      delete(roomClone);
+
                             return mongoStorage.save('venue-rooms', roomClone, roomClone._id).catch(function() {
                               $rootScope.$broadcast("showError", "There was an error updating the server with the room order.");
                             });
                           });
                           $rootScope.$broadcast("showInfo", "Room Sort Order Successfully Updated.");
-                        });
-
-
+                        });// rooms-bag.drop-model
 
                         //============================================================
                         // Search function, search side events will result in color change
@@ -149,7 +114,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                           if (!$scope.search || $scope.search == ' ') return true;
                           var temp = JSON.stringify(se);
                           return (temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0);
-                        };
+                        }; // searchSe
 
                     }, //link
                     controller: function($scope) {
@@ -158,17 +123,16 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                       // used by child dir, timeRow
                       //============================================================
                       this.resetSchedule = function() {
-console.log('side.events--- resetSchedule');
+
                           this.initRowHeight();
                           this.generateDays();
                       }; //this.resetSchedule
-
 
                       //============================================================
                       //
                       //============================================================
                       this.initRowHeight = function() {
-console.log('side.events--- initRowHeight');
+
                           $document.ready(function() {
                               $timeout(function() {
                                   var roomColumnEl;

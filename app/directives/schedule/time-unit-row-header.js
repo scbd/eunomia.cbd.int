@@ -111,15 +111,4 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/m
             }; //return
         }
     ]);
-    // app.filter('momentFormat', function() {
-    //     return function(input) {
-    //         return input.format('dddd [the] Do of MMMM, YYYY');
-    //     };
-    // });
-    //
-    // app.filter('toHour', function() {
-    //     return function(input) {
-    //         return input.format('HH:mm');
-    //     };
-    // });
 });
