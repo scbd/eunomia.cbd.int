@@ -1,4 +1,4 @@
-define(['app', 'lodash', 'text!./tier-row-header.html', 'moment'], function(app, _, template, moment) {
+define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filters/moment'], function(app, _, template, moment) {
 
     app.directive("tierRowHeader", ['$timeout',
         function($timeout) {
@@ -15,40 +15,40 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment'], function(app,
                 controller: function($scope, $element, $document) {
 
 
+                        // //============================================================
+                        // //
+                        // //============================================================
                         $scope.$watch('conferenceDays', function() {
                             if (!_.isEmpty($scope.conferenceDays))
                                 initTimeIntervals();
                         });
-
+                        //
+                        // //============================================================
+                        // //
+                        // //============================================================
                         $scope.$watch('isOpen', function() {
-                                initTimeIntervals();
+                            initTimeIntervals();
                         });
 
                         //============================================================
                         //
                         //============================================================
                         function initTimeIntervals() {
+                            $scope.timezone=$scope.conference.timezone;
 
                             if ($scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
-// console.log('$scope.startTime',$scope.startTime);
-// console.log('$scope.endTime',$scope.endTime);
- console.log('$scope.conferenceDays',$scope.conferenceDays);
+                                $scope.firstDay = moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day');
+                                $scope.lastDay =moment.tz($scope.conferenceDays[$scope.conferenceDays.length-1],$scope.conference.timezone).startOf('day');
 
-if($scope.conferenceDays && $scope.conferenceDays.length)
-$scope.conferenceDays.forEach(function(item, key){
-  $scope.conferenceDays.seTiers.forEach
-  moment.tz($scope.conference.StartDate,$scope.conference.timezone).startOf('day');
-  $scope.timeIntervals.push(item.);
-
-});
-                                //var hours = $scope.endTime.hours() - $scope.startTime.hours();
-                                $scope.timeIntervals = [];
-                              //  var t = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
-
-                                // for (var i = 0; i < hours + 1; i++) {
-                                //     $scope.timeIntervals.push(moment(t));
-                                //     t = t.add(1, 'hours');
-                                // }
+                                $scope.timeIntervals=[];
+                                if($scope.conferenceDays && $scope.conferenceDays.length)
+                                $scope.conferenceDays.forEach(function(item){
+                                  $scope.conference.seTiers.forEach(function(tier){
+                                      var dayTier = moment.tz(item,$scope.conference.timezone).startOf('day').add(tier.seconds,'seconds');
+                                      if(dayTier.isoWeekday()<6)
+                                          $scope.timeIntervals.push(dayTier);
+                                  });
+                                });
                                 initOuterGridWidth();
                             }
                         } //initTimeIntervals
@@ -77,19 +77,6 @@ $scope.conferenceDays.forEach(function(item, key){
 
                             $element.find('#day-header-' + 0).css('width', $scope.outerGridWidth);
                             $element.find('#interval-header-' + 0).css('width', $scope.outerGridWidth);
-
-                            //   $scope.selectedConfDays = [];
-                            //   $scope.selectedConfDays.push($scope.day);
-                            // _.each($scope.selectedConfDays, function(con, key) {
-                            //     $timeout(function() {
-                            //         $element.find('#day-header-' + key).css('width', $scope.outerGridWidth);
-                            //     });
-                            // });
-                            // _.each($scope.selectedConfDays, function(con, key) {
-                            //     $timeout(function() {
-                            //         $element.find('#interval-header-' + key).css('width', $scope.outerGridWidth);
-                            //     });
-                            // });
                         } //initDayWidth
 
                         //============================================================
@@ -110,20 +97,10 @@ $scope.conferenceDays.forEach(function(item, key){
                         function calcColWidths() {
                             $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
                             initIntervalWidth();
-                        } //init
-                    } //calcColWidths
+                        } //calcColWidths
+
+                    } //
             }; //return
         }
     ]);
-    // app.filter('momentFormat', function() {
-    //     return function(input) {
-    //         return input.format('dddd [the] Do of MMMM, YYYY');
-    //     };
-    // });
-    //
-    // app.filter('toHour', function() {
-    //     return function(input) {
-    //         return input.format('HH:mm');
-    //     };
-    // });
 });

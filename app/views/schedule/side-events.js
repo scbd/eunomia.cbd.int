@@ -4,18 +4,21 @@ define(['app', 'lodash', 'moment',
   'css!libs/angular-dragula/dist/dragula.css',
   'services/mongo-storage',
   'directives/forms/edit/room',
-  'directives/grid-reservation-se',
+  'directives/side-events/se-grid-reservation',
   'directives/side-events/unscheduled',
   'directives/side-events/se-schedule-header',
   'directives/side-events/side-events',
   'ngDialog',
-  'directives/side-event'
+  'directives/side-events/side-event'
 ], function(app, _, moment, roomDialog, resDialog) {
 
     return['$scope','eventGroup',function($scope,conf){
         $scope.conference=conf;
-        $scope.conferenceDays={};
+        $scope.conferenceDays=[];
         $scope.isOpen=true;
+        $scope.bagScopes={};
+        $scope.slotElements=[];
+
     }];
 
 });

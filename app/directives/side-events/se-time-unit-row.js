@@ -5,6 +5,8 @@ define(['app',
     'moment',
     'ngDialog',
     '../forms/edit/reservation',
+    'css!libs/angular-dragula/dist/dragula.css',
+    'filters/moment'
     // './grid-reservation'
 ], function(app, _, template, resDialog, moment) {
 
@@ -15,103 +17,133 @@ define(['app',
                 template: template,
                 replace: true,
                 transclude: false,
-                scope: {
-                    'startTime': '=',
-                    'endTime': '=',
-                    'conferenceDays': '=',
-                    'room': '=',
-                    'rooms': '=',
-                    'day': '=',
-                    'conference':'='
-                },
-                require: ['^conferenceSchedule','timeUnitRow'],
+                require: ['^side-events'],
                 link: function($scope, $element, $attr, schedule) {
 
                         $scope.schedule = schedule[0];
-                        $scope.timeUnitRowCtrl = schedule[1];
 
                         var timeUnit = 900.025; //15 minutes in seconds
-                        var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
+                        var intervalDuration; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
+                        var initialized = false;
+                        var allOrgs;
 
-                        // mongoStorage.getAllOrgs('inde-orgs', 'published').then(function(orgs) {
-                        //     allOrgs = orgs.data;
-                        // });
+                          initTypes();
 
-                        //============================================================
+                        mongoStorage.loadOrgs().then(function(orgs) {
+                            allOrgs = orgs;
+                        });
+
+                        // ============================================================
                         //
-                        //============================================================
+                        // ============================================================
                         $scope.$watch('conferenceDays', function() {
+                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized)
                             initTimeIntervals();
                         });
 
                         //============================================================
                         //
                         //============================================================
-                        $scope.$watch('startTime', function() {
-
-                            initTimeIntervals();
-                        });
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$watch('endTime', function() {
-
-                            initTimeIntervals();
-                        });
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$watch('day', function() {
-                            if ($scope.day)
-                                initTimeIntervals();
+                        $scope.$watch('isOpen', function() {
+                          initOuterGridWidth().then(function() {
+                              calcColWidths();
+                          });
                         });
 
                         //============================================================
                         //
                         //============================================================
                         $scope.$watch('room.rowHeight', function() {
-                            if ($scope.room.rowHeight)
+                            if ($scope.room.rowHeight){
                                 $element.css('height',$scope.room.rowHeight);
+                                $scope.cellHeight = $scope.room.rowHeight;
+                            }
                         });
 
-                        initTypes();
 
                         //============================================================
                         //
                         //============================================================
                         function initTimeIntervals() {
 
-                            if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
+                          initialized=true;
 
-                                var hours = $scope.endTime.hours() - $scope.startTime.hours();
+                          if(!_.isObject($scope.bagScopes))
+                            $scope.bagScopes = {};
 
-                                $scope.timeIntervals = [];
+                          $scope.timezone=$scope.conference.timezone;
 
-                                var t = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
+                          if ($scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
+                                $scope.firstDay = moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day');
+                                $scope.lastDay =moment.tz($scope.conferenceDays[$scope.conferenceDays.length-1],$scope.conference.timezone).startOf('day');
 
-                                for (var i = 0; i <= hours; i++) {
-                                    var intervalObj = {};
-                                    intervalObj.subIntervals = [];
-                                    intervalObj.interval = moment(t);
-                                    for (var j = 0; j < intervalDuration; j++) {
-                                        intervalObj.subIntervals.push({
-                                            time: moment(t).startOf('minute'),
-                                            res: {}
-                                        });
-                                        t = t.add(timeUnit, 'seconds');
-                                    }
-                                    $scope.timeIntervals.push(intervalObj);
-                                }
+                                $scope.timeIntervals=[];
+                                if($scope.conferenceDays && $scope.conferenceDays.length)
+                                  $scope.conferenceDays.forEach(function(item){
+                                    $scope.conference.seTiers.forEach(function(tier){
+                                        var cell ={};
+                                        cell.dayTier = moment.tz(item,$scope.conference.timezone).startOf('day').add(tier.seconds,'seconds');
+                                        cell.id =$scope.room._id+cell.dayTier.format('YYYYMMDDTHHmm');
+                                        cell.room = $scope.room;
+                                        cell.drag = false;
+                                        cell.bag=[];
+
+                                        if(cell.dayTier.isoWeekday()<6)
+                                            $scope.timeIntervals.push(cell);
+
+
+                                        $scope.bagScopes[cell.id]=cell.bag;
+                                    });
+                                  });
+                                $scope.room.timeIntervals = $scope.timeIntervals;
 
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
+                                    if(!$scope.slotElements)$scope.slotElements={};
+                                    if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
+                                    _.each($scope.bagScopes,function(v,k){
+
+                                      var elId ='#'+k;
+                                      var el =  $element.find(elId);
+                                      $scope.slotElements[$scope.room._id].push(el);
+
+                                    });
+
                                     $scope.getReservations();
+
                                 });
                             }
                         } //initTimeIntervals
+
+                        //=======================================================================
+                        // import created by and modified by adta for admins
+                        //=======================================================================
+                        function injectUserData(docs) { //jshint ignore:line
+
+                            if(!$scope.users) $scope.users=[];
+                              _.each(docs, function(doc) {
+                                 if(doc.sideEvent && doc.sideEvent.meta){
+                                  $scope.users.push(doc.sideEvent.meta.createdBy);
+                                  $scope.users.push(doc.sideEvent.meta.modifiedBy);
+                                }
+                              });
+
+                            $scope.users=_.uniq($scope.users);
+
+                            if(!_.isEmpty($scope.users))
+                              return $http.get('/api/v2013/userinfos?query='+JSON.stringify({userIDs:$scope.users})).then(function(res){
+                                  _.each(docs, function(doc) {
+                                       if(!_.find(res.data,{userID:doc.sideEvent.meta.createdBy})) throw 'User not found : '+doc.sideEvent.meta.createdBy;
+                                       doc.sideEvent.meta.createdByObj=_.find(res.data,{userID:doc.sideEvent.meta.createdBy});
+
+                                       if(!_.find(res.data,{userID:doc.sideEvent.meta.modifiedBy})) throw 'User not found : '+doc.sideEvent.meta.modifiedBy;
+                                       doc.sideEvent.meta.modifiedByObj=_.find(res.data,{userID:doc.sideEvent.meta.modifiedBy});
+                                 });
+                              });
+
+                        } //importUserData
+
 
                         //============================================================
                         //
@@ -165,7 +197,7 @@ define(['app',
                         //
                         //============================================================
                         function initTypes() {
-
+                            if(_.isEmpty($scope.options.types)) return $q(function(resolve){resolve(true);});
                             return mongoStorage.loadTypes('reservations').then(function(result) {
                                 if(!$scope.options)$scope.options={};
                                 $scope.options.types = result;
@@ -175,28 +207,29 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        $scope.getReservations = function (resId) {
-                            cleanSchedule(resId);
+                        $scope.getReservations = function () {
+
                             if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
 
                                 inProgress = true;
                                 var start = moment($scope.conferenceDays[0]).startOf('day');
                                 var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
-
+                                var reservations = [];
                                 mongoStorage.getReservations(start, end, {
                                     room: $scope.room._id
-                                }).then(
+                                },'570fd0a52e3fa5cfa61d90ee').then(
                                     function(responce) {
-
-                                        $scope.reservations = responce.data;
-
+                                      //injectUserData(responce.data);
+                                      reservations = responce.data;
                                         initTypes().then(function() {
-                                            calcAllResWidths($scope.reservations);
-                                            _.each($scope.reservations, function(res) {
+
+                                            _.each(reservations, function(res) {
                                                 embedTypeInRes(res);
-                                                //embedOrgsSideEvent(res);
+                                                embedOrgsSideEvent(res);
                                                 loadReservationsInRow(res);
+                                                addModels(reservations);
                                             });
+
                                         });
                                         inProgress = false;
                                     }
@@ -204,21 +237,29 @@ define(['app',
                             } // if
                         }; // getReservations
 
+                        //============================================================
+                        //
+                        //============================================================
+                        function addModels(reservations) {
+                            if (!$scope.seModels) $scope.seModels = [];
+                            _.each(reservations, function(se) {
+                              $scope.seModels.push(se);
+                            });
 
+                        } //loadReservationInRow
                         //============================================================
                         //
                         //============================================================
                         function loadReservationsInRow(res) {
 
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
-                                for (var j = 0; j < intervalDuration; j++) {
-                                    var interval = $scope.timeIntervals[i].subIntervals[j];
 
-                                    if (isResInTimeInterval(interval, res))
-                                        interval.res = res;
-                                    else if (!_.isEmpty(interval.res) && isResDeleted(interval.res))
-                                        delete(interval.res);
-                                } //for
+                                    var interval = $scope.timeIntervals[i];
+                                    if (isResInTimeInterval(interval.dayTier, res))
+                                        interval.bag.push(res);
+                                    // else if (!_.isEmpty(interval.res) && isResDeleted(interval.res))
+                                    //     delete(interval.res);
+
                             } //for
                         } //loadReservationInRow
 
@@ -226,42 +267,11 @@ define(['app',
                         //
                         //============================================================
                         function isResInTimeInterval(timeInterval, res) {
-
-                            var resStart = moment(res.start).format('X');
-                            var intervalStart = moment(timeInterval.time).format('X');
-                            var intervalEnd = moment(timeInterval.time).add(timeUnit, 'seconds').format('X');
-
-                            return (resStart >= intervalStart && resStart < intervalEnd);
+                            return  moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
+                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(45,'minutes'));
 
                         } //isResInInterval
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function calcAllResWidths(reservations) {
-                            _.each(reservations, function(res) {
-                                res.resWidth = calcResWidth(res);
-                            });
-                        } //calcAllResCWidths
-
-                        //============================================================
-                        //
-                        //============================================================
-                        function isResDeleted(res) {
-
-                            return (res.meta && res.meta === 'deleted');
-                        } //isResDeleted
-
-                        //============================================================
-                        //
-                        //============================================================
-                        function calcResWidth(res) {
-                            var resStart = moment(res.start).format('X');
-                            var resEnd = moment(res.end).format('X');
-                            if (!$scope.colWidth) throw "Error: column width not set timming issue";
-                            var resWidth = Math.ceil((resEnd - resStart) / timeUnit) * ($scope.colWidth / intervalDuration);
-                            return Number(resWidth);
-                        } //calcResWidth
 
                         //============================================================
                         //
@@ -295,86 +305,8 @@ define(['app',
                             }
                         } //embedTypeInRes
 
-                        //============================================================
-                        //ensure deleted res do not remain
-                        //============================================================
-                        function cleanSchedule(res) {
-
-                            if (!_.isObject(res)) {
-                                res = {
-                                    '_id': res
-                                };
-                            }
-                            for (var i = 0; i < $scope.timeIntervals.length; i++) {
-                                for (var j = 0; j < intervalDuration; j++) {
-                                    var interval = $scope.timeIntervals[i].subIntervals[j];
-
-                                    if (res._id === interval.res._id)
-                                        interval.res = {};
-                                }
-                            }
-                        } //calcResWidth
-
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.resDialog = function(doc, start) {
-                            if(!doc._id)
-                              $scope.editRes = {};
-                              else
-                              $scope.editRes=doc;
-
-
-                            $scope.editStart = start;
-                            ngDialog.open({
-                                template: resDialog,
-                                className: 'ngdialog-theme-default',
-                                closeByDocument: true,
-                                plain: true,
-                                scope: $scope
-                            });
-
-                        }; //$scope.roomDialog
-
                     }, //link
 
-                    controller:function($scope){
-
-                      $scope.getReservations='';
-                      //============================================================
-                      //
-                      //===========================================================
-                      this.resetSchedule= function() {
-                          $scope.schedule.resetSchedule();
-                      }; //resetSchedule
-
-                      //============================================================
-                      //
-                      //===========================================================
-                      this.setDay= function(day) {
-                          $scope.schedule.setDay(day);
-                      }; //resetSchedule
-
-                      //============================================================
-                      //
-                      //===========================================================
-                      this.deleteRes= function(objClone) {
-                            if (objClone.meta && objClone.meta.status === 'deleted') {
-                                var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);
-                                delete($scope.reservations[deleted]);
-                                if (deleted === 0 || deleted) $scope.reservations.splice(deleted, 1);
-                            }
-                      };//deleteRes
-
-                      //============================================================
-                      //
-                      //===========================================================
-                      this.getReservations= function(objId) {
-                          $scope.getReservations(objId);
-                      }; //resetSchedule
-
-                    }
 
             }; //return
         }

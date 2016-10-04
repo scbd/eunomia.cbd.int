@@ -1,33 +1,48 @@
 <div class="container-fluid" >
-<div class="row  view-header text-center" style="position:relative;margin-bottom:0px;">
-  <div class="view-title pull-left"> Side Event Reservations
-    <span class="badge" style="position:absolute;top:3px;left:240px;">{{reservations.length}}</span>
+<div class="row  view-header text-center" style="position:relative;margin-bottom:0px;height:52px;">
+  <div class="col-xs-1 ">
+    <div class="view-title text-nowrap" style="line-height:40px;">Side Event Reservations
+       <span class="badge" style="position:absolute;top:6px;left:240px;">{{countReservations()}}</span>
+    </div>
   </div>
-  <div class="relative" style="margin-left:auto;margin-right:auto;width:230px;height:40px;">
-    <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:85px;">
+  <div class="col-xs-1 col-xs-offset-3">
+    <button ng-disabled="isPrevDay()" ng-click="prevDay()" style="margin-top:5px;" tool-tip type="button" class="btn btn-fab btn-fab-mini"  data-placement="top" title="" data-original-title="Prev Day">
+      <i class="fa fa-arrow-left"></i>
+    </button>
+  </div>
+  <div class="col-xs-3 " >
+    <div class="form-group" style="position:absolute;left:1px;margin-top:0px;width:140px;">
       <!-- <input id="start-filter" class="form-control" type="text" ng-model="startDate" ng-change="dateChange('start-filter')" style="color:#eee;"> -->
-      <input id="start-filter" type="text" class="form-control" ng-model="startDate" style="color:#eee;" ng-change="dateChange('start-filter')"
-             date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD', clearButton: false,weekStart: 0 }"
+      <input id="start-filter" type="text" class="form-control" ng-model="startDateFormat" style="color:#eee;" ng-change="dateChangeStart()"
+             date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd Do MMM', clearButton: true,weekStart: 0 }"
              date-picker-min-date="conference.startObj"
-             date-picker-max-date="endDate">
+             date-picker-max-date="endDate"
+             currentDate="startDate">
 
     </div>
-    <span style="position:absolute;right:48%;top:25%;font-size:16px;">to</span>
-    <div class="form-group" style="position:absolute;right:1px;margin-top:0px;width:85px;">
-      <input id="end-filter" type="text" class="form-control" ng-model="endDate" style="color:#eee;" ng-change="dateChange('end-filter')"
-             date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD', clearButton: false,weekStart: 0 }"
+
+    <span style="position:absolute;right:48%;top:75%;font-size:16px;"><br>to</span>
+    <div class="form-group" style="position:absolute;right:1px;margin-top:0px;width:140px;">
+      <input id="end-filter" type="text" class="form-control" ng-model="endDateFormat" style="color:#eee;" ng-change="dateChangeEnd()"
+             date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd Do MMM', clearButton: false,weekStart: 0 }"
              date-picker-min-date="startDate"
-             date-picker-max-date="conference.endObj">
+             date-picker-max-date="conference.endObj"
+             currentDate="endDate">
     </div>
+  </div>
+  <div class="col-xs-1">
+    <button ng-disabled="isNextDay()" ng-click="nextDay()" style="margin-top:5px;"   tool-tip type="button" class="btn btn-fab btn-fab-mini"  data-placement="top" title="" data-original-title="Next Day">
+      <i class="fa fa-arrow-right"></i>
+    </button>
   </div>
   <div style="position:absolute;top:0px;right:1px;width:220px;">
     <div >
       <div class="form-group" style="margin-top:0px;">
         <div class="input-group">
-          <input type="text" id="searchSe" class="form-control" ng-model="searchRes" placeholder="Search Reservations">
+          <input type="text" id="searchSe" class="form-control" ng-model="search" placeholder="Search Reservations" ng-change="searchReservations()">
           <span class="input-group-btn small">
-            <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchRes='';">
-              <i class="fa fa-search" ng-if="!searchRes"></i> <i class="fa fa-times" ng-if="searchRes"></i>
+            <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';searchReservations();">
+              <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
             </button>
           </span>
         </div>

@@ -1,44 +1,8 @@
-<div class="row-base">
-  <style>
-    .row-base {
-      min-height: 40px;
-      /*width:10000px;*/
-      border-bottom-style: solid;
-      border-bottom-width: 1px;
-      border-bottom-color: #bbb;
-    }
-
-    .interval-hour {
-      display: inline-block;
-    }
-
-    .col-stripped {
-      background-color: #f9f9f9;
-    }
-
-    .col-stripped-alt {
-      background-color: #eeeeee;
-    }
-
-    .sub-interval {
-      display: inline-block;
-    }
-
-    .sub-interval:hover {
-      background-color: #fff;
-    }
-
-    .sub-interval-background {
-      display: inline-block;
-      z-index: -5;
-      border-style: solid;
-      border-width: 1px;
-      border-color: #000;
-    }
-  </style>
-  <div id="interval-{{$index}}" class="interval-hour relative" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:visible;height:100%;width:{{colWidth}}px;">
-    <div class="sub-interval" ng-repeat="sub in timeColumn.subIntervals" ng-click="resDialog(sub.res,sub.time);" style="position:relative;height:100%;width:25%;">
-      <grid-reservation ng-if="sub.res._id" rooms="rooms" doc="sub.res"></grid-reservation>
+<div id="row-{{$index}}" class="row-base">
+  <div  id="interval-{{$index}}" class="wrapper" ng-repeat="cell in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:hidden;height:98%;width:{{colWidth}}px;">
+    <div id="{{cell.id}}" interval-index="{{$index}}" room="{{cell.room._id}}" date="{{cell.dayTier |  momentTZ:conference.timezone:'format'}}"  dragula='"se-bag"' dragula-model='cell.bag' style="overflow:hidden;min-width:{{colWidth-1}}px;max-width:{{colWidth}}px;min-height:100%;">
+        <se-grid-reservation ng-repeat="res in cell.bag  track by $index"  row-min-height="cellHeight" rooms="rooms" res-id="{{res._id}}" doc="res"></se-grid-reservation>
+        <div ng-if="!cell.bag.length || cell.drag"  style="margin: 0 auto;width:{{colWidth}}px;max-width:{{colWidth}}px;max-height:1px;min-height:1px;">&nbsp;</div>
     </div>
   </div>
 </div>
