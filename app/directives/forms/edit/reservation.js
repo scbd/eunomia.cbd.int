@@ -38,6 +38,23 @@ define(['app', 'lodash',
                                   var e = moment.utc($scope.doc.start);
                                   $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
                                 }
+                                if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
+                                    $scope.doc.series = [];
+                                    var countDays = 0;
+                                    _.each($scope.conferenceDays, function(day, k) {
+                                        var startDay = day.startOf('day').isSame(moment.tz($scope.doc.start,$scope.conference.timezone).startOf('day'));
+                                        var isBefore = day.isSameOrBefore(moment.tz($scope.doc.start,$scope.conference.timezone));
+                                        if(!isBefore ) countDays++;
+
+                                        if(startDay)
+                                          $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
+                                        else{
+                                          $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
+
+                                        }
+                                    });
+                                }
+
                             }
                         });
 
@@ -67,6 +84,11 @@ define(['app', 'lodash',
                             initTypes();
                             initMaterial();
 
+                            if(typeof $scope.doc.open ==='undefined')
+                                $scope.doc.open=true;
+
+                            if(typeof $scope.doc.confirmed ==='undefined')
+                                $scope.doc.confirmed=true;
 
                             _.each($scope.rooms, function(r) {
                                 r.selected = false;
@@ -87,35 +109,13 @@ define(['app', 'lodash',
                             triggerChanges();
                             $scope.levelChangeSquare();
 
-                            $scope.recurrence = [];
-                            _.each($scope.conferenceDays, function(day, k) {
-//console.log(!day.isBefore(moment.utc().startOf('day')));
-                              if(!day.isBefore(moment.utc().startOf('day')))
-                                $scope.recurrence[k] = true;
-                                else $scope.recurrence[k] = false;
-                            });
-//  console.log($scope.recurrence);
-                            //init reccurence
                             if ($scope.doc.recurrence) {
-                                mongoStorage.getRecurrences($scope.doc._id).then(function(res) {
-                                    if (!_.isEmpty(res.data)) {
-                                        $scope.doc.children = res.data;
-
-                                        _.each(res.data, function(c, k) {
-                                            $scope.recurrence[k] = true;
-                                        });
-                                    } else {
-                                        $scope.doc.recurrence = false;
-                                        $scope.save($scope.doc);
-                                    }
-
+                                mongoStorage.getRecurrences($scope.doc.seriesId).then(function(res) {
+                                    if (!_.isEmpty(res.data))
+                                        $scope.recurrenceSeries = res.data;
                                 });
-                            }
 
-                            if($scope.doc.parent || $scope.doc.recurrence || $scope.doc.seriesId){
-                                  $scope.editSeriesFlag=true;
                             }
-
                         } //init
 
                         //============================================================
@@ -148,16 +148,16 @@ define(['app', 'lodash',
                                 } //
                             } //if(ngModel)
                         } /// isEmptyModel
+
                         //============================================================
                         //
                         //============================================================
                         $scope.loadSubTypes = function(type) {
-                                  console.log('here' );
                             $scope.options.type = _.find($scope.options.types, {
                                 '_id': type
                             });
-
                         }; //loadSubType
+
                         //============================================================
                         //
                         //============================================================
@@ -165,7 +165,7 @@ define(['app', 'lodash',
 
                             var parentObj;
                             var q={
-                //              parent:{$exists:false},
+
                               schema:'reservations',
                               'meta.status':{'$nin':['deleted','archived']}
                             };
@@ -199,15 +199,8 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.isSideEvent = function() {
-
                             if ($scope.doc.type === '570fd0a52e3fa5cfa61d90ee') return true;
-    // var seType = _.find($scope.options.types, {
-    //     '_id': '570fd0a52e3fa5cfa61d90ee'
-    // });
-    // return _.find(seType.children, {
-    //     '_id': $scope.doc.type
-    // });
-                        }; //$scope.isSideEvent
+                        }; //
 
 
                         //============================================================
@@ -215,10 +208,8 @@ define(['app', 'lodash',
                         //============================================================
                         $scope.editSeries = function(yes) {
 
-
                             $scope.editSeriesFlag = yes;
                             $scope.changeTab('details');
-
                         }; //$scope.editSeries
 
                         //============================================================
@@ -289,38 +280,42 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        function cleanReservation(res) {
+                        function cleanReservation(res, isNew) {
                             if (!res) throw "Error: not res obj passed.";
                             var objClone = _.cloneDeep(res);
+                            if(isNew){
+                                delete(objClone._id);
+                                delete(objClone.meta);
+                                delete(objClone.history);
+                            }
+
+                            if(!objClone.recurrence) delete(objClone.series);
                             delete(objClone.test);
                             delete(objClone.startDisp);
                             delete(objClone.endDisp);
                             delete(objClone.typeObj);
                             delete(objClone.children);
                             delete(objClone.subTypeObj);
-                            delete(objClone.sideEvent);
-
+                            delete(objClone.resWidth);
+                            if(!objClone.description)objClone.description=' ';
                             objClone.start = moment.utc(moment.tz(objClone.start,$scope.conference.timezone)).format();
-                            objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone)).format();//moment.tz(objClone.end,$scope.conference.timezone);
+                            objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone)).subtract(1,'seconds').format();//moment.tz(objClone.end,$scope.conference.timezone);
 
                             addLocation(objClone);
                             return objClone;
                         } //initVunues
-
-
 
                         //============================================================
                         //
                         //============================================================
                         function addLocation(objClone) {
 
-                            if (!objClone.location) {
-                                objClone.location = {};
-                                objClone.location.room = $scope.room._id;
-                            } else if (!objClone.location.room)
-                                objClone.location.room = $scope.room._id;
-
+                            if(!objClone.location)            objClone.location = {};
+                            if(!objClone.location.room)       objClone.location.room = $scope.room._id;
+                            if(!objClone.location.conference) objClone.location.conference= $scope.conference._id;
+                            if(!objClone.location.venue)      objClone.location.venue = $scope.conference.venueId;
                         } //initVunues
+
                         //============================================================
                         //
                         //============================================================
@@ -333,18 +328,24 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        function saveRec(doc, k) {
-                            var docClone = cleanReservation(doc);
-                            delete(docClone._id);
-                            var resStartSeconds = moment.utc(doc.start).format('X') - moment.utc(doc.start).startOf('day').format('X');
-                            var resLengthSeconds = moment.utc(doc.end).format('X') - moment.utc(doc.start).format('X');
-                            docClone.start = moment.utc($scope.conferenceDays[0]).startOf('day').add(k, 'days').add(resStartSeconds, 'seconds').format();
-                            docClone.end = moment.utc(docClone.start).add(resLengthSeconds, 'seconds').format();
-                            delete(docClone.recurrence);
-                            delete(docClone.meta);
-                            docClone.parent = doc._id;
-                            docClone.series = $scope.seriesId;
-                            mongoStorage.saveRes(docClone).catch(function(error) {
+                        function saveRec(doc, k, isNew) {
+                            var docClone = cleanReservation(doc,isNew);
+
+
+                            if(!isNew){
+                              var diff= moment(docClone.end).diff(moment(docClone.start),'minutes');
+
+                                docClone.start = moment($scope.doc.series[k].date).format();
+                                docClone.end = moment($scope.doc.series[k].date).add(diff, 'minutes').format();
+                                docClone._id = retRecId($scope.doc.series[k].date,$scope.recurrenceSeries);
+
+                            }else{
+                              docClone.start = moment.tz(docClone.start,$scope.conference.timezone).add(k, 'days').format();
+                              docClone.end = moment.tz(docClone.end,$scope.conference.timezone).add(k, 'days').format();
+                            }
+
+                            if((docClone._id && !isNew) || (!docClone._id && isNew))
+                            mongoStorage.save('reservations',docClone).catch(function(error) {
                                 console.log(error);
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation reccurence: '" + docClone.title + "' to the server.");
                             });
@@ -353,9 +354,30 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        function deleteRec(doc, k) {
-                            var docClone = cleanReservation(doc.children[k]);
+                        function retRecId(start,children) {
+                            var res = _.find(children,function(child){
+                                            if(moment(child.start).isSame(start))
+                                              return true;
+                                            else {
+                                              return false;
+                                            }
+                                      });
+
+                            if(res)
+                              return res._id;
+                            else
+                              return false;
+                        }
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function deleteRec(start) {
+                            var resId=retRecId(start,$scope.recurrenceSeries);
+                            var docClone ={};
+                            docClone.meta ={};
                             docClone.meta.status = 'deleted';
+                            docClone._id=resId;
 
                             mongoStorage.save('reservations', docClone, docClone._id).catch(function(error) {
                                 console.log(error);
@@ -367,9 +389,13 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.hideCurrentandPastDays = function(doc, day) {
+                            if(doc.seriesId) return true;
                             return (moment.utc(doc.start).startOf('day').isBefore(moment.utc(day).startOf('day')));
-
                         }; //initVunues
+
+                        //============================================================
+                        //
+                        //============================================================
                         function guid() {
                           function s4() {
                             return Math.floor((1 + Math.random()) * 0x10000)
@@ -379,38 +405,46 @@ define(['app', 'lodash',
                           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                             s4() + '-' + s4() + s4() + s4();
                         }
+
                         //============================================================
                         //
                         //============================================================
                         function saveRecurrences(doc) {
-                          console.log('$scope.recurrence',$scope.recurrence);
-                                console.log('$scope.doc.children',$scope.doc.children);
-                                      console.log('$scope.editSeriesFlag',$scope.editSeriesFlag);
-                            if ($scope.doc.recurrence) {
-                                $scope.seriesId = guid();
-                                if (!$scope.doc.children) $scope.doc.children = [];
-                                if (!_.isEmpty($scope.recurrence)) {
-  console.log('in loop');
-        console.log('$scope.editSeriesFlag',$scope.editSeriesFlag);
-                                    _.each($scope.recurrence, function(v, k) {
-                                        var isAfter = (moment.utc(doc.start).startOf('day').isAfter(moment.utc($scope.conferenceDays[0]).startOf('day').add(k, 'days')));
-                                        if (v && doc.children.length === 0 && !isAfter) { // create
-  console.log('create');
-                                            saveRec(doc, k);
-                                        } else if (!v && $scope.doc.children[k]) { //delete
-    console.log('delete');
-                                            deleteRec(doc, k);
-                                        }else if($scope.editSeriesFlag===true){
-      console.log('$scope.editSeriesFlag',$scope.editSeriesFlag);
 
-                                          _.each($scope.recurrence, function(v, k) {
-                                                  saveRec(doc, k);
-                                          });
+                            if (doc.recurrence) {
+
+
+                                if (!_.isEmpty(doc.series)) {
+
+                                    var daysCount =0;
+
+                                    _.each(doc.series, function(v, k) {
+                                        var isAfter = (moment(doc.start).isSameOrAfter(moment($scope.conferenceDays[0]).startOf('day').add(k, 'days')));
+                                        if(!isAfter) daysCount++;
+
+                                        if (v.selected && !isAfter && isNewReservationInSeries(v.date)) { // create on create after existing date
+
+
+                                            saveRec(doc, daysCount,true);
+                                        } else if(v.selected && !isNewReservationInSeries(v.date)){ //edit
+                                            saveRec(doc, k);
+                                        }else if(!v.selected && !isNewReservationInSeries(v.date) ){
+                                            deleteRec(v.date);
                                         }
+
                                     });
                                 } else throw "Error thrying to update reccurences but reccurrence is empty.";
                             }
                         } //
+
+
+                        //============================================================
+                        // returns true if it does not exist in series
+                        //============================================================
+                        function isNewReservationInSeries(start) {
+                            return !retRecId(start,$scope.recurrenceSeries);
+                        }
+
 
                         //============================================================
                         //
@@ -433,11 +467,10 @@ define(['app', 'lodash',
                                 obj.sideEvent.title = obj.title;
                                 obj.sideEvent.description = obj.description;
                             }
-                            var objClone = cleanReservation(obj);
-                            console.log('objClone',objClone);
 
-if(objClone.parent || objClone.seriesId || objClone.recurrence)
-$scope.changeTab('recurrence');
+                            if(!obj.seriesId && obj.recurrence) obj.seriesId = guid();
+
+                            var objClone = cleanReservation(obj);
 
 
                             if(!objClone.start || !objClone.end ) throw "Error missing start or end time or location.";
@@ -445,7 +478,6 @@ $scope.changeTab('recurrence');
                             return mongoStorage.save('reservations', objClone).then(function(res) {
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
-                                    saveSideEvent(objClone);
 
                                     if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
                                         $scope.timeUnitRowCtrl.resetSchedule();
@@ -455,7 +487,6 @@ $scope.changeTab('recurrence');
                                     if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day')) // if user changes the day change view to that day
                                         $scope.timeUnitRowCtrl.setDay(moment.utc($scope.doc.start).startOf('day'));
 
-
                                     saveRecurrences(obj);
 
                                 }, 500);
@@ -463,18 +494,13 @@ $scope.changeTab('recurrence');
                                 $scope.closeThisDialog();
                             }).catch(function(error) {
                                 console.log(error);
-                                $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + objClone.title + "' to the server.");
+                                $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
                             });
                         }; //save
-                        init();
+init();
                     } //link
             }; //return
         }
     ]);
 
-    app.filter('momentDayFormat', function() {
-        return function(input) {
-            return moment.utc(input).format('dddd YYYY-MM-DD');
-        };
-    });
 });
