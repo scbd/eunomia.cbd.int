@@ -31,6 +31,47 @@
         <p class="help-block" ng-show="valid">error</p>
       </div>
     </div>
+    <div class="col-xs-12" ng-if="doc.schema==='reservations'">
+      <div class="form-group label-floating">
+        <label class="control-label" for="priority">Priority</label>
+        <input class="form-control" id="priority" type="number" ng-model="doc.priority" ng-diabled="doc.system">
+        <p class="help-block" ng-show="valid">error</p>
+      </div>
+    </div>
+
+    <div class="col-xs-12" ng-if="doc.schema==='reservations'">
+      <div class="form-group label-floating">
+        <label class="control-label" for="open">Open</label>
+        <select id="open" class="form-control" ng-model="doc.open" ng-if="!doc.system">
+          <option value="true">Open</option>
+          <option value="false">Closed</option>
+         </select>
+
+        <p class="help-block" ng-show="valid">error</p>
+        <div  ng-if="doc.system">
+          <span ng-if="type.open==true">Open</span>
+          <span ng-if="type.open==false">Closed</span>
+        </div>
+                <span class="material-input"></span>
+      </div>
+
+    </div>
+    <!-- <div class="col-xs-12" ng-if="doc.schema==='reservations'">
+      <div class="form-group label-floating">
+        <label class="control-label" for="open">Open</label>
+        <div  >
+          <select id="open" ng-model="doc.open" style="margin-top:20px;" ng-if="!doc.system" >
+            <option value="true">Open</option>
+            <option value="false">Closed</option>
+          </select>
+                  <span class="material-input"></span>
+        </div>
+        <div  ng-if="type.system">
+          <span ng-if="type.open==true">Open</span>
+          <span ng-if="type.open==false">Closed</span>
+        </div>        <p class="help-block" ng-show="valid">error</p>
+      </div>
+    </div> -->
     <div class="col-xs-12">
         <color-picker  binding="doc.color" float-label></color-picker>
     </div>
