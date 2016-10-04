@@ -4,11 +4,13 @@
       cursor: pointer;
     }
   </style>
-  <div class="col-xs-10 col-xs-offset-1 ">
+  <div class="col-xs-12 ">
     <table class="table table-striped table-hover ">
       <thead>
         <tr>
           <th width="50%">Title</th>
+          <th width="10%" ng-if="schema==='reservations'">Priority</th>
+          <th width="10%" ng-if="schema==='reservations'">Open</th>
           <th width="25%">Color</th>
           <th width="25%">Actions</th>
         </tr>
@@ -21,6 +23,25 @@
               <input class="form-control" id="title" type="text" ng-model="child.title" ng-change="child.changed=true;">
               <p class="help-block" ng-show="valid">error</p>
             </div>
+          </td>
+          <td ng-if="schema==='reservations'">
+            <div class="form-group label-floating" style="margin-top:10px;">
+              <label class="control-label hidden-md hidden-lg hidden-xl" for="roomNameD">Priority</label>
+              <input class="form-control" id="title" type="number" ng-model="child.priority" ng-disabled="child.system" ng-change="child.changed=true">
+              <p class="help-block" ng-show="valid">error</p>
+            </div>
+          </td>
+          <td ng-if="schema==='reservations'">
+              <div>
+                <select ng-model="child.open" style="margin-top:20px;" ng-if="!child.system" ng-change="child.changed=true">
+                  <option value="true">Open</option>
+                  <option value="false">Closed</option>
+                </select>
+              </div>
+              <div ng-if="child.system" >
+                <span ng-if="child.open==true">Open</span>
+                <span ng-if="child.open==false">Closed</span>
+              </div>
           </td>
           <td>
             <color-picker class="hidden-md hidden-lg hidden-xl" binding="child.color" float-label></color-picker>

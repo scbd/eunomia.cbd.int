@@ -15,8 +15,10 @@
       <thead>
         <tr>
           <th width="5%"><i class="fa fa-child" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Children"></i></th>
-          <th width="50%">Title</th>
-          <th width="25%">Color</th>
+          <th width="40%">Title</th>
+          <th width="10%" ng-if="schema==='reservations'">Priority</th>
+          <th width="10%" ng-if="schema==='reservations'">Open</th>
+          <th width="15%">Color</th>
           <th width="20%">Actions</th>
         </tr>
       </thead>
@@ -31,11 +33,31 @@
               <p class="help-block" ng-show="valid">error</p>
             </div>
           </td>
+          <td ng-if="schema==='reservations'">
+            <div class="form-group label-floating" style="margin-top:10px;">
+              <label class="control-label hidden-md hidden-lg hidden-xl" for="roomNameD">Priority</label>
+              <input class="form-control" id="title" type="number" ng-model="type.priority" ng-disabled="type.system" ng-change="type.changed=true">
+              <p class="help-block" ng-show="valid">error</p>
+            </div>
+          </td>
+          <td ng-if="schema==='reservations'">
+              <div>
+                <select ng-model="type.open" style="margin-top:20px;" ng-if="!type.system" ng-change="type.changed=true">
+                  <option value="true">Open</option>
+                  <option value="false">Closed</option>
+                </select>
+              </div>
+              <div  ng-if="type.system">
+                <span ng-if="type.open==true">Open</span>
+                <span ng-if="type.open==false">Closed</span>
+              </div>
+          </td>
           <td>
             <color-picker class="hidden-md hidden-lg hidden-xl" binding="type.color" float-label></color-picker>
             <color-picker class="hidden-xs hidden-sm" binding="type.color"></color-picker>
           </td>
           <td class="text-nowrap">
+            <section ng-if="!type.system">
             <span class="hidden-xs hidden-sm btn-group-vertical" ng-if="type.changed">
               <a  ng-click="save(type);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="Save"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
             </span>
@@ -49,17 +71,18 @@
 
               <a ng-if="!type.system" ng-click="typeDialog(type._id)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
             </div>
+          </section>
           </td>
         </tr>
         <tr></tr>
         <tr ng-show="type.children && type.showChildren" ng-repeat-end>
-          <td colspan="4">
+          <td colspan="6">
             <strong>Children of {{type.title}}:</strong>
             <div ng-include="'/app/views/admin/types-children-table.html'"></div>
           </td>
         </tr>
         <tr >
-          <td colspan="4">
+          <td colspan="6">
               &nbsp;
           </td>
         </tr>
