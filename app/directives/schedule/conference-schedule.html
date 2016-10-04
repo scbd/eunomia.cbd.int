@@ -73,7 +73,7 @@
     <div class="control-header">
       <div class="row" style="background-color:#a7a7a7;">
         <div class="col-xs-1">
-          <div class="view-title text-nowrap"> <span style="margin-left:20px;">Room Reservations</span>
+          <div class="view-title text-nowrap" style="line-height:40px;"> <span style="margin-left:20px;">Room Reservations</span>
           </div>
         </div>
 
@@ -88,7 +88,8 @@
               <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
                      date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
                      date-picker-min-date="conference.startObj"
-                     date-picker-max-date="conference.endObj">
+                     date-picker-max-date="conference.endObj"
+                     currentDate="dayObj">
             </div>
           </div>
           <div class="col-xs-2">
