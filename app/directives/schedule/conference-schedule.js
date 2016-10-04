@@ -84,15 +84,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.changeStartTime = changeStartTime;
                             $scope.changeEndTime = changeEndTime;
 
-
-
                             initDayTimeSelects();
-                            getRooms();
                             initDay();
-
                             setStartTime();
                             setEndTime();
-
                         } //init
 
                         //============================================================
@@ -129,12 +124,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                       $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
                                       $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                   }
-
-                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setMaxDate', start);
-                                  $element.find('#day-filter').bootstrapMaterialDatePicker('setMinDate', end);
                                   $scope.day = $scope.dayObj.startOf('day').startOf('day').format('dddd YYYY-MM-DD');
                                   prevNextRestrictions();
-                              }, 1000);
+                              }, 500);
 
                         } //init
 
@@ -164,11 +156,11 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
                             $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
 //TODO
-          $timeout(function() {
+                            $timeout(function() {
 
-              $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj.startOf('day').hour(Number($scope.startTime.substring(0, 2))));
-              $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
-          });
+                                $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj.startOf('day').hour(Number($scope.startTime.substring(0, 2))));
+                                $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
+                            });
                             $scope.dayObj = $scope.conference.startObj;
                             $timeout(function(){prevNextRestrictions();},1000);
                         } //changeConference
@@ -242,8 +234,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function setDay() {
-
-                            $scope.dayObj = moment.tz($scope.day,$scope.conference.timezone).startOf('day');
+                            $scope.dayObj = moment($scope.day,'dddd YYYY-MM-DD').startOf('day');
                             prevNextRestrictions();
                         } //getStartTime
 
@@ -337,9 +328,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           $scope.conferenceDays = [];
 
-                          var numDays = moment($scope.conference.schedule.end).diff($scope.conference.schedule.start,'days');//Math.floor((Number($scope.conference.schedule.end) - Number($scope.conference.start)) / (24 * 60 * 60));
+                          var numDays = moment($scope.conference.schedule.end).diff($scope.conference.schedule.start,'days')+1;//Math.floor((Number($scope.conference.schedule.end) - Number($scope.conference.start)) / (24 * 60 * 60));
 
-                          $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
+                          $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).startOf('day');
                           $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
                           $scope.startDay = $scope.conference.startObj;
                           $scope.endDay = $scope.conference.endObj;
