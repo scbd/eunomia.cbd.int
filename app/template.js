@@ -27,31 +27,58 @@ define(['app',
             });
         });
 
+        //==============================
+        //
+        //==============================
         $rootScope.$on("showInfo", function(evt, msg) {
             showInfo(msg);
         });
+
+        //==============================
+        //
+        //==============================
         $rootScope.$on("showWarning", function(evt, msg) {
             showWarning(msg);
         });
+
+        //==============================
+        //
+        //==============================
         $rootScope.$on("showSuccess", function(evt, msg) {
             showSuccess(msg);
         });
+
+        //==============================
+        //
+        //==============================
         $rootScope.$on("showError", function(evt, msg) {
             showError(msg);
         });
 
+        //==============================
+        //
+        //==============================
         function showInfo(msg) {
             toastr.info(msg);
         }
 
+        //==============================
+        //
+        //==============================
         function showWarning(msg) {
             toastr.warning(msg);
         }
 
+        //==============================
+        //
+        //==============================
         function showSuccess(msg) {
             toastr.success(msg);
         }
 
+        //==============================
+        //
+        //==============================
         function showError(msg) {
             toastr.error(msg);
         }
