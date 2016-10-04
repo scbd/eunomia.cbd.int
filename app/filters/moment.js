@@ -7,4 +7,11 @@ define(['app', 'moment-timezone'], function(app, moment) { 'use strict';
         };
     }]);
 
+    app.filter('momentTZ', [function() {
+
+        return function(datetime,timezone, method, arg1, arg2, arg3) {
+            return moment.tz(datetime,timezone)[method](arg1, arg2, arg3);
+        };
+    }]);
+
 });
