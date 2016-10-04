@@ -1,4 +1,4 @@
-define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment'], function(app, _, template, moment) {
+define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/moment'], function(app, _, template, moment) {
 
     app.directive("timeUnitRowHeader", ['$timeout',
         function($timeout) {
@@ -111,15 +111,15 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment'], function
             }; //return
         }
     ]);
-    app.filter('momentFormat', function() {
-        return function(input) {
-            return input.format('dddd [the] Do of MMMM, YYYY');
-        };
-    });
-
-    app.filter('toHour', function() {
-        return function(input) {
-            return input.format('HH:mm');
-        };
-    });
+    // app.filter('momentFormat', function() {
+    //     return function(input) {
+    //         return input.format('dddd [the] Do of MMMM, YYYY');
+    //     };
+    // });
+    //
+    // app.filter('toHour', function() {
+    //     return function(input) {
+    //         return input.format('HH:mm');
+    //     };
+    // });
 });
