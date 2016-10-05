@@ -8,7 +8,7 @@ define(['app'], function(app) {
     app.factory('devRouter', [function() {
 
         var domain = document.location.hostname.replace(/[^\.]+\./, '');
-        var production = false; // change to true to work on production accounts from dev
+        var production = true; // change to true to work on production accounts from dev, should be true for prod as well
         if ((domain === 'localhost' ||  (domain.indexOf('cbddev.xyz') >= 0)) && !production)
             domain = 'cbddev.xyz';
         else
