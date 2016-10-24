@@ -1,5 +1,7 @@
 <div id="{{room._id}}" i="{{room.sort}}" class="room-row-base grabable text-center" ng-click="roomDialog(room);" >
-    <div>{{room.title}}</div>
+    <div class="small"><strong>{{room.title}}</strong></div>
     <div class="small" ng-if="room.atTable">({{room.capacity}}/{{room.atTable}})</div>
     <div class="small" ng-if="!room.atTable">({{room.capacity}})</div>
+    <hr style="padding:0;margin:0;">
+    <div class="small text-nowrap" >[{{room.location}}]</div>
 </div>
