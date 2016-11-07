@@ -36,6 +36,7 @@ define(['app', 'lodash',
           //
           //============================================================
           function initVenues(){
+
               return mongoStorage.getDocs('venues').then(function(venues){
                 $scope.options.venues=venues.data;
                 _.each($scope.options.venues,function(ven){
@@ -43,7 +44,6 @@ define(['app', 'lodash',
                         ven.selected=true;
 
                 });
-
               });
           }//initVunues
 
@@ -126,12 +126,16 @@ define(['app', 'lodash',
               $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
               $scope.isSideEvents=($location.path()==='/side-events');
               //updateColorSquare();
-              triggerChanges();
 
-              initVenues();
-              initTypes();
-              $timeout(function(){$element.find('#roomNameD').focus();},500);
-              initVal();
+
+              initVenues().then(function(){
+                initTypes();
+                $timeout(function(){$element.find('#roomNameD').focus();
+triggerChanges();
+              },500);
+                initVal();
+              });
+
 
           }//triggerChanges
 

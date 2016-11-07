@@ -8,7 +8,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html','moment'
         template: template,
         replace: true,
         transclude: false,
-        priority: -100,
+        // priority: -100,
         scope: {
           'doc': '=',
           'rowMinHeight': '=',

@@ -73,6 +73,11 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
                             return mongoStorage.getConferenceRooms($scope.conference._id).then(function(res) {
                                 $scope.rooms = res.data;
+                                $scope.rooms=[];
+                                res.data.forEach(function(r){
+                                  if(r.isSideEvent)
+                                    $scope.rooms.push(r);
+                                });
                             }).then(function() {
                                 ctrl.initRowHeight();
                             });

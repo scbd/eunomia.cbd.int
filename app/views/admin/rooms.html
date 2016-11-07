@@ -39,9 +39,9 @@
                             </th>
                             <th width="10%">Type</th>
 
-                            <th width="10%">Location</th>
+                            <th width="15%">Location</th>
 
-                            <th width="10%">Local Name</th>
+                            <th width="5%">Is Side-event?</th>
                             <th width="10%" ng-show="false">venue</th>
                             <th width="10%">
                                 <sorter label-name="Color" ng-model="roomsCtrl.sort" property="color" load="roomsCtrl.load()" style="margin-bottom:0px;"></sorter>
@@ -90,21 +90,21 @@
                             <td width="10%">
                                 <div class="form-group label-floating" style="margin-top:10px;">
                                     <select class="form-control" ng-model="doc.type" ng-change="doc.changed=true;">
-{{}}
+
                                         <option ng-repeat="parent in roomsCtrl.options.types track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent._id === doc.type">{{parent.title}}</option>
 
                                     </select>
                                 </div>
                             </td>
-                            <td width="10%">
+                            <td width="15%">
                                 <div class="form-group label-floating" style="margin-top:10px;">
                                     <input class="form-control" id="location" type="text" ng-model="doc.location" ng-change="doc.changed=true;">
                                 </div>
                             </td>
 
-                            <td width="10%">
+                            <td width="5%" >
                                 <div class="form-group label-floating" style="margin-top:10px;">
-                                    <input class="form-control" id="llocalName" type="text" ng-model="doc.localName" ng-change="doc.changed=true;">
+                                    Yes<input class="form-control" id="llocalName" type="checkbox" ng-model="doc.isSideEvent" ng-change="doc.changed=true;">
                                 </div>
                             </td>
                             <td width="10%" ng-show="false">
