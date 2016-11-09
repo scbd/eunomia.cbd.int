@@ -1,7 +1,9 @@
 define(['app', 'lodash',
     'text!./reservation.html',
     'moment',
-    '../../color-picker'
+    '../../color-picker',
+    'directives/color-picker',
+    'directives/agenda-select'
 ], function(app, _, template, moment) {
 
     app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope',
@@ -20,7 +22,8 @@ define(['app', 'lodash',
                     'room': '=?',
                     'rooms': '=?',
                     'timeUnitRowCtrl': '=?',
-                    'conference':'=?'
+                    'conference':'=?',
+                    'tab':"=?"
                 },
 
                 link: function($scope, $element) {
@@ -62,10 +65,11 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         function init() {
+
                             $scope.options = {};
                             $scope.tabs = {
                                 'details': {
-                                    'active': true
+                                    'active': false
                                 },
                                 'recurrence': {
                                     'active': false
@@ -78,9 +82,14 @@ define(['app', 'lodash',
                                 },
                                 'cctv': {
                                     'active': false
-                                }
+                                },
+                                'agenda': {
+                                    'active': false
+                                },
                             };
 
+                            if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
+                            else $scope.changeTab('details');
                             initTypes();
                             initMaterial();
 
@@ -105,7 +114,7 @@ define(['app', 'lodash',
                                     '_id': $scope.doc.location.room
                                 }).selected = true;
                             }
-
+                            if(!$scope.doc.agenda)$scope.doc.agenda={};
                             triggerChanges();
                             $scope.levelChangeSquare();
 
@@ -190,8 +199,8 @@ define(['app', 'lodash',
                                     $scope.options.type = _.find($scope.options.types, {
                                         '_id': $scope.doc.type
                                     });
-                            }).catch(function onerror(response) {
-                                $scope.onError(response);
+                            }).catch(function (response) {
+                                console.log(response);
                             });
                         }
 
@@ -209,7 +218,7 @@ define(['app', 'lodash',
                         $scope.editSeries = function(yes) {
 
                             $scope.editSeriesFlag = yes;
-                            $scope.changeTab('details');
+                            //$scope.changeTab('details');
                         }; //$scope.editSeries
 
                         //============================================================
@@ -331,6 +340,7 @@ define(['app', 'lodash',
                         function saveRec(doc, k, isNew) {
                             var docClone = cleanReservation(doc,isNew);
 
+                            delete(docClone.agenda);
 
                             if(!isNew){
                               var diff= moment(docClone.end).diff(moment(docClone.start),'minutes');
@@ -423,8 +433,6 @@ define(['app', 'lodash',
                                         if(!isAfter) daysCount++;
 
                                         if (v.selected && !isAfter && isNewReservationInSeries(v.date)) { // create on create after existing date
-
-
                                             saveRec(doc, daysCount,true);
                                         } else if(v.selected && !isNewReservationInSeries(v.date)){ //edit
                                             saveRec(doc, k);

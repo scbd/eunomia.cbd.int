@@ -385,7 +385,12 @@ define(['app', 'lodash'], function(app, _) {
                     var params = {};
                     if (modified) {
                         params = {
-                            q: {}
+                            q: {
+
+                                  timezone: { $exists: true },
+                                  venueId:  { $exists: true } // TMP for compatibility with coference collection;
+                            },
+                             s : { StartDate : -1 }
                           };
                         numPromises++;
                         allPromises[1]= $http.get('/api/v2016/conferences', {
@@ -411,7 +416,7 @@ define(['app', 'lodash'], function(app, _) {
                                               }
                                           }
                                       }).then(function(m) {
-                                        console.log(m.data);
+
                                           conf.meetings = m.data;
                                       }));
                               });
@@ -428,7 +433,8 @@ define(['app', 'lodash'], function(app, _) {
                 return $q(function(resolve, reject) {
                     var timeOut = setInterval(function() {
                         if ((allPromises.length === 2 && !modified) || (modified && numPromises === allPromises.length && allPromises.length > 2) )
-                            $q.all(allPromises).then(function() {
+                            $q.all(allPromises).then(function(res) {
+
                                 clearInterval(timeOut);
                                 if(modified)
                                   localStorage.setItem('allConferences', JSON.stringify(conferences));

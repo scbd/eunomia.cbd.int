@@ -3,12 +3,13 @@ define(['app',
         'lodash',
         'moment-timezone',
         'services/authentication',
+        'services/mongo-storage',
         'bm',
         'bm-rip'
 ], function(app,toastTemplate, _, moment) {
     'use strict';
 
-    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$http', '$injector', function($rootScope, toastr, $templateCache,$document, $http, $injector) {
+    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$http', '$injector','mongoStorage', function($rootScope, toastr, $templateCache,$document, $http, $injector,mongoStorage) {
 
         var _ctrl = this;
 
@@ -88,28 +89,43 @@ define(['app',
         //==============================
         function initEventGroups() {
 
-            var query = {
-                timezone: { $exists: true },
-                venueId:  { $exists: true } // TMP for compatibility with coference collection;
-            };
-            return $http.get('/api/v2016/event-groups', { params : { q : query, s : { StartDate : -1 } } }).then(function(res){
+            return mongoStorage.loadConferences(true).then(function(res){
+                  var now = moment(new Date());
+                  var eventGroups = res;
+                  var selectEventGroupId = 'TODO';
 
-                var now = moment(new Date());
-                var eventGroups = res.data;
-                var selectEventGroupId = 'TODO';
+                  var bestMatch = _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
+                                  _.findLast(eventGroups, function(e) { return now.isBefore(e.EndDate); }) ||
+                                  _.first   (eventGroups);
+                  if(bestMatch)
+                      selectEventGroupId = bestMatch._id;
 
-                var bestMatch = _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
-                                _.findLast(eventGroups, function(e) { return now.isBefore(e.EndDate); }) ||
-                                _.first   (eventGroups);
-
-                if(bestMatch)
-                    selectEventGroupId = bestMatch._id;
-
-                _ctrl.eventGroups        = res.data;
-                _ctrl.selectEventGroupId = selectEventGroupId;
-
-                return eventGroupChange(false);
+                  _ctrl.eventGroups        = res;
+                  _ctrl.selectEventGroupId = selectEventGroupId;
+                  return eventGroupChange(false);
             });
+            // var query = {
+            //     timezone: { $exists: true },
+            //     venueId:  { $exists: true } // TMP for compatibility with coference collection;
+            // };
+//             return $http.get('/api/v2016/event-groups', { params : { q : query, s : { StartDate : -1 } } }).then(function(res){
+// console.log(res.data);
+//                 var now = moment(new Date());
+//                 var eventGroups = res.data;
+//                 var selectEventGroupId = 'TODO';
+//
+//                 var bestMatch = _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
+//                                 _.findLast(eventGroups, function(e) { return now.isBefore(e.EndDate); }) ||
+//                                 _.first   (eventGroups);
+//
+//                 if(bestMatch)
+//                     selectEventGroupId = bestMatch._id;
+//
+//                 _ctrl.eventGroups        = res.data;
+//                 _ctrl.selectEventGroupId = selectEventGroupId;
+//
+//                 return eventGroupChange(false);
+//             });
         }
 
         //==============================

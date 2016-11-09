@@ -319,12 +319,16 @@ var end=moment($scope.day).add($scope.endTime);
                         //============================================================
                         //
                         //============================================================
-                        $scope.resDialog = function(doc, start) {
+                        $scope.resDialog = function(doc, start, tab) {
                             if(!doc._id)
                               $scope.editRes = {};
                               else
                               $scope.editRes=doc;
 
+                              if(tab){
+
+                                $scope.tab=tab;
+                              }
 
                             $scope.editStart = start;
                             ngDialog.open({

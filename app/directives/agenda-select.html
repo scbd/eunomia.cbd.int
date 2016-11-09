@@ -1,0 +1,103 @@
+<div>
+<style>
+ .agenda-item-row{
+   width:100%;
+ }
+ .parent {
+    display:table;
+ }
+ .child {
+    display:table-cell;
+     float: none;
+      white-space: nowrap;
+ }
+ .child-center {
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+   float: none;
+   white-space: nowrap;
+ }
+ .child-left {
+    display:table-cell;
+    text-align:left;
+   float: none;
+   white-space: nowrap;
+ }
+ .child-right {
+    display:table-cell;
+    text-align:right;
+   float: none;
+   white-space: nowrap;
+ }
+ .debug {
+    border-style: solid;
+    border-width: 1px;
+    color:red;
+}
+
+.label.doc-status             { display: inline-block; width:40px;padding-top:4px; padding-bottom:3px; }
+.label.doc-status.pre-session { border: dotted 1px #777;    color: #777;   background: none}
+.label.doc-status.draft { border: solid 1px #777;    color: #777;    background: none}
+.label.doc-status.l     { width:25px;border: solid 1px #5bc0de; color: #5bc0de; background: none}
+.label.doc-status.crp   { border: solid 1px #f0ad4e; color: #f0ad4e; background: none}
+</style>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group" style="margin-left:10px;margin-top:15px;">
+      <div class="togglebutton">
+        <label>
+          <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
+    <div class="form-group label-floating" style="margin-top:10px;" >
+      <label class="control-label" for="meeting{{meeting._id}}">{{meeting.EVT_CD}}</label>
+
+      <select id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-change="itemSelected(meeting,selectedItem)" >
+        <option ng-repeat="item in meeting.agenda.items track by $index" value="{{item.item}}" ng-selected="item.item===selectedItem">{{item.display}}</option>
+       </select>
+      <span class="material-input"></span>
+      <p class="help-block" ng-show="valid">error</p>
+    </div>
+  </div>
+
+
+</div>
+    </div>
+  <div class="panel-body">
+    <section dragula='"agenda-items"' dragula-model="binding.items">
+          <div class="row" ng-repeat="item in binding.items track by $index">
+              <div class="col-xs-1" style="padding-left:0;margin: 10px 0 10px 0 ;"> <span class="label vercenter" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }">{{getPrefix(item)}} {{item.item}}</span></div>
+              <div class="col-xs-6" style="padding-right:0;margin: 10px 0 10px 0 ;"><span class="small" ng-class="{'text-success':getPrefix(item)==='CBD','text-primary':getPrefix(item)==='NP','text-warning':getPrefix(item)==='CP' }">{{getTitle(item)}} </span></div>
+
+
+              <div class="col-xs-1" style="padding-left:0;padding-right:10px;margin-right:18px;">
+                  <a href="javascript:void(0)" class="btn btn-flat btn-xs" ng-show="item.status==='crp'" ng-click="clearStatus(item)" style="padding: 4px 4px 4px 4px;"> <span class="label doc-status crp">CRP</span></a>
+                  <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-show="item.status!=='crp'" ng-click="setStatus(item,'crp')">CRP</a>
+              </div>
+              <div class="col-xs-1" style="padding-left:8px;padding-right:10px;margin-right:8px;">
+                  <a href="javascript:void(0)" class="btn btn-flat btn-xs" ng-show="item.status==='l'" ng-click="clearStatus(item)" style="padding: 4px 4px 4px 4px;"> <span class="label doc-status l">L</span></a>
+                  <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-show="item.status!=='l'" ng-click="setStatus(item,'l')">L</a>
+              </div>
+              <!--
+                    <a href="javascript:void(0)" class="btn btn-flat btn-xs" ng-show="item.status==='PRE'">  <span class="label doc-status pre-session">PRE</span></a>
+                    <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-show="item.status!=='PRE'">PRE</a>
+
+                    <a href="javascript:void(0)" class="btn btn-flat btn-xs" ng-show="item.status==='Draft'">  <span class="label doc-status draft">Draft</span></a>
+                    <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-show="item.status!=='Draft'">Draft</a> -->
+              <div class="col-xs-1" style="padding-left:10px;">
+                  <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="delete(item)" ><i class="fa fa-trash"></i></a>
+              </div>
+          </div>
+
+
+    </section>
+  </div>
+  <!-- <div class="panel-footer">Panel Footer</div> -->
+</div>
+</div>

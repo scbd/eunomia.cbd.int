@@ -1,4 +1,4 @@
-define(['app', 'text!./grid-reservation.html'], function(app, template) {
+define(['app', 'text!./grid-reservation.html','lodash'], function(app, template,_) {
     app.directive("gridReservation", [
         function() {
             return {
@@ -9,10 +9,27 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
                 priority: -100,
                 scope: {
                     'doc': '=',
+                    'start': '=',
+                    'popRes': '&',
                 },
                 link: function($scope, $element) {
 
                         init();
+                        //============================================================
+                        //
+                        //============================================================
+
+                        function hasAgenda(doc){
+                          if(!doc.type) return false;
+                            var agendaTypes = ['570fd1ac2e3fa5cfa61d90f5','570fd1cb2e3fa5cfa61d90f7','582330845d4c0e8231238ebf','570fd1552e3fa5cfa61d90f0'];
+
+                            if(_.indexOf(agendaTypes,doc.type)>-1)
+                              return true;
+                            else
+                              return false;
+
+                        }
+                        $scope.hasAgenda=hasAgenda;
 
                         //============================================================
                         //
@@ -26,6 +43,7 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
                                     return $element.find('#pop-title').html();
                                 }
                             });
+
 
                             titleEl.on('mouseenter', function() {
                                 titleEl.popover('show');
@@ -41,7 +59,7 @@ define(['app', 'text!./grid-reservation.html'], function(app, template) {
 
                             if($scope.doc.typeObj)
                                 $scope.color=$scope.doc.typeObj.color;
-                                
+
                             if($scope.doc.subTypeObj)
                               $scope.color=$scope.doc.subTypeObj.color;
 

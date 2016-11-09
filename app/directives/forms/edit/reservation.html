@@ -20,11 +20,12 @@
   </div>
 
   <div ng-show="!tabs.recurrenceQuestion.active">
-    <div class="btn-group btn-group-justified btn-group-raised hidden-xs">
-      <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
+    <div class="btn-group btn-group-justified btn-group-raised hidden-xs hidden-sm">
+      <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
       <!-- <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a> -->
-      <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recurrence</a>
-      <a  href="javascript:void(0)" class="btn" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
+      <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recurrence</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
     </div>
     <div class="btn-group btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl">
       <a href="javascript:void(0)" class="btn btn-xs btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
@@ -128,16 +129,17 @@
        <span class="help-block"></span>
     </div>
     </div>
-  </div>
-  <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
-    <div class="form-group" style="margin-left:10px;margin-top:15px;">
-      <div class="togglebutton">
-        <label>
-          <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
-        </label>
+    <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
+      <div class="form-group" style="margin-left:10px;margin-top:15px;">
+        <div class="togglebutton">
+          <label>
+            <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
+
 
     <!-- recurrence -->
     <div class="row" ng-show="tabs.recurrence.active">
@@ -223,7 +225,16 @@
       </div>
     </div>
   </div> -->
+  <!-- agenda -->
+  <div class="row" ng-show="tabs.agenda.active">
+      <section >
+            <div class="col-xs-12">
+                <agenda-select conference="conference" ng-model="doc.agenda"> </agenda-select>
+            </div>
+      </section>
+  </div>
 
+<!-- save-->
 <div class='row' ng-show="!tabs.recurrenceQuestion.active">
   <div class="col-xs-12">
     <div class="form-group hidden-xs">
@@ -240,6 +251,9 @@
     </div>
   </div>
 </div>
+
+
+
     <script>
       $.material.init();
     </script>
