@@ -44,7 +44,8 @@
 </style>
   <div class="panel panel-default">
     <div class="panel-heading">
-<div class="row">
+<div name="form" class="row">
+  <form novalidate>
   <div class="col-xs-12">
     <div class="form-group" style="margin-left:10px;margin-top:15px;">
       <div class="togglebutton">
@@ -55,17 +56,18 @@
     </div>
   </div>
   <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
-    <div class="form-group label-floating" style="margin-top:10px;" >
-      <label class="control-label" for="meeting{{meeting._id}}">{{meeting.EVT_CD}}</label>
+    <div class="form-group " style="margin-top:10px;" >
+      <!-- <label class="control-label" for="meeting{{meeting._id}}">{{meeting.EVT_CD}}</label> -->
 
-      <select id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-change="itemSelected(meeting,selectedItem)" >
-        <option ng-repeat="item in meeting.agenda.items track by $index" value="{{item.item}}" ng-selected="item.item===selectedItem">{{item.display}}</option>
+      <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items" ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
+        <!-- <option ng-repeat="item in meeting.agenda.items track by $index" value="{{item.item}}" ng-selected="item.item===selectedItem">{{item.display}}</option> -->
+<option value=''>{{meeting.EVT_CD}}</option>
        </select>
       <span class="material-input"></span>
       <p class="help-block" ng-show="valid">error</p>
     </div>
   </div>
-
+</form>
 
 </div>
     </div>
@@ -94,7 +96,6 @@
                   <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="delete(item)" ><i class="fa fa-trash"></i></a>
               </div>
           </div>
-
 
     </section>
   </div>

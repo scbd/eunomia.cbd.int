@@ -52,6 +52,7 @@ var watchKill = $scope.$watch('conference',function(){
           function itemSelected(meeting, item){
 
               createAgendaItem(meeting, item);
+
           }//itemSelected
           $scope.itemSelected=itemSelected;
 
@@ -69,7 +70,6 @@ var watchKill = $scope.$watch('conference',function(){
           function setStatus (item,status){
 
               item.status=status;
-              console.log(item);
           }//itemSelected
           $scope.setStatus=setStatus;
 
@@ -113,11 +113,12 @@ var watchKill = $scope.$watch('conference',function(){
           //
           //============================================================
           function createAgendaItem(meeting, item){
-              var law;
-              var itemObj = _.find(meeting.agenda.items,{item:Number(item)});
-              if(!itemObj) throw "error no itme found in meetings agenda";
 
-              $scope.binding.items.push({meeting:meeting.EVT_CD,item:item});
+              var itemObj = item;
+              if(!itemObj) throw "error no item found in meetings agenda";
+              var i =_.find($scope.binding.items,{meeting:meeting.EVT_CD,item:item.item});
+              if(!i)
+                $scope.binding.items.push({meeting:meeting.EVT_CD,item:item.item});
 
           }//itemSelected
           $scope.itemSelected=itemSelected;
