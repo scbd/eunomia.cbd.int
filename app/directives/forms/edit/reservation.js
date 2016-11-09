@@ -341,6 +341,7 @@ define(['app', 'lodash',
                             var docClone = cleanReservation(doc,isNew);
 
                             delete(docClone.agenda);
+                            delete(docClone.message);
 
                             if(!isNew){
                               var diff= moment(docClone.end).diff(moment(docClone.start),'minutes');
