@@ -85,7 +85,7 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                         function initIntervalWidth() {
                             _.each($scope.timeIntervals, function(con, key) {
                                 $timeout(function() {
-                                    $element.find('#sub-interval-header-' + key).css('width', 70);
+                                    $element.find('#sub-interval-header-' + key).css('width', $scope.colWidth);
                                 });
 
                             });
@@ -96,7 +96,6 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                         //============================================================
                         function calcColWidths() {
                             $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
-                            $scope.colWidth=70;
                             initIntervalWidth();
                         } //calcColWidths
 

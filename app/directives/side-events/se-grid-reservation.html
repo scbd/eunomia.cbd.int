@@ -1,8 +1,14 @@
 <div style="height:{{rowMinHeight-2}}px;max-width:93%;margin: 0 auto;">
   <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir" style="border:none;" data-toggle="popover" data-placement="top" style="height:100%;width:100%;margin:0 0 0 0;">
-<br>
     <span class="text-center" style="font-weight:500;  line-height: 25px;" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">#{{::doc.sideEvent.id}}</span>
-
+    <span id="res-title" ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.title}}</span>
+    <span class="text-center" ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
+      <span style="display:inline;line-height: 25px;" ng-repeat="org in doc.sideEvent.orgs track by $index" ng-if="org">
+                  <i ng-if="org._id.length===2"   class="flag-icon flag-icon-{{org._id}}" style="width:20px;height:13.5px;margin-bottom:5px;"></i>
+        <img ng-if="org._id.length>2" ng-src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym || org.name.en}}
+        <span ng-if="!$last">|</span>
+      </span>
+    </span>
     <div id="pop-title" style="display: none;">
       <div class="text-center">
         <span>#{{::doc.sideEvent.id}} &nbsp; </span>

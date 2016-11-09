@@ -32,7 +32,7 @@
     }
   </style>
   <div>
-    <div id="day-header-0"  class="day-header" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">
+    <div id="day-header-0"  class="day-header text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">
         <div id="interval-header-0" class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
           <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">{{timeColumn | momentTZ:timezone:'format':'DD MMM'}}</div>
         </div>

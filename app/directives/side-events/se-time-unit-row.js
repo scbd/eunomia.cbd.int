@@ -181,7 +181,7 @@ define(['app',
                         //
                         //============================================================
                         function initIntervalWidth() {
-                            $element.css('width',70);
+                            $element.css('width',$scope.outerGridWidth);
                         } //initDayWidth
 
                         //============================================================
@@ -189,7 +189,6 @@ define(['app',
                         //============================================================
                         function calcColWidths() {
                             $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
-$scope.colWidth=70;
                             initIntervalWidth();
                         } //init
                         var inProgress = false;
