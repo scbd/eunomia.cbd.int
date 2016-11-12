@@ -26,7 +26,13 @@
             </div>
         </div>
         <div class="panel-body relative" style="overflow:none; padding: 5px 3px 5px 3px;">
-            <div style="position:absolute;bottom:3px;right:47%;cursor:pointer;" ng-click="res.sideEvent.show=!res.sideEvent.show;"><i class="fa fa-times" ng-show="res.sideEvent.show"></i><i class="fa fa-arrows-v" ng-show="!res.sideEvent.show"></i></div>
+            <div style="position:absolute;bottom:3px;right:47%;cursor:pointer;" ng-click="res.sideEvent.show=!res.sideEvent.show;"><i class="fa fa-times" ng-show="res.sideEvent.show"></i><i class="fa fa-arrows-v" ng-show="!res.sideEvent.show"></i>
+
+            </div>
+            <div style="position:absolute;bottom:3px;right:3%;cursor:pointer;" ng-click="deleteRes()">
+                  <i class="fa fa-trash pull-right"></i>
+            </div>
+
             <table class="table table-striped table-hover" style="margin-left:6px;overflow:none;width:95%;" ng-click="res.sideEvent.show=!res.sideEvent.show;">
 
                 <tbody>
@@ -74,4 +80,5 @@
             <se-grid-reservation   doc="res" ignore-min-height="true" res-id="{{res._id}}" >  </se-grid-reservation>
         </span>
     </div> -->
+
 </div>
