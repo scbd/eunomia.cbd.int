@@ -311,6 +311,8 @@ define(['app', 'lodash',
                             objClone.start = moment.utc(moment.tz(objClone.start,$scope.conference.timezone)).format();
                             if(!objClone._id)
                               objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone).subtract(1,'seconds')).format();//moment.tz(objClone.end,$scope.conference.timezone);
+                            else
+                                objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone)).format();
 
                             addLocation(objClone);
                             return objClone;
@@ -485,7 +487,7 @@ define(['app', 'lodash',
 
 
                             if(!objClone.start || !objClone.end ) throw "Error missing start or end time or location.";
-
+console.log('objClone before save',objClone);
                             return mongoStorage.save('reservations', objClone).then(function(res) {
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
