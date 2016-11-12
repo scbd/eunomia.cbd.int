@@ -127,12 +127,13 @@
         </section>
       </div>
         <div id="scroll-grid" class="outer">
-          <div class="scroll-grid">
+          <div class="scroll-grid" style="position:relative;">
+            <div  ng-style="timeLine()" ></div>
 <!-- time heard row -->
         <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="dayObj" conference-days="conferenceDays"></time-unit-row-header>
 <!-- room rows start -->
 
-        <time-unit-row  start-time="startTimeObj" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+        <time-unit-row options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
 
 <!-- room rows end -->
       </div>
