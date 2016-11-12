@@ -307,9 +307,10 @@ define(['app', 'lodash',
                             delete(objClone.subTypeObj);
                             delete(objClone.resWidth);
                             if(!objClone.description)objClone.description=' ';
+
                             objClone.start = moment.utc(moment.tz(objClone.start,$scope.conference.timezone)).format();
                             if(!objClone._id)
-                              objClone.end = moment.tz(objClone.end,$scope.conference.timezone).subtract(1,'seconds').format();//moment.tz(objClone.end,$scope.conference.timezone);
+                              objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone).subtract(1,'seconds')).format();//moment.tz(objClone.end,$scope.conference.timezone);
 
                             addLocation(objClone);
                             return objClone;
