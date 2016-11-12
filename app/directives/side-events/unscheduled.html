@@ -85,7 +85,7 @@
         <!-- dragu;ar containers -->
         <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="min-width:100%;min-height:83vh;">
           <!-- | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter |orderBy:'sideEvent.id'  -->
-          <side-event res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index" ng-show="se.visible"></side-event>
+          <side-event res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index" ng-show="se.visible" load="load()"></side-event>
           <div ng-if="!ses.length">&nbsp;</div>
         </div>
         <!-- endn of container -->

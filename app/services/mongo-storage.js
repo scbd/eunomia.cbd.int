@@ -332,7 +332,10 @@ define(['app', 'lodash'], function(app, _) {
             params = {
                 q: {
                     'link.conference': meeting,
-                    'start':null
+                    'start':null,
+                    'meta.status': {
+                        $nin: ['archived', 'deleted']
+                    }
                 }
             };
             return $http.get('/api/v2016/reservations', {
