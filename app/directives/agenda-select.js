@@ -13,9 +13,10 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
 
 
 var watchKill = $scope.$watch('conference',function(){
-  if($scope.conference && !_.isEmpty($scope.conference)){
+  if($scope.conference && !_.isEmpty($scope.conference)&& !_.isEmpty($scope.conference.meetings)){
 
       _.each($scope.conference.meetings,function(m){
+            if(!m.agenda)m.agenda={};
             m.agenda.items.push({item:-1,display:'  '});
             _.each(m.agenda.items,function(i){
                   if(i.item>-1)

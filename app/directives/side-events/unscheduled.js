@@ -227,7 +227,11 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                             var startDate = moment.tz(container.attr('date'),$scope.conference.timezone); //.format('X')
                             if (container.attr('id') !== 'unscheduled-side-events') {
                               q.start = r.start = startDate.format();
-                              q.end = r.end =startDate.add(44,'minutes').add(59,'seconds').format();
+
+                              if(moment(q.start).format('HH')==='13')
+                                  q.end = r.end =startDate.add(89,'minutes').add(59,'seconds').format();
+                              else if(moment(q.start).format('HH')==='18')
+                                  q.end = r.end =startDate.add(74,'minutes').add(59,'seconds').format();
                               q.location = r.location = {};
                               q.location.venue =r.location.venue= $scope.conference.venueId;
                               q.location.conference =r.location.conference= $scope.conference._id;
@@ -268,6 +272,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                           var resId = el.attr('res-id');
 
                           toggleDragFlag(source);
+
                           if (toId === 'unscheduled-side-events')
                             res = _.find($scope.sideEvents, {
                               '_id': resId
@@ -275,7 +280,8 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                           else
                             res = $scope.bagScopes[toId][0];
 
-                          res.visible=true;
+                          if(res)
+                            res.visible=true;
                           setTimes(res, container);
                           removeDropIndicators();
 
