@@ -501,6 +501,8 @@ define(['app', 'lodash',
                                     saveRecurrences(obj);
 
                                 }, 500);
+                                if(!objClone._id)
+                                  $scope.conference.changeConference();
                                 $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
                                 $scope.closeThisDialog();
                             }).catch(function(error) {

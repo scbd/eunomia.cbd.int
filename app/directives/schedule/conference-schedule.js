@@ -248,18 +248,16 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                             var colWidth = Number($scope.outerGridWidth) / Number(hours);
 
                             var posInterval = colWidth / 60;
-                            var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * (posInterval - .1);
+                            var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * (posInterval - .1);//jshint ignore:line
 
                             return leftPosition;
 
                         } //
 
                         //============================================================
-                        //
+                        // $scope.changeConference
                         //============================================================
                         function changeConference() {
-
-
 
                             $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
                             $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
@@ -274,6 +272,7 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                             $timeout(function(){prevNextRestrictions();},1000);
 
                         } //changeConference
+                        $scope.conference.changeConference = changeConference;
 
                         //============================================================
                         //
