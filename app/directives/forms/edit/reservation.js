@@ -308,7 +308,8 @@ define(['app', 'lodash',
                             delete(objClone.resWidth);
                             if(!objClone.description)objClone.description=' ';
                             objClone.start = moment.utc(moment.tz(objClone.start,$scope.conference.timezone)).format();
-                            objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone)).subtract(1,'seconds').format();//moment.tz(objClone.end,$scope.conference.timezone);
+                            if(!objClone._id)
+                              objClone.end = moment.tz(objClone.end,$scope.conference.timezone).subtract(1,'seconds').format();//moment.tz(objClone.end,$scope.conference.timezone);
 
                             addLocation(objClone);
                             return objClone;
@@ -494,7 +495,7 @@ define(['app', 'lodash',
                                     $scope.timeUnitRowCtrl.deleteRes(objClone);
                                     $scope.timeUnitRowCtrl.getReservations(objClone._id); // reload row to show changes by save
                                     if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day')) // if user changes the day change view to that day
-                                        $scope.timeUnitRowCtrl.setDay(moment.utc($scope.doc.start).startOf('day'));
+                                        $scope.timeUnitRowCtrl.setDay(moment.tz(objClone.end,$scope.conference.timezone).startOf('day'));
 
                                     saveRecurrences(obj);
 
