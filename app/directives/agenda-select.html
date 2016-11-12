@@ -75,9 +75,11 @@
     <section dragula='"agenda-items"' dragula-model="binding.items">
           <div class="row" ng-repeat="item in binding.items track by $index">
               <div class="col-xs-1" style="padding-left:0;margin: 10px 0 10px 0 ;"> <span class="label vercenter" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }">{{getPrefix(item)}} {{item.item}}</span></div>
-              <div class="col-xs-6" style="padding-right:0;margin: 10px 0 10px 0 ;"><span class="small" ng-class="{'text-success':getPrefix(item)==='CBD','text-primary':getPrefix(item)==='NP','text-warning':getPrefix(item)==='CP' }">{{getTitle(item)}} </span></div>
+              <div class="col-xs-5" style="padding-right:0;margin: 10px 0 10px 0 ;"><span class="small text-nowrap" ng-class="{'text-success':getPrefix(item)==='CBD','text-primary':getPrefix(item)==='NP','text-warning':getPrefix(item)==='CP' }">{{getTitle(item)}} </span></div>
 
-
+              <div class="col-xs-1" style="padding-left:0;padding-right:10px;margin-right:18px;">
+                  <input ng-model="item.number"  min="0" type="number" style="width:150%;margin-top:7px;text-align:center;"></input>
+              </div>
               <div class="col-xs-1" style="padding-left:0;padding-right:10px;margin-right:18px;">
                   <a href="javascript:void(0)" class="btn btn-flat btn-xs" ng-show="item.status==='crp'" ng-click="clearStatus(item)" style="padding: 4px 4px 4px 4px;"> <span class="label doc-status crp">CRP</span></a>
                   <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-show="item.status!=='crp'" ng-click="setStatus(item,'crp')">CRP</a>

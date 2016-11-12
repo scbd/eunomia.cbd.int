@@ -16,8 +16,9 @@ var watchKill = $scope.$watch('conference',function(){
   if($scope.conference && !_.isEmpty($scope.conference)&& !_.isEmpty($scope.conference.meetings)){
 
       _.each($scope.conference.meetings,function(m){
-            if(!m.agenda)m.agenda={};
-            m.agenda.items.push({item:-1,display:'  '});
+            if(!m.agenda)
+              m.agenda={};
+
             _.each(m.agenda.items,function(i){
                   if(i.item>-1)
                     i.display=i.item+' '+(i.shortTitle || i.title);
@@ -105,7 +106,7 @@ var watchKill = $scope.$watch('conference',function(){
 
               var i       = _.find(meeting.agenda.items,{item:Number(item.item)});
               var title = (i.shortTitle || i.title).substring(0,25);
-              if(title.length>=25) title=title+' ...';
+              if(title.length>=13) title=title+' ...';
 
               return title;
           }//itemSelected
