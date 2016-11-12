@@ -22,7 +22,9 @@ define(['app',
                     'room': '=',
                     'rooms': '=',
                     'day': '=',
-                    'conference':'='
+                    'conference':'=',
+                    'reservations':'=',
+                    'options':'='
                 },
                 require: ['^conferenceSchedule','timeUnitRow'],
                 link: function($scope, $element, $attr, schedule) {
@@ -38,12 +40,21 @@ define(['app',
                         mongoStorage.loadOrgs().then(function(orgs) {
                             allOrgs = orgs;
                         });
-
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // killResWatch = $scope.$watch('reservations', function() {
+                        //   if(!_.isEmpty($scope.reservations)){
+                        //     //if(!_.isEmpty($scope.reservations[$scope.room._id])){
+                        //       initTimeIntervals();
+                        //       killResWatch();
+                        //     }
+                        // },true);
                         //============================================================
                         //
                         //============================================================
                         $scope.$watch('conferenceDays', function() {
-                          if(!_.isEmpty($scope.conferenceDays))
+                          if(!_.isEmpty($scope.conferenceDays) && !_.isEmpty($scope.reservations))
                             initTimeIntervals();
                         });
 
@@ -51,7 +62,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('startTime', function() {
-                          if($scope.startTime)
+                          if($scope.startTime && !_.isEmpty($scope.reservations))
                             initTimeIntervals();
                         });
 
@@ -59,7 +70,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('endTime', function() {
-                          if($scope.endTime)
+                          if($scope.endTime && !_.isEmpty($scope.reservations))
                             initTimeIntervals();
                         });
 
@@ -67,7 +78,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('day', function() {
-                            if ($scope.day)
+                            if ($scope.day && !_.isEmpty($scope.reservations))
                                 initTimeIntervals();
                         });
 
@@ -79,7 +90,7 @@ define(['app',
                                 $element.css('height',$scope.room.rowHeight);
                         });
 
-                        initTypes();
+                        //initTypes();
 
                         var inProgress = false;
                         //============================================================
@@ -111,7 +122,8 @@ define(['app',
 
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
-                                    $scope.getReservations().then(function(){ inProgress =false;});
+                                    $scope.getReservations();
+  //$scope.getReservations().then(function(){ inProgress =false;});
                                 });
                             }
                         } //initTimeIntervals
@@ -164,44 +176,50 @@ define(['app',
                         } //init
 
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function initTypes() {
 
-                            return mongoStorage.loadTypes('reservations').then(function(result) {
-                                if(!$scope.options)$scope.options={};
-                                $scope.options.types = result;
-                            });
-                        } //initTypes()
 
                         //============================================================
                         //
                         //============================================================
                         $scope.getReservations = function (resId) {
                             cleanSchedule(resId);
-                            if (!_.isEmpty($scope.conferenceDays) ) {
+        // console.log($scope.reservations[$scope.room._id]);
+        // console.log($scope.conferenceDays);
 
-var start =moment($scope.day).add($scope.startTime);
-var end=moment($scope.day).add($scope.endTime);
-                                return mongoStorage.getReservations(start, end, {
-                                    room: $scope.room._id
-                                }).then(
-                                    function(responce) {
+                        $q.when($scope.reservations).then(function(responce){
 
-                                        $scope.reservations = responce.data;
+                          if (!_.isEmpty($scope.conferenceDays) )
+                             calcAllResWidths(responce[$scope.room._id]);
+                             _.each(responce[$scope.room._id], function(res) {
+                                 embedTypeInRes(res);
+                                 embedOrgsSideEvent(res);
+                                 loadReservationsInRow(res);
+                             });
+                             inProgress =false;
+                        })
 
-                                        initTypes().then(function() {
-                                            calcAllResWidths($scope.reservations);
-                                            _.each($scope.reservations, function(res) {
-                                                embedTypeInRes(res);
-                                                embedOrgsSideEvent(res);
-                                                loadReservationsInRow(res);
-                                            });
-                                        });
-                                    }
-                                ); // mongoStorage.getReservations
-                            } // if
+
+// var start =moment($scope.day).add($scope.startTime);
+// var end=moment($scope.day).add($scope.endTime);
+//                                 return mongoStorage.getReservations(start, end, {
+//                                     room: $scope.room._id
+//                                 }).then(
+//                                     function(responce) {
+//
+//                                         $scope.reservations={};
+//                                         $scope.reservations[$scope.room._id] = responce.data;
+//
+//                                         initTypes().then(function() {
+//                                             calcAllResWidths($scope.reservations[$scope.room._id]);
+//                                             _.each($scope.reservations[$scope.room._id], function(res) {
+//                                                 embedTypeInRes(res);
+//                                                 embedOrgsSideEvent(res);
+//                                                 loadReservationsInRow(res);
+//                                             });
+//                                         });
+//                                     }
+//                                 ); // mongoStorage.getReservations
+                            //} // if
                         }; // getReservations
 
 
@@ -220,6 +238,7 @@ var end=moment($scope.day).add($scope.endTime);
                                         delete(interval.res);
                                 } //for
                             } //for
+
                         } //loadReservationInRow
 
                         //============================================================

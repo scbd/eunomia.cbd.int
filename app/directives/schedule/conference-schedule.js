@@ -8,8 +8,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     'css!libs/angular-dragula/dist/dragula.css',
 ], function(app, _, template, moment) {
 
-    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q',
-        function($timeout, $document, mongoStorage,$rootScope,$q) {
+    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','$location',
+        function($timeout, $document, mongoStorage,$rootScope,$q,$location) {
             return {
                 restrict: 'E',
                 template: template,
@@ -22,7 +22,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
+                        initTypes();
                         init();
+
 
                         //============================================================
                         //
@@ -77,23 +79,72 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function init() {
-
+                            $scope.reservations={};
                             $scope.rooms = [];
                             $scope.startTime = ''; //display
                             $scope.endTime = ''; //display
                             $scope.startTimeObj = '';
                             $scope.endTimeObj = '';
-
+                            $scope.options={};
                             $scope.changeDay = changeDay; // update times and effects on day change
                             $scope.changeStartTime = changeStartTime;
                             $scope.changeEndTime = changeEndTime;
 
                             initDayTimeSelects();
-                            initDay();
+                            //initDay();
+
                             setStartTime();
                             setEndTime();
-                        } //init
 
+                        } //init
+                        //============================================================
+                        //
+                        //============================================================
+                        function initTypes() {
+
+                            if(!$scope.options || _.isEmpty($scope.options.types))
+                              return mongoStorage.loadTypes('reservations').then(function(result) {
+                                  if(!$scope.options)$scope.options={};
+                                  $scope.options.types = result;
+                              });
+                            else {
+                              return $q(function(resolve){resolve(true)});
+                            }
+                        } //initTypes()
+                        //============================================================
+                        //
+                        //============================================================
+                      function getReservations() {
+var roomIds=[];
+                          _.each($scope.rooms,function(r){
+                              roomIds.push(r._id);
+                          });
+                          var q={room:{'$in':roomIds}};
+
+var start =   moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format();
+var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').format();
+
+                                return mongoStorage.getReservations(start, end, q).then(
+                                    function(responce) {
+
+
+                                      //  $timeout(function(){
+                                          var reservations={};
+                                          _.each($scope.rooms,function(r){
+
+                                              reservations[r._id] = [];
+                                            _.each(responce.data,function(res){
+                                                if(res.location.room===r._id)
+                                                  reservations[r._id].push(res);
+                                            });
+
+                                        });
+                                    //  });
+                                    return reservations;
+                                    }
+                                ); // mongoStorage.getReservations
+
+                        } // getReservations
                         //============================================================
                         //
                         //============================================================
@@ -112,22 +163,44 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         function initDay() {
 
+                          //  if($location.search('day')) console.log($location.search('day'));
+
                             var start =   moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
-                            var end =    moment.tz($scope.conference.schedule.end,$scope.conference.timezone).startOf('day');
+                            var end =    moment.tz($scope.conference.schedule.end,$scope.conference.timezone).startOf('day').add(1,'day');
 
-                            $scope.dayObj = moment.tz(moment(),$scope.conference.timezone).startOf('day');
+                            if($location.search().day && moment($location.search().day).isValid()){
+                                if( moment($location.search().day).isSameOrAfter(start) && moment($location.search().day).isSameOrBefore(end))
+                                    $scope.dayObj = moment.tz(moment($location.search().day),$scope.conference.timezone).startOf('day');
+                                else
+                                  $location.search('day',start.format());
 
+                                $timeout(function() {
+                                    prevNextRestrictions();
+                                }, 100);
+                                getRooms().then(function(){
+                                  $scope.reservations=getReservations();
+                                });
+                              }
+                            else{
+                              if(moment.tz(moment(),$scope.conference.timezone).isAfter(moment.tz(start,$scope.conference.timezone)))
+                                  $location.search('day',moment.tz(moment(),$scope.conference.timezone).format());
+                              else
+                                  $location.search('day',moment.tz(start,$scope.conference.timezone).format());
+                            }
                             $timeout(function() {
+
                                 if($scope.dayObj.isSameOrAfter(start) && $scope.dayObj.isSameOrBefore(end)){
                                     $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
                                     $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                 }else {
+
                                     $scope.dayObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
                                     $scope.day= $scope.dayObj.format('dddd YYYY-MM-DD');
                                     $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
                                 }
-                                $scope.day = $scope.dayObj.startOf('day').startOf('day').format('dddd YYYY-MM-DD');
+                                $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
                                 prevNextRestrictions();
+                                //$location.search('day',moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format());
                             }, 500);
                         } //init
 
@@ -146,13 +219,47 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             prevNextRestrictions();
                         } //initDayTimeSelects
 
+                        $scope.timeLine = function() {
+                                if (!$scope.endTime || !$scope.startTime) return;
+
+                                if($scope.dayObj && $scope.dayObj.startOf('day').isSame(moment().startOf('day')))
+                                    return {
+                                        'height': $scope.gridHeight,
+                                        'position': 'absolute',
+                                        'z-index': 100,
+                                        'top': '40px',
+                                        'border-color': 'red',
+                                        'border-right-style': 'dashed',
+                                        'border-right-width': 'thin',
+                                        'left': leftPosition()
+                                    };
+                                else return {};
+                            };
+                            //============================================================
+                            //
+                            //============================================================
+                        function leftPosition() {
+
+                            var hours = $scope.endTimeObj.hours() - $scope.startTimeObj.hours();
+                            $document.ready(function() {
+                                var scrollGridEl = $document.find('#scroll-grid');
+                                $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
+                            });
+                            var colWidth = Number($scope.outerGridWidth) / Number(hours);
+
+                            var posInterval = colWidth / 60;
+                            var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * (posInterval - .1);
+
+                            return leftPosition;
+
+                        } //
 
                         //============================================================
                         //
                         //============================================================
                         function changeConference() {
 
-                            getRooms();
+
 
                             $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
                             $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
@@ -163,7 +270,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                 $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
                             });
                             $scope.dayObj = $scope.conference.startObj;
+                            initDay();
                             $timeout(function(){prevNextRestrictions();},1000);
+
                         } //changeConference
 
                         //============================================================
@@ -235,8 +344,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function setDay() {
+
                             $scope.dayObj = moment($scope.day,'dddd YYYY-MM-DD').startOf('day');
-                            prevNextRestrictions();
+                            $location.search('day',moment($scope.day,'dddd YYYY-MM-DD').startOf('day').format());
+                            // prevNextRestrictions();
                         } //getStartTime
 
                         //============================================================
@@ -246,15 +357,16 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                             if(_.isEmpty($scope.conferenceDays) || !$scope.dayObj) return;
 
-                            if($scope.dayObj.subtract(1, 'day').isBefore($scope.conferenceDays[0].startOf('day')))
+                            if(moment.tz($scope.dayObj,$scope.conference.timezone).subtract(1, 'day').isBefore($scope.conferenceDays[0].startOf('day')))
                                 $scope.isPrevDay = true;
                             else
                                 $scope.isPrevDay = false;
 
-                            if($scope.dayObj.add(1, 'day').isAfter($scope.conferenceDays[$scope.conferenceDays.length-1].startOf('day')))
+                            if(moment.tz($scope.dayObj,$scope.conference.timezone).add(1, 'day').isAfter($scope.conference.endObj.startOf('day')))
                                 $scope.isNextDay = true;
                             else
                                 $scope.isNextDay = false;
+
                         } //getStartTime
                         $scope.prevNextRestrictions=prevNextRestrictions;
                         //============================================================
@@ -263,14 +375,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         $scope.nextDay = function() {
 
                             $scope.dayObj = $scope.dayObj.add(1, 'day');
+                            $location.search('day',$scope.dayObj.format());
+                            $scope.dayObj = moment.tz(moment($location.search().day),$scope.conference.timezone).startOf('day');
 
-
-                            $timeout(function() {
-                                $scope.dayObj = moment.tz($scope.dayObj,$scope.conference.timezone);
-                                $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
-                                $scope.day = $scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
-                                prevNextRestrictions();
-                            }, 100);
                         }; //changeStartTime
 
                         //============================================================
@@ -279,13 +386,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         $scope.prevDay = function() {
 
                             $scope.dayObj = $scope.dayObj.subtract(1, 'day');
+                            $location.search('day',$scope.dayObj.format());
 
-                            $timeout(function() {
-                                $scope.dayObj = moment.tz($scope.dayObj,$scope.conference.timezone);
-                                $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', $scope.dayObj);
-                                $scope.day =$scope.dayObj.startOf('day').format('dddd YYYY-MM-DD');
-                                prevNextRestrictions();
-                            }, 100);
                         }; //changeStartTime
 
                         //============================================================
@@ -331,7 +433,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           var numDays = moment($scope.conference.schedule.end).diff($scope.conference.schedule.start,'days')+1;//Math.floor((Number($scope.conference.schedule.end) - Number($scope.conference.start)) / (24 * 60 * 60));
 
-                          $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).startOf('day');
+                          $scope.conference.endObj = moment.tz($scope.conference.schedule.end,$scope.conference.timezone).add(1,'day').startOf('day');
                           $scope.conference.startObj = moment.tz($scope.conference.schedule.start,$scope.conference.timezone).startOf('day');
                           $scope.startDay = $scope.conference.startObj;
                           $scope.endDay = $scope.conference.endObj;
@@ -357,9 +459,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                   _.each($scope.rooms, function(room) {
                                       room.rowHeight = $scope.rowHeight;
                                   });
+                                  $scope.gridHeight=(Number($scope.rowHeight)*$scope.rooms.length);
+
                               });
                           });
                       }; //this.initRowHeight
+
+
             } //return
         };
     }]);
