@@ -106,7 +106,6 @@ var watchKill = $scope.$watch('conference',function(){
 
               var i       = _.find(meeting.agenda.items,{item:Number(item.item)});
               var title = (i.shortTitle || i.title).substring(0,25);
-              if(title.length>=13) title=title+' ...';
 
               return title;
           }//itemSelected
