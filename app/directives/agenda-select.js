@@ -41,6 +41,9 @@ var watchKill = $scope.$watch('conference',function(){
               if(!$scope.binding )
                $scope.binding={};
 
+              if($scope.binding.visible===undefined)
+                $scope.binding.visible = true;
+
               if(!$scope.binding.items)
                   $scope.binding.items=[];
 

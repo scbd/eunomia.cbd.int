@@ -46,11 +46,20 @@
     <div class="panel-heading">
 <div name="form" class="row">
   <form novalidate>
-  <div class="col-xs-12">
+  <div class="col-xs-6">
     <div class="form-group" style="margin-left:10px;margin-top:15px;">
       <div class="togglebutton">
         <label>
           <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="form-group" style="margin-left:10px;margin-top:15px;">
+      <div class="togglebutton">
+        <label>
+          <input type="checkbox" ng-model="binding.visible" ng-false-value="false" ng-false-value="true"><span >Visible on CCTV</span>
         </label>
       </div>
     </div>
