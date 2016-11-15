@@ -29,7 +29,8 @@ require.config({
         'ngDialog'                 : 'libs/ng-dialog/js/ngDialog',
         'toastr'                   : 'libs/angular-toastr/dist/angular-toastr.tpls.min',
         'text'                     : 'libs/requirejs-text/text',
-        'socket.io'                : 'libs/socket.io-1.4.5/index'
+        'socket.io'                : 'libs/socket.io-1.4.5/index',
+        'ui.select'                : 'libs/angular-ui-select/dist/select',
     },
     shim: {
         'libs/angular/angular'      : { deps: ['jquery'] },
@@ -45,6 +46,7 @@ require.config({
         'BM-date-picker'            : { deps: ['jquery','moment-timezone']},
         'dragula'                   : { deps: ['angular','jquery'] },
         'ngRoute'                   : { deps: ['angular'] },
+        'ui.select'                   : { deps: ['angular'] },        
     }
 });
 

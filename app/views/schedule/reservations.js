@@ -3,7 +3,10 @@ define(['app','lodash','moment',
     'directives/date-picker',
   'directives/sorter',
   'filters/moment',
+    'filters/propsFilter',
+    'filters/htmlToPlaintext',
 'ngDialog',
+'ui.select',
 
 ], function(app, _,moment,deleteDialog,roomDialog) {
 
@@ -24,7 +27,14 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.changeDate=changeDate;
       _ctrl.getRoom = getRoom;
       _ctrl.getType = getType;
+      _ctrl.toggleFields=toggleFields;
+      _ctrl.isFieldSelect=isFieldSelect;
       _ctrl.searchText='';
+      _ctrl.searchType=[];
+      _ctrl.searchRoom=[];
+      _ctrl.showFields=false;
+      _ctrl.selectFields=['Title','Room','Date','Start','End','Type'];
+      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Start'},{title:'End'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'}];
       init();
 
       return this;
@@ -93,6 +103,25 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
   //        if(_ctrl.conference) q['location.conference']=_ctrl.conference._id;
 
 
+          if($location.search().searchType) {
+
+              if(!_.isArray($location.search().searchType))
+                  _ctrl.searchType=[$location.search().searchType];
+              else
+                  _ctrl.searchType=$location.search().searchType;
+
+              q['type']={'$in':_ctrl.searchType};
+          }
+
+          if($location.search().searchRoom) {
+
+              if(!_.isArray($location.search().searchRoom))
+                  _ctrl.searchRoom=[$location.search().searchRoom];
+              else
+                  _ctrl.searchRoom=$location.search().searchRoom;
+
+              q['location.room']={'$in':_ctrl.searchRoom};
+          }
 
           if($location.search().searchText ){
               _ctrl.searchText = $location.search().searchText;
@@ -179,6 +208,11 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
         if(_ctrl.searchText)search.searchText=_ctrl.searchText;
 
+        if(!_.isEmpty(_ctrl.searchType))
+          search.searchType=_ctrl.searchType;
+
+        if(!_.isEmpty(_ctrl.searchRoom))
+            search.searchRoom=_ctrl.searchRoom;
         $location.search(search);
       }
       //=====
@@ -197,7 +231,20 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
                  _ctrl.conference.rooms =result.data;
         }).catch(onError);
       }
+      //============================================================
+      //
+      //============================================================
+      function isFieldSelect(field) {
+          return (_ctrl.selectFields.indexOf(field)>-1);
+      }
 
+      //============================================================
+      //
+      //============================================================
+      function toggleFields() {
+
+          _ctrl.showFields=!_ctrl.showFields;
+      }
       //============================================================
       //q, pageNumber,pageLength,count,sort
       //============================================================

@@ -1,5 +1,15 @@
 <div id="reservations" class="container-fluid" style="height:100%;width:100%">
+<style>
+input{
 
+        border: 0;
+            background-color: #EEEEEE;
+            display:inline;
+            position:absolute;
+            top:-1;
+
+}
+</style>
     <div class="alert alert-danger" ng-show="hasError()">
         <strong>Error as occured...</strong>
         <div>{{error}}</div>
@@ -43,6 +53,45 @@
     </div>
     </div>
   </div>
+</div>
+<div class="row">
+
+      <div class="col-xs-4  ">
+          <ui-select multiple ng-model="reservationsCtrl.searchType" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+              <ui-select-match placeholder="Type Search">
+                  <div style="display:inline;background-color:{{$item.color}}">{{$item.title}}</div>
+              </ui-select-match>
+              <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="type._id as type in reservationsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
+                  <div style="background-color:{{type.color}}">
+                      <hr style="margin: 0 0 0 0;">
+                      <small>
+                      <span class="text-nowrap">
+                          <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{type.title}} </span>
+                        </span>
+                  </small>
+                  </div>
+              </ui-select-choices>
+          </ui-select>
+      </div>
+            <div class="col-xs-4">
+            </div>
+      <div class="col-xs-4  ">
+          <ui-select multiple ng-model="reservationsCtrl.searchRoom" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+              <ui-select-match placeholder="Room Search">
+                  <div style="display:inline;background-color:{{$item.color}}">{{$item.acronym}}</div>
+              </ui-select-match>
+              <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="room._id as room in reservationsCtrl.conference.rooms | propsFilter: {title: $select.search}">
+                  <div style="background-color:{{room.color}}">
+                      <hr style="margin: 0 0 0 0;">
+                      <small>
+                      <span class="text-nowrap">
+                          <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{room.title}} </span>
+                        </span>
+                  </small>
+                  </div>
+              </ui-select-choices>
+          </ui-select>
+      </div>
 </div>
     <div class="row">
         <style>
@@ -109,6 +158,25 @@
 
             </div>
         </div>
+
+        <div class="col-xs-12  " ng-show="reservationsCtrl.showFields">
+            <ui-select multiple ng-model="reservationsCtrl.selectFields" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+                <ui-select-match placeholder="Select Fields">
+                   <span class="label label-primary" style="font-size:1em;">{{$item.title}}</span>
+                </ui-select-match>
+                <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="field.title as field in reservationsCtrl.fields | propsFilter: {title:$select.search}">
+                    <div >
+                        <hr style="margin: 0 0 0 0;">
+                        <small>
+                        <span class="text-nowrap">
+                            <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{field.title}} </span>
+                          </span>
+                    </small>
+                    </div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
         <div class="col-xs-12 col-sm-12 ">
             <!-- <h1>            <div class="form-group label-floating" >
                   <select class="form-control" ng-model="reservationsCtrl.venueId" style="height:70px;line-height:70px;font-size:36px;" ng-change="reservationsCtrl.load()">
@@ -119,25 +187,29 @@
                 <table class="table">
                     <thead>
                         <tr>
-                          <!-- <th width="2%">&nbsp;1</th> -->
-                            <th width="20%">title
+                          <th width="2%"><i class="fa fa-columns pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="!reservationsCtrl.showFields"></i><i class="fa fa-times pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="reservationsCtrl.showFields"></i></th>
+                            <th width="20%" ng-if="reservationsCtrl.isFieldSelect('Title');">Title
                                 <!-- <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="10%">room
+                            <th width="20%" ng-if="reservationsCtrl.isFieldSelect('Description');">Description
+                                <!-- <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
+                            </th>
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room / Locatoin / Capacity
                                 <!-- <sorter label-name="Room" ng-model="reservationsCtrl.sort" property="room" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="10%">Date
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Date');">Date
                                 <!-- <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="Date" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="10%">Start
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Start');">Start
                                 <!-- <sorter label-name="Start" ng-model="reservationsCtrl.sort" property="start" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="10%">End
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('End');">End
                                 <!-- <sorter label-name="End" ng-model="reservationsCtrl.sort" property="end" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="10%">Type</th>
-
-
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Type');">Type</th>
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Options');">Options</th>
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda Items</th>
+                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">CCTV Message</th>
                             <!-- <th width="5%">Actions</th> -->
 
                         </tr>
@@ -148,45 +220,58 @@
                         <!-- | filter:reservationsCtrl.searchType |orderBy:'title' -->
                         <!-- ng-repeat="doc in docs  track by $index" -->
                         <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat="doc in reservationsCtrl.docs  track by $index">
-                          <!-- <td width="2%">
-                              <div class="form-group " style="margin-top:10px;" >
+                          <td width="2%">&nbsp;
+                              <!-- <div class="form-group " style="margin-top:10px;" >
                                   <input class="form-control" id="selected" type="checkbox" ng-model="doc.selected" >
-                              </div>
-                          </td> -->
+                              </div> -->
+                          </td>
 
-                            <td width="20%">
+                            <td width="20%" ng-if="reservationsCtrl.isFieldSelect('Title');">
 
                                     {{doc.title}}
 
                             </td>
+                            <td width="20%" ng-if="reservationsCtrl.isFieldSelect('Description');">
 
-                            <td width="10%">
+                                    {{doc.description}}
+
+                            </td>
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Room');">
 
                                     {{reservationsCtrl.getRoom(doc.location.room,'title')}}<hr style="margin: 0 0 0 0;">
 {{reservationsCtrl.getRoom(doc.location.room,'location')}}<hr style="margin: 0 0 0 0;">
 {{reservationsCtrl.getRoom(doc.location.room,'capacity')}}<hr style="margin: 0 0 0 0;">
                             </td>
 
-                            <td width="10%">
-                                <div class="form-group label-floating" style="margin-top:10px;">
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Date');">
+                                <div class="form-group label-floating" >
                                       {{doc.start |moment:'format':'YYYY-MM-DD'}}
                                 </div>
                             </td>
-                            <td width="10%">
-                                <div class="form-group label-floating" style="margin-top:10px;">
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Start');">
+                                <div class="form-group label-floating" >
                                       {{doc.start|moment:'format':'HH:mm'}}
                                 </div>
                             </td>
-                            <td width="10%">
-                              <div class="form-group label-floating" style="margin-top:10px;">
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('End');">
+                              <div class="form-group label-floating" >
                                       {{doc.end|moment:'format':'HH:mm'}}
                               </div>
                             </td>
 
-                            <td width="10%" >
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Type');">
                                 <div class="form-group label-floating" style="margin-top:10px;background-color: {{reservationsCtrl.getType(doc.type,'reservation','color')}};">
                                     {{reservationsCtrl.getType(doc.type,'reservation','title')}}
                                 </div>
+                            </td>
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Options');">
+                              {{doc.options}}
+                            </td>
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">
+                              {{doc.agendaItems}}
+                            </td>
+                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">
+                              {{doc.cctv}}
                             </td>
                         </tr>
 
