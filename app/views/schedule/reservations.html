@@ -233,7 +233,7 @@ input{
                             </td>
                             <td width="20%" ng-if="reservationsCtrl.isFieldSelect('Description');">
 
-                                    {{doc.description}}
+                                    {{doc.description |htmlToPlaintext}}
 
                             </td>
                             <td width="10%" ng-if="reservationsCtrl.isFieldSelect('Room');">
