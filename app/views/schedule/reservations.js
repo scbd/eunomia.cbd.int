@@ -1,7 +1,6 @@
 define(['app','lodash','moment',
 'services/mongo-storage',
     'directives/date-picker',
-  'directives/pagination',
   'directives/sorter',
   'filters/moment',
 'ngDialog',
