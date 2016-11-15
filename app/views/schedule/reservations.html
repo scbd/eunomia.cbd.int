@@ -6,7 +6,7 @@
     </div>
 <div class="row">
   <div class="col-xs-2  ">
-    <div class="form-group label-floating">
+    <div class="form-group ">
       <label class="control-label" for="parent">Start Date</label>
       <input id="start-filter" type="text" class="form-control" ng-model="reservationsCtrl.startFilter"
              date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }"
@@ -17,7 +17,7 @@
     </div>
   </div>
   <div class="col-xs-2  ">
-    <div class="form-group label-floating">
+    <div class="form-group ">
       <label class="control-label" for="parent">End Date</label>
       <input id="end-filter" type="text" class="form-control" ng-model="reservationsCtrl.endFilter"
              date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }"
@@ -25,6 +25,22 @@
              date-picker-max-date="reservationsCtrl.conference.endObj"
              current-date="reservationsCtrl.endFilterObj"
              ng-change="reservationsCtrl.changeDate();">
+    </div>
+  </div>
+    <div class="col-xs-4  ">
+      &nbsp;
+    </div>
+  <div class="col-xs-4  ">
+    <div class="form-group ">
+      <div class="input-group">
+      <label class="control-label " for="search-res">Search Reservations</label>
+      <input type="text" id="search-res" class="form-control" ng-model="reservationsCtrl.searchText" ng-model-options='{ debounce: 1000 }' placeholder="" ng-change="reservationsCtrl.changeDate()">
+      <span class="input-group-btn small">
+        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="reservationsCtrl.searchText='';reservationsCtrl.changeDate();">
+          <i class="fa fa-search" ng-if="!reservationsCtrl.searchText"></i> <i class="fa fa-times" ng-if="reservationsCtrl.searchText"></i>
+        </button>
+      </span>
+    </div>
     </div>
   </div>
 </div>
@@ -103,7 +119,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                          <th width="2%">&nbsp;1</th>
+                          <!-- <th width="2%">&nbsp;1</th> -->
                             <th width="20%">title
                                 <!-- <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
@@ -132,11 +148,11 @@
                         <!-- | filter:reservationsCtrl.searchType |orderBy:'title' -->
                         <!-- ng-repeat="doc in docs  track by $index" -->
                         <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat="doc in reservationsCtrl.docs  track by $index">
-                          <td width="2%">
+                          <!-- <td width="2%">
                               <div class="form-group " style="margin-top:10px;" >
                                   <input class="form-control" id="selected" type="checkbox" ng-model="doc.selected" >
                               </div>
-                          </td>
+                          </td> -->
 
                             <td width="20%">
 
@@ -192,5 +208,7 @@
             </button>
         </div>
     </div>
-
+    <script>
+      $.material.init();
+    </script>
 </div>

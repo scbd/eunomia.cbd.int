@@ -25,6 +25,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.changeDate=changeDate;
       _ctrl.getRoom = getRoom;
       _ctrl.getType = getType;
+      _ctrl.searchText='';
       init();
 
       return this;
@@ -38,9 +39,9 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         moment.tz.setDefault(conference.timezone);
 
 
-          if(!_ctrl.conference.startObj)
+
             _ctrl.conference.startObj  = moment(conference.schedule.start);
-          if(!_ctrl.conference.endObj)
+
             _ctrl.conference.endObj    = moment(conference.schedule.end);
 
           if($location.search().start && $location.search().end){
@@ -49,11 +50,9 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           }else {
               _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
               _ctrl.endFilter   = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
+              changeDate();
           }
-              _ctrl.start = $location.search().start;
 
-          if($location.search().end)
-              _ctrl.end = $location.search().end;
 
 
         $q.all([loadRooms(),loadTypes()]).then(getReservations);
@@ -64,7 +63,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       //
       //============================================================
     function getReservations(pageIndex) {
-console.log(pageIndex);
+
           _ctrl.loading = true;
           if(!pageIndex || !Number(pageIndex)) pageIndex=0;
 
@@ -96,18 +95,17 @@ console.log(pageIndex);
 
 
 
-          if(_ctrl.search ){
-              if(_ctrl.search && _ctrl.search.length>0 && !Number(_ctrl.search))
-                q['$text'] = {'$search':_ctrl.search};  // jshint ignore:line
-              else if(_ctrl.search.length>0 && Number(_ctrl.search))
-                q['sideEvent.id'] = Number(_ctrl.search);  // jshint ignore:line
+          if($location.search().searchText ){
+              _ctrl.searchText = $location.search().searchText;
+              q['$text'] = {'$search':'"'+_ctrl.searchText+'"'};  // jshint ignore:line
           }
 
           if($location.search().start)
               _ctrl.start = $location.search().start;
 
-          if($location.search().end)
+          if($location.search().start)
               _ctrl.end = $location.search().end;
+
 
           if(_ctrl.start && _ctrl.end)
               q['$and']= [{
@@ -167,15 +165,24 @@ console.log(pageIndex);
           _ctrl.pageCount   = pageCount ;
       }
 
+
       //============================================================
       //
       //============================================================
       function changeDate() {
 
-          _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
-          _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
-          $location.search({'end':moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format(),'start': moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format()});
+        _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
+        _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
+        var search = {
+          'end'  :moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format(),
+          'start': moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format(),
+        };
+
+        if(_ctrl.searchText)search.searchText=_ctrl.searchText;
+
+        $location.search(search);
       }
+      //=====
 
       //============================================================
       //q, pageNumber,pageLength,count,sort
@@ -207,7 +214,7 @@ console.log(pageIndex);
       //q, pageNumber,pageLength,count,sort
       //============================================================
       function getType(id,schema,property) {
-
+          if(!_ctrl.conference.types) return '';
           var type = _.find(_ctrl.conference.types[schema] ,{_id:id});
 
           if(!type) return'';
