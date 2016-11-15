@@ -98,7 +98,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function loadDocs(schema,q, pageNumber,pageLength,count,sort) {
+        function loadDocs(schema,q, pageNumber,pageLength,count,sort,fields) {
 
             var params = {};
             if(!sort)
@@ -110,7 +110,8 @@ define(['app', 'lodash'], function(app, _) {
                 q: q,
                 sk: pageNumber,
                 l: pageLength,
-                s:sort//{'meta':{'modifiedOn':1}}//{'meta.modifiedOn':1}
+                s:sort,//{'meta':{'modifiedOn':1}}//{'meta.modifiedOn':1},
+                f:fields
             };
 
 
