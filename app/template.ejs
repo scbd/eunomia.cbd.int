@@ -51,9 +51,9 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li ng-class="{ active : templateCtrl.menu=='schedule' }"   ><a href="/schedule/conference">Schedule</a></li>
-            <li ng-class="{ active : templateCtrl.menu=='reservations' }"   ><a href="/schedule/reservations">Reservations</a></li>      
-            <li ng-class="{ active : templateCtrl.menu=='side-events' }"><a href="/schedule/side-events">Side-Events</a></li>
-            <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }"><a href="/cctv/frames">CCTV</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='reservations' }"  ><a href="/schedule/reservations">Reservations</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='side-events' }" ng-if="templateCtrl.isAdmin()" ><a href="/schedule/side-events">Side-Events</a></li>
+            <li ng-class="{ active : templateCtrl.menu=='cctv-frames' }" ng-if="templateCtrl.isAdmin()" ><a href="/cctv/frames">CCTV</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="hidden-xs">
@@ -62,7 +62,7 @@
                   </select>
                 </a>
             </li>
-            <li class="dropdown" ng-class="{ active : templateCtrl.menu=='admin' }">
+            <li class="dropdown" ng-class="{ active : templateCtrl.menu=='admin' }" ng-if="templateCtrl.isAdmin()" >
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="/admin/cctv/feeds">CCTV Feeds</a></li>

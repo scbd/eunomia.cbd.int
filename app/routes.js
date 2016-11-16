@@ -7,7 +7,7 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
 
         $routeProvider.
             when('/',                                { redirectTo: '/schedule/conference' }).
-            when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'schedule'}).
+            when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'schedule'}).
             when('/schedule/reservations',           { templateUrl: 'views/schedule/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'reservations'}).
             when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
 

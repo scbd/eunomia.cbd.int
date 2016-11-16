@@ -10,8 +10,7 @@ define(['app','lodash','moment',
 
 ], function(app, _,moment,deleteDialog,roomDialog) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q) {
-
+return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user) {
 
       var _ctrl = this;
       _ctrl.conference=conference;

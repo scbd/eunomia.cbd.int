@@ -9,7 +9,7 @@ define(['app',
 ], function(app,toastTemplate, _, moment) {
     'use strict';
 
-    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$http', '$injector','mongoStorage', function($rootScope, toastr, $templateCache,$document, $http, $injector,mongoStorage) {
+    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$http', '$injector','mongoStorage',function($rootScope, toastr, $templateCache,$document, $http, $injector,mongoStorage) {
 
         var _ctrl = this;
 
@@ -20,12 +20,22 @@ define(['app',
         $templateCache.put("directives/toast/toast.html", toastTemplate);
 
         $rootScope.$on('$routeChangeSuccess', function(event,current){
+
             _ctrl.menu=current.$$route.menu;
             $document.ready(function() {
               $.material.init();
               $.material.input();
               $.material.ripples();
             });
+
+            //============================================================
+            //
+            //============================================================
+            $rootScope.user.isAdmin = function() {
+
+                return _.intersection($rootScope.user.roles, ['Administrator', 'EunoAdministrator']).length > 0;
+            };
+            _ctrl.isAdmin=$rootScope.user.isAdmin;
         });
 
         //==============================
@@ -34,6 +44,7 @@ define(['app',
         $rootScope.$on("showInfo", function(evt, msg) {
             showInfo(msg);
         });
+
 
         //==============================
         //
@@ -104,28 +115,6 @@ define(['app',
                   _ctrl.selectEventGroupId = selectEventGroupId;
                   return eventGroupChange(false);
             });
-            // var query = {
-            //     timezone: { $exists: true },
-            //     venueId:  { $exists: true } // TMP for compatibility with coference collection;
-            // };
-//             return $http.get('/api/v2016/event-groups', { params : { q : query, s : { StartDate : -1 } } }).then(function(res){
-// console.log(res.data);
-//                 var now = moment(new Date());
-//                 var eventGroups = res.data;
-//                 var selectEventGroupId = 'TODO';
-//
-//                 var bestMatch = _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
-//                                 _.findLast(eventGroups, function(e) { return now.isBefore(e.EndDate); }) ||
-//                                 _.first   (eventGroups);
-//
-//                 if(bestMatch)
-//                     selectEventGroupId = bestMatch._id;
-//
-//                 _ctrl.eventGroups        = res.data;
-//                 _ctrl.selectEventGroupId = selectEventGroupId;
-//
-//                 return eventGroupChange(false);
-//             });
         }
 
         //==============================

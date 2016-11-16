@@ -112,7 +112,7 @@
                         <span class="help-block"></span>
                     </div>
                 </div>
-                <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
+                <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent && isAdmin()" >
                     <div class="form-group" style="margin-left:10px;margin-top:15px;">
                         <div class="togglebutton">
                             <label>
@@ -274,7 +274,7 @@
   </div>
 
 <!-- save-->
-<div class='row' ng-show="!tabs.recurrenceQuestion.active">
+<div class='row' ng-show="!tabs.recurrenceQuestion.active" ng-if="isAdmin()">
   <div class="col-xs-12">
     <div class="form-group hidden-xs">
       <div class="btn-group btn-group-justified btn-group-raised">
