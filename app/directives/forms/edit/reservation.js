@@ -86,6 +86,9 @@ define(['app', 'lodash',
                                 'agenda': {
                                     'active': false
                                 },
+                                'options': {
+                                    'active': false
+                                },
                             };
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
@@ -126,7 +129,21 @@ define(['app', 'lodash',
 
                             }
                         } //init
+                        //============================================================
+                        //
+                        //============================================================
 
+                        function hasAgenda(doc){
+                          if(!doc.type) return false;
+                            var agendaTypes = ['570fd1ac2e3fa5cfa61d90f5','570fd1cb2e3fa5cfa61d90f7','582330845d4c0e8231238ebf','570fd1552e3fa5cfa61d90f0'];
+
+                            if(_.indexOf(agendaTypes,doc.type)>-1)
+                              return true;
+                            else
+                              return false;
+
+                        }
+                        $scope.hasAgenda=hasAgenda;
                         //============================================================
                         //
                         //============================================================

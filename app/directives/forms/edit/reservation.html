@@ -22,10 +22,11 @@
   <div ng-show="!tabs.recurrenceQuestion.active">
     <div class="btn-group btn-group-justified btn-group-raised hidden-xs hidden-sm">
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
+            <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.options.active}" ng-click="changeTab('options')">Options</a>
       <!-- <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a> -->
-      <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recurrence</a>
+      <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recur.</a>
       <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
-      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
+      <a  ng-if="hasAgenda(doc)" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
     </div>
     <div class="btn-group btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl">
       <a href="javascript:void(0)" class="btn btn-xs btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
@@ -35,157 +36,195 @@
     </div>
   </div>
 
-  <div class="row" ng-show="tabs.details.active">
+<div class="row" ng-show="tabs.details.active">
 
     <div class="col-xs-12">
-      <!-- dirty dirty hack jquery change removing value from first input fix-->
-      <div class="form-group label-floating" ng-show="false">
-        <input class="form-control" id="test" type="text" ng-model="doc.test">
-      </div>
-
-      <!-- dirty dirty hack-->
-      <div class="form-group label-floating">
-        <label class="control-label" for="title">Title</label>
-        <input class="form-control" id="title" type="text" ng-model="doc.title">
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div>
-    <div class="col-xs-6">
-    <div class="form-group label-floating" >
-      <label class="control-label" for="startT">Start Time</label>
-      <!-- <input id="startT" class="form-control" type="text" ng-model="doc.startDisp" > -->
-      <input id="startT" type="text" class="form-control" ng-model="doc.start"
-             date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }"
-             date-picker-min-date="conferenceDays[0]"
-             date-picker-max-date="conferenceDays[conferenceDays.length-1]" >
-    </div>
-  </div>
-  <div class="col-xs-6">
-  <div class="form-group label-floating" >
-    <label class="control-label" for="endT">End Time</label>
-    <!-- <input id="endT" class="form-control" type="text" ng-model="doc.endDisp" > -->
-    <input id="endT" type="text" class="form-control" ng-model="doc.end"
-           date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" >
-  </div>
-</div>
-
-<div class="col-xs-6">
-  <div class="form-group" style="margin-left:10px;margin-top:15px;">
-    <div class="togglebutton">
-      <label>
-        <input type="checkbox" ng-model="doc.open" ng-false-value="false" ng-false-value="true"><span ng-if="doc.open">Open</span><span ng-if="!doc.open">Closed</span>
-      </label>
-    </div>
-  </div>
-</div>
-<div class="col-xs-6">
-  <div class="form-group" style="margin-left:10px;margin-top:15px;">
-    <div class="togglebutton">
-      <label>
-        <input type="checkbox" ng-model="doc.confirmed" ng-false-value="false" ng-false-value="true"><span ng-if="doc.confirmed">Confirmed</span><span ng-if="!doc.confirmed">Unconfirmed</span>
-      </label>
-    </div>
-  </div>
-
-</div>
-
-    <div class="col-xs-6">
-      <div class="form-group label-floating">
-        <label class="control-label" for="parent">Type</label>
-
-        <select id="parent" class="form-control" ng-model="doc.type" ng-change="loadSubTypes(doc.type)" ng-disabled="isSideEvent()">
-          <option   ng-repeat="parent in options.types track by $index" ng-style = "{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
-        </select>
-        <span class="material-input"></span>
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div>
-    <div class="col-xs-6" ng-show="options.type.children">
-      <div class="form-group label-floating">
-        <label class="control-label" for="parent">Sub Type</label>
-
-        <select id="parent" class="form-control" ng-model="doc.subType">
-          <option   ng-repeat="subType in options.type.children track by $index" ng-style = "{'background-color':parent.color}" value="{{subType._id}}" ng-if="subType._id" ng-selected="subType._id===doc.subType">{{subType.title}}</option>
-        </select>
-        <span class="material-input"></span>
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div>
-    <div class="col-xs-6">
-      <div class="form-group label-floating">
-        <label class="control-label" for="roomList">Room</label>
-
-        <select id="roomList" class="form-control" ng-model="doc.location.room">
-          <option ng-repeat="room in rooms track by $index" value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.title}}</option>
-        </select>
-        <span class="material-input"></span>
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div>
-    <div class="col-xs-12">
-      <div class="form-group label-floating">
-     <label for="description" class="control-label">Description</label>
-       <textarea class="form-control" rows="3" id="description" ng-model="doc.description"></textarea>
-       <span class="help-block"></span>
-    </div>
-    </div>
-    <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
-      <div class="form-group" style="margin-left:10px;margin-top:15px;">
-        <div class="togglebutton">
-          <label>
-            <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
-          </label>
+        <!-- dirty dirty hack jquery change removing value from first input fix-->
+        <div class="form-group label-floating" ng-show="false">
+            <input class="form-control" id="test" type="text" ng-model="doc.test">
         </div>
-      </div>
-    </div>
-  </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Details</h4></div>
+            <div class="panel-body">
+                <!-- dirty dirty hack-->
+                <div class="form-group label-floating">
+                    <label class="control-label" for="title">Title</label>
+                    <input class="form-control" id="title" type="text" ng-model="doc.title">
+                    <p class="help-block" ng-show="valid">error</p>
+                </div>
+
+                <div class="col-xs-6">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="startT">Start Time</label>
+                        <!-- <input id="startT" class="form-control" type="text" ng-model="doc.startDisp" > -->
+                        <input id="startT" type="text" class="form-control" ng-model="doc.start" date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" date-picker-min-date="conferenceDays[0]" date-picker-max-date="conferenceDays[conferenceDays.length-1]">
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="endT">End Time</label>
+                        <!-- <input id="endT" class="form-control" type="text" ng-model="doc.endDisp" > -->
+                        <input id="endT" type="text" class="form-control" ng-model="doc.end" date-picker="{ switchOnClick: true, time: true, date: false, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }">
+                    </div>
+                </div>
+
+
+
+                <div ng-class="{'col-xs-6':options.type.children,'col-xs-12':!options.type.children}">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="parent">Type</label>
+
+                        <select id="parent" class="form-control" ng-model="doc.type" ng-change="loadSubTypes(doc.type)" ng-disabled="isSideEvent()">
+                            <option ng-repeat="parent in options.types track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+                        </select>
+                        <span class="material-input"></span>
+                        <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-show="options.type.children">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="parent">Sub Type</label>
+
+                        <select id="parent" class="form-control" ng-model="doc.subType">
+                            <option ng-repeat="subType in options.type.children track by $index" ng-style="{'background-color':parent.color}" value="{{subType._id}}" ng-if="subType._id" ng-selected="subType._id===doc.subType">{{subType.title}}</option>
+                        </select>
+                        <span class="material-input"></span>
+                        <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="roomList">Room</label>
+
+                        <select id="roomList" class="form-control" ng-model="doc.location.room">
+                            <option ng-repeat="room in rooms track by $index" value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.title}}</option>
+                        </select>
+                        <span class="material-input"></span>
+                        <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="form-group label-floating">
+                        <label for="description" class="control-label">Description</label>
+                        <textarea class="form-control" rows="3" id="description" ng-model="doc.description"></textarea>
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+                <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent">
+                    <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                        <div class="togglebutton">
+                            <label>
+                                <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!--options -->
+    <div class="row" ng-show="tabs.options.active">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Options</h4></div>
+                <div class="panel-body">
+
+                    <div class="col-xs-12">
+                        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                            <div class="togglebutton">
+                                <label>
+                                    <input type="checkbox" ng-model="doc.open" ng-false-value="false" ng-false-value="true"><span ng-if="doc.open">Open to Public</span><span ng-if="!doc.open">Closed to Public</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                            <div class="togglebutton">
+                                <label>
+                                    <input type="checkbox" ng-model="doc.confirmed" ng-false-value="false" ng-false-value="true"><span ng-if="doc.confirmed">Confirmed Reservation</span><span ng-if="!doc.confirmed">Unconfirmed Reservation</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                            <div class="togglebutton">
+                                <label>
+                                    <input type="checkbox" ng-model="doc.security" ng-false-value="false" ng-false-value="true"><span ng-if="doc.security">Security</span><span ng-if="!doc.security">No Security</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- recurrence -->
     <div class="row" ng-show="tabs.recurrence.active">
-        <section >
-              <div class="col-xs-12">
-                  <h4 >Apply Changes to Selected Recurrences</h4>
-              </div>
-              <div class="col-xs-12" >
-                <div >
-                  <label ng-repeat-start="d in doc.series  track by $index" ng-if="hideCurrentandPastDays(doc,doc.series[$index].date)">
-                      &nbsp;<input type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true"> {{d.date | moment:'format':'dddd YYYY-MM-DD HH:mm'}} </input>
-                  </label><br ng-repeat-end ng-if="hideCurrentandPastDays(doc,conferenceDays[$index])">
+        <section>
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Add or Delete from Recurrence Set</h4></div>
+                    <div class="panel-body">
+
+                        <div>
+                            <label ng-repeat-start="d in doc.series  track by $index" ng-if="hideCurrentandPastDays(doc,doc.series[$index].date)">
+                                &nbsp;
+                                <input type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true"> {{d.date | moment:'format':'dddd YYYY-MM-DD HH:mm'}} </input>
+                            </label>
+                            <br ng-repeat-end ng-if="hideCurrentandPastDays(doc,conferenceDays[$index])">
+                        </div>
+                    </div>
+
                 </div>
-              </div>
-      </section>
+
+            </div>
+
+        </section>
     </div>
 
   <!-- cctv -->
-  <div class="row" ng-show="tabs.cctv.active">
+<div class="row" ng-show="tabs.cctv.active">
     <div class="col-xs-12">
-        <h4>CCTV Message</h4>
-    </div>
-    <div class="col-xs-4">
-      <div class="form-group label-floating">
-        <label class="control-label" for="msgType">Level</label>
-        <select id="msgType" class="form-control" ng-model="doc.message.level">
-            <option value="0">   </options>
-            <option value="warning">Warning</options>
-            <option value="alert">Alert</options>
-        </select>
-        <span class="material-input"></span>
-      </div>
-    </div>
-    <div class="col-xs-1" ng-init="levelClasses = { warning : 'text-warning', alert : 'text-danger' }">
-      <div>&nbsp;</div>
-      <span ><i class="fa fa-2x fa-square {{levelClasses[doc.message.level]}}" id="levelChangeSquare" ng-show="doc.message.level"></i><i class="fa fa-2x fa-square-o" ng-show="!doc.message.level"></i></span>
-    </div>
-    <div class="col-xs-12">
-      <div class="form-group label-floating">
-        <label class="control-label" for="msgTitle">Text</label>
-        <textarea class="form-control" rows="3" id="msgTitle" ng-model="doc.message.text"></textarea>
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>CCTV Message</h4></div>
+            <div class="panel-body">
+                <div class="col-xs-4">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="msgType">Level</label>
+                        <select id="msgType" class="form-control" ng-model="doc.message.level">
+                            <option value="0">
+                                </options>
+                                <option value="warning">Warning</options>
+                                    <option value="alert">Alert</options>
+                        </select>
+                        <span class="material-input"></span>
+                    </div>
+                </div>
+                <div class="col-xs-1" ng-init="levelClasses = { warning : 'text-warning', alert : 'text-danger' }">
+                    <div>&nbsp;</div>
+                    <span><i class="fa fa-2x fa-square {{levelClasses[doc.message.level]}}" id="levelChangeSquare" ng-show="doc.message.level"></i><i class="fa fa-2x fa-square-o" ng-show="!doc.message.level"></i></span>
+                </div>
 
-  </div>
+                <div class="col-xs-12">
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="msgTitle">Text</label>
+                        <textarea class="form-control" rows="3" id="msgTitle" ng-model="doc.message.text"></textarea>
+                        <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- save -->
   <!-- <div class="row" ng-show="tabs.recurrence.active" ng-if="false">
