@@ -43,7 +43,8 @@
 .label.doc-status.crp   { border: solid 1px #f0ad4e; color: #f0ad4e; background: none}
 </style>
   <div class="panel panel-default">
-    <div class="panel-heading">
+        <div class="panel-heading"><h4>Agenda Items</h4></div>
+    <div class="panel-body">
 <div name="form" class="row">
   <form novalidate>
   <div class="col-xs-6">
@@ -80,12 +81,13 @@
 
 </div>
     </div>
-  <div class="panel-body">
+  <div class="panel-footer">
     <section dragula='"agenda-items"' dragula-model="binding.items">
           <div class="row" ng-repeat="item in binding.items track by $index">
-              <div class="col-xs-2"><span class="label vercenter" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
-              <div class="col-xs-6"><input class="form-control" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text"></div>
+              <div class="col-xs-2"><span class="label vercenter" style="margin-top:5px;" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
+              <div class="col-xs-6"><div class="form-group" style="margin: 0 0 0 0;"><input class="form-control" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text">  </div></div>
               <div class="col-xs-2">
+                <div class="form-group" style="margin: 0 0 0 0;">
                   <select class="form-control" ng-model="item.status">
                       <option value=""></option>
                       <option value="pre-session">Pre</option>
@@ -93,6 +95,7 @@
                       <option value="crp">CRP</option>
                       <option value="l">L</option>
                   </select>
+                </div>
               </div>
               <div class="col-xs-1" style="padding-left:10px;">
                   <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="delete(item)" ><i class="fa fa-trash"></i></a>
