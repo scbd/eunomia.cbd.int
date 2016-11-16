@@ -20,7 +20,9 @@
       padding: 2px 4px 2px 4px;
       margin: 0 0 0 0;
     }
-
+    .red-agenda{
+      color:red;
+    }
     .search-found {
       background-color: rgba(0, 155, 72, .3);
     }
@@ -56,7 +58,7 @@
         </span>
       </div>
     </div>
-    <i class="fa fa-list-ol pull-right small" style="cursor:pointer;" aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i>
+    <span ng-class="{'red-agenda':doc.agenda.provisional}"><i class="fa fa-list-ol pull-right small" style="cursor:pointer;"  aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i></span>
   </div>
 
 </div>
