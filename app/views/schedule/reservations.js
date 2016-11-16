@@ -29,15 +29,21 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.getType = getType;
       _ctrl.toggleFields=toggleFields;
       _ctrl.isFieldSelect=isFieldSelect;
+      _ctrl.getPrefix=getPrefix;
+      _ctrl.hasDayChange = hasDayChange;
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
-      _ctrl.showFields=false;
-      _ctrl.selectFields=['Title','Room','Date','Start','End','Type'];
+      _ctrl.showFields=true;
+      _ctrl.sort = {'start':1};
+      _ctrl.selectFields=['Title','Room','Date','Start','End','Type','Options','Agenda Items','CCTV Message'];
       _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Start'},{title:'End'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'}];
       init();
-
+      $scope.$watch('reservationsCtrl.sort',function(){
+        getReservations();
+      });
       return this;
+
 
 
       //============================================================
@@ -62,12 +68,29 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
               changeDate();
           }
 
-
+        if($location.search().itemsPerPage )
+            _ctrl.itemsPerPage=$location.search().itemsPerPage;
 
         $q.all([loadRooms(),loadTypes()]).then(getReservations);
 
       } //init
+      //============================================================
+      //
+      //============================================================
+      function getPrefix(item){
 
+        var meeting = _.find(conference.meetings,{EVT_CD:item.meeting});
+        return meeting.agenda.prefix;
+      }//itemSelected
+      //============================================================
+      //
+      //============================================================
+      function hasDayChange(dayOne, dayTwo){
+        if(!dayTwo || !dayOne) return false;
+
+        if(!moment(dayOne).startOf('day').isSame(moment(dayTwo).startOf('day')))
+          return true;
+      }//itemSelected
       //============================================================
       //
       //============================================================
@@ -213,6 +236,10 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
         if(!_.isEmpty(_ctrl.searchRoom))
             search.searchRoom=_ctrl.searchRoom;
+
+        if(_ctrl.itemsPerPage)
+            search.itemsPerPage=_ctrl.itemsPerPage;
+
         $location.search(search);
       }
       //=====
