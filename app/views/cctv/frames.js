@@ -1,6 +1,6 @@
 define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment'], function(_, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', 'eventGroup', function($http, $route, $location, $scope, $q, eventGroup) {
+    return ['$http', '$route', '$location', '$scope', '$q', 'eventGroup','$window', function($http, $route, $location, $scope, $q, eventGroup,$window) {
 
         var _ctrl = this;
 
@@ -9,6 +9,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
         _ctrl.edit       = edit;
         _ctrl.delete     = del;
         _ctrl.buildSortKey = sortKey;
+        _ctrl.goTo       = goTo;
 
         init();
 
@@ -28,9 +29,10 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
         //==============================
         function init() {
 
-            _ctrl.selectedDay  = $location.search().day;
-            _ctrl.selectedFeed = $location.search().feed;
-            _ctrl.selectedType = $location.search().type;
+            _ctrl.selectedDay     = $location.search().day;
+            _ctrl.selectedFeed    = $location.search().feed;
+            _ctrl.selectedType    = $location.search().type;
+            _ctrl.selectedDayLink = moment().format('YYYY-MM-DD');
 
             return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
@@ -40,14 +42,25 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
                     return ret;
                 }, {});
 
-                _ctrl.feeds        = feeds;
-                _ctrl.feedsMap     = feedsMap;
+                _ctrl.feeds             = feeds;
+                _ctrl.selectedFeedLink  =feeds[0]._id;
+                _ctrl.feedsMap          = feedsMap;
 
             }).then(function () {
 
                 return load();
 
             }).catch(errorHandler);
+        }
+
+
+        //==============================
+        //
+        //==============================
+        function goTo(feed,day) {
+
+          $window.open('https://www.cbd.int/cctv/help/event-information?streamId='+feed+'&datetime='+day, '_blank');
+
         }
 
         //==============================
