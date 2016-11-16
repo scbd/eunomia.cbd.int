@@ -175,7 +175,7 @@
                 <div class="form-group " style="margin-top:0;">
 
                     <label class="control-label " for="search-res">Column Selection</label>
-                    <ui-select multiple ng-model="reservationsCtrl.selectFields" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+                    <ui-select multiple ng-model="reservationsCtrl.selectFields" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.updateFields()">
                         <ui-select-match placeholder="Select Fields">
                             <span class="label label-primary" style="font-size:1em;">{{$item.title}}</span>
                         </ui-select-match>
@@ -204,7 +204,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th width="2%"><i class="fa fa-columns pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="!reservationsCtrl.showFields"></i><i class="fa fa-times pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()"
+                            <th width="2%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="!reservationsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()"
                                     ng-if="reservationsCtrl.showFields"></i></th>
                             <th ng-if="reservationsCtrl.isFieldSelect('Title');">
                                 <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" style="margin-bottom:0px;"></sorter>
@@ -212,17 +212,17 @@
                             <th width="20%" ng-if="reservationsCtrl.isFieldSelect('Description');">Description
                                 <!-- <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room / Location / Capacity
+                            <th width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                                 <!-- <sorter label-name="Room" ng-model="reservationsCtrl.sort" property="room" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
                             <th width="20%" ng-if="reservationsCtrl.isFieldSelect('Date');">
-                                <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter> / Start / End
+                                <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
                             </th>
 
                             <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Type');">Type</th>
                             <th class="hidden-print" width="7%" ng-if="reservationsCtrl.isFieldSelect('Options');">Options</th>
-                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda Items</th>
-                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">CCTV Message</th>
+                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda <span class="hidden-print">Items</span></th>
+                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">CCTV <span class="hidden-print">Message</span></th>
                             <!-- <th width="5%">Actions</th> -->
 
                         </tr>
@@ -232,6 +232,11 @@
                     <tbody>
                         <!-- | filter:reservationsCtrl.searchType |orderBy:'title' -->
                         <!-- ng-repeat="doc in docs  track by $index" -->
+                        <tr ng-if="reservationsCtrl.loading">
+                            <td colspan="11" class="text-center">
+                                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+                            </td>
+                        </tr>
                         <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat-start="doc in reservationsCtrl.docs  track by $index">
                             <td width="2%">&nbsp;
                                 <!-- <div class="form-group " style="margin-top:10px;" >

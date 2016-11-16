@@ -31,13 +31,14 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.isFieldSelect=isFieldSelect;
       _ctrl.getPrefix=getPrefix;
       _ctrl.hasDayChange = hasDayChange;
+      _ctrl.updateFields=updateFields;
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
       _ctrl.showFields=true;
       _ctrl.sort = {'start':1};
-      _ctrl.selectFields=['Title','Room','Date','Start','End','Type','Options','Agenda Items','CCTV Message'];
-      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Start'},{title:'End'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'}];
+      _ctrl.selectFields=['Title','Room','Date','Type','Options','Agenda Items','CCTV Message'];
+      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'}];
       init();
       $scope.$watch('reservationsCtrl.sort',function(){
         getReservations();
@@ -45,35 +46,37 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       return this;
 
 
+        //============================================================
+        //
+        //============================================================
+        function init() {
 
-      //============================================================
-      //
-      //============================================================
-      function init() {
+            moment.tz.setDefault(conference.timezone);
+            _ctrl.conference.startObj = moment(conference.schedule.start);
+            _ctrl.conference.endObj = moment(conference.schedule.end);
 
-        moment.tz.setDefault(conference.timezone);
+            if(localStorage.getItem('reservations-colums'))
+              _ctrl.selectFields=JSON.parse(localStorage.getItem('reservations-colums'));
+            else
+                localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
+
+            if ($location.search().start && $location.search().end) {
+                _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
+                _ctrl.endFilter = moment($location.search().end).format('YYYY-MM-DD HH:mm');
+            } else {
+                _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
+                _ctrl.endFilter = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
+                changeDate();
+            }
+
+            if ($location.search().itemsPerPage)
+                _ctrl.itemsPerPage = $location.search().itemsPerPage;
+
+            $q.all([loadRooms(), loadTypes()]).then(getReservations);
+
+        } //init
 
 
-
-            _ctrl.conference.startObj  = moment(conference.schedule.start);
-
-            _ctrl.conference.endObj    = moment(conference.schedule.end);
-
-          if($location.search().start && $location.search().end){
-              _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
-              _ctrl.endFilter   = moment($location.search().end).format('YYYY-MM-DD HH:mm');
-          }else {
-              _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
-              _ctrl.endFilter   = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
-              changeDate();
-          }
-
-        if($location.search().itemsPerPage )
-            _ctrl.itemsPerPage=$location.search().itemsPerPage;
-
-        $q.all([loadRooms(),loadTypes()]).then(getReservations);
-
-      } //init
       //============================================================
       //
       //============================================================
@@ -82,6 +85,14 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         var meeting = _.find(conference.meetings,{EVT_CD:item.meeting});
         return meeting.agenda.prefix;
       }//itemSelected
+
+      //============================================================
+      //
+      //============================================================
+      function updateFields(){
+        localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
+      }//itemSelected
+
       //============================================================
       //
       //============================================================
@@ -109,6 +120,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
                         _ctrl.count=responce.count;
                         _ctrl.docs=responce.data;
                         refreshPager(pageIndex);
+                        _ctrl.loading = false;
                         return responce.data;
                   }
               ); // mongoStorage.getReservations
