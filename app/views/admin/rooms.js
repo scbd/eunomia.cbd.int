@@ -30,6 +30,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.delete = del;
       _ctrl.load = loadRooms;
       _ctrl.save = save;
+      _ctrl.getType =getType;
+
       init();
 
 
@@ -143,7 +145,17 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         }).catch(onError);
       } //triggerChanges
 
+      //============================================================
+      //q, pageNumber,pageLength,count,sort
+      //============================================================
+      function getType(id,property) {
+          if(!_ctrl.options.types ) return '';
+          var type = _.find(_ctrl.options.types ,{_id:id});
 
+          if(!type) return'';
+          if(!property) return type;
+          return type[property];
+      }
       //============================================================
       //
       //============================================================
