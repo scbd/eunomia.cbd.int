@@ -1,7 +1,7 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-xs-8">
+        <div class="col-xs-7">
             <h1>Frames<h1>
         </div>
 
@@ -9,18 +9,18 @@
             <div class="form-group">
 
                 <label for="feeds" required>View Feed</label>
-                <select class="form-control" ng-model="framesCtrl.selectedFeedLink" ng-options="feed._id as feed.title for feed in framesCtrl.feeds"  ng-change="framesCtrl.refresh()">
+                <select class="form-control" ng-model="framesCtrl.selectedFeedLink" ng-options="feed.code as feed.title for feed in framesCtrl.feeds"  ng-change="framesCtrl.refresh()">
                 </select>
 
 
           </div>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
             <div class="form-group">
                   <div class="input-group">
                   <label for="code" required>As On Day</label>
                   <input type="text" class="form-control" name="code" ng-model="framesCtrl.selectedDayLink" ng-change="framesCtrl.refresh()"
-                         date-picker="{ switchOnClick: true, time: false, date: true, format: 'YYYY-MM-DD', clearButton: true }"
+                         date-picker="{ switchOnClick: true, time: true, date: true, format: '', clearButton: true }"
                          date-picker-min-date="framesCtrl.eventGroup.schedule.start"
                          date-picker-max-date="framesCtrl.eventGroup.schedule.end">
                          <span class="input-group-btn">

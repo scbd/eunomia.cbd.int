@@ -32,7 +32,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
             _ctrl.selectedDay     = $location.search().day;
             _ctrl.selectedFeed    = $location.search().feed;
             _ctrl.selectedType    = $location.search().type;
-            _ctrl.selectedDayLink = moment().format('YYYY-MM-DD');
+            _ctrl.selectedDayLink = moment().format();
 
             return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
@@ -43,7 +43,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
                 }, {});
 
                 _ctrl.feeds             = feeds;
-                _ctrl.selectedFeedLink  =feeds[0]._id;
+                _ctrl.selectedFeedLink  =feeds[0].code;
                 _ctrl.feedsMap          = feedsMap;
 
             }).then(function () {
