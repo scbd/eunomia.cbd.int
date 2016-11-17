@@ -1,4 +1,4 @@
-<div>
+<div >
   <style>
     /*.colorpicker-visible {
       z-index: 33000;
@@ -20,20 +20,15 @@
   </div>
 
   <div ng-show="!tabs.recurrenceQuestion.active">
-    <div class="btn-group btn-group-justified btn-group-raised hidden-xs hidden-sm">
+    <div class="btn-group btn-group-justified btn-group-raised ">
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
             <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.options.active}" ng-click="changeTab('options')">Options</a>
       <!-- <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a> -->
       <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recur.</a>
       <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
-      <a  ng-if="hasAgenda(doc)" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
     </div>
-    <div class="btn-group btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl">
-      <a href="javascript:void(0)" class="btn btn-xs btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
-  <!-- <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a> -->
-      <!-- <a ng-if="doc.sideEvent" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('sideEvent')">Side Event</a> -->
-      <a  href="javascript:void(0)" class="btn" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
-    </div>
+
   </div>
 
 <div class="row" ng-show="tabs.details.active">

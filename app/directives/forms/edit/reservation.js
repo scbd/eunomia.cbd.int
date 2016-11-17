@@ -511,7 +511,7 @@ define(['app', 'lodash',
 
 
                             if(!objClone.start || !objClone.end ) throw "Error missing start or end time or location.";
-console.log('objClone before save',objClone);
+
                             return mongoStorage.save('reservations', objClone).then(function(res) {
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
