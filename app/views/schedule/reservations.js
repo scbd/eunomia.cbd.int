@@ -8,11 +8,20 @@ define(['app','lodash','moment',
 'ngDialog',
 'ui.select',
 
-], function(app, _,moment,deleteDialog,roomDialog) {
+
+], function(app, _,moment) {
 
 return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user) {
-
+      var docDefinition = { content: '' };
       var _ctrl = this;
+
+      _ctrl.pdf = function(){
+
+        //generatePdf();
+        getPDFReservations();
+
+      };
+
       _ctrl.conference=conference;
 
       _ctrl.count = 0;
@@ -75,6 +84,120 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
         } //init
 
+        //============================================================
+        //
+        //============================================================
+        function generatePdf(){
+            docDefinition.content=[{
+                        						style: 'tableExample',
+                        						table: {
+                                        headerRows: 1,
+                                        widths: ['14%','25%', '*','10%', '15%'],
+                        								body: [
+                        										[{ text: 'Date', style: 'tableHeader' },{ text: 'Room', style: 'tableHeader' },{ text: 'Title', style: 'tableHeader' },{ text: 'Type', style: 'tableHeader' },{ text: 'Options', style: 'tableHeader' }],
+
+                        								]
+                        						}
+                        				}];
+
+            docDefinition.styles={
+                                  header: {
+                                    fontSize: 9,
+                                    margin: [5, 5, 5, 5]
+                                  },
+                                  footer: {
+                                    fontSize: 9,
+                                    margin: [5, 5, 5, 5]
+                                  },
+                                  subheader: {
+                                    fontSize: 16,
+                                    bold: true,
+                                    margin: [0, 10, 0, 5]
+                                  },
+                                  tableHeader: {
+                                    bold: true,
+                                     fillColor:'#eeeeee',
+                                    fontSize: 13,
+                                    color: 'black'
+                                  }
+                                };
+pdfRows();
+
+docDefinition.footer=pdfFooter;
+docDefinition.header=pdfHeader;
+        }//itemSelected
+
+        //============================================================
+        //
+        //============================================================
+        function pdfRows(){
+              var row= [];
+              _.each(_ctrl.pdfDocs,function(doc){
+
+                    row= [];
+                    row.push(formatDatePdf(doc));
+                    row.push( formatRoomPdf(doc) || ' ');
+                    row.push(doc.title || ' ');
+                    row.push(getType(doc.type,'reservation','title') || ' ');
+                    row.push(formatOptionsPdf(doc) || ' ');
+
+                    docDefinition.content[0].table.body.push(row);
+              });
+
+        }//pdfRows
+
+        //============================================================
+        //
+        //============================================================
+        function formatOptionsPdf(doc){
+          var options='';
+            if(doc.open)
+              options='Open\n';
+            else
+              options='Closed\n';
+
+            if(doc.confirmed)
+              options+='Confirmed\n';
+            else
+              options+='Unconfirmed\n';
+
+            if(doc.security)
+              options+='Security';
+
+            return options;
+        }//formatOptionsPdf
+
+        //============================================================
+        //
+        //============================================================
+        function formatRoomPdf(doc){
+            return getRoom(doc.location.room,'title')+'\n\n '+getRoom(doc.location.room,'location');
+        }//formatRoomPdf
+
+        //============================================================
+        //
+        //============================================================
+        function formatDatePdf(doc){
+            return moment(doc.start).format('YYYY-MM-DD')+'\n\nStart: '+moment(doc.start).format('HH:mm')+'\n\t\t\t\t\t\t\t\t\tto\nEnd:   '+moment(doc.end).format('HH:mm');
+        }//formatDatePdf
+
+        //============================================================
+        //
+        //============================================================
+        function pdfHeader(){
+
+          return {text:'Showing '+_ctrl.itemsPerPage+' of '+_ctrl.pdfCount + ' Reservations\n From:   '+moment(_ctrl.start).format('YYYY-MM-DD HH:mm')+'   to  '+moment(_ctrl.end).format('YYYY-MM-DD HH:mm'),
+                  style:'header'};
+        }//itemSelected
+
+        //============================================================
+        //
+        //============================================================
+        function pdfFooter(page, pages){
+
+
+          return {text:'printed on '+moment().format('YYYY-MM-DD HH:mm')+'  ('+page + ' of ' + pages+')',style:'footer'};
+        }//itemSelected
 
       //============================================================
       //
@@ -101,6 +224,30 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         if(!moment(dayOne).startOf('day').isSame(moment(dayTwo).startOf('day')))
           return true;
       }//itemSelected
+
+      //============================================================
+      //
+      //============================================================
+    function getPDFReservations(pageIndex) {
+
+          _ctrl.loading = true;
+          var q=buildQuery ();//{'location.conference':conference._id};
+
+          return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort).then(
+              function(responce) {
+                    _ctrl.pdfCount=responce.count;
+                    _ctrl.pdfDocs=responce.data;
+                    generatePdf();
+
+                    //pdfMake.createPdf(docDefinition).download();
+
+
+                    return responce.data;
+              }
+          ).then(function(){pdfMake.createPdf(docDefinition).download();_ctrl.loading = false;}); //
+
+      } // getReservations
+
       //============================================================
       //
       //============================================================
