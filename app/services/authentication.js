@@ -207,7 +207,7 @@ console.log(devRouter.ACCOUNTS_URI);
 
                 var token = res.data;
 
-                return $q.all([token, $http.get('https://api.' + devRouter.DOMAIN + '/api/v2013/authentication/user', {
+                return $q.all([token, $http.get('/api/v2013/authentication/user', {
                     headers: {
                         Authorization: "Ticket " + token.authenticationToken
                     }
