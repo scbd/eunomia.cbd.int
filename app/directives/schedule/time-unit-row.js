@@ -35,21 +35,13 @@ define(['app',
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
-
+                        $scope.intervalDuration = intervalDuration;
 
                         mongoStorage.loadOrgs().then(function(orgs) {
                             allOrgs = orgs;
                         });
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // killResWatch = $scope.$watch('reservations', function() {
-                        //   if(!_.isEmpty($scope.reservations)){
-                        //     //if(!_.isEmpty($scope.reservations[$scope.room._id])){
-                        //       initTimeIntervals();
-                        //       killResWatch();
-                        //     }
-                        // },true);
+
+
                         //============================================================
                         //
                         //============================================================
@@ -90,8 +82,6 @@ define(['app',
                                 $element.css('height',$scope.room.rowHeight);
                         });
 
-                        //initTypes();
-
                         var inProgress = false;
                         //============================================================
                         //
@@ -123,7 +113,6 @@ define(['app',
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
                                     $scope.getReservations();
-  //$scope.getReservations().then(function(){ inProgress =false;});
                                 });
                             }
                         } //initTimeIntervals
@@ -176,50 +165,21 @@ define(['app',
                         } //init
 
 
-
-
                         //============================================================
                         //
                         //============================================================
                         $scope.getReservations = function (resId) {
-                            cleanSchedule(resId);
-        // console.log($scope.reservations[$scope.room._id]);
-        // console.log($scope.conferenceDays);
 
-                        $q.when($scope.reservations).then(function(responce){
+                            $q.when($scope.reservations).then(function(responce){
 
-                          if (!_.isEmpty($scope.conferenceDays) )
-                             calcAllResWidths(responce[$scope.room._id]);
-                             _.each(responce[$scope.room._id], function(res) {
-                                 embedTypeInRes(res);
-                                 embedOrgsSideEvent(res);
-                                 loadReservationsInRow(res);
-                             });
-                             inProgress =false;
-                        })
-
-
-// var start =moment($scope.day).add($scope.startTime);
-// var end=moment($scope.day).add($scope.endTime);
-//                                 return mongoStorage.getReservations(start, end, {
-//                                     room: $scope.room._id
-//                                 }).then(
-//                                     function(responce) {
-//
-//                                         $scope.reservations={};
-//                                         $scope.reservations[$scope.room._id] = responce.data;
-//
-//                                         initTypes().then(function() {
-//                                             calcAllResWidths($scope.reservations[$scope.room._id]);
-//                                             _.each($scope.reservations[$scope.room._id], function(res) {
-//                                                 embedTypeInRes(res);
-//                                                 embedOrgsSideEvent(res);
-//                                                 loadReservationsInRow(res);
-//                                             });
-//                                         });
-//                                     }
-//                                 ); // mongoStorage.getReservations
-                            //} // if
+                              if (!_.isEmpty($scope.conferenceDays) )
+                                 _.each(responce[$scope.room._id], function(res) {
+                                     embedTypeInRes(res);
+                                     embedOrgsSideEvent(res);
+                                     loadReservationsInRow(res);
+                                 });
+                                 inProgress =false;
+                            });
                         }; // getReservations
 
 
@@ -382,12 +342,25 @@ define(['app',
                       //============================================================
                       //
                       //===========================================================
-                      this.deleteRes= function(objClone) {
-                            if (objClone.meta && objClone.meta.status === 'deleted') {
-                                var deleted = _.indexOf(_.pluck($scope.reservations, '_id'), objClone._id);
-                                delete($scope.reservations[deleted]);
-                                if (deleted === 0 || deleted) $scope.reservations.splice(deleted, 1);
+                      this.deleteRes= function(res) {
+
+                        $timeout(function(){
+                            if (res.meta && res.meta.status === 'deleted') {
+                              if (!_.isObject(res)) {
+                                  res = {
+                                      '_id': res
+                                  };
+                              }
+
+                              for (var i = 0; i < $scope.timeIntervals.length; i++) {
+                                  for (var j = 0; j < $scope.intervalDuration; j++) {
+                                      var interval = $scope.timeIntervals[i].subIntervals[j];
+                                      if (res._id === interval.res._id)
+                                          delete(interval.res);
+                                  }
+                              }
                             }
+                        });
                       };//deleteRes
 
                       //============================================================
