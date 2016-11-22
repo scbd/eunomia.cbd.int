@@ -171,7 +171,7 @@ define(['app',
                         $scope.getReservations = function (resId) {
 
                             $q.when($scope.reservations).then(function(responce){
-
+                              calcAllResWidths(responce[$scope.room._id]);
                               if (!_.isEmpty($scope.conferenceDays) )
                                  _.each(responce[$scope.room._id], function(res) {
                                      embedTypeInRes(res);
