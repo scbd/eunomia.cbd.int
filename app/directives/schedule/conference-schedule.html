@@ -68,9 +68,9 @@
       background-color: #f9f9f9;
     }
   </style>
-  <div class="conference-schedule" style="height:94%;">
+  <div  class="conference-schedule" style="height:94%;">
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
-    <div class="control-header">
+    <div  class="control-header">
       <div class="row" style="background-color:#a7a7a7;">
         <div class="col-xs-1">
           <div class="view-title text-nowrap" style="line-height:40px;"> <span style="margin-left:20px;">Room Reservations</span>
@@ -85,7 +85,7 @@
           </div>
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
-              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay('day-filter')"
+              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay(day)"
                      date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
                      date-picker-min-date="conference.startObj"
                      date-picker-max-date="conference.endObj"
@@ -121,7 +121,8 @@
     </div>
     <div >
       <div id="room-col" class="room-col-base">
-        <div class="room-column-header text-center" style="height:40px;">Rooms</div>
+        <div hl-sticky="">
+        <div   class="room-column-header text-center" style="height:40px;">Rooms</div></div>
         <section dragula='"all-rooms-bag"' dragula-model="rooms">
             <room-row ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
         </section>
@@ -130,7 +131,9 @@
           <div class="scroll-grid" style="position:relative;">
             <div  ng-style="timeLine()" ></div>
 <!-- time heard row -->
+<div hl-sticky="" offset-top="-40">
         <time-unit-row-header start-time="startTimeObj" end-time="endTimeObj" day="dayObj" conference-days="conferenceDays"></time-unit-row-header>
+</div>
 <!-- room rows start -->
 
         <time-unit-row options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>

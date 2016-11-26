@@ -204,7 +204,7 @@
                 </div></h1> -->
       <div class="table-responsive">
                 <table class="table">
-                    <thead>
+                    <thead hl-sticky="" style="background-color:#bbbbbb;">
                         <tr>
                             <th width="2%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="!reservationsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()"
                                     ng-if="reservationsCtrl.showFields"></i></th>
@@ -233,7 +233,7 @@
                     </thead>
                 </table>
 
-                <table class="table table-striped table-hover container">
+                <table class="table table-striped table-hover container" id="table-rows">
                     <tbody>
                         <!-- | filter:reservationsCtrl.searchType |orderBy:'title' -->
                         <!-- ng-repeat="doc in docs  track by $index" -->
@@ -304,9 +304,11 @@
                                 <span class="text-{{doc.message.level}}">{{doc.message.text}}</span>
                             </td>
                         </tr>
-                        <tr ng-repeat-end class="warning" ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
+                        <tr ng-repeat-end  class="warning" ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
                           <td colspan="5">
-                              <h2>{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}</h2>
+                            <div hl-sticky="content-heading" offset-top="80" collection="content" collection-parent="head" sticky-class="warning">
+                              <div  style="background-color:#fcf8e3;"><h2  >{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}</h2></div>
+                            </div>
                           </td>
                         </tr>
                     </tbody>

@@ -295,9 +295,9 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                         //============================================================
                         //
                         //============================================================
-                        function changeDay() {
+                        function changeDay(day) {
 
-                            setDay();
+                            setDay(day);
                             prevNextRestrictions();
                         } //changeEndTime
 
@@ -342,9 +342,11 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                         //============================================================
                         //
                         //============================================================
-                        function setDay() {
+                        function setDay(day) {
 
+                            if(day)$scope.day=day;
                             $scope.dayObj = moment($scope.day,'dddd YYYY-MM-DD').startOf('day');
+
                             $location.search('day',moment($scope.day,'dddd YYYY-MM-DD').startOf('day').format());
                             // prevNextRestrictions();
                         } //getStartTime
@@ -377,7 +379,7 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                             $location.search('day',$scope.dayObj.format());
                             $scope.dayObj = moment.tz(moment($location.search().day),$scope.conference.timezone).startOf('day');
 
-                        }; //changeStartTime
+                        }; //nextDay
 
                         //============================================================
                         //
@@ -387,7 +389,7 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                             $scope.dayObj = $scope.dayObj.subtract(1, 'day');
                             $location.search('day',$scope.dayObj.format());
 
-                        }; //changeStartTime
+                        }; //prevDay
 
                         //============================================================
                         //

@@ -31,6 +31,7 @@ require.config({
         'text'                     : 'libs/requirejs-text/text',
         'socket.io'                : 'libs/socket.io-1.4.5/index',
         'ui.select'                : 'libs/angular-ui-select/dist/select',
+        'hl.sticky'                : 'libs/angular-sticky/dist/angular-sticky'
     },
     shim: {
         'libs/angular/angular'      : { deps: ['jquery'] },
@@ -46,7 +47,8 @@ require.config({
         'BM-date-picker'            : { deps: ['jquery','moment-timezone']},
         'dragula'                   : { deps: ['angular','jquery'] },
         'ngRoute'                   : { deps: ['angular'] },
-        'ui.select'                   : { deps: ['angular'] },        
+        'ui.select'                 : { deps: ['angular'] },
+        'hl.sticky'                 : { deps: ['angular'] },
     }
 });
 
