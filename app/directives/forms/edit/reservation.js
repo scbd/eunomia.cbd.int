@@ -6,8 +6,8 @@ define(['app', 'lodash',
     'directives/agenda-select'
 ], function(app, _, template, moment) {
 
-    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope',
-        function($timeout, mongoStorage, $document, $rootScope) {
+    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http','$q',
+        function($timeout, mongoStorage, $document, $rootScope,$http,$q) {
             return {
                 restrict: 'E',
                 template: template,
@@ -27,7 +27,22 @@ define(['app', 'lodash',
                 },
 
                 link: function($scope, $element) {
-
+                  //============================================================
+                  //
+                  //============================================================
+                  $scope.$watch('doc.recurrence', function(val, prevVal) {
+                      if (val && val !== prevVal) {
+                        availableApiCall();
+                      }
+                    });
+                    //============================================================
+                    //
+                    //============================================================
+                    $scope.$watch('doc.end', function(val, prevVal) {
+                        if (val && val !== prevVal && $scope.doc.recurrence) {
+                          availableApiCall();
+                        }
+                      });
                         //============================================================
                         //
                         //============================================================
@@ -131,7 +146,9 @@ define(['app', 'lodash',
                                 mongoStorage.getRecurrences($scope.doc.seriesId).then(function(res) {
                                     if (!_.isEmpty(res.data))
                                         $scope.recurrenceSeries = res.data;
-                                });
+
+
+                                }).then(availableApiCall);
 
                             }
                         } //init
@@ -428,8 +445,8 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.hideCurrentandPastDays = function(doc, day) {
-                            if(doc.seriesId) return true;
-                            return (moment.utc(doc.start).startOf('day').isBefore(moment.utc(day).startOf('day')));
+
+                            return (moment.utc(doc.start).startOf('day').isBefore(moment.utc(day).startOf('day')) ||  !moment(day).utc().add(moment(day).utcOffset(),'m').isSame(moment.utc(day).startOf('day')));
                         }; //initVunues
 
                         //============================================================
@@ -473,8 +490,72 @@ define(['app', 'lodash',
                                 } else throw "Error thrying to update reccurences but reccurrence is empty.";
                             }
                         } //
+                        //============================================================
+                        // returns true if it does not exist in series
+                        //============================================================
+                        function availableApiCall() {
+                          var allPromises=[];
+                          var diff = moment($scope.doc.end).diff(moment($scope.doc.start),'minutes');
 
 
+                          _.each($scope.doc.series,function(r,index){
+                            var end = moment.utc(moment.tz(r.date,$scope.conference.timezone).add(diff,'minutes')).format();
+                            var start = moment.utc(moment.tz(r.date,$scope.conference.timezone)).format();
+                            var curRec =_.find($scope.recurrenceSeries,function(j){
+                                return moment(j.start).isSame(r.date);
+                            });
+
+                            var params = {q:{
+
+                                        'meta.status':{'$ne':'deleted'},
+                                        'location.room':$scope.doc.location.room,
+                                        '$or':
+                                            [{'$and' :[
+                                              {start :{'$gte':{'$date':start}}},
+                                              {start :{'$lt':{'$date':end}}}
+                                            ]},
+                                             {'$and' :[
+                                               {end  :{'$gte':{'$date':start}}},
+                                               {end  :{'$lt':{'$date':end}}},
+                                             ]},
+                                             {'$and' :[
+                                               {start  :{'$lt':{'$date':start}}},
+                                               {end  :{'$gte':{'$date':end}}},
+                                             ]},
+                                           ]
+                                    },
+                                    c:1
+                                  };
+                            if(curRec)params.q._id={'$ne':{'$oid':curRec._id}};
+
+                             allPromises.push($http.get('/api/v2016/reservations',{'params': params}).then(
+                                function(responce) {
+
+                                    if(responce.data.count){
+                                      $scope.doc.series[index].available=false;
+                                      if(!$scope.recurrenceSeries && _.isEmpty($scope.recurrenceSeries))
+                                        $scope.doc.series[index].selected=false;
+                                    }else{
+                                    $scope.doc.series[index].available=true;
+                                      //
+
+                                    }
+
+                                                        })); // mongoStorage.getReservations
+
+                                                      });
+                        }
+
+                        //============================================================
+                        // returns true if it does not exist in series
+                        //============================================================
+                        function isAvailable(doc) {
+                          if(_.has(doc, 'available'))
+                            return doc.available;
+                          else
+                            return -1;
+                        }
+                        $scope.isAvailable=isAvailable;
                         //============================================================
                         // returns true if it does not exist in series
                         //============================================================
