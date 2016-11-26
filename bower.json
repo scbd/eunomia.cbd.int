@@ -29,7 +29,7 @@
     "angular-ui-select": "^0.19.6"
   },
   "resolutions": {
-    "angular": "1.5.8",
+    "angular": "1.5",
     "jquery": "2.2",
     "bootstrap-material-design": "v0.5",
     "flag-icon-css": "^2.5.0"
