@@ -52,7 +52,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                       $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
                                       setEndTime(); // creates passes moment object for children directives
 
-                                      $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
+                                      $scope.startTime = moment($scope.dayObj).startOf('day').hour(6).format('HH:mm');
                                       setStartTime(); // creates passes moment object for children directives
                                       $rootScope.$broadcast("showError", "Start time cannot be after or equal to the end time.");
                                   }
@@ -68,7 +68,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                       $scope.endTime = moment($scope.dayObj).startOf('day').hour(23).format('HH:mm');
                                       setEndTime(); // creates passes moment object for children directives
 
-                                      $scope.startTime = moment($scope.dayObj).startOf('day').hour(8).format('HH:mm');
+                                      $scope.startTime = moment($scope.dayObj).startOf('day').hour(6).format('HH:mm');
                                       setStartTime(); // creates passes moment object for children directives
                                       $rootScope.$broadcast("showError", "End time cannot be  before or equal to the start time.");
                                   }
@@ -115,14 +115,14 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                       function getReservations() {
-var roomIds=[];
+                          var roomIds=[];
                           _.each($scope.rooms,function(r){
                               roomIds.push(r._id);
                           });
                           var q={room:{'$in':roomIds}};
 
-var start =   moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format();
-var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').format();
+                          var start =   moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format();
+                          var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').format();
 
                                 return mongoStorage.getReservations(start, end, q).then(
                                     function(responce) {
@@ -214,7 +214,7 @@ var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').fo
                             $scope.endTime = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').hour(23).format('HH:mm');
                             setEndTime(); // creates passes moment object for children directives
 
-                            $scope.startTime = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').hour(8).format('HH:mm');
+                            $scope.startTime = moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').hour(6).format('HH:mm');
                             setStartTime(); // creates passes moment object for children directives
                             prevNextRestrictions();
                         } //initDayTimeSelects

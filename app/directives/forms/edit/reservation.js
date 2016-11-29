@@ -47,7 +47,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.$watch('doc.start', function(val, prevVal) {
-                            if (val && val !== prevVal) {
+                            if ($scope.doc.start && val && val !== prevVal) {
                                 if (!moment.utc($scope.doc.start).isSame(moment.utc($scope.doc.end), 'day') && $scope.doc.end) {
                                     var t = moment.utc($scope.doc.end);
                                     $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
