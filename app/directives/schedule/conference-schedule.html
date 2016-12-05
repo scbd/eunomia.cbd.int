@@ -85,7 +85,7 @@
           </div>
           <div class="col-xs-5  ">
             <div class="form-group" style="margin-top:0px;">
-              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay(day)"
+              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay(day,'true')"
                      date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
                      date-picker-min-date="conference.startObj"
                      date-picker-max-date="conference.endObj"

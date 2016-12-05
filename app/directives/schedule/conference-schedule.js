@@ -296,9 +296,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         //
                         //============================================================
-                        function changeDay(day) {
+                        function changeDay(day,ui) {
 
-                            setDay(day);
+                            setDay(day,ui);
                             prevNextRestrictions();
                         } //changeEndTime
 
@@ -343,13 +343,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                         //
                         //============================================================
-                        function setDay(day) {
+                        function setDay(day,ui) {
 
                             if(day)$scope.day=day;
                             $scope.dayObj = moment($scope.day,'dddd YYYY-MM-DD').startOf('day');
 
-                            if($scope.day===day)
-                              $location.search('day',moment($location.search.day).add(1,'second').format());
+                            if($scope.day===day && !ui)
+                              $location.search('day',moment($location.search().day).add(1,'second').format());
                             else
                               $location.search('day',moment($scope.day,'dddd YYYY-MM-DD').startOf('day').format());
                             // prevNextRestrictions();
