@@ -164,13 +164,41 @@ define(['app',
                             initIntervalWidth();
                         } //init
 
+                        //============================================================
+                        //ensure deleted res do not remain
+                        //============================================================
+                        function cleanSchedule(res) {
+
+                            if (!_.isObject(res)) {
+                                res = {
+                                    '_id': res
+                                };
+                            }
+                            for (var i = 0; i < $scope.timeIntervals.length; i++) {
+                                for (var j = 0; j < intervalDuration; j++) {
+                                    var interval = $scope.timeIntervals[i].subIntervals[j];
+
+                                    if (res._id === interval.res._id)
+                                        interval.res = {};
+                                }
+                            }
+                        } //calcResWidth
+
+
+                          //============================================================
+                          //
+                          //============================================================
+                          $scope.resetSchedule = function () {
+                              $scope.schedule.resetSchedule();
+                          };
 
                         //============================================================
                         //
                         //============================================================
                         $scope.getReservations = function (resId) {
-
-                            $q.when($scope.reservations).then(function(responce){
+                          //console.log(resId);
+                            if (resId) return reloadRow(resId);
+                            return $q.when($scope.reservations).then(function(responce){
                               calcAllResWidths(responce[$scope.room._id]);
                               if (!_.isEmpty($scope.conferenceDays) )
                                  _.each(responce[$scope.room._id], function(res) {
@@ -182,6 +210,37 @@ define(['app',
                             });
                         }; // getReservations
 
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function reloadRow (resId) {
+                            cleanSchedule(resId);
+                            if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
+
+                                inProgress = true;
+                                var start = moment($scope.conferenceDays[0]).startOf('day');
+                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
+
+                                return mongoStorage.getReservations(start, end, {
+                                    room: $scope.room._id
+                                }).then(
+                                    function(responce) {
+
+                                        $scope.reservations = responce.data;
+
+
+                                            calcAllResWidths($scope.reservations);
+                                            _.each($scope.reservations, function(res) {
+                                                embedTypeInRes(res);
+                                                embedOrgsSideEvent(res);
+                                                loadReservationsInRow(res);
+                                            });
+                                        inProgress = false;
+                                    }
+                                ); // mongoStorage.getReservations
+                            } // if
+                        }; // getReservations
 
                         //============================================================
                         //
@@ -198,6 +257,7 @@ define(['app',
                                         delete(interval.res);
                                 } //for
                             } //for
+
 
                         } //loadReservationInRow
 
@@ -284,11 +344,12 @@ define(['app',
                                     '_id': res
                                 };
                             }
+
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
                                 for (var j = 0; j < intervalDuration; j++) {
                                     var interval = $scope.timeIntervals[i].subIntervals[j];
 
-                                    if (res._id === interval.res._id)
+                                    if (interval.res && res._id === interval.res._id)
                                         interval.res = {};
                                 }
                             }
@@ -345,7 +406,6 @@ define(['app',
                       this.deleteRes= function(res) {
 
                         $timeout(function(){
-                            if (res.meta && res.meta.status === 'deleted') {
                               if (!_.isObject(res)) {
                                   res = {
                                       '_id': res
@@ -355,11 +415,12 @@ define(['app',
                               for (var i = 0; i < $scope.timeIntervals.length; i++) {
                                   for (var j = 0; j < $scope.intervalDuration; j++) {
                                       var interval = $scope.timeIntervals[i].subIntervals[j];
+
                                       if (res._id === interval.res._id)
                                           delete(interval.res);
                                   }
                               }
-                            }
+                          //  }
                         });
                       };//deleteRes
 
@@ -367,9 +428,14 @@ define(['app',
                       //
                       //===========================================================
                       this.getReservations= function(objId) {
-                          $scope.getReservations(objId);
+                          return  $scope.getReservations(objId);
                       }; //resetSchedule
-
+                      //============================================================
+                      //
+                      //===========================================================
+                      this.resetSchedule = function() {
+                          return $scope.resetSchedule();
+                      }; //resetSchedule
                     }
 
             }; //return

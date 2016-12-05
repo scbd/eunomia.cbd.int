@@ -48,11 +48,11 @@ define(['app', 'lodash',
                         //============================================================
                         $scope.$watch('doc.start', function(val, prevVal) {
                             if ($scope.doc.start && val && val !== prevVal) {
-                                if (!moment.utc($scope.doc.start).isSame(moment.utc($scope.doc.end), 'day') && $scope.doc.end) {
+                                if (!moment.tz($scope.doc.start,$scope.conference.timezone).isSame(moment.tz($scope.doc.end,$scope.conference.timezone), 'day') && $scope.doc.end) {
                                     var t = moment.utc($scope.doc.end);
                                     $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
                                 }
-                                if(moment.utc($scope.doc.start).isSameOrAfter(moment.utc($scope.doc.end)) && $scope.doc.end){
+                                if(moment.tz($scope.doc.start,$scope.conference.timezone).isSameOrAfter(moment.tz($scope.doc.end,$scope.conference.timezone)) && $scope.doc.end){
                                   var e = moment.utc($scope.doc.start);
                                   $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
                                 }
@@ -111,6 +111,9 @@ define(['app', 'lodash',
                                     'active': false
                                 },
                             };
+                            mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
+                                $scope.document=res;
+                            });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
                             else $scope.changeTab('details');
@@ -288,6 +291,7 @@ define(['app', 'lodash',
                                 });
 
                                 $timeout(function() {
+
                                     if ($scope.doc.end)
                                         $scope.doc.end = moment.tz($scope.doc.end,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
                                     else
@@ -597,17 +601,30 @@ define(['app', 'lodash',
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
 
-                                    if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
-                                        $scope.timeUnitRowCtrl.resetSchedule();
 
-                                    $scope.timeUnitRowCtrl.deleteRes(objClone);
-                                    $scope.timeUnitRowCtrl.getReservations(objClone._id); // reload row to show changes by save
+                                    if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
+                                            $scope.timeUnitRowCtrl.resetSchedule();
+                                    else{
+                                          $scope.timeUnitRowCtrl.deleteRes(objClone);
+                                          $scope.timeUnitRowCtrl.getReservations(objClone._id);
+                                    }
+
+
+
                                     if (!moment.utc($scope.day).isSame(moment.utc($scope.doc.start).startOf('day'), 'day')) // if user changes the day change view to that day
                                         $scope.timeUnitRowCtrl.setDay(moment.tz(objClone.end,$scope.conference.timezone).startOf('day'));
 
+
                                     saveRecurrences(obj);
 
-                                }, 500);
+                                }, 500).then(function(){
+                                $timeout(function(){
+                                  // if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
+                                  //         $scope.timeUnitRowCtrl.resetSchedule();
+
+                                },1000);
+                                });
+
                                 if(!objClone._id)
                                   $scope.conference.changeConference();
                                 $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
@@ -617,7 +634,7 @@ define(['app', 'lodash',
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
                             });
                         }; //save
-init();
+                        init();
                     } //link
             }; //return
         }

@@ -145,6 +145,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                 ); // mongoStorage.getReservations
 
                         } // getReservations
+                        $scope.getReservations = getReservations;
                         //============================================================
                         //
                         //============================================================
@@ -347,7 +348,10 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             if(day)$scope.day=day;
                             $scope.dayObj = moment($scope.day,'dddd YYYY-MM-DD').startOf('day');
 
-                            $location.search('day',moment($scope.day,'dddd YYYY-MM-DD').startOf('day').format());
+                            if($scope.day===day)
+                              $location.search('day',moment($location.search.day).add(1,'second').format());
+                            else
+                              $location.search('day',moment($scope.day,'dddd YYYY-MM-DD').startOf('day').format());
                             // prevNextRestrictions();
                         } //getStartTime
 
@@ -411,9 +415,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                       // used by child dir, timeRow
                       //============================================================
                       this.resetSchedule = function() {
+                          return $scope.changeDay($scope.day);
 
-                          this.initRowHeight();
-                          this.generateDays();
+
                       }; //this.resetSchedule
                       //============================================================
                       // used by child dir, timeRow
@@ -445,6 +449,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                           }
                           $scope.lastConfDay=moment.tz(date.add(1, 'day'),$scope.conference.timezone);
                       }; //generateDays
+                      $scope.generateDays=this.generateDays;
 
                       //============================================================
                       //
@@ -465,7 +470,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                               });
                           });
                       }; //this.initRowHeight
-
+                      $scope.initRowHeight=this.initRowHeight;
 
             } //return
         };

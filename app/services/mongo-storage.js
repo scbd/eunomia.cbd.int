@@ -25,6 +25,24 @@ define(['app', 'lodash'], function(app, _) {
             } //create
         }
 
+
+        //============================================================
+        //
+        //============================================================
+        function loadDoc(schema, _id) {
+
+            return $q.when($http.get('/api/v2016/' + schema + '/' + _id)) //}&f={"document":1}'))
+                .then(
+
+                    function(response) {
+                        if (!_.isEmpty(response.data))
+                            return response.data;
+                        else
+                            return false;
+
+                    });
+        }
+
         //============================================================
         //
         //============================================================
@@ -458,22 +476,15 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function loadTypes(schema,force) {
-            var allPromises = [];
-            var numPromises= 1;
-            var modified = true;
+        function loadTypes(schema) {
 
-            allPromises[0] = isModified('types').then(
-                function(isModified) {
 
-                    modified = Boolean(!localStorage.getItem(schema+'-types') | isModified | force);
-                    var params = {};
-                    if (modified) {
-                        params = {
+
+                        var params = {
                             q: {'schema':schema,'meta.status':{'$nin':['deleted','archived']}}
                           };
-                        numPromises++;
-                        allPromises[1]= $http.get('/api/v2016/types', {
+
+                        return $http.get('/api/v2016/types', {
                             'params': params
                         }).then(function(res) {
 
@@ -490,22 +501,10 @@ define(['app', 'lodash'], function(app, _) {
                                       delete(types[schema][key]);
                                   }
                               });
+                              return types[schema];
+
                         });
-                    } else if(!_.isEmpty(types[schema])){
-                            numPromises++;
-                            return allPromises.push($q(function(resolve) {resolve(types[schema]);}));
-                    }else{
-                            types[schema]=JSON.parse(localStorage.getItem(schema+'-types'));
-                            numPromises++;
-                            return allPromises.push($q(function(resolve) {resolve(types[schema]);}));
-                    }
-                });
-                return $q.all(allPromises).then(function() {
-                            if(modified && types[schema])
-                                localStorage.setItem(schema+'-types', JSON.stringify(types[schema]));
-                    //  console.log('retunr',localStorage.getItem(schema+'-types'));
-                            return types[schema];
-                        });
+
 
         } // loadTypes
 
@@ -570,7 +569,8 @@ define(['app', 'lodash'], function(app, _) {
             getReservations: getReservations,
             getDocs: getDocs,
             loadDocs:loadDocs,
-            loadOrgs:loadOrgs
+            loadOrgs:loadOrgs,
+            loadDoc:loadDoc
         }; //return
     }]); //factory
 }); //require
