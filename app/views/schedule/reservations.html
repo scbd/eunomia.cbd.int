@@ -83,6 +83,7 @@
                         </span>
                   </small>
                     </div>
+
                 </ui-select-choices>
             </ui-select>
         </div>
@@ -211,7 +212,7 @@
                             <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Date');">
                                 <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
                             </th>
-                            <th width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
+                            <th width="26%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                                 <!-- <sorter label-name="Room" ng-model="reservationsCtrl.sort" property="room" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
                             <th width="32%" ng-if="reservationsCtrl.isFieldSelect('Title');">
@@ -227,7 +228,9 @@
                             <th class="hidden-print" width="7%" ng-if="reservationsCtrl.isFieldSelect('Options');">Options</th>
                             <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda <span class="hidden-print">Items</span></th>
                             <th width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">CCTV <span class="hidden-print">Message</span></th>
-                            <!-- <th width="5%">Actions</th> -->
+                            <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
+                                <sorter label-name="Modified" ng-model="reservationsCtrl.sort" property="meta.modifiedOn" style="margin-bottom:0px;"></sorter>
+                            </th>
 
                         </tr>
                     </thead>
@@ -257,12 +260,12 @@
                                 <strong>End:</strong>&nbsp;&nbsp; {{doc.end|moment:'format':'HH:mm'}}
 
                             </td>
-                            <td width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">
+                            <td  width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">
 
                                 {{reservationsCtrl.getRoom(doc.location.room,'title')}}
                                 <hr style="margin: 0 0 0 0;"> {{reservationsCtrl.getRoom(doc.location.room,'location')}}
                             </td>
-                            <td ng-if="reservationsCtrl.isFieldSelect('Title');">
+                            <td  width="35%"  ng-if="reservationsCtrl.isFieldSelect('Title');">
 
                                 {{doc.title}}
                                 <section class="visible-print-block">
@@ -303,10 +306,13 @@
                             <td width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">
                                 <span class="text-{{doc.message.level}}">{{doc.message.text}}</span>
                             </td>
+                            <td width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
+                                {{doc.meta.modifiedOn}}
+                            </td>
                         </tr>
                         <tr ng-repeat-end  class="warning" ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
                           <td colspan="5">
-                            <div hl-sticky="content-heading" offset-top="80" collection="content" collection-parent="head" sticky-class="warning">
+                            <div hl-sticky="content-heading" offset-top="60" collection="content" collection-parent="head" sticky-class="warning">
                               <div  style="background-color:#fcf8e3;"><h2  >{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}</h2></div>
                             </div>
                           </td>
