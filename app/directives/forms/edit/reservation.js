@@ -111,9 +111,10 @@ define(['app', 'lodash',
                                     'active': false
                                 },
                             };
-                            mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
-                                $scope.document=res;
-                            });
+                            if($scope.doc._id)
+                              mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
+                                  $scope.document=res;
+                              });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
                             else $scope.changeTab('details');
