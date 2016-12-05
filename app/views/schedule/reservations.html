@@ -70,11 +70,11 @@
     <div class="row hidden-print">
 
         <div class="col-xs-4  ">
-            <ui-select multiple ng-model="reservationsCtrl.searchType" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+            <ui-select multiple ng-model="reservationsCtrl.searchType" close-on-select="true" append-to-body="true"  ng-change="reservationsCtrl.changeDate()">
                 <ui-select-match placeholder="Type Search">
                     <div style="display:inline;background-color:{{$item.color}}">{{$item.title}}</div>
                 </ui-select-match>
-                <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="type._id as type in reservationsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
+                <ui-select-choices  style="width:100%;" position="down" repeat="type._id as type in reservationsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
                     <div style="background-color:{{type.color}}">
                         <hr style="margin: 0 0 0 0;">
                         <small>
@@ -90,7 +90,7 @@
           <i class="fa fa-file-pdf-o fa-3x pointer" ng-click="reservationsCtrl.pdf()"></i>
         </div>
         <div class="col-xs-4  ">
-            <ui-select multiple ng-model="reservationsCtrl.searchRoom" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="reservationsCtrl.changeDate()">
+            <ui-select multiple ng-model="reservationsCtrl.searchRoom" close-on-select="true"  ng-change="reservationsCtrl.changeDate()">
                 <ui-select-match placeholder="Room Search">
                     <div style="display:inline;background-color:{{$item.color}}">{{$item.acronym}}</div>
                 </ui-select-match>
@@ -214,7 +214,7 @@
                             <th width="25%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                                 <!-- <sorter label-name="Room" ng-model="reservationsCtrl.sort" property="room" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
                             </th>
-                            <th ng-if="reservationsCtrl.isFieldSelect('Title');">
+                            <th width="32%" ng-if="reservationsCtrl.isFieldSelect('Title');">
                                 <sorter label-name="Title" ng-model="reservationsCtrl.sort" property="title" style="margin-bottom:0px;"></sorter>
                             </th>
                             <th width="20%" ng-if="reservationsCtrl.isFieldSelect('Description');">Description
