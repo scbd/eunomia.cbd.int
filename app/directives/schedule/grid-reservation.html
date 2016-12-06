@@ -53,7 +53,7 @@
       <div ng-if="doc.sideEvent">
         <span ng-repeat="org in doc.sideEvent.orgs track by $index" ng-if="org">
           <i ng-if="org._id.length===2"   class="flag-icon flag-icon-{{org._id}}" style="width:20px;height:13.5px;margin-bottom:5px;"></i>
-          <img  ng-if="org._id.length>2" ng-src="{{org.logo}}" class="img-circle" alt="Cinque Terre" width="15" height="15"> {{org.acronym || org.name.en}}
+{{org.acronym || org.name.en}}
           <span ng-if="!$last">|</span>
         </span>
       </div>
