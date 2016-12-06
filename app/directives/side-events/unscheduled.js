@@ -224,6 +224,11 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                         function setTimes(r, container) {
                             var q = {};
                             q._id=r._id;
+                            if(!container.attr('date')) throw 'Error: date not set in element';
+                            if(!container.attr('id')) throw 'Error:  bag id not set in element';
+                            if(!container.attr('room')) throw 'Error: room id not set in element';
+
+
                             var startDate = moment.tz(container.attr('date'),$scope.conference.timezone); //.format('X')
                             if (container.attr('id') !== 'unscheduled-side-events') {
                               q.start = r.start = startDate.format();
