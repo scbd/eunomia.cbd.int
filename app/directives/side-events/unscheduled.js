@@ -224,14 +224,15 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                         function setTimes(r, container) {
                             var q = {};
                             q._id=r._id;
-                            if(!container.attr('date')) throw 'Error: date not set in element';
-                            if(!container.attr('id')) throw 'Error:  bag id not set in element';
-                            if(!container.attr('room')) throw 'Error: room id not set in element';
+
 
 
                             var startDate = moment.tz(container.attr('date'),$scope.conference.timezone); //.format('X')
                             if (container.attr('id') !== 'unscheduled-side-events') {
                               q.start = r.start = startDate.format();
+                              if(!container.attr('date')) throw 'Error: date not set in element';
+                              if(!container.attr('id')) throw 'Error:  bag id not set in element';
+                              if(!container.attr('room')) throw 'Error: room id not set in element';
 
                               if(moment(q.start).format('HH')==='13')
                                   q.end = r.end =startDate.add(89,'minutes').add(59,'seconds').format();
@@ -252,7 +253,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment',
                               q.location = r.location = {};
                               q.location.venue =r.location.venue= $scope.conference.venueId;
                               q.location.conference =r.location.conference= $scope.conference._id;
-                              q.location.room = r.location.room =container.attr('room');
+                              q.location.room = r.location.room ='unscheduled';
                               return mongoStorage.save('reservations',q).then(function(){
                                   $rootScope.$broadcast("showInfo"," side events successfully saved for:  "+ r.title);
                               }).catch(onError);
