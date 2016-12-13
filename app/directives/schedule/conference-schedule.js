@@ -22,7 +22,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
-
+                        initTypes();
                         init();
 
 
@@ -79,7 +79,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function init() {
-                            $scope.isLoading=isLoading;
                             $scope.reservations={};
                             $scope.rooms = [];
                             $scope.startTime = ''; //display
@@ -90,11 +89,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.changeDay = changeDay; // update times and effects on day change
                             $scope.changeStartTime = changeStartTime;
                             $scope.changeEndTime = changeEndTime;
-                            $scope.loading ={};
-                            $scope.loading.rooms=false;
-                            $scope.loading.types=false;
-                            $scope.loading.reservations=true;
-                            initTypes();
+
                             initDayTimeSelects();
                             //initDay();
 
@@ -106,15 +101,14 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function initTypes() {
-                            $scope.loading.types=true;
+
                             if(!$scope.options || _.isEmpty($scope.options.types))
                               return mongoStorage.loadTypes('reservations').then(function(result) {
                                   if(!$scope.options)$scope.options={};
                                   $scope.options.types = result;
-                                  $scope.loading.types=false;
                               });
                             else {
-                              return $q(function(resolve){resolve(true);$scope.loading.types=false;});
+                              return $q(function(resolve){resolve(true)});
                             }
                         } //initTypes()
                         //============================================================
@@ -122,7 +116,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //============================================================
                       function getReservations() {
                           var roomIds=[];
-                          $scope.loading.reservations=true;
                           _.each($scope.rooms,function(r){
                               roomIds.push(r._id);
                           });
@@ -130,8 +123,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           var start =   moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format();
                           var end =    moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').format();
-                          var f = {open:1,confirmed:1,title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.hostOrgs':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1}
-                                return mongoStorage.getReservations(start, end, q, false,f).then(
+
+                                return mongoStorage.getReservations(start, end, q).then(
                                     function(responce) {
 
 
@@ -147,7 +140,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                                         });
                                     //  });
-                                    $timeout(function(){$scope.loading.reservations=false;},500);
                                     return reservations;
                                     }
                                 ); // mongoStorage.getReservations
@@ -165,18 +157,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                   allP.push(mongoStorage.save('venue-rooms',{'_id':item._id,'sort':item.sort,'venue':item.venue}));
                                 });
                             }
-                        } //init
-                        //============================================================
-                        //
-                        //============================================================
-                        function isLoading() {
-                            var loading = false;
-                            _.each($scope.loading,function(obj){
-                                if(obj)
-                                  loading=true;
-
-                            });
-                            return loading;
                         } //init
 
                         //============================================================
@@ -419,14 +399,12 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         //
                         //============================================================
                         function getRooms() {
-                            $scope.loading.rooms=true;
+
                             return mongoStorage.getConferenceRooms($scope.conference._id).then(function(res) {
                                 $scope.rooms = res.data;
-
                             }).then(function() {
                                 ctrl.initRowHeight();
                                 ctrl.generateDays();
-                                $scope.loading.rooms=false;
                             });
                         } //initRooms
 
