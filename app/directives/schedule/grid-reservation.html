@@ -1,10 +1,11 @@
-<div ng-style="{'width':doc.resWidth+'px'}" style="cursor:pointer;position:absolute;height:100%;background-color:#a7a7a7;z-index:10;overflow:hidden;">
+<div ng-class="{'unconfirmed':(!doc.confirmed)}" ng-style="{'width':doc.resWidth+'px'}" style="cursor:pointer;position:absolute;height:100%;background-color:#a7a7a7;z-index:10;overflow:hidden;">
   <style>
     .grid-slot-row {
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
 
     .grid-slot-row-inline {
       display: inline;
@@ -31,8 +32,8 @@
   <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" ng-style="{'background-color':color}" style="border:none;margin:0 0 0 0;overflow:hidden;" data-toggle="popover" data-placement="top" >
 <i class="fa fa-repeat pull-right small" aria-hidden="true" ng-if="doc.seriesId"></i>
     <div  ng-if="!doc.sideEvent" ng-style="{'width':doc.resWidth+'px'}" style="font-weight:500;display:block;white-space:normal;" >{{doc.title}}</div>
-    <span  ng-if="doc.sideEvent" style="font-weight:500;" >#{{doc.sideEvent.id}}</span>
-    <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}}</span>
+    <span  ng-if="doc.sideEvent" style="font-weight:500;" >#{{doc.sideEvent.id}} </span>
+    <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}} </span>
     <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
       <span style="display:inline;" ng-repeat="org in doc.sideEvent.orgs track by $index" ng-if="org">
         <i ng-if="org._id.length===2"   class="flag-icon flag-icon-{{org._id}}" style="width:20px;height:13.5px;margin-bottom:5px;"></i>
@@ -57,8 +58,14 @@
           <span ng-if="!$last">|</span>
         </span>
       </div>
+      <div class="text-center">
+        <span ng-if="!doc.confirmed" class="text-center small" style="color:pink;">Unconfirmed<br></span>
+        <span ng-if="doc.open" class="text-center small" style="color:blue;">Open<br></span>
+        <span ng-if="!doc.open" class="text-center small" style="color:red;">Closed<br></span>
+        <span ng-if="doc.security" class="text-center small" style="color:red;">Security<br></span>
+      </div>
     </div>
-    <span ng-class="{'red-agenda':doc.agenda.provisional}" style="position:absolute;bottom:1px;right:46%;"><i class="fa fa-list-ol  small" style="cursor:pointer;"  aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i></span>
+    <span  ng-class="{'red-agenda':doc.agenda.provisional}" style="position:absolute;bottom:1px;right:5px;"><i class="fa fa-list-ol  small" style="cursor:pointer;"  aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i></span>
   </div>
 
 </div>
