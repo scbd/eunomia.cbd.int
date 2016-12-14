@@ -1,4 +1,4 @@
-<div ng-class="{'col-xs-9':isOpen,'col-xs-12':!isOpen}" style="padding-left:0px;padding-right:0px;">
+<div ng-class="{'col-xs-10':isOpen,'col-xs-12':!isOpen}" style="padding-left:0px;padding-right:0px;">
 
   <style>
     .conference-schedule .control-header {
@@ -28,13 +28,13 @@
       float: left;
       display: block;
       min-height: 95%;
-      width: 90%;
+      width: 87%;
       overflow-x: none;
       overflow-y: none;
     }
 
     .room-row-base {
-      min-height:40px;
+      min-height:20px;
       /*padding: 5px 5px 5px 5px;*/
       cursor: -webkit-grab;
       border-bottom-style: solid;
@@ -53,7 +53,7 @@
       min-height: 90%;
       display: block;
       float: left;
-      width: 10%;
+      width: 13%;
     }
     .room-column-header {
       min-height:40px;
@@ -69,7 +69,7 @@
       background-color: #f9f9f9;
     }
     .row-base {
-        min-height: 40px;
+        max-height: 20px;
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-bottom-color: #bbb;
@@ -104,11 +104,11 @@
     }
 
     .grid-slot-dir {
-
+/*
         width: 100%;
         height: 100%;
         overflow: none;
-        text-overflow: ellipsis;
+        text-overflow: ellipsis;*/
         background-color: #ddd;
         margin: 0 0 0 0;
     }
@@ -130,29 +130,99 @@
     .search-found {
         background-color: rgba(0, 155, 72, .3);
     }
+
   </style>
   <div class="conference-schedule" >
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
+    <div class="app-loading" ng-show="loading.reservations" ng-animate-children>
+           <!--
+               HACKY CODE WARNING: I'm putting Style block inside directive so that it
+               will be removed from the DOM when we remove the directive container.
+           -->
+           <style type="text/css">
+               /*div.app-loading {
+                   position: fixed ;
+               }*/
+               div.app-loading div.animated-container {
+                   background-color: #FFFFFF ;
+                   bottom: 0px ;
+                   left: 0px ;
+                   opacity: 1.0 ;
+                   position: absolute;
+                   right: 0px ;
+                   top: 0px ;
+                   height:1000px;
+                   z-index: 99999999999999 ;
+               }
+               /* Used to initialize the ng-leave animation state. */
+               div.app-loading div.animated-container.ng-leave {
+                   opacity: 1.0 ;
+                   transition: all linear 200ms ;
+                       -webkit-transition: all linear 200ms ;
+               }
+               /* Used to set the end properties of the ng-leave animation state. */
+               div.app-loading div.animated-container.ng-leave-active {
+                   opacity: 0 ;
+               }
+               div.app-loading div.messaging {
+                   color: #1FA65D ;
+                   font-family: monospace ;
+                   left: 0px ;
+                   margin-top: -37px ;
+                   position: absolute ;
+                   right: 0px ;
+                   text-align: center ;
+                   top: 30% ;
+               }
+               div.app-loading h1 {
+                   font-size: 26px ;
+                   line-height: 35px ;
+                   margin: 0px 0px 20px 0px ;
+               }
+               div.app-loading p {
+                   font-size: 18px ;
+                   line-height: 14px ;
+                   margin: 0px 0px 0px 0px ;
+               }
+           </style>
+
+
+           <!-- BEGIN: Actual animated container. -->
+           <div class="animated-container">
+               <div class="messaging">
+                   <h1>
+                    <br>
+                      <span class="color-black">Loading Eunomia   </span>
+                      <br> <br>
+                       <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+                   </h1>
+               </div>
+           </div>
+      </div>
+
 
     <div >
 
       <div id="room-col" class="room-col-base" >
         <div class="room-column-header text-center" style="height:40px;line-height:40px;"><span class="pull-left" ng-show="!isOpen" ng-click="isOpen=!isOpen;"><i class="fa fa-arrow-circle-right" ></i></span> Rooms </div>
         <section dragula='"all-rooms-bag"' dragula-model="rooms">
-            <se-room-row ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room" ng-class="{'row-stripped':($index%2)}"></se-room-row>
+            <se-room-row ng-show="room.hideRoomSearch==1 || (room.isSideEvent && prefs.onlySERooms && room.hideRoomSearch==='-1') || (!prefs.onlySERooms && room.hideRoomSearch==='-1')" ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room"  ng-class="{'row-stripped':($index%2)}"></se-room-row>
         </section>
       </div>
 
         <div id="scroll-grid" class="outer">
           <div class="scroll-grid">
 <!-- time heard row -->
-<div hl-sticky="">
-        <tier-row-header conference="conference" is-open="isOpen" conference-days="conferenceDays"></tier-row-header>
-</div>
+
+<!-- <div > -->
+        <tier-row-header conference="conference" is-open="isOpen" col-width="colWidth" conference-days="conferenceDays"></tier-row-header>
+<!-- </div> -->
+
+       <!-- END: Actual animated container. -->
 <!-- room rows start -->
 
-        <se-time-unit-row   is-open="isOpen" conference="conference" room="rooms[$index]" rooms="rooms"  conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')"  ng-class="{'row-stripped':($index%2)}"></se-time-unit-row>
-
+        <se-time-unit-row ng-show="room.hideRoomSearch==1 ||(room.isSideEvent && prefs.onlySERooms && room.hideRoomSearch==='-1') || (!prefs.onlySERooms && room.hideRoomSearch==='-1')"  is-open="isOpen" conference="conference" room="rooms[$index]" rooms="rooms"  conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')"  ng-class="{'row-stripped':($index%2)}"></se-time-unit-row>
+        <totals rooms="rooms" reservations="reservations" conference="conference" conference-days="conferenceDays"></totals>
 <!-- room rows end -->
       </div>
     </div>

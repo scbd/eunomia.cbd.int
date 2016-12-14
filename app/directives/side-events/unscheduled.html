@@ -1,98 +1,45 @@
-<div class="col-xs-3 wrapper" style="vertical-align:top;height:100%;background-color:#f9f9f9;" ng-show="isOpen">
-  <!-- side event container -->
-  <div style="position:fixed;width:22%;">
-  <div class="se-cont" style="vertical-align:top;height:100%">
-    <div class="se-cont-header text-center">
-      <h4 style="margin-top:0px;padding-top:10px;">Unscheduled Side Events <span ng-click="isOpen=!isOpen;clearFilters();" class="pull-right" style="cursor:pointer;"><i class="fa fa-times-circle"></i></span></h4>
 
-      <div class="btn-group  btn-group-raised btn-group-xs" style="margin:auto;">
-        <a href="javascript:void(0)" class="btn " ng-click="showFilter=!showFilter;"><i class="fa fa-filter"></i> Filter</a>
-        <a href="javascript:void(0)" class="btn " ng-click="showSearch=!showSearch;"><i class="fa fa-search"></i> Search</a>
-        <!-- <a href="javascript:void(0)" class="btn " ng-click="sync();" data-toggle="tooltip" data-placement="left" title="" data-original-title="Tooltip on left"><i class="fa fa-refresh fa-spin" ng-show="syncLoading"></i><i class="fa fa-refresh" ng-show="!syncLoading"></i> Sync</a> -->
-      </div>
-      <div></div>
-      <div class="relative" style="width:100%;" ng-show="showSearch">
-        <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showSearch=0;"></i>
-        <div class="form-group label-floating">
-          <div class="input-group">
-            <label class="control-label" for="searchSe">Search Side Events</label>
-            <input type="text" id="searchSe" class="form-control" ng-model="search" ng-change="searchSee(search)">
-            <span class="input-group-btn small">
-              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';clearFilters();">
-                <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
-              </button>
-            </span>
-          </div>
-        </div>
-      </div>
+<div class="col-xs-2 " ng-show="isOpen" >
+<div>
+<h4 style="margin-top:0px;padding-top:10px;">Unscheduled Side Events <span ng-click="isOpen=!isOpen;clearFilters();" class="pull-right" style="cursor:pointer;"><i class="fa fa-times-circle"></i></span></h4>
 
-      <div class="relative" style="width:100%;" ng-show="showFilter">
-        <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showFilter=0;clearFilters();"></i>
-        <div class="form-group label-floating">
-          <div class="input-group text-left" style="width:100%">
-            <label class="control-label" for="org-select" style="margin-left:2px;">Filter By Organization</label>
-            <input type="text" id="searchSe" class="form-control" ng-model="searchOrg" ng-change="searchOrgFilter(searchOrg)">
-            <span class="material-input"></span>
-            <span class="input-group-btn small">
-              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="searchOrg='';clearFilters();">
-                <i class="fa fa-search" ng-if="!searchOrg"></i> <i class="fa fa-times" ng-if="searchOrg"></i>
-              </button>
-            </span>
-          </div>
-        </div>
-        <div class="form-group label-floating" style="margin-left:2px;">
-          <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Preference</label>
-          <select id="conf-select" class="form-control" ng-model="preferenceSearch" ng-change="searchPrefFilter(preferenceSearch)">
-
-            <option ng-repeat="docObj in preferences" value="{{docObj.value}}" ng-selected="docObj.selected">{{::docObj.title}} </option>
-          </select>
-        </div>
-
-        <div class="form-group label-floating" style="margin-left:2px;">
-          <label class="control-label" style="white-space: nowrap;position:absolute;right:105px;">Filter By Requirement</label>
-          <select id="conf-select" class="form-control" ng-model="searchReq" ng-change="searchReqFilter(searchReq);">
-
-            <option ng-repeat="docObj in options.requirements track by $index" value="{{docObj.value}}" ng-selected="docObj.selected">{{::docObj.title }}</option>
-          </select>
-        </div>
-      </div>
-
-      <span>&nbsp;</span>
-      <div class="text-left" style="padding-bottom:10px;">
-        <p class="help-block" style="line-height:20px;">Showing
-          <span class="badge">{{sideEventsVisible()}}</span>
-          <span ng-show="search">for
-            <span class="label label-default" style="font-size:11px;font-weight:300;">"{{search}}"</span>
-          </span>
-          <span ng-show="searchOrg">
-            <span ng-show='!search'>for</span>
-            <span ng-show='search'>and</span>
-            <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchOrg}}"</span> in orgs</span>
-          <span ng-show="preferenceSearch">
-            <span ng-show='!searchOrg && !search'>for</span>
-            <span ng-show='searchOrg || search'>and</span>
-            <span class="label label-default" style="font-size:11px;font-weight:300;">"{{prefObj.title}}"</span> in prefrences</span>
-          <span ng-show="searchReq">
-            <span ng-show='!searchOrg && !search && !preferenceSearch'>for</span>
-            <span ng-show='searchOrg || search || preferenceSearch'>and</span>
-            <span class="label label-default" style="font-size:11px;font-weight:300;">"{{searchReq}}"</span> in requirements</span>
-        </p>
-        <span ng-show='searchOrg || search || preferenceSearch || searchReq' class="text-right" style="font-size:10px;cursor:pointer;" ng-click="clearFilters();"><a>Clear All Filters</a></span>
-      </div>
-
-    </div>
-    <div class="se-scroll" style="height:83vh;overflow-y:auto;">
-      <div class="wrapper" style="min-width:100%;min-height:100%;">
-        <!-- dragu;ar containers -->
-        <div class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="min-width:100%;min-height:83vh;">
-          <!-- | filter:searchSe | filter:searchOrgFilter | filter:searchPrefFilter | filter:searchReqFilter |orderBy:'sideEvent.id'  -->
-          <side-event res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index" ng-show="se.visible" load="load()"></side-event>
-          <div ng-if="!ses.length">&nbsp;</div>
-        </div>
-        <!-- endn of container -->
-      </div>
+<div class="btn-group  btn-group-raised btn-group-xs" style="margin:auto;">
+  <a href="javascript:void(0)" class="btn " ng-click="showSearch=!showSearch;"><i class="fa fa-search"></i> Search</a>
+  <a href="javascript:void(0)" class="btn " ng-click="filterDialog()"><i class="fa fa-filter"></i> Filter</a>
+  <a href="javascript:void(0)" class="btn " ng-click="configDialog()"><i class="fa fa-cogs" aria-hidden="true"></i> Config</a>
+</div>
+<div>&nbsp;</div>
+<div class="relative" style="width:100%;" ng-show="showSearch">
+  <i class="fa fa-times" style="position:absolute;right:5px;top:-15px;" ng-click="showSearch=0;"></i>
+  <div class="form-group label-floating">
+    <div class="input-group">
+      <label class="control-label" for="searchSe">Search Side Events</label>
+      <input type="text" id="searchSe" class="form-control" ng-model="search" ng-model-options="{debounce: 200 }" ng-change="load()">
+      <span class="input-group-btn small">
+        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';clearFilters();load();">
+          <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search" ></i>
+        </button>
+      </span>
     </div>
   </div>
-  <!-- style="height:83vh;overflow-y:auto;" -->
 </div>
+<div class="text-left" style="padding-bottom:10px;">
+  <p class="help-block" style="line-height:20px;">Showing
+    <span class="badge">{{sideEvents.length}}</span>
+    <span ng-show="search">for
+      <span class="label label-default" style="font-size:11px;font-weight:300;">"{{search}}"</span>
+    </span>
+  </p>
+</div>
+</div>
+    <div class="se-scrollr" style="width:100%;height:83vh;overflow-y:auto;">
+      <div class="wrapper" style="min-width:100%;min-height:100%;">
+
+        <div ng-show="!loading.unscheduled" class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="min-width:100%;min-height:83vh;">
+          <span ng-show="loadingRes || loading.unscheduled">Loading ... <i class="fa fa-spinner fa-pulse fa-fw"></i></span>
+          <side-event  res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index"  load="load()" ng-click="resDialog(se)"></side-event>
+          <div ng-if="!sideEvents.length">&nbsp;</div>
+        </div>
+      </div>
+    </div>
 </div>

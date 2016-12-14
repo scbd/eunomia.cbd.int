@@ -10,10 +10,10 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                 scope: {
                     'isOpen':'=',
                     'conferenceDays':'=',
-                    'conference':'='
+                    'conference':'=',
+                    'colWidth':'='
                 },
                 controller: function($scope, $element, $document) {
-
 
                         // //============================================================
                         // //
@@ -95,7 +95,8 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                         //
                         //============================================================
                         function calcColWidths() {
-                            $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
+                            $scope.colWidth =  Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
+
                             initIntervalWidth();
                         } //calcColWidths
 

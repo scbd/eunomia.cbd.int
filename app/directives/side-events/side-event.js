@@ -6,7 +6,7 @@ define(['app',
     ],
     function(app, _, template) {
 
-        app.directive('sideEvent', ['$timeout', 'mongoStorage', function($timeout, mongoStorage) {
+        app.directive('sideEvent', ['$timeout', 'mongoStorage','$http', function($timeout, mongoStorage,$http) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -17,7 +17,17 @@ define(['app',
                 },
                 template: template,
 
-                link: function($scope) {
+                link: function($scope,$elem) {
+                    $elem.find('#res-el').hide();
+
+
+                    var subEl=$elem.find('#res-panel');
+
+                    if($scope.res.subTypeObj && $scope.res.subTypeObj.color){
+                      subEl.css("background-color",$scope.res.subTypeObj.color);
+                    }
+
+
                     //============================================================
                     //
                     //============================================================
@@ -42,17 +52,29 @@ define(['app',
 
                         return objClone;
                     } //initVunues
+
                     //============================================================
                     //
                     //============================================================
                     function deleteRes() {
 
                         if (confirm('Are you sure you would like to permanently delete this reservation?')) {
-                            if (!$scope.res.meta) $scope.doc.meta = {};
-                            $scope.res.meta.status = 'deleted';
-                            return mongoStorage.save('reservations', cleanReservation($scope.res)).then(function(res) {
+                            var dalObj = _.clone($scope.res);
+                            dalObj.meta={};
+                            dalObj.meta.status='deleted';
 
-                                $scope.load();
+                            return mongoStorage.save('reservations',dalObj).then(function() {
+                                if($scope.res.sideEvent)
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.res.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                        var params = {};
+                                        params.id = res2.data[0]._id;
+                                        var update =res2.data[0];
+                                        update.meta={};
+                                        if (!update.meta.clientOrg) update.meta.clientOrg = 0;
+                                        update.meta.status='canceled';
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                  });
+                              $scope.load();
                             });
                         }
                     } //init
@@ -76,7 +98,7 @@ define(['app',
                             titleEl.popover('hide');
                         });
                         $timeout(function() {
-                            if ($scope.res.sideEvent.orgs && $scope.res.sideEvent.orgs.length > 1) {
+                            if ($scope.res.sideEvent && $scope.res.sideEvent.orgs && $scope.res.sideEvent.orgs.length > 1) {
                                 var orgEl = $element.find("div.num-orgs"); //.popover({ placement: 'bottom', html: 'true'});
 
                                 var orgs = $element.find("#orgs").popover({
