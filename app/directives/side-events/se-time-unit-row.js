@@ -18,21 +18,13 @@ define(['app',
                 replace: true,
                 transclude: false,
                 require: ['^side-events'],
-                link: function($scope, $element, $attr, schedule) {
 
-                        $scope.schedule = schedule[0];
+                link: function($scope, $element, $attr) {
 
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
                         var initialized = false;
-                        var allOrgs;
-
-                          initTypes();
-
-                        mongoStorage.loadOrgs().then(function(orgs) {
-                            allOrgs = orgs;
-                        });
 
                         // ============================================================
                         //
@@ -41,26 +33,6 @@ define(['app',
                           if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized)
                             initTimeIntervals();
                         });
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$watch('isOpen', function() {
-                          initOuterGridWidth().then(function() {
-                              calcColWidths();
-                          });
-                        });
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$watch('room.rowHeight', function() {
-                            if ($scope.room.rowHeight){
-                                $element.css('height',$scope.room.rowHeight);
-                                $scope.cellHeight = $scope.room.rowHeight;
-                            }
-                        });
-
 
                         //============================================================
                         //
@@ -95,6 +67,7 @@ define(['app',
 
                                         $scope.bagScopes[cell.id]=cell.bag;
                                     });
+
                                   });
                                 $scope.room.timeIntervals = $scope.timeIntervals;
 
@@ -141,7 +114,6 @@ define(['app',
                                        doc.sideEvent.meta.modifiedByObj=_.find(res.data,{userID:doc.sideEvent.meta.modifiedBy});
                                  });
                               });
-
                         } //importUserData
 
 
@@ -181,72 +153,37 @@ define(['app',
                         //
                         //============================================================
                         function initIntervalWidth() {
-                            $element.css('width',$scope.outerGridWidth);
+                            $element.css('max-width',$scope.outerGridWidth);
                         } //initDayWidth
 
                         //============================================================
                         //
                         //============================================================
                         function calcColWidths() {
-                            $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
-                            initIntervalWidth();
-                        } //init
-                        var inProgress = false;
+                           $scope.colWidth = $scope.$parent.colWidth;
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function initTypes() {
-                            if(_.isEmpty($scope.options.types)) return $q(function(resolve){resolve(true);});
-                            return mongoStorage.loadTypes('reservations').then(function(result) {
-                                if(!$scope.options)$scope.options={};
-                                $scope.options.types = result;
-                            });
-                        } //initTypes()
+                           initIntervalWidth();
+                        } //init
+
 
                         //============================================================
                         //
                         //============================================================
                         $scope.getReservations = function () {
 
-                            if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
+                              _.each($scope.collisions[$scope.room._id], function(res) {
+                                embedTypeInRes(res);
+                                loadCollisions(res);
+                              });
 
-                                inProgress = true;
-                                var start = moment($scope.conferenceDays[0]).startOf('day');
-                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
-                                var reservations = [];
-                                mongoStorage.getReservations(start, end, {
-                                    room: $scope.room._id
-                                },'570fd0a52e3fa5cfa61d90ee').then(
-                                    function(responce) {
-                                      //injectUserData(responce.data);
-                                      reservations = responce.data;
-                                        initTypes().then(function() {
+                              _.each($scope.reservations[$scope.room._id], function(res) {
+                                embedTypeInRes(res);
+                                loadReservationsInRow(res);
+                              });
 
-                                            _.each(reservations, function(res) {
-                                                embedTypeInRes(res);
-                                                embedOrgsSideEvent(res);
-                                                loadReservationsInRow(res);
-                                                addModels(reservations);
-                                            });
-
-                                        });
-                                        inProgress = false;
-                                    }
-                                ); // mongoStorage.getReservations
-                            } // if
                         }; // getReservations
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function addModels(reservations) {
-                            if (!$scope.seModels) $scope.seModels = [];
-                            _.each(reservations, function(se) {
-                              $scope.seModels.push(se);
-                            });
 
-                        } //loadReservationInRow
                         //============================================================
                         //
                         //============================================================
@@ -255,10 +192,10 @@ define(['app',
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
 
                                     var interval = $scope.timeIntervals[i];
+
                                     if (isResInTimeInterval(interval.dayTier, res))
                                         interval.bag.push(res);
-                                    // else if (!_.isEmpty(interval.res) && isResDeleted(interval.res))
-                                    //     delete(interval.res);
+
 
                             } //for
                         } //loadReservationInRow
@@ -266,40 +203,91 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
+                        function loadCollisions(res) {
+
+                            for (var i = 0; i < $scope.timeIntervals.length; i++) {
+
+                                    var interval = $scope.timeIntervals[i];
+
+                                   if (isblockedTimeInterval(interval.dayTier, res)){
+                                        if(res.subType)
+                                          interval.bag.push(res);
+                                        else
+                                          $scope.timeIntervals[i].collision=true;
+
+                                    }
+                            } //for
+                        } //loadReservationInRow
+                        //============================================================
+                        //
+                        //============================================================
+                        function isblockedTimeInterval(timeInterval, res) {
+
+                          // console.log('timeInterval',timeInterval.format());
+                          // if((
+                          //         (moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
+                          //                 moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))
+                          //       )){
+                          //           console.log('res.end',res.end);
+                          //           console.log('res.start',res.start);
+                          //           console.log('timeInterval',timeInterval.format());
+                          //           console.log('------------------');
+                          // }
+
+
+                            return  ((moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
+                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes'))) ||
+
+                                    (moment.tz(res.end,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
+                                            moment.tz(res.end,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))||
+
+                                    (moment.tz(res.start,$scope.conference.timezone).isBefore(timeInterval) &&
+                                            moment.tz(res.end,$scope.conference.timezone).isAfter(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))
+
+                                  );
+
+                        } //isResInInterval
+                        //============================================================
+                        //
+                        //============================================================
                         function isResInTimeInterval(timeInterval, res) {
                             return  moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
-                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(45,'minutes'));
+                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes'));
 
                         } //isResInInterval
 
 
-                        //============================================================
-                        //
-                        //===========================================================
-                        function embedOrgsSideEvent(res) {
-                            if (res.sideEvent && _.isEmpty(res.sideEvent.orgs)) {
-                                res.sideEvent.orgs = [];
-                                _.each(res.sideEvent.hostOrgs, function(org) {
-                                    res.sideEvent.orgs.push(_.find(allOrgs, {
-                                        '_id': org
-                                    }));
-                                });
-                            }
-                        } //embedOrgsSideEvent
+                        // //============================================================
+                        // //
+                        // //===========================================================
+                        // function embedOrgsSideEvent(res) {
+                        //     if (res.sideEvent && _.isEmpty(res.sideEvent.orgs)) {
+                        //         res.sideEvent.orgs = [];
+                        //         _.each(res.sideEvent.hostOrgs, function(org) {
+                        //             res.sideEvent.orgs.push(_.find(allOrgs, {
+                        //                 '_id': org
+                        //             }));
+                        //         });
+                        //     }
+                        // } //embedOrgsSideEvent
 
+                        var typeFound;
                         //============================================================
                         //
                         //===========================================================
                         function embedTypeInRes(res) {
-                            var typeFound = _.find($scope.options.types, {
+
+                          if(!typeFound)
+                            typeFound = _.find($scope.options.types, {
                                 '_id': res.type
                             });
-                            var subFound = _.find($scope.options.types, {
+                          if(!typeFound) return;
+
+                            if(typeFound && typeFound.children)
+                            var subFound = _.find(typeFound.children, {
                                 '_id': res.subType
                             });
-                            if (typeFound) {
-                                res.typeObj = typeFound;
-                            }
+
                             if (subFound ) {
                                 res.subTypeObj = subFound;
                             }

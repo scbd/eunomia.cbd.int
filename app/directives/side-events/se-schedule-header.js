@@ -14,6 +14,7 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                     'bagScopes': '=',
                     'conference':'=',
                     'conferenceDays':'=',
+                    'rooms':'='
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
@@ -28,112 +29,124 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
 
                             ctrl.generateDays();
 
-                            $timeout(function(){
-                              dateChangeEffect('end-filter');
-                              dateChangeEffect('start-filter');
-                            },550);
+                            //
+                            // $timeout(function(){
+                            //   dateChangeEffect('end-filter');
+                            //   dateChangeEffect('start-filter');
+                            // },550);
                         } //init
 
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function isPrevDay() {
+                        //     if(!moment($scope.startDate).subtract(7,'days').isSameOrAfter($scope.conference.startObj))
+                        //       return true;
+                        //     else
+                        //       return false;
+                        // } //disPrevDay
+                        // $scope.isPrevDay=isPrevDay;
+                        //
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function isNextDay() {
+                        //     if(! moment($scope.startDate).add(8,'days').isSameOrBefore($scope.conference.endObj))
+                        //       return true;
+                        //     else
+                        //       return false;
+                        // } //disPrevDay
+                        // $scope.isNextDay=isNextDay;
+
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function nextDay() {
+                        //   $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).add(7,'days');
+                        //   dateChangeEffect('start-filter');
+                        //   $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).add(8,'days');
+                        //   dateChangeEffect('end-filter');
+                        //   ctrl.generateDays();
+                        // } //disPrevDay
+                        // $scope.nextDay=nextDay;
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function prevDay() {
+                        //   $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(7,'days');
+                        //   dateChangeEffect('start-filter');
+                        //   $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(5,'days');
+                        //   dateChangeEffect('end-filter');
+                        //   ctrl.generateDays();
+                        // } //disPrevDay
+                        // $scope.prevDay=prevDay;
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function dateChangeEffect(id) {
+                        //
+                        //     $element.find('#' + id).parent().addClass('is-focused');
+                        //
+                        //     $timeout(function() {
+                        //       $element.find('#' + id).parent().removeClass('is-focused');
+                        //     }, 2000);
+                        // } //dateChangeEffect
                         //============================================================
                         //
                         //============================================================
-                        function isPrevDay() {
-                            if(!moment($scope.startDate).subtract(7,'days').isSameOrAfter($scope.conference.startObj))
-                              return true;
-                            else
-                              return false;
-                        } //disPrevDay
-                        $scope.isPrevDay=isPrevDay;
+                        // $scope.dateChangeStart = function() {
+                        //
+                        //   // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
+                        //   // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
+                        //   $scope.startDate = moment($scope.startDateFormat,'dddd Do MMM').startOf();
+                        //
+                        //   dateChangeEffect('start-filter');
+                        //   ctrl.generateDays();
+                        // }; //dateChangeStart
 
                         //============================================================
                         //
                         //============================================================
-                        function isNextDay() {
-                            if(! moment($scope.startDate).add(8,'days').isSameOrBefore($scope.conference.endObj))
-                              return true;
-                            else
-                              return false;
-                        } //disPrevDay
-                        $scope.isNextDay=isNextDay;
-
-                        //============================================================
+                        // $scope.dateChangeEnd= function() {
                         //
-                        //============================================================
-                        function nextDay() {
-                          $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).add(7,'days');
-                          dateChangeEffect('start-filter');
-                          $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).add(8,'days');
-                          dateChangeEffect('end-filter');
-                          ctrl.generateDays();
-                        } //disPrevDay
-                        $scope.nextDay=nextDay;
-                        //============================================================
-                        //
-                        //============================================================
-                        function prevDay() {
-                          $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(7,'days');
-                          dateChangeEffect('start-filter');
-                          $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(5,'days');
-                          dateChangeEffect('end-filter');
-                          ctrl.generateDays();
-                        } //disPrevDay
-                        $scope.prevDay=prevDay;
-                        //============================================================
-                        //
-                        //============================================================
-                        function dateChangeEffect(id) {
-
-                            $element.find('#' + id).parent().addClass('is-focused');
-
-                            $timeout(function() {
-                              $element.find('#' + id).parent().removeClass('is-focused');
-                            }, 2000);
-                        } //dateChangeEffect
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.dateChangeStart = function() {
-
-                          // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                          // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                          $scope.startDate = moment($scope.startDateFormat,'dddd Do MMM').startOf();
-
-                          dateChangeEffect('start-filter');
-                          ctrl.generateDays();
-                        }; //dateChangeStart
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.dateChangeEnd= function() {
-
-                          // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                          // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                          $scope.endDate = moment($scope.endDateFormat,'dddd Do MMM').add(1,'day').startOf();
-                          dateChangeEffect('end-filter');
-                          ctrl.generateDays();
-                        }; //dateChangeEnd
+                        //   // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
+                        //   // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
+                        //   $scope.endDate = moment($scope.endDateFormat,'dddd Do MMM').add(1,'day').startOf();
+                        //   dateChangeEffect('end-filter');
+                        //   ctrl.generateDays();
+                        // }; //dateChangeEnd
 
                         //============================================================
                         //
                         //============================================================
                         $scope.searchReservations = function() {
                             if (!$scope.search || $scope.searchsearchRes === ' '){
+                              _.each($scope.rooms,function(room){
+                                room.hideRoomSearch='-1';
+                              });
                               _.each($scope.bagScopes,function(bag){
                                   if(!bag.length) return;
                                     bag[0].searchFound=false;
+                                    bag[0].hide=false;
                               });
                               return false;
                             }
+
+                            _.each($scope.rooms,function(room){
+                              room.hideRoomSearch=0;
+                            });
 
                           _.each($scope.bagScopes,function(bag){
                               if(!bag.length) return;
                               var temp = JSON.stringify(bag[0]);
                               if(temp.toLowerCase().indexOf($scope.search.toLowerCase()) >= 0){
                                 bag[0].searchFound=true;
+                                var r = _.find($scope.rooms,{'_id':bag[0].location.room});
+                                r.hideRoomSearch=1;
                                 return true;
                               }else{
                                 bag[0].searchFound=false;
+                                bag[0].hide=true;
                                 return true;
                               }
                           });
@@ -160,7 +173,7 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
 
                       var numDays = moment.tz($scope.endDate,$scope.conference.timezone).diff($scope.startDate,'days');
 
-                      if(numDays >7) numDays =7;
+                      //if(numDays >7) numDays =7;
 
                       $scope.conferenceDays=[];
                        for (var i = 0; i < numDays; i++) {
