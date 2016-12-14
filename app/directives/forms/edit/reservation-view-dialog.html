@@ -1,0 +1,107 @@
+<div >
+  <div >
+    <div class="btn-group btn-group-justified btn-group-raised ">
+      <a href="javascript:void(0)" class="btn btn-xs"  ng-click="goTo('https://www.cbd.int/side-events/'+se.id)">View Side-event</a>
+      <a href="javascript:void(0)" class="btn btn-xs"  ng-click="goTo('https://www.cbd.int/side-events/manage/events/'+se._id)">Edit Side-event</a>
+    </div>
+    <div class="btn-group btn-group-justified btn-group-raised ">
+      <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Request Details</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.contact.active}" ng-click="changeTab('contact')">Contact</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.other.active}" ng-click="changeTab('other')">Other</a>
+    </div>
+  </div>
+
+<div class="row" ng-show="tabs.details.active">
+  <div class="table-responsive">
+            <table class="table table-striped table-hover container">
+                <thead>
+                  <th>Property
+                  </th>
+                  <th>Value
+                  </th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ID</td>
+                    <td>{{se.id}}</td>
+                  </tr>
+                  <tr>
+                    <td>Title</td>
+                    <td>{{se.title}}</td>
+                  </tr>
+                  <tr>
+                    <td>Preferred Date Times</td>
+                    <td>
+                        <div>{{se.prefDate.one}} @ {{se.prefDateTime.one}}</div>
+                        <div>{{se.prefDate.two}} @ {{se.prefDateTime.two}}</div>
+                        <div>{{se.prefDate.three}} @ {{se.prefDateTime.three}}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Host Orgs</td>
+
+                    <td>
+                        <span ng-repeat="o in se.hostOrgObjs"><i class="flag-icon flag-icon-{{o.code.toLowerCase()}}" ng-if="o.code"></i> {{o.acronym || o.name.en}} <span ng-if="!$last">|</span></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Requirements</td>
+                    <td>
+                        <span>Catering</span> <span>LCD</span> <span>Overhead</span>
+                        <span>skype</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Exp. Number Part.</td>
+                    <td>{{se.expNumPart}}</td>
+                  </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+</div>
+<div class="row" ng-show="tabs.contact.active">
+  <div class="table-responsive">
+            <table class="table table-striped table-hover container">
+                <thead>
+                  <th>Property
+                  </th>
+                  <th>Value
+                  </th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{{se.contact.personalTitle}} {{se.contact.firstName}} {{se.contact.lastName}}<br>{{se.contact.jobTitle}}</td>
+                  </tr>
+                  <tr>
+                    <td>Email/Phone</td>
+                    <td><a ng-href="mailto:{{se.contact.email}}">{{se.contact.email}}</a><br>{{se.contact.phone}}</td>
+                  </tr>
+                  <tr>
+                    <td>Address</td>
+                    <td>{{se.contact.address}}<br>{{se.contact.city}} {{se.contact.state}} {{se.contact.zip}}<br>{{se.countryObj.name.en}}</td>
+                  </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+<div class="row" ng-show="tabs.other.active">
+  <div class="table-responsive">
+            <table class="table table-striped table-hover container">
+                <thead>
+                  <th>Property
+                  </th>
+                  <th>Value
+                  </th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Description</td>
+                    <td>{{se.description |  htmlToPlaintext}} </td>
+                  </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+</div>
