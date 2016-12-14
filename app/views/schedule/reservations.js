@@ -28,7 +28,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.options = {};
       _ctrl.sort = {'title':1};
       _ctrl.venueId = conference.venueId;
-      _ctrl.itemsPerPage=10;
+      _ctrl.itemsPerPage=50;
       _ctrl.currentPage=0;
       _ctrl.pages=[];
       _ctrl.onPage = getReservations;
@@ -45,8 +45,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.searchRoom=[];
       _ctrl.showFields=true;
       _ctrl.sort = {'start':1};
-      _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','CCTV Message'];
-      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'}];
+      _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified'];
+      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'}];
       init();
       $scope.$watch('reservationsCtrl.sort',function(){
         getReservations();
@@ -205,6 +205,7 @@ docDefinition.header=pdfHeader;
       function getPrefix(item){
 
         var meeting = _.find(conference.meetings,{EVT_CD:item.meeting});
+        if(!meeting) return '';
         return meeting.agenda.prefix;
       }//itemSelected
 
@@ -258,10 +259,11 @@ docDefinition.header=pdfHeader;
 
           _ctrl.itemsPerPage=Number(_ctrl.itemsPerPage);
         var q=buildQuery ();//{'location.conference':conference._id};
+       var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1};
 
 
 
-              return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort).then(
+              return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort,f).then(
                   function(responce) {
                         _ctrl.count=responce.count;
                         _ctrl.docs=responce.data;

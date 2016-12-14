@@ -107,7 +107,8 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/m
                             $scope.colWidth = Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
                             initIntervalWidth();
                         } //init
-                    } //calcColWidths
+
+                    } //link
             }; //return
         }
     ]);
