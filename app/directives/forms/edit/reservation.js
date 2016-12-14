@@ -27,54 +27,7 @@ define(['app', 'lodash',
                 },
 
                 link: function($scope, $element) {
-                  //============================================================
-                  //
-                  //============================================================
-                  $scope.$watch('doc.recurrence', function(val, prevVal) {
-                      if (val && val !== prevVal) {
-                        availableApiCall();
-                      }
-                    });
-                    //============================================================
-                    //
-                    //============================================================
-                    $scope.$watch('doc.end', function(val, prevVal) {
-                        if (val && val !== prevVal && $scope.doc.recurrence) {
-                          availableApiCall();
-                        }
-                      });
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$watch('doc.start', function(val, prevVal) {
-                            if ($scope.doc.start && val && val !== prevVal) {
-                                if (!moment.tz($scope.doc.start,$scope.conference.timezone).isSame(moment.tz($scope.doc.end,$scope.conference.timezone), 'day') && $scope.doc.end) {
-                                    var t = moment.utc($scope.doc.end);
-                                    $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
-                                }
-                                if(moment.tz($scope.doc.start,$scope.conference.timezone).isSameOrAfter(moment.tz($scope.doc.end,$scope.conference.timezone)) && $scope.doc.end){
-                                  var e = moment.utc($scope.doc.start);
-                                  $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
-                                }
-                                if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
-                                    $scope.doc.series = [];
-                                    var countDays = 0;
-                                    _.each($scope.conferenceDays, function(day, k) {
-                                        var startDay = day.startOf('day').isSame(moment.tz($scope.doc.start,$scope.conference.timezone).startOf('day'));
-                                        var isBefore = day.isSameOrBefore(moment.tz($scope.doc.start,$scope.conference.timezone));
-                                        if(!isBefore ) countDays++;
 
-                                        if(startDay)
-                                          $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
-                                        else{
-                                          $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
-
-                                        }
-                                    });
-                                }
-
-                            }
-                        });
                         //============================================================
                         //
                         //============================================================
@@ -111,13 +64,17 @@ define(['app', 'lodash',
                                     'active': false
                                 },
                             };
+
                             if($scope.doc._id)
                               mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
-                                  $scope.document=res;
+                                  $scope.doc=res;
+                                  $scope.doc.start=moment.tz(res.start,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
+                                  $scope.doc.end=moment.tz(res.end,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
                               });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
                             else $scope.changeTab('details');
+
                             initTypes();
                             initMaterial();
 
@@ -155,6 +112,54 @@ define(['app', 'lodash',
                                 }).then(availableApiCall);
 
                             }
+                            //============================================================
+                            //
+                            //============================================================
+                            $scope.$watch('doc.recurrence', function(val, prevVal) {
+                                if (val && val !== prevVal) {
+                                  availableApiCall();
+                                }
+                              });
+                              //============================================================
+                              //
+                              //============================================================
+                              $scope.$watch('doc.end', function(val, prevVal) {
+                                  if (val && val !== prevVal && $scope.doc.recurrence) {
+                                    availableApiCall();
+                                  }
+                                });
+                                  //============================================================
+                                  //
+                                  //============================================================
+                                  $scope.$watch('doc.start', function(val, prevVal) {
+                                      if ($scope.doc.start && val && val !== prevVal) {
+                                          if (!moment.tz($scope.doc.start,$scope.conference.timezone).isSame(moment.tz($scope.doc.end,$scope.conference.timezone), 'day') && $scope.doc.end) {
+                                              var t = moment.utc($scope.doc.end);
+                                              $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
+                                          }
+                                          if(moment.tz($scope.doc.start,$scope.conference.timezone).isSameOrAfter(moment.tz($scope.doc.end,$scope.conference.timezone)) && $scope.doc.end){
+                                            var e = moment.utc($scope.doc.start);
+                                            $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
+                                          }
+                                          if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
+                                              $scope.doc.series = [];
+                                              var countDays = 0;
+                                              _.each($scope.conferenceDays, function(day, k) {
+                                                  var startDay = day.startOf('day').isSame(moment.tz($scope.doc.start,$scope.conference.timezone).startOf('day'));
+                                                  var isBefore = day.isSameOrBefore(moment.tz($scope.doc.start,$scope.conference.timezone));
+                                                  if(!isBefore ) countDays++;
+
+                                                  if(startDay)
+                                                    $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
+                                                  else{
+                                                    $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
+
+                                                  }
+                                              });
+                                          }
+
+                                      }
+                                  });
                         } //init
 
                         //============================================================
@@ -266,19 +271,34 @@ define(['app', 'lodash',
                             //$scope.changeTab('details');
                         }; //$scope.editSeries
 
+
                         //============================================================
                         //
                         //============================================================
                         function deleteRes() {
-                            if (confirm('Are you sure you would like to permanently delete this reservation?')) {
-                                if (!$scope.doc.meta) $scope.doc.meta = {};
-                                $scope.doc.meta.status = 'deleted';
-                                $scope.save($scope.doc);
-                                $scope.closeThisDialog();
-                            }
-                        } //init
 
+                            if (confirm('Are you sure you would like to permanently delete this reservation?')) {
+                                var dalObj = _.clone($scope.doc);
+                                dalObj.meta={};
+                                dalObj.meta.status='deleted';
+
+                                return $scope.save(dalObj).then(function() {
+                                    if($scope.doc.sideEvent)
+                                      $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                            var params = {};
+                                            params.id = res2.data[0]._id;
+                                            var update =res2.data[0];
+                                            update.meta={};
+                                            if (!update.meta.clientOrg) update.meta.clientOrg = 0;
+                                            update.meta.status='canceled';
+                                            $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                      });
+                                });
+                            }
+                            $scope.closeThisDialog();
+                        } //init
                         $scope.deleteRes = deleteRes;
+
                         //============================================================
                         //
                         //============================================================
@@ -586,7 +606,7 @@ define(['app', 'lodash',
                         //============================================================
                         $scope.save = function(obj) {
 
-                            if ($scope.isSideEvent()) {
+                            if ($scope.isSideEvent() && obj.sideEvent)  {
                                 obj.sideEvent.title = obj.title;
                                 obj.sideEvent.description = obj.description;
                             }
@@ -602,12 +622,11 @@ define(['app', 'lodash',
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
 
-
-                                    if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
+                                    if (objClone.location.room !== $scope.room._id && objClone._id) // if user chose new room reload schedule
                                             $scope.timeUnitRowCtrl.resetSchedule();
                                     else{
                                           $scope.timeUnitRowCtrl.deleteRes(objClone);
-                                          $scope.timeUnitRowCtrl.getReservations(objClone._id);
+                                          $scope.timeUnitRowCtrl.getReservations({'resId':obj._id});
                                     }
 
 
@@ -619,15 +638,11 @@ define(['app', 'lodash',
                                     saveRecurrences(obj);
 
                                 }, 500).then(function(){
-                                $timeout(function(){
-                                  // if (objClone.location.room !== $scope.room._id) // if user chose new room reload schedule
-                                  //         $scope.timeUnitRowCtrl.resetSchedule();
 
-                                },1000);
                                 });
 
-                                if(!objClone._id)
-                                  $scope.conference.changeConference();
+                                // if(!objClone._id)
+                                //   $scope.conference.changeConference();
                                 $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
                                 $scope.closeThisDialog();
                             }).catch(function(error) {
