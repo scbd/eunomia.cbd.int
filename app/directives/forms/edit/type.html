@@ -8,17 +8,32 @@
       background-color: #a7a7a7;
       color: rgba(0, 0, 0, 0.87);
     }
+    body > .ui-select-container {
+        z-index:99999999999;
+        }
   </style>
+
+
   <div style="background-color:#a7a7a7;height:60px;position:absolute;top:0px;left:0px;width:100%;text-align:center;color:#eee;">
     <h2 style="margin-top:13px;" ng-if="doc._id">Edit {{schema}} Type</h2>
         <h2 style="margin-top:13px;" ng-if="!doc._id && doc.parent">New {{schema}} Child Type</h2>
           <h2 style="margin-top:13px;" ng-if="!doc._id && !doc.parent">New {{schema}} Type</h2>
   </div>
-  <div style="height:60px;">
 
-  </div>
 
-  <div class="row" >
+
+
+
+  <div class="row panel panel-default" style="margin-top:25px;" >
+    <div class="panel-heading">
+      <div class="row">
+      <div class="btn-group btn-group-justified btn-group-raised ">
+        <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Type Details</a>
+        <a ng-show="doc.parent==='570fd0a52e3fa5cfa61d90ee' && doc._id" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.assignment.active}" ng-click="changeTab('assignment')">Auto Assignment</a>
+      </div>
+    </div>
+    </div>
+    <div class="panel-body" ng-show="tabs.details.active">
     <div class="col-xs-12">
       <!-- dirty dirty hack jquery change removing value from first input fix-->
       <div class="form-group label-floating" ng-show="false">
@@ -79,13 +94,43 @@
       <div class="form-group label-floating">
         <label class="control-label" for="parent">Parent</label>
         <select id="parent" class="form-control" ng-model="doc.parent">
-          <option ng-repeat="parent in options.types" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+          <option ng-repeat="parent in options.types" value="{{parent._id}}" ng-selected="parent._id===doc.parent">{{parent.title}}</option>
         </select>
         <span class="material-input"></span>
         <p class="help-block" ng-show="valid">error</p>
       </div>
     </div>
   </div>
+
+  <div class="panel-body" ng-show="tabs.assignment.active" style="height:400px;">
+    <div style="height:350px;">
+    <label>Organizations</label>
+    <ui-select multiple ng-model="doc.orgs" close-on-select="true" append-to-body="true"  >
+        <ui-select-match placeholder="Type Search">
+            <div style="display:inline;background-color:{{$item.color}}">{{$item.acronym || $item.title}}</div>
+        </ui-select-match>
+        <ui-select-choices  style="width:100%;" position="down" repeat="type._id as type in orgs | propsFilter: {title: $select.search, acronym:$select.search}">
+            <div style="background-color:{{type.color}}">
+                <hr style="margin: 0 0 0 0;">
+                <small>
+              <span class="text-nowrap">
+                  <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{type.acronym || type.title}} </span>
+                </span>
+          </small>
+            </div>
+
+        </ui-select-choices>
+    </ui-select>
+  </div>
+    <div class="btn-group btn-group-justified btn-group-raised" ng-show="doc._id">
+      <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="autoTypes(doc._id,doc.orgs)">Update Side-event Reservations</a>
+    </div><br>
+    <span class="small text-danger"ng-show="message">{{message}}</span>
+  </div>
+
+</div>
+
+
 
 <div class='row'>
   <div class="col-xs-12">
