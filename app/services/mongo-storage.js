@@ -258,7 +258,7 @@ define(['app', 'lodash'], function(app, _) {
 
                         return $q.all([countries(),$http.get('/api/v2016/inde-orgs', {'params': params})]).then(function(data) {
                             var orgsAndParties = _.union(data[0], data[1].data);
-  
+
                             allOrgs = orgsAndParties;
                             localStorage.setItem('allOrgs', JSON.stringify(orgsAndParties));
                             return allOrgs;
@@ -423,7 +423,7 @@ define(['app', 'lodash'], function(app, _) {
                                                       $in: oidArray
                                                   }
                                               },
-                                               f : {EVT_REG_MTG_CD:1}
+                                  //             f : {EVT_REG_MTG_CD:1,agenda:1}
                                           }
                                       }).then(function(m) {
 
