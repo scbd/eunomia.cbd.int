@@ -94,7 +94,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             $scope.loading.rooms=false;
                             $scope.loading.types=false;
                             $scope.loading.reservations=true;
-                            $scope.hideEmptyRooms=false;
+                            $scope.hideEmptyRooms=true;
                             initTypes();
                             initDayTimeSelects();
                             //initDay();

@@ -70,6 +70,22 @@ define(['app', 'lodash',
                                   $scope.doc=res;
                                   $scope.doc.start=moment.tz(res.start,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
                                   $scope.doc.end=moment.tz(res.end,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
+                                  if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
+                                      $scope.doc.series = [];
+                                      var countDays = 0;
+                                      _.each($scope.conferenceDays, function(day, k) {
+                                          var startDay = day.startOf('day').isSame(moment.tz($scope.doc.start,$scope.conference.timezone).startOf('day'));
+                                          var isBefore = day.isSameOrBefore(moment.tz($scope.doc.start,$scope.conference.timezone));
+                                          if(!isBefore ) countDays++;
+
+                                          if(startDay)
+                                            $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
+                                          else{
+                                            $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
+
+                                          }
+                                      });
+                                  }
                               });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
@@ -112,6 +128,7 @@ define(['app', 'lodash',
                                 }).then(availableApiCall);
 
                             }
+
                             //============================================================
                             //
                             //============================================================
