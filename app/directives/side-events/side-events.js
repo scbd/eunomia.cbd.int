@@ -171,10 +171,11 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                         }; // searchSe
 
                         function collisionQuery(roomIds){
-                          var or =[];
 
+                            $scope.collisions={};
                              _.each($scope.conferenceDays,function(day){
-                                    $scope.conference.seTiers.forEach(function(tier,index){
+                                    var or =[];
+                                    $scope.conference.seTiers.forEach(function(tier){
                                         var end;
                                         var start = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds');
                                         if(moment(start).format('HH')==='13')
@@ -199,7 +200,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                             ]});
 
                                     });
-                             });
+
 
                                 var f = {start:1,end:1,location:1,subType:1,type:1};
                                 var sort ={'start':-1};
@@ -212,23 +213,23 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                   },
                                    '$or':or
                                 };
-                                return mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
+                                mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
                                     function(responce) {
-                                          var reservations={};
-                                          _.each($scope.rooms,function(r){
 
-                                              reservations[r._id] = [];
+                                          _.each($scope.rooms,function(r){
+                                              if(!$scope.collisions[r._id])$scope.collisions[r._id]=[];
+
                                             _.each(responce.data,function(res){
                                                 if(res.location.room===r._id)
-                                                  reservations[r._id].push(res);
+                                                  $scope.collisions[r._id].push(res);
                                             });
 
                                         });
-                                        $scope.collisions=reservations;
 
-                                    return reservations;
+                                    return $scope.collisions;
                                     }
                                 );
+                             });
                         }
                         //============================================================
                         //
