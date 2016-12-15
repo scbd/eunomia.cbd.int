@@ -1,0 +1,39 @@
+
+  <div class="panel panel-default">
+    <style>
+    body > .ui-select-container {
+        z-index:99999999999;
+        }
+    </style>
+    <div class="panel-heading">Filter Unscheduled Side-events
+
+
+    </div>
+    <div class="panel-body">
+      <label>Type</label>
+      <ui-select multiple ng-model="$parent.searchT" close-on-select="true" append-to-body="true"  ng-change="load($parent.searchT)">
+          <ui-select-match placeholder="Type Search">
+              <div style="display:inline;background-color:{{$item.color}}">{{$item.title}}</div>
+          </ui-select-match>
+          <ui-select-choices  style="width:100%;" position="down" repeat="type._id as type in seTypes | propsFilter: {title: $select.search}">
+              <div style="background-color:{{type.color}}">
+                  <hr style="margin: 0 0 0 0;">
+                  <small>
+                <span class="text-nowrap">
+                    <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{type.title}} </span>
+                  </span>
+            </small>
+              </div>
+
+          </ui-select-choices>
+      </ui-select>
+      <div>
+        <select class="form-control" ng-model="$parent.selectedTime"  ng-change="load()">
+            <option ng-repeat="docObj in sideEventTimes" value="{{docObj.value}}" ng-if="docObj.value" ng-selected="docObj.value===selectedTime">{{docObj.title}} </option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+

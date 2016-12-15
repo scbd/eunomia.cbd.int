@@ -1,0 +1,53 @@
+
+  <div class="panel panel-default">
+    <style>
+    body > .ui-select-container {
+        z-index:99999999999;
+        }
+    </style>
+    <div class="panel-heading">Side-events Scheduling Configuration
+
+
+    </div>
+    <div class="panel-body">
+      <div class="col-xs-12">
+          <label>Show only rooms labeld side-event rooms or that contain a side-event</label>
+          <div class="form-group" style="margin-left:10px;margin-top:15px;">
+              <div class="togglebutton">
+                  <label>
+                      <input type="checkbox" ng-click="savePrefs()" ng-model="prefs.onlySERooms" ng-false-value="false" ng-false-value="true"><span ng-if="preferences.onlySERooms">Only side-event rooms</span><span ng-if="!preferences.onlySERooms">All rooms</span>
+                  </label>
+              </div>
+          </div>
+      </div>
+      <div><label>Block or Reserve Tiers</label></div>
+      <div class="col-xs-4">
+      <label>Room</label>
+          <select class="form-control" ng-model="selectedRoom"  >
+              <option ng-repeat="room in rooms | orderBy:'title'" value="{{room._id}}" ng-selected="selectedRoom===room._id">{{room.title}} </option>
+          </select>
+        </div>
+        <div class="col-xs-4">
+        <label>Tier</label>
+            <select class="form-control" ng-model="selectedTime"  >
+                <option ng-repeat="tier in sideEventTimes" value="{{tier.value}}" ng-selected="selectedTime===$index">{{tier.title}} </option>
+            </select>
+          </div>
+          <div class="col-xs-4">
+            <label>Blocked Type</label>
+                <select class="form-control" ng-model="selectedType"  >
+                    <option ng-repeat="type in options.blockedTypes" value="{{type._id}}" ng-selected="type._id===selectedType">{{type.title}} </option>
+                </select>
+          </div>
+          <div class="col-xs-12">
+            <div class="btn-group btn-group-justified btn-group-raised">
+                  <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="addBlocked(selectedRoom,selectedTime,selectedType)">Add Block</a>
+            </div>
+          </div>
+    </div>
+    <script>
+      $.material.init();
+    </script>
+  </div>
+
+

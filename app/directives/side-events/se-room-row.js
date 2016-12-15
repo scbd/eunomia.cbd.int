@@ -19,10 +19,10 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
             //============================================================
             //
             //============================================================
-            $scope.$watch('room.rowHeight',function(){
-              if($scope.room.rowHeight)
-                $element.css('height',$scope.room.rowHeight);
-            });
+            // $scope.$watch('room.rowHeight',function(){
+            //   if($scope.room.rowHeight)
+            //     $element.css('height',$scope.room.rowHeight);
+            // });
 
             //============================================================
             //
@@ -44,6 +44,13 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
                   plain: true,
                   scope: $scope
                 });
+            };//$scope.roomDialog
+
+            //============================================================
+            //
+            //============================================================
+            $scope.shape = function(id) {
+              //  console.log($scope.room);
             };//$scope.roomDialog
 
           } //link

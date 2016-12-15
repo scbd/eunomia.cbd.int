@@ -130,9 +130,7 @@
                         <span class="badge">{{reservationsCtrl.count}} </span> records
                         <span ng-if="reservationsCtrl.search"> for <span style="color:#009B48;">"{{reservationsCtrl.search}}"</span></span>
                         </span>
-                        <div ng-show="loading" style="display:inline;">
-                            <i class="fa fa-spinner fa-spin"></i> Loading...
-                        </div>
+
                     </div>
                 </div>
 
@@ -226,8 +224,7 @@
 
                             <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Type');">Type</th>
                             <th class="hidden-print" width="7%" ng-if="reservationsCtrl.isFieldSelect('Options');">Options</th>
-                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda <span class="hidden-print">Items</span></th>
-                            <th width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">CCTV <span class="hidden-print">Message</span></th>
+                            <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Agenda Items');">Agenda </th>
                             <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
                                 <sorter label-name="Modified" ng-model="reservationsCtrl.sort" property="meta.modifiedOn" style="margin-bottom:0px;"></sorter>
                             </th>
@@ -242,7 +239,71 @@
                         <!-- ng-repeat="doc in docs  track by $index" -->
                         <tr ng-if="reservationsCtrl.loading">
                             <td colspan="11" class="text-center">
-                                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+                              <div class="app-loading"  ng-animate-children>
+                                     <!--
+                                         HACKY CODE WARNING: I'm putting Style block inside directive so that it
+                                         will be removed from the DOM when we remove the directive container.
+                                     -->
+                                     <style type="text/css">
+                                         /*div.app-loading {
+                                             position: fixed ;
+                                         }*/
+                                         div.app-loading div.animated-container {
+                                             background-color: #FFFFFF ;
+                                             bottom: 0px ;
+                                             left: 0px ;
+                                             opacity: 1.0 ;
+                                             position: absolute;
+                                             right: 0px ;
+                                             top: 115px ;
+                                             z-index: 99999999999999 ;
+                                         }
+                                         /* Used to initialize the ng-leave animation state. */
+                                         div.app-loading div.animated-container.ng-leave {
+                                             opacity: 1.0 ;
+                                             transition: all linear 200ms ;
+                                                 -webkit-transition: all linear 200ms ;
+                                         }
+                                         /* Used to set the end properties of the ng-leave animation state. */
+                                         div.app-loading div.animated-container.ng-leave-active {
+                                             opacity: 0 ;
+                                         }
+                                         div.app-loading div.messaging {
+                                             color: #1FA65D ;
+                                             font-family: monospace ;
+                                             left: 0px ;
+                                             margin-top: -37px ;
+                                             position: absolute ;
+                                             right: 0px ;
+                                             text-align: center ;
+                                             top: 30% ;
+                                         }
+                                         div.app-loading h1 {
+                                             font-size: 26px ;
+                                             line-height: 35px ;
+                                             margin: 0px 0px 20px 0px ;
+                                         }
+                                         div.app-loading p {
+                                             font-size: 18px ;
+                                             line-height: 14px ;
+                                             margin: 0px 0px 0px 0px ;
+                                         }
+                                     </style>
+
+
+                                     <!-- BEGIN: Actual animated container. -->
+                                     <div class="animated-container">
+                                         <div class="messaging">
+                                             <h1>
+                                              <br>
+                                                <span class="color-black">Loading Eunomia   </span>
+                                                <br> <br>
+                                                 <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+                                             </h1>
+                                         </div>
+                                     </div>
+                                </div>
+                                     <!-- END: Actual animated container. -->
                             </td>
                         </tr>
                         <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat-start="doc in reservationsCtrl.docs  track by $index">
@@ -267,7 +328,7 @@
                             </td>
                             <td  width="35%"  ng-if="reservationsCtrl.isFieldSelect('Title');">
 
-                                {{doc.title}}
+                                <span ng-if="doc.sideEvent.id">#{{doc.sideEvent.id}}</span> {{doc.title}}
                                 <section class="visible-print-block">
                                     <span class="label label-success small" ng-if="doc.open">Open</span><span class="label label-danger" ng-if="!doc.open">Closed to Public</span>
                                     <span class="label label-info small" ng-if="doc.confirmed">Confirmed</span><span class="label label-default" ng-if="!doc.confirmed">Unconfirmed</span>
@@ -303,11 +364,8 @@
                                     <span class="text-uppercase">{{item.status}}</span>
                                 </div>
                             </td>
-                            <td width="10%" ng-if="reservationsCtrl.isFieldSelect('CCTV Message');">
-                                <span class="text-{{doc.message.level}}">{{doc.message.text}}</span>
-                            </td>
                             <td width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
-                                {{doc.meta.modifiedOn}}
+                                {{doc.meta.modifiedOn|moment:'format':'YYYY-mm-dd HH:mm'}}
                             </td>
                         </tr>
                         <tr ng-repeat-end  class="warning" ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">

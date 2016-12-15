@@ -8,7 +8,10 @@
       color: #fff;
     }
     .unconfirmed{
+
+
       border: solid red 3px;
+
     }
     .conference-schedule .control-header .form-group select {
       color: #fff;
@@ -69,10 +72,78 @@
     .row-stripped {
       background-color: #f9f9f9;
     }
+    .pointer{cursor:pointer;}
   </style>
   <div  class="conference-schedule" style="height:94%;">
+
+
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
     <div  class="control-header">
+      <div class="app-loading" ng-show="isLoading()" ng-animate-children>
+             <!--
+                 HACKY CODE WARNING: I'm putting Style block inside directive so that it
+                 will be removed from the DOM when we remove the directive container.
+             -->
+             <style type="text/css">
+                 /*div.app-loading {
+                     position: fixed ;
+                 }*/
+                 div.app-loading div.animated-container {
+                     background-color: #FFFFFF ;
+                     bottom: 0px ;
+                     left: 0px ;
+                     opacity: 1.0 ;
+                     position: absolute;
+                     right: 0px ;
+                     top: 115px ;
+                     z-index: 99999999999999 ;
+                 }
+                 /* Used to initialize the ng-leave animation state. */
+                 div.app-loading div.animated-container.ng-leave {
+                     opacity: 1.0 ;
+                     transition: all linear 200ms ;
+                         -webkit-transition: all linear 200ms ;
+                 }
+                 /* Used to set the end properties of the ng-leave animation state. */
+                 div.app-loading div.animated-container.ng-leave-active {
+                     opacity: 0 ;
+                 }
+                 div.app-loading div.messaging {
+                     color: #1FA65D ;
+                     font-family: monospace ;
+                     left: 0px ;
+                     margin-top: -37px ;
+                     position: absolute ;
+                     right: 0px ;
+                     text-align: center ;
+                     top: 30% ;
+                 }
+                 div.app-loading h1 {
+                     font-size: 26px ;
+                     line-height: 35px ;
+                     margin: 0px 0px 20px 0px ;
+                 }
+                 div.app-loading p {
+                     font-size: 18px ;
+                     line-height: 14px ;
+                     margin: 0px 0px 0px 0px ;
+                 }
+             </style>
+
+
+             <!-- BEGIN: Actual animated container. -->
+             <div class="animated-container">
+                 <div class="messaging">
+                     <h1>
+                      <br>
+                        <span class="color-black">Loading Eunomia   </span>
+                        <br> <br>
+                         <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+                     </h1>
+                 </div>
+             </div>
+        </div>
+             <!-- END: Actual animated container. -->
       <div class="row" style="background-color:#a7a7a7;">
         <div class="col-xs-1">
           <div class="view-title text-nowrap" style="line-height:40px;"> <span style="margin-left:20px;">Room Reservations</span>
@@ -118,15 +189,26 @@
             </button>
           </div>
         </div>
-
+        <div class="col-xs-3">
+          <div class="form-group" style="margin-top:0px;">
+            <div class="input-group">
+              <input type="text" id="searchSe" class="form-control" ng-model="search" placeholder="Search Reservations" ng-change="searchReservations()">
+              <span class="input-group-btn small">
+                <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';searchReservations();">
+                  <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div >
       <div id="room-col" class="room-col-base">
         <div hl-sticky="">
-        <div   class="room-column-header text-center" style="height:40px;">Rooms</div></div>
+        <div   class="room-column-header text-center" style="height:40px;">Rooms<br><i ng-click="toggleEmptyRooms();" ng-show="hideEmptyRooms"  class="fa fa-eye pointer" aria-hidden="true"></i><i ng-click="toggleEmptyRooms();" ng-show="!hideEmptyRooms" class="fa fa-eye-slash pointer" aria-hidden="true"></i></div></div>
         <section dragula='"all-rooms-bag"' dragula-model="rooms">
-            <room-row ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
+            <room-row ng-show="room.hideRoomSearch==='-1' || room.hideRoomSearch==1" ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room" ng-class="{'row-stripped':($index%2)}"></room-row>
         </section>
       </div>
         <div id="scroll-grid" class="outer">
@@ -138,7 +220,7 @@
 </div>
 <!-- room rows start -->
 
-        <time-unit-row options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+        <time-unit-row ng-show="room.hideRoomSearch==='-1' || room.hideRoomSearch==1" options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
 
 <!-- room rows end -->
       </div>

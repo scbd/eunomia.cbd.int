@@ -46,7 +46,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function getReservations(start, end, location, type) {
+        function getReservations(start, end, location, type,fields) {
 
             var params = {};
 
@@ -69,10 +69,12 @@ define(['app', 'lodash'], function(app, _) {
                     'meta.status': {
                         $nin: ['archived', 'deleted']
                     },
-                    'type':type
-                }
-            };
 
+
+                },
+                'f':fields
+            };
+            if(type)params.q.type=type;
             //TODO search if parent and if yes search for parent or children
             if (type && _.isString(type)) {
                 return getChildrenTypes(type).then(function(typeArr) {
@@ -256,6 +258,7 @@ define(['app', 'lodash'], function(app, _) {
 
                         return $q.all([countries(),$http.get('/api/v2016/inde-orgs', {'params': params})]).then(function(data) {
                             var orgsAndParties = _.union(data[0], data[1].data);
+  
                             allOrgs = orgsAndParties;
                             localStorage.setItem('allOrgs', JSON.stringify(orgsAndParties));
                             return allOrgs;
@@ -343,24 +346,7 @@ define(['app', 'lodash'], function(app, _) {
             });
         }
 
-        //============================================================
-        //
-        //============================================================
-        function getUnscheduledSideEvents(meeting) {
-            var params = {};
-            params = {
-                q: {
-                    'link.conference': meeting,
-                    'start':null,
-                    'meta.status': {
-                        $nin: ['archived', 'deleted']
-                    }
-                }
-            };
-            return $http.get('/api/v2016/reservations', {
-                'params': params
-            });
-        }
+
 
         //============================================================
         //
@@ -412,7 +398,8 @@ define(['app', 'lodash'], function(app, _) {
                                   timezone: { $exists: true },
                                   venueId:  { $exists: true } // TMP for compatibility with coference collection;
                             },
-                             s : { StartDate : -1 }
+                             s : { StartDate : -1 },
+                             f : {Title:1,MajorEventIDs:1,StartDate:1,EndDate:1,timezone:1,schedule:1,venueId:1,seTiers:1}
                           };
                         numPromises++;
                         allPromises[1]= $http.get('/api/v2016/conferences', {
@@ -435,7 +422,8 @@ define(['app', 'lodash'], function(app, _) {
                                                   _id: {
                                                       $in: oidArray
                                                   }
-                                              }
+                                              },
+                                               f : {EVT_REG_MTG_CD:1}
                                           }
                                       }).then(function(m) {
 
@@ -477,11 +465,9 @@ define(['app', 'lodash'], function(app, _) {
         //
         //============================================================
         function loadTypes(schema) {
-
-
-
                         var params = {
-                            q: {'schema':schema,'meta.status':{'$nin':['deleted','archived']}}
+                            q: {'schema':schema,'meta.status':{'$nin':['deleted','archived']}},
+                            f:{parent:1,title:1,color:1}
                           };
 
                         return $http.get('/api/v2016/types', {
@@ -502,10 +488,7 @@ define(['app', 'lodash'], function(app, _) {
                                   }
                               });
                               return types[schema];
-
                         });
-
-
         } // loadTypes
 
         var isModifiedInProgress = {};
@@ -565,7 +548,7 @@ define(['app', 'lodash'], function(app, _) {
             deleteDoc: deleteDoc,
             save: save,
             getConferenceRooms: getConferenceRooms,
-            getUnscheduledSideEvents: getUnscheduledSideEvents,
+
             getReservations: getReservations,
             getDocs: getDocs,
             loadDocs:loadDocs,

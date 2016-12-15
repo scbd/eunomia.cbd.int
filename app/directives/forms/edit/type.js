@@ -3,8 +3,8 @@ define(['app', 'lodash',
   '../../color-picker'
 ], function(app, _, template) {
 
-  app.directive("type", ['$timeout','mongoStorage',
-    function($timeout,mongoStorage) {
+  app.directive("type", ['$timeout','mongoStorage','$http',
+    function($timeout,mongoStorage,$http) {
       return {
         restrict: 'E',
         template: template,
@@ -12,6 +12,8 @@ define(['app', 'lodash',
         transclude: false,
         scope: {'doc':'=?',
         'schema':'=?',
+        'orgs':'=?',
+        'conference':'=?',
         'closeThisDialog':'&'},
         link: function($scope, $element) {
 
@@ -51,6 +53,10 @@ define(['app', 'lodash',
           //
           //============================================================
           function initTypes() {
+            $scope.tabs={};
+            $scope.tabs.details={};
+            $scope.tabs.details.active =true;
+            $scope.tabs.assignment={};
             var q={
               parent:{$exists:false},
               schema:$scope.doc.schema || $scope.schema,
@@ -66,11 +72,27 @@ define(['app', 'lodash',
                             });
               });
             });
-            // .catch(function onerror(response) {
-            //   $scope.onError(response);
-            // });
-          }
 
+          }
+          //============================================================
+          //
+          //============================================================
+          $scope.autoTypes = function(typeId,orgs) {
+              $http.get('/api/v2016/reservations/auto-types/'+$scope.conference._id,{params:{typeId:typeId,orgs:orgs}}).then(function(r){
+                $scope.message=r.data.message;
+              });
+
+          }; //initVunues
+          //============================================================
+          //
+          //============================================================
+          $scope.changeTab = function(tabName) {
+              _.each($scope.tabs, function(tab) {
+                  tab.active = false;
+              });
+              $scope.tabs[tabName].active = true;
+
+          }; //initVunues
           //============================================================
           //
           //============================================================

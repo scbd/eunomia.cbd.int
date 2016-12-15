@@ -1,0 +1,94 @@
+<div class="row">
+  <style>
+    .pointer {
+      cursor: pointer;
+    }
+  </style>
+  <div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-xl-4 col-xl-offset-4">
+
+        <h1>Side-event Types</h1>
+    <div class="table-responsive" >
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th width="5%"></th>
+          <th width="40%">Title</th>
+          <th width="10%" ng-if="schema==='reservations'">Priority</th>
+          <th width="10%" ng-if="schema==='reservations'">Open</th>
+          <th width="15%">Color</th>
+          <th width="20%">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat-start="type in types | filter:searchType |orderBy:'title' track by $index">
+          <td ng-class="{'pointer':type.children}" style="vertical-align:middle;" ng-click="type.showChildren=!type.showChildren;"><a ng-if="type.children"><i ng-show="type.showChildren" class="fa fa-minus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Hide Children"></i><i ng-show="!type.showChildren" class="fa fa-plus-circle" aria-hidden="true" tool-tip data-placement="top" title="" data-original-title="Show Children"></i></a>
+          </td>
+          <td>
+            <div class="form-group label-floating" style="margin-top:10px;">
+              <label class="control-label hidden-md hidden-lg hidden-xl" for="roomNameD">Title</label>
+              <input class="form-control" id="title" type="text" ng-model="type.title" ng-disabled="type.system" ng-change="type.changed=true">
+              <p class="help-block" ng-show="valid">error</p>
+            </div>
+          </td>
+          <td ng-if="schema==='reservations'">
+            <div class="form-group label-floating" style="margin-top:10px;">
+              <label class="control-label hidden-md hidden-lg hidden-xl" for="roomNameD">Priority</label>
+              <input class="form-control" id="title" type="number" ng-model="type.priority" ng-disabled="type.system" ng-change="type.changed=true">
+              <p class="help-block" ng-show="valid">error</p>
+            </div>
+          </td>
+          <td ng-if="schema==='reservations'">
+              <div>
+                <select ng-model="type.open" style="margin-top:20px;" ng-if="!type.system" ng-change="type.changed=true">
+                  <option value="true">Open</option>
+                  <option value="false">Closed</option>
+                </select>
+              </div>
+              <div  ng-if="type.system">
+                <span ng-if="type.open==true">Open</span>
+                <span ng-if="type.open==false">Closed</span>
+              </div>
+          </td>
+          <td>
+            <color-picker class="hidden-md hidden-lg hidden-xl" binding="type.color" float-label></color-picker>
+            <color-picker class="hidden-xs hidden-sm" binding="type.color"></color-picker>
+          </td>
+          <td class="text-nowrap">
+            <section ng-if="!type.system">
+            <span class="hidden-xs hidden-sm btn-group-vertical" ng-if="type.changed">
+              <a  ng-click="save(type);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="top" title="" data-original-title="Save"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+            </span>
+            <span class="hidden-xs hidden-sm btn-group-vertical">
+              <a ng-click="typeDialog(type)" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="edit"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
+              <a  ng-click="deleteDial(type);" style="width:60px;" tool-tip href="javascript:void(0)" class="btn btn-raised btn-xs" data-placement="bottom" title="" data-original-title="Delete"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+            </span>
+            <div class="btn-group-xs btn-group-vertical btn-group-raised hidden-md hidden-lg hidden-xl " style="vertical-align:middle;text-align:center;">
+              <a  ng-if="type.changed" ng-click="save(type);" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-save  fa-2x" aria-hidden="true"></i></a>
+              <a  ng-click="typeDialog(type)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-edit  fa-2x" aria-hidden="true"></i></a>
+
+              <a ng-if="!type.system" ng-click="typeDialog(type._id)" href="javascript:void(0)" class="btn btn-raised btn-xs"><i class="fa fa-trash  fa-2x" aria-hidden="true"></i></a>
+            </div>
+          </section>
+          </td>
+        </tr>
+        <tr></tr>
+        <tr ng-show="type.children && type.showChildren" ng-repeat-end>
+          <td colspan="6">
+            <strong>Children of {{type.title}}:</strong>
+            <div ng-include="'/app/views/admin/types-children-table.html'"></div>
+          </td>
+        </tr>
+        <tr >
+          <td colspan="6">
+              &nbsp;
+          </td>
+        </tr>
+    </table>
+  </div>
+  </div>
+  <div class="col-xs-1 col-sm-1  col-md-1  col-lg-1  col-xl-1" style="margin: 0 10px 0 0;">
+    <button ng-click="typeDialog()" tool-tip type="button" class="btn btn-fab btn-fab hidden-xs hidden-sm" style="margin-top:50px;" data-placement="top" title="" data-original-title="New Type">
+      <i class="fa fa-plus"></i>
+    </button>
+  </div>
+</div>

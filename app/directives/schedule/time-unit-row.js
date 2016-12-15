@@ -37,10 +37,6 @@ define(['app',
                         intervalDuration = 3600 / timeUnit;
                         $scope.intervalDuration = intervalDuration;
 
-                        mongoStorage.loadOrgs().then(function(orgs) {
-                            allOrgs = orgs;
-                        });
-
 
                         //============================================================
                         //
@@ -196,7 +192,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.getReservations = function (resId) {
-                          //console.log(resId);
+
                             if (resId) return reloadRow(resId);
                             return $q.when($scope.reservations).then(function(responce){
                               calcAllResWidths(responce[$scope.room._id]);
@@ -219,12 +215,30 @@ define(['app',
                             if (!_.isEmpty($scope.conferenceDays) && !inProgress) {
 
                                 inProgress = true;
-                                var start = moment($scope.conferenceDays[0]).startOf('day');
-                                var end = moment($scope.conferenceDays[$scope.conferenceDays.length - 1]).endOf('day');
 
-                                return mongoStorage.getReservations(start, end, {
-                                    room: $scope.room._id
-                                }).then(
+                                var q={
+                                  'location.room': $scope.room._id,
+                                  '$and': [{
+                                      'start': {
+                                          '$gte': {
+                                              '$date': moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day').format()
+                                          }
+                                      }
+                                  }, {
+                                      'end': {
+                                          '$lt': {
+                                              '$date': moment.tz($scope.conferenceDays[$scope.conferenceDays.length - 1],$scope.conference.timezone).endOf('day').format()
+                                          }
+                                      }
+                                  }],
+                                  'meta.status': {
+                                      $nin: ['archived', 'deleted']
+                                  }
+                                };
+
+                                var f = {open:1,confirmed:1,title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.hostOrgs':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1};
+
+                              return mongoStorage.loadDocs('reservations',q, 0,1000000,false,{},f).then(
                                     function(responce) {
 
                                         $scope.reservations = responce.data;

@@ -1,0 +1,14 @@
+<div id="all-types" class="container-fluid" style="height:100%;width:100%">
+
+  <div class="alert alert-danger" ng-show="hasError()">
+    <strong>Error as occured...</strong>
+    <div>{{error}}</div>
+  </div>
+
+
+  <div ng-include="'/app/views/admin/side-event-table.html'"></div>
+
+  <button ng-click="typeDialog()" tool-tip type="button" class="btn btn-fab btn-fab hidden-md hidden-lg hidden-xl" style="position:fixed;bottom:10px; right:10px" data-placement="top" title="" data-original-title="New Reservation Type">
+    <i class="fa fa-plus"></i>
+  </button>
+</div>

@@ -8,6 +8,7 @@ define(['app', 'lodash', 'moment',
   'directives/side-events/unscheduled',
   'directives/side-events/se-schedule-header',
   'directives/side-events/side-events',
+  'directives/side-events/totals',
   'ngDialog',
   'directives/side-events/side-event'
 ], function(app, _, moment, roomDialog, resDialog) {
@@ -18,6 +19,11 @@ define(['app', 'lodash', 'moment',
         $scope.isOpen=true;
         $scope.bagScopes={};
         $scope.slotElements=[];
+        $scope.options={};
+        $scope.options.typesProm={};
+        $scope.reservations=[];
+        $scope.rooms=[];
+        $scope.prefs={};
 
     }];
 
