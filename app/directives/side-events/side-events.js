@@ -279,7 +279,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
                                   });
                                   $scope.reservations=reservations;
-              console.log($scope.reservations);
+
                               $timeout(function(){$scope.loading.reservations=false;});
 
                               return reservations;

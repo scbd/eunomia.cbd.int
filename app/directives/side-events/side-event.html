@@ -1,11 +1,11 @@
-<div class="se-dragable-wrapper grabbible" res-id="{{res._id}}" style="z-index:9999999;">
+<div class="se-dragable-wrapper grabbible class" res-id="{{res._id}}" style="z-index:9999999;">
   <style>.se {
     background-color:#dddddd;
     margin: 1px 0 1px 0;
     }</style>
-  <div id="res-el" class="text-center"  ><b>#{{res.sideEvent.id}}</b></div>
+  <div  id="res-el" class="text-center"  ><b>#{{res.sideEvent.id}}</b></div>
 
-  <div id="res-panel" class="text-center se" ng-style="{'background-color':res.subTypeObj.color}" style="line-hieght:20px;">
+  <div  ng-show="!loadingRes" id="res-panel" class="text-center se" ng-style="{'background-color':res.subTypeObj.color}" style="line-hieght:20px;">
       <span ng-if="res.sideEvent" class="pull-left" style="font-size:10px;"><i class="fa fa-users"></i> {{res.sideEvent.expNumPart}}</span>
       <span ng-if="res.sideEvent"><b>#{{res.sideEvent.id}}</b></span>
       <span ng-if="!res.sideEvent" class="pull-left" style="font-size:10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -14,5 +14,5 @@
             <i style="top;5px;" ng-click="deleteRes();$event.stopPropagation();" class="fa fa-trash pull-right"></i>
       </span>
   </div>
-
+<div ng-show="loadingRes"  class="text-center"><i  class="fa fa-spinner fa-pulse  fa-fw"></i></div>
 </div>

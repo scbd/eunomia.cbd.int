@@ -34,10 +34,12 @@
 </div>
     <div class="se-scrollr" style="width:100%;height:83vh;overflow-y:auto;">
       <div class="wrapper" style="min-width:100%;min-height:100%;">
+        <span ng-show="loadingRes || loading.unscheduled">Loading ... <i class="fa fa-spinner fa-pulse fa-fw"></i></span>
 
         <div ng-show="!loading.unscheduled" class='se-cont' id="unscheduled-side-events" dragula='"se-bag"' dragula-model='sideEvents' style="min-width:100%;min-height:83vh;">
-          <span ng-show="loadingRes || loading.unscheduled">Loading ... <i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-          <side-event  res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index"  load="load()" ng-click="resDialog(se)"></side-event>
+          <side-event  res-id="{{se._id}}" res="se" ng-repeat="se in sideEvents  track by $index" loading-res="se.loadingRes" load="load()" ng-click="resDialog(se)"></side-event>
+          <!-- <se-grid-reservation ng-show="!res.hide" ng-repeat="res in sideEvents  track by $index"  row-min-height="cellHeight" rooms="rooms" res-id="{{res._id}}" doc="res"></se-grid-reservation> -->
+
           <div ng-if="!sideEvents.length">&nbsp;</div>
         </div>
       </div>

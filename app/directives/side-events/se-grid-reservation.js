@@ -20,6 +20,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
           $scope.tabs.other={};
           $scope.tabs.contact={};
           $scope.tabs.details.active =true;
+
           var subEl=$element.find('#res-el');
           if($scope.doc.subTypeObj && $scope.doc.subTypeObj.color){
             subEl.css("background-color",$scope.doc.subTypeObj.color);

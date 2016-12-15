@@ -13,7 +13,8 @@ define(['app',
                 transclude: true,
                 scope: {
                     res: '=',
-                    load: '&'
+                    load: '&',
+                    loadingRes:'='
                 },
                 template: template,
 

@@ -51,13 +51,13 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                         //
                         //============================================================
                         $scope.resDialog = function(res) {
-                          $scope.loadingRes=true;
+                          res.loadingRes=true;
                           if(res.sideEvent)
-                            getRes(res.sideEvent.id).then(function(res){
-                              $scope.se=res;
+                            getRes(res.sideEvent.id).then(function(r){
+                              $scope.se=r;
                               loadOrgs($scope.se.hostOrgs).then(function(orgObjs){
                                   $scope.se.hostOrgObjs=orgObjs;
-                                  loadCountry(res.contact.country.identifier).then(function(cObj){
+                                  loadCountry(r.contact.country.identifier).then(function(cObj){
                                       $scope.se.countryObj = cObj;
                                       ngDialog.open({
                                           template: resDialog,
@@ -66,7 +66,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                           plain: true,
                                           scope: $scope
                                       });
-                                        $scope.loadingRes=false;
+                                        res.loadingRes=false;
 
                                   });
                                 });
@@ -98,11 +98,10 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                       //
                       //============================================================
                       function savePrefs() {
-                          // localStorage.getItem('allOrgs')
-                          // JSON.parse(localStorage.getItem('allOrgs'));
                           localStorage.setItem('prefs', JSON.stringify($scope.prefs));
                       }
                       $scope.savePrefs=savePrefs;
+
                         //============================================================
                         //
                         //============================================================
@@ -236,6 +235,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           mongoStorage.save('reservations',res).then(function(){
 
                               $rootScope.$broadcast("showInfo", "Reservation 'Blocked' Successfully Created");
+
                             }).catch(function(error) {
                                 console.log(error);
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
@@ -356,15 +356,20 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                               var type  = _.find($scope.options.types,{'_id':res.type});
 
                                               var subType = _.find(type.children,{'_id':res.subType});
-                                              $scope.seTypes = type.children;
+
                                               if(type)
                                                 res.subTypeObj=subType;
+
+                                              res.loadingRes=false;
                                         });
 
                                         var blocked =_.find($scope.options.types,{'title':'Blocked'});
-                                        if(!blocked) throw "Blocked reservation not found";
+                                        var se =_.find($scope.options.types,{'_id':'570fd0a52e3fa5cfa61d90ee'});
+                                        if(!blocked) throw "Blocked type not found";
                                         $scope.options.blockedTypes=blocked.children;
 
+                                        if(!blocked) throw "Side-event type not found";
+                                        $scope.seTypes = se.children;
                                       }
                                         $scope.loading.unscheduled=false;
                                     },100);
