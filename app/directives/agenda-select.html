@@ -67,11 +67,10 @@
   </div>
   <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
     <div class="form-group " style="margin-top:10px;" >
-      <!-- <label class="control-label" for="meeting{{meeting._id}}">{{meeting.EVT_CD}}</label> -->
 
       <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items" ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
-        <!-- <option ng-repeat="item in meeting.agenda.items track by $index" value="{{item.item}}" ng-selected="item.item===selectedItem">{{item.display}}</option> -->
-<option value=''>{{meeting.EVT_CD}}</option>
+
+        <option value=''>{{meeting.EVT_CD}}</option>
        </select>
       <span class="material-input"></span>
       <p class="help-block" ng-show="valid">error</p>

@@ -12,24 +12,24 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
         link: function($scope, $element,$attr,$ctrl) {
 
 
-var watchKill = $scope.$watch('conference',function(){
-  if($scope.conference && !_.isEmpty($scope.conference)&& !_.isEmpty($scope.conference.meetings)){
+            var watchKill = $scope.$watch('conference',function(){
+              if($scope.conference && !_.isEmpty($scope.conference)&& !_.isEmpty($scope.conference.meetings)){
 
-      _.each($scope.conference.meetings,function(m){
-            if(!m.agenda)
-              m.agenda={};
+                  _.each($scope.conference.meetings,function(m){
+                        if(!m.agenda)
+                          m.agenda={};
 
-            _.each(m.agenda.items,function(i){
-                  if(i.item>-1)
-                    i.display=i.item+' '+(i.shortTitle || i.title);
+                        _.each(m.agenda.items,function(i){
+                              if(i.item>-1)
+                                i.display=i.item+' '+(i.shortTitle || i.title);
+                        });
+
+                  });
+                  $ctrl.init();
+                  watchKill();
+
+              }
             });
-
-      });
-      $ctrl.init();
-      watchKill();
-
-  }
-});
 
         }, //link
         controller: ['$scope',function($scope) {
@@ -67,7 +67,7 @@ var watchKill = $scope.$watch('conference',function(){
           function clearStatus (item){
 
               delete(item.status);
-          }//itemSelected
+          }//clearStatus
           $scope.clearStatus=clearStatus;
           //============================================================
           //
@@ -75,7 +75,7 @@ var watchKill = $scope.$watch('conference',function(){
           function setStatus (item,status){
 
               item.status=status;
-          }//itemSelected
+          }//setStatus
           $scope.setStatus=setStatus;
 
           //============================================================
@@ -87,7 +87,7 @@ var watchKill = $scope.$watch('conference',function(){
                   if(i && i.item===item.item && item.law===i.law)
                     $scope.binding.items.splice(index,1);
               });
-          }//itemSelected
+          }//deleteItem
           $scope.delete=deleteItem;
 
           //============================================================
@@ -97,7 +97,7 @@ var watchKill = $scope.$watch('conference',function(){
 
             var meeting = _.find($scope.conference.meetings,{EVT_CD:item.meeting});
             return meeting.agenda.prefix;
-          }//itemSelected
+          }//getPrefix
           $scope.getPrefix=getPrefix;
 
           //============================================================
@@ -111,20 +111,17 @@ var watchKill = $scope.$watch('conference',function(){
               var title = (i.shortTitle || i.title).substring(0,25);
 
               return title;
-          }//itemSelected
+          }//getTitle
           $scope.getTitle=getTitle;
           //============================================================
           //
           //============================================================
           function createAgendaItem(meeting, item){
 
-              var itemObj = item;
-              if(!itemObj) throw "error no item found in meetings agenda";
-              var i =_.find($scope.binding.items,{meeting:meeting.EVT_CD,item:item.item});
-              if(!i)
-                $scope.binding.items.push({meeting:meeting.EVT_CD,item:item.item});
+              if(!item) throw "error no item found in meetings agenda";
+              $scope.binding.items.push({meeting:meeting.EVT_CD,item:item.item});
 
-          }//itemSelected
+          }//createAgendaItem
           $scope.itemSelected=itemSelected;
 
         } ]//controller
