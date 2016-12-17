@@ -374,15 +374,14 @@ define(['app',
                         //
                         //============================================================
                         $scope.resDialog = function(doc, start, tab) {
-                            if(!doc._id)
-                              $scope.editRes = {};
+
+                              if(!doc || !doc._id)
+                                $scope.editRes = {};
                               else
-                              $scope.editRes=doc;
-
-                              if(tab){
-
+                                $scope.editRes=doc;
+                              if(tab)
                                 $scope.tab=tab;
-                              }
+
 
                             $scope.editStart = start;
                             ngDialog.open({
@@ -430,7 +429,7 @@ define(['app',
                                   for (var j = 0; j < $scope.intervalDuration; j++) {
                                       var interval = $scope.timeIntervals[i].subIntervals[j];
 
-                                      if (res._id === interval.res._id)
+                                      if (res && interval.res && (res._id === interval.res._id))
                                           delete(interval.res);
                                   }
                               }
