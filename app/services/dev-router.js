@@ -9,6 +9,7 @@ define(['app'], function(app) {
 
         var domain = document.location.hostname.replace(/[^\.]+\./, '');
 
+        if ((domain === 'localhost')) domain='cbddev.xyz';
         var ACCOUNTS_URI = 'https://accounts.' + domain;
 
 
