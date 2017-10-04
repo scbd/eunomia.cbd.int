@@ -62,6 +62,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                               $scope.loading.rooms=false;
                               $scope.loading.types=false;
                               $scope.loading.reservations=true;
+                              $scope.outerGridWidth=0;
                               initTypes();
                         } //init
                         //============================================================
@@ -269,6 +270,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                           };
                           return mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
                               function(responce) {
+
                                     var reservations={};
                                     _.each($scope.rooms,function(r){
 
@@ -279,6 +281,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                       });
 
                                   });
+
                                   $scope.reservations=reservations;
 
                               $timeout(function(){$scope.loading.reservations=false;});

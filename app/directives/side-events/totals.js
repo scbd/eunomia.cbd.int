@@ -11,13 +11,8 @@ define(['app',
                 template: template,
                 replace: true,
                 transclude: false,
-                scope:{
-                  conferenceDays:'=',
-                conference:'=',
-                rooms:'=',
-                reservations:'=',
-              },
-                link: function($scope, $element, $attr) {
+
+                link: function($scope, $element) {
 
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration; // number on sub time intervals in a col, now a colomm is houw
@@ -27,10 +22,11 @@ define(['app',
                         // ============================================================
                         //
                         // ============================================================
-                        $scope.$watch('reservations', function() {
-
-                          if(!_.isEmpty($scope.reservations) )
-                            initTimeIntervals();
+                        var killW = $scope.$watch('reservations', function() {
+                              if(!_.isEmpty($scope.reservations) ){
+                                  initTimeIntervals();
+                                  killW();
+                              }
                         });
 
                         //============================================================
@@ -69,73 +65,59 @@ define(['app',
 
                                   });
 
+                                  $scope.getTotals();
 
-                                initOuterGridWidth().then(function() {
-                                    calcColWidths();
-                                    if(!$scope.slotElements)$scope.slotElements={};
-                                    if(!$scope.slotElements.totals)$scope.slotElements.totals=[];
-                                    // _.each($scope.bagScopes,function(v,k){
-                                    //
-                                    //   var elId ='#'+k;
-                                    //   var el =  $element.find(elId);
-                                    //   $scope.slotElements.totals.push(el);
-                                    //
-                                    // });
-
-                                    $scope.getTotals();
-
-                                });
                             }
                         } //initTimeIntervals
 
 
-                        //============================================================
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function initOuterGridWidth() {
+                        //     var scrollGridEl;
+                        //     var deferred = $q.defer();
+                        //     var countInterval = 0;
                         //
-                        //============================================================
-                        function initOuterGridWidth() {
-                            var scrollGridEl;
-                            var deferred = $q.defer();
-                            var countInterval = 0;
-
-                            var cancInterval = setInterval(function() {
-                                $document.ready(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-
-                                    countInterval++;
-
-                                    if ($scope.outerGridWidth && countInterval < 25) {
-                                        clearInterval(cancInterval);
-                                        deferred.resolve(scrollGridEl);
-                                    } else {
-                                        clearInterval(cancInterval);
-                                        deferred.reject('time out');
-                                    }
-                                    if (countInterval > 24) {
-                                        deferred.reject('time out');
-                                        clearInterval(cancInterval);
-                                    }
-                                });
-                            }, 100);
-
-                            return deferred.promise;
-                        } //initOuterGridWidth
-
-                        //============================================================
+                        //     var cancInterval = setInterval(function() {
+                        //         $document.ready(function() {
+                        //             scrollGridEl = $document.find('#scroll-grid');
+                        //             $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
                         //
-                        //============================================================
-                        function initIntervalWidth() {
-                            $element.css('max-width',$scope.outerGridWidth);
-                        } //initDayWidth
-
-                        //============================================================
+                        //             countInterval++;
                         //
-                        //============================================================
-                        function calcColWidths() {
-                           $scope.colWidth = $scope.$parent.colWidth;
+                        //             if ($scope.outerGridWidth && countInterval < 25) {
+                        //                 clearInterval(cancInterval);
+                        //                 deferred.resolve(scrollGridEl);
+                        //             } else {
+                        //                 clearInterval(cancInterval);
+                        //                 deferred.reject('time out');
+                        //             }
+                        //             if (countInterval > 24) {
+                        //                 deferred.reject('time out');
+                        //                 clearInterval(cancInterval);
+                        //             }
+                        //         });
+                        //     }, 100);
+                        //
+                        //     return deferred.promise;
+                        // } //initOuterGridWidth
 
-                           initIntervalWidth();
-                        } //init
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function initIntervalWidth() {
+                        //     $element.css('max-width',$scope.outerGridWidth);
+                        // } //initDayWidth
+
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function calcColWidths() {
+                        //    $scope.colWidth = $scope.$parent.colWidth;
+                        //
+                        //    initIntervalWidth();
+                        // } //init
 
 
                         //============================================================

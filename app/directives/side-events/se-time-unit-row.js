@@ -29,10 +29,13 @@ define(['app',
                         // ============================================================
                         //
                         // ============================================================
-                        $scope.$watch('conferenceDays', function() {
-                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized)
-                            initTimeIntervals();
+                        var killWw = $scope.$watch('conferenceDays', function() {
+                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized){
+                                initTimeIntervals();
+                                killWw();
+                            }
                         });
+
 
                         //============================================================
                         //
@@ -71,21 +74,32 @@ define(['app',
                                   });
                                 $scope.room.timeIntervals = $scope.timeIntervals;
 
-                                initOuterGridWidth().then(function() {
-                                    calcColWidths();
-                                    if(!$scope.slotElements)$scope.slotElements={};
-                                    if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
-                                    _.each($scope.bagScopes,function(v,k){
+                                // initOuterGridWidth().then(function() {
 
-                                      var elId ='#'+k;
-                                      var el =  $element.find(elId);
-                                      $scope.slotElements[$scope.room._id].push(el);
+                                    // ============================================================
+                                    //
+                                    // ============================================================
+                                    var killW = $scope.$watch('reservations', function() {
+                                      if(!_.isEmpty($scope.reservations)){
 
+                                          //calcColWidths();
+                                          if(!$scope.slotElements)$scope.slotElements={};
+                                          if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
+                                          _.each($scope.bagScopes,function(v,k){
+
+                                            var elId ='#'+k;
+                                            var el =  $element.find(elId);
+                                            $scope.slotElements[$scope.room._id].push(el);
+
+                                          });
+
+                                        $scope.getReservations();
+                                        killW();
+                                      }
                                     });
 
-                                    $scope.getReservations();
 
-                                });
+                                // });
                             }
                         } //initTimeIntervals
 
@@ -120,50 +134,51 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        function initOuterGridWidth() {
-                            var scrollGridEl;
-                            var deferred = $q.defer();
-                            var countInterval = 0;
-
-                            var cancInterval = setInterval(function() {
-                                $document.ready(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-
-                                    countInterval++;
-
-                                    if ($scope.outerGridWidth && countInterval < 25) {
-                                        clearInterval(cancInterval);
-                                        deferred.resolve(scrollGridEl);
-                                    } else {
-                                        clearInterval(cancInterval);
-                                        deferred.reject('time out');
-                                    }
-                                    if (countInterval > 24) {
-                                        deferred.reject('time out');
-                                        clearInterval(cancInterval);
-                                    }
-                                });
-                            }, 100);
-
-                            return deferred.promise;
-                        } //initOuterGridWidth
-
-                        //============================================================
+                        // function initOuterGridWidth() {
+                        //     var scrollGridEl;
+                        //     var deferred = $q.defer();
+                        //     var countInterval = 0;
                         //
-                        //============================================================
-                        function initIntervalWidth() {
-                            $element.css('max-width',$scope.outerGridWidth);
-                        } //initDayWidth
-
-                        //============================================================
+                        //     var cancInterval = setInterval(function() {
+                        //         $document.ready(function() {
+                        //             scrollGridEl = $document.find('#scroll-grid');
+                        //             $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
                         //
-                        //============================================================
-                        function calcColWidths() {
-                           $scope.colWidth = $scope.$parent.colWidth;
+                        //             countInterval++;
+                        //
+                        //             if ($scope.outerGridWidth && countInterval < 25) {
+                        //                 clearInterval(cancInterval);
+                        //                 deferred.resolve(scrollGridEl);
+                        //             } else {
+                        //                 clearInterval(cancInterval);
+                        //                 deferred.reject('time out');
+                        //             }
+                        //             if (countInterval > 24) {
+                        //                 deferred.reject('time out');
+                        //                 clearInterval(cancInterval);
+                        //             }
+                        //         });
+                        //     }, 100);
+                        //
+                        //     return deferred.promise;
+                        // } //initOuterGridWidth
 
-                           initIntervalWidth();
-                        } //init
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function initIntervalWidth() {
+                        //     $element.css('max-width',$scope.outerGridWidth);
+                        // } //initDayWidth
+
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function calcColWidths() {
+                        //     console.log('calcColWidths',$scope.colWidth)
+                        //    $scope.colWidth = $scope.$parent.colWidth;
+                        //
+                        //    //initIntervalWidth();
+                        // } //init
 
 
                         //============================================================
@@ -174,7 +189,7 @@ define(['app',
                               _.each($scope.collisions[$scope.room._id], function(res) {
                                 embedTypeInRes(res);
                                 loadCollisions(res);
-                              });
+                            });
 
                               _.each($scope.reservations[$scope.room._id], function(res) {
                                 embedTypeInRes(res);

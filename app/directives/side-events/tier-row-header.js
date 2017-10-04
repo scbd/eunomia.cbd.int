@@ -11,7 +11,8 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                     'isOpen':'=',
                     'conferenceDays':'=',
                     'conference':'=',
-                    'colWidth':'='
+                    'colWidth':'=',
+                    'outerGridWidth':'='
                 },
                 controller: function($scope, $element, $document) {
 
@@ -64,32 +65,32 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
 
                                     $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
                                     if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
-                                    initDayWidth();
+                                    // initDayWidth();
                                     calcColWidths();
                                 });
                             });
                         } //initOuterGridWidth
 
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // function initDayWidth() {
+                        //
+                        //     $element.find('#day-header-' + 0).css('width', $scope.outerGridWidth);
+                        //     $element.find('#interval-header-' + 0).css('width', $scope.outerGridWidth);
+                        // } //initDayWidth
+
                         //============================================================
                         //
                         //============================================================
-                        function initDayWidth() {
-
-                            $element.find('#day-header-' + 0).css('width', $scope.outerGridWidth);
-                            $element.find('#interval-header-' + 0).css('width', $scope.outerGridWidth);
-                        } //initDayWidth
-
-                        //============================================================
+                        // function initIntervalWidth() {
+                        //     _.each($scope.timeIntervals, function(con, key) {
+                        //         $timeout(function() {
+                        //             $element.find('#sub-interval-header-' + key).css('width', $scope.colWidth);
+                        //         });
                         //
-                        //============================================================
-                        function initIntervalWidth() {
-                            _.each($scope.timeIntervals, function(con, key) {
-                                $timeout(function() {
-                                    $element.find('#sub-interval-header-' + key).css('width', $scope.colWidth);
-                                });
-
-                            });
-                        } //initIntervalWidth
+                        //     });
+                        // } //initIntervalWidth
 
                         //============================================================
                         //
@@ -97,7 +98,7 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                         function calcColWidths() {
                             $scope.colWidth =  Number($scope.outerGridWidth) / Number($scope.timeIntervals.length);
 
-                            initIntervalWidth();
+                        //    initIntervalWidth();
                         } //calcColWidths
 
                     } //

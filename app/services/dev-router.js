@@ -9,7 +9,7 @@ define(['app'], function(app) {
 
         var domain = document.location.hostname.replace(/[^\.]+\./, '');
 
-        var ACCOUNTS_URI = 'https://accounts.' + domain;
+        var ACCOUNTS_URI = 'https://accounts.' + 'cbddev.xyz'//domain;
 
 
         /***************************************************************************************

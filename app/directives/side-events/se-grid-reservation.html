@@ -1,9 +1,6 @@
-<div style="height:19px;" class="text-center pointer" ng-click="resDialog(doc)">
+<div class="se-grid-res text-center pointer" ng-click="resDialog(doc)">
   <div ng-show="!loadingRes" id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir"  >
     <span  style="font-weight:500;  line-height: 17px;" ng-if="doc.sideEvent">#{{::doc.sideEvent.id}}</span>
-    <span  style="font-weight:500;  line-height: 17px;" ng-if="!doc.sideEvent">
-      <i class="fa fa-calendar-times-o" aria-hidden="true"></i></span>
-
   </div>
   <i ng-show="loadingRes" class="fa fa-spinner fa-pulse  fa-fw"></i>
 </div>

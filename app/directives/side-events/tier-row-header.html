@@ -1,4 +1,4 @@
-<div class="header-row-base">
+<div class="header-row-base" ng-style="{'width':outerRowWidth}" style="overflow:hidden;">
   <style>
     .header-row-base {
       min-height: 39px;
@@ -17,14 +17,22 @@
       max-height: 19px;
       display: inline-block;
       overflow: visible;
-    }
 
+    }
+    .interval-col-time {
+      max-height: 19px;
+      display: inline-block;
+      overflow: visible;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-color: #bbb;
+    }
     .col-stripped {
       background-color: #f9f9f9;
     }
 
-    .day-stripped-on {
-      background-color: #d7d7d7;
+    .col-stripped-on {
+      background-color: #eee;
     }
 
     .day-stripped-off {
@@ -33,15 +41,16 @@
   </style>
 
   <div hl-sticky="">
-    <div id="day-header-0"  class="day-header text-center" ng-class="{'day-stripped-on':!($index%2)}" style="display:inline-block;">
-        <div id="interval-header-0" class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
-          <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">{{timeColumn | momentTZ:timezone:'format':'DD MMM'}}</div>
+    <div id="day-header-0"  class="day-header text-center"  style="display:inline-block;" >
+        <div id="interval-header-0" class="times-row" ng-style="{'width':outerRowWidth}" style="display:inline-block;">
+          <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped-on':!($index%2),'col-stripped':($index%2)}" ng-style="{'width':colWidth}" style="margin-right:.6px;">{{timeColumn | momentTZ:timezone:'format':'DD MMM'}}</div>
         </div>
     </div>
   </div>
   <div hl-sticky="">
     <div id="interval-header-0" class="times-row" style="display:inline-block;width:{{outerRowWidth}};">
-      <div id="sub-interval-header-{{$index}}" class="interval-col text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2)}" style="width:{{colWidth}}px;">{{timeColumn | momentTZ:timezone:'format':'HH:mm'}}</div>
+        <!-- ng-style="{'min-width':colWidth,'max-width':colWidth}" -->
+      <div id="sub-interval-header-{{$index}}" class="interval-col-time text-center" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped-on':!($index%2),'col-stripped':($index%2)}" ng-style="{'width':colWidth}" style="margin-right:.6px;">{{timeColumn | momentTZ:timezone:'format':'HH:mm'}}</div>
     </div>
   </div>
 </div>
