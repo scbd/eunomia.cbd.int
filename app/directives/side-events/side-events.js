@@ -183,7 +183,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                         if(moment(start).format('HH')==='13')
                                             end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
                                         else
-                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(75,'minutes');
+                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
 
                                         or.push(
                                           {'$and' :[
