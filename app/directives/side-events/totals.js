@@ -4,30 +4,31 @@ define(['app',
 
 ], function(app, _, template) {
 
-    app.directive("totals", ['$q','$document',
-        function( $q,$document) {
+    app.directive("totals", ['$timeout',
+        function( $timeout) {
             return {
                 restrict: 'E',
                 template: template,
                 replace: true,
                 transclude: false,
 
-                link: function($scope, $element) {
+                link: function($scope) {
 
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration; // number on sub time intervals in a col, now a colomm is houw
                         intervalDuration = 3600 / timeUnit;
                         var initialized = false;
 
-                        // ============================================================
+                        // $timeout(initTimeIntervals,4000);
+                        // //============================================================
+                        // //
+                        // //============================================================
+                        // $scope.$watch('conferenceDays',function(){
+                        //     if(!_.isEmpty($scope.conferenceDays) ){
                         //
-                        // ============================================================
-                        var killW = $scope.$watch('reservations', function() {
-                              if(!_.isEmpty($scope.reservations) ){
-                                  initTimeIntervals();
-                                  killW();
-                              }
-                        });
+                        //
+                        //     }
+                        // });
 
                         //============================================================
                         //
@@ -71,60 +72,12 @@ define(['app',
                         } //initTimeIntervals
 
 
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function initOuterGridWidth() {
-                        //     var scrollGridEl;
-                        //     var deferred = $q.defer();
-                        //     var countInterval = 0;
-                        //
-                        //     var cancInterval = setInterval(function() {
-                        //         $document.ready(function() {
-                        //             scrollGridEl = $document.find('#scroll-grid');
-                        //             $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-                        //
-                        //             countInterval++;
-                        //
-                        //             if ($scope.outerGridWidth && countInterval < 25) {
-                        //                 clearInterval(cancInterval);
-                        //                 deferred.resolve(scrollGridEl);
-                        //             } else {
-                        //                 clearInterval(cancInterval);
-                        //                 deferred.reject('time out');
-                        //             }
-                        //             if (countInterval > 24) {
-                        //                 deferred.reject('time out');
-                        //                 clearInterval(cancInterval);
-                        //             }
-                        //         });
-                        //     }, 100);
-                        //
-                        //     return deferred.promise;
-                        // } //initOuterGridWidth
-
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function initIntervalWidth() {
-                        //     $element.css('max-width',$scope.outerGridWidth);
-                        // } //initDayWidth
-
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function calcColWidths() {
-                        //    $scope.colWidth = $scope.$parent.colWidth;
-                        //
-                        //    initIntervalWidth();
-                        // } //init
-
 
                         //============================================================
                         //
                         //============================================================
                         $scope.getTotals = function () {
-
+                            initTimeIntervals();
                             _.each($scope.rooms, function(room) {
                                     _.each($scope.reservations[room._id], function(res) {
 

@@ -36,8 +36,8 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                         $scope.tabs.details.active =true;
                         $scope.searchT=[];
                         $scope.selectedTime='';
-                        $scope.prefs={};
-    
+                        
+
                         init();
                         //============================================================
                         //

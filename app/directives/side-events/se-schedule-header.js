@@ -28,93 +28,8 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                             $scope.endDate = $scope.conference.endObj = moment.tz($scope.conference.EndDate,$scope.conference.timezone).startOf();
 
                             ctrl.generateDays();
-
-                            //
-                            // $timeout(function(){
-                            //   dateChangeEffect('end-filter');
-                            //   dateChangeEffect('start-filter');
-                            // },550);
                         } //init
 
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function isPrevDay() {
-                        //     if(!moment($scope.startDate).subtract(7,'days').isSameOrAfter($scope.conference.startObj))
-                        //       return true;
-                        //     else
-                        //       return false;
-                        // } //disPrevDay
-                        // $scope.isPrevDay=isPrevDay;
-                        //
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function isNextDay() {
-                        //     if(! moment($scope.startDate).add(8,'days').isSameOrBefore($scope.conference.endObj))
-                        //       return true;
-                        //     else
-                        //       return false;
-                        // } //disPrevDay
-                        // $scope.isNextDay=isNextDay;
-
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function nextDay() {
-                        //   $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).add(7,'days');
-                        //   dateChangeEffect('start-filter');
-                        //   $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).add(8,'days');
-                        //   dateChangeEffect('end-filter');
-                        //   ctrl.generateDays();
-                        // } //disPrevDay
-                        // $scope.nextDay=nextDay;
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function prevDay() {
-                        //   $scope.startDate = moment.tz($scope.startDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(7,'days');
-                        //   dateChangeEffect('start-filter');
-                        //   $scope.endDate = moment.tz($scope.endDateFormat,'dddd Do MMM',$scope.conference.timezone).subtract(5,'days');
-                        //   dateChangeEffect('end-filter');
-                        //   ctrl.generateDays();
-                        // } //disPrevDay
-                        // $scope.prevDay=prevDay;
-                        // //============================================================
-                        // //
-                        // //============================================================
-                        // function dateChangeEffect(id) {
-                        //
-                        //     $element.find('#' + id).parent().addClass('is-focused');
-                        //
-                        //     $timeout(function() {
-                        //       $element.find('#' + id).parent().removeClass('is-focused');
-                        //     }, 2000);
-                        // } //dateChangeEffect
-                        //============================================================
-                        //
-                        //============================================================
-                        // $scope.dateChangeStart = function() {
-                        //
-                        //   // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                        //   // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                        //   $scope.startDate = moment($scope.startDateFormat,'dddd Do MMM').startOf();
-                        //
-                        //   dateChangeEffect('start-filter');
-                        //   ctrl.generateDays();
-                        // }; //dateChangeStart
-
-                        //============================================================
-                        //
-                        //============================================================
-                        // $scope.dateChangeEnd= function() {
-                        //
-                        //   // var startDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                        //   // var endDatTS = moment.tz($scope.conference.StartDate,$scope.conference.timezone);
-                        //   $scope.endDate = moment($scope.endDateFormat,'dddd Do MMM').add(1,'day').startOf();
-                        //   dateChangeEffect('end-filter');
-                        //   ctrl.generateDays();
-                        // }; //dateChangeEnd
 
                         //============================================================
                         //
@@ -171,14 +86,13 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                     //============================================================
                     function generateDays() {
 
-                      var numDays = moment.tz($scope.endDate,$scope.conference.timezone).diff($scope.startDate,'days');
+                      var numDays = moment($scope.endDate).diff($scope.startDate,'days')+2;
 
-                      //if(numDays >7) numDays =7;
 
                       $scope.conferenceDays=[];
                        for (var i = 0; i < numDays; i++) {
                            var date = moment.tz($scope.startDate,$scope.conference.timezone).add(i,'days');
-                           if(date.isoWeekday()<6 && date.isSameOrBefore($scope.conference.endObj))
+                           //if(date.isSameOrBefore($scope.conference.endObj))
                               $scope.conferenceDays.push(date);
                        }
 

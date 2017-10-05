@@ -63,6 +63,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                               $scope.loading.types=false;
                               $scope.loading.reservations=true;
                               $scope.outerGridWidth=0;
+                              $scope.prefs={};
                               initTypes();
                         } //init
                         //============================================================

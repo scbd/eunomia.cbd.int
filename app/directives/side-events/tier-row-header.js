@@ -46,7 +46,7 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                                 $scope.conferenceDays.forEach(function(item){
                                   $scope.conference.seTiers.forEach(function(tier){
                                       var dayTier = moment.tz(item,$scope.conference.timezone).startOf('day').add(tier.seconds,'seconds');
-                                      if(dayTier.isoWeekday()<6)
+                                    //   if(dayTier.isoWeekday()<6)
                                           $scope.timeIntervals.push(dayTier);
                                   });
                                 });
