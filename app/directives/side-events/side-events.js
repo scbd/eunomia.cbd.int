@@ -62,6 +62,8 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                               $scope.loading.rooms=false;
                               $scope.loading.types=false;
                               $scope.loading.reservations=true;
+                              $scope.outerGridWidth=0;
+                              $scope.prefs={};
                               initTypes();
                         } //init
                         //============================================================
@@ -181,7 +183,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                         if(moment(start).format('HH')==='13')
                                             end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
                                         else
-                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(75,'minutes');
+                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
 
                                         or.push(
                                           {'$and' :[
@@ -269,6 +271,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                           };
                           return mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
                               function(responce) {
+
                                     var reservations={};
                                     _.each($scope.rooms,function(r){
 
@@ -279,6 +282,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                       });
 
                                   });
+
                                   $scope.reservations=reservations;
 
                               $timeout(function(){$scope.loading.reservations=false;});

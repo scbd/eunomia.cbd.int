@@ -11,16 +11,26 @@
     </div>
     <div class="panel-body">
       <div class="col-xs-12">
-          <label>Show only rooms labeld side-event rooms or that contain a side-event</label>
+          <label>Show only rooms labeled side-event rooms</label>
           <div class="form-group" style="margin-left:10px;margin-top:15px;">
               <div class="togglebutton">
                   <label>
-                      <input type="checkbox" ng-click="savePrefs()" ng-model="prefs.onlySERooms" ng-false-value="false" ng-false-value="true"><span ng-if="preferences.onlySERooms">Only side-event rooms</span><span ng-if="!preferences.onlySERooms">All rooms</span>
+                      <input type="checkbox" ng-click="savePrefs()" ng-model="prefs.onlySERooms" ng-false-value="false" ng-false-value="true"><span ng-if="preferences.onlySERooms">Only side-event rooms</span><span ng-if="!preferences.onlySERooms">Show Side-event rooms only</span>
                   </label>
               </div>
           </div>
       </div>
-      <div><label>Block or Reserve Tiers</label></div>
+      <!-- <div class="col-xs-12">
+          <label>Show Weekends</label>
+          <div class="form-group" style="margin-left:10px;margin-top:15px;">
+              <div class="togglebutton">
+                  <label>
+                      <input type="checkbox" ng-click="savePrefs()" ng-model="prefs.onlyWeekdaysSE" ng-false-value="false" ng-false-value="true"><span ng-if="preferences.onlyWeekdaysSE">Show week days only<</span><span ng-if="!preferences.onlySERooms">Show week days only</span>
+                  </label>
+              </div>
+          </div>
+      </div> -->
+      <!-- <div><label>Block or Reserve Tiers</label></div>
       <div class="col-xs-4">
       <label>Room</label>
           <select class="form-control" ng-model="selectedRoom"  >
@@ -43,7 +53,7 @@
             <div class="btn-group btn-group-justified btn-group-raised">
                   <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="addBlocked(selectedRoom,selectedTime,selectedType)">Add Block</a>
             </div>
-          </div>
+          </div> -->
     </div>
     <script>
       $.material.init();

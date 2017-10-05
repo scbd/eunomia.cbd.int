@@ -55,8 +55,6 @@ min-height:40px;
 .se-cont {
   /*display: table-cell;*/
   overflow-x: hidden;
-  background-color: #d7d7d7;
-  max-width:250px;
 
 }
 .se-cont .title {

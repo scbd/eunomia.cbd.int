@@ -1,9 +1,10 @@
-<div id="row-{{$index}}" class="row-base">
-  <div  id="interval-{{$index}}" class="wrapper" ng-repeat="cell in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2),'debug-border':cell.collision}" style="overflow:hidden;height:100%;max-width:{{colWidth}}px;">
-    <div ng-show="cell.collision" class="text-center" id="{{cell.id}}" style="padding-bottom:3px;line-height:15px;overflow:hidden;min-width:{{colWidth-6}}px;max-width:{{colWidth}}px;max-height:19px;background-color:red;">
-      <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+<div id="row-{{$index}}" class="row-base" style="overflow:hidden;">
+  <div  id="interval-{{$index}}" class="wrapper" ng-repeat="cell in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:hidden;height:20px;" ng-style="{'min-width':colWidth,'width':colWidth}" >
+    <div ng-show="cell.collision" class="text-center" id="{{cell.id}}" interval-index="{{$index}}" room="{{cell.room._id}}" date="{{cell.dayTier |  momentTZ:conference.timezone:'format'}}"   ng-style="{'min-width':colWidth,'max-width':colWidth}" style="overflow:hidden;min-height:100%;background-color:red;">
+                    <i class="fa fa-calendar-times-o" aria-hidden="true"></i>
+
     </div>
-    <div ng-show="!cell.collision" id="{{cell.id}}" interval-index="{{$index}}" room="{{cell.room._id}}" date="{{cell.dayTier |  momentTZ:conference.timezone:'format'}}"  dragula='"se-bag"' dragula-model='cell.bag' style="overflow:hidden;min-width:{{colWidth}}px;max-width:{{colWidth}}px;min-height:100%;">
+    <div ng-show="!cell.collision" id="{{cell.id}}" interval-index="{{$index}}" room="{{cell.room._id}}" date="{{cell.dayTier |  momentTZ:conference.timezone:'format'}}"  dragula='"se-bag"' dragula-model='cell.bag' ng-style="{'min-width':colWidth,'max-width':colWidth}" style="overflow:hidden;min-height:100%;">
         <se-grid-reservation ng-show="!res.hide" ng-repeat="res in cell.bag  track by $index"  row-min-height="cellHeight" rooms="rooms" res-id="{{res._id}}" doc="res"></se-grid-reservation>
         <div ng-if="!cell.bag.length || cell.drag"  style="margin: 0 auto;width:{{colWidth}}px;max-width:{{colWidth}}px;max-height:1px;min-height:1px;">&nbsp;</div>
     </div>

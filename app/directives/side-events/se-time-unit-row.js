@@ -7,11 +7,10 @@ define(['app',
     '../forms/edit/reservation',
     'css!libs/angular-dragula/dist/dragula.css',
     'filters/moment'
-    // './grid-reservation'
 ], function(app, _, template, resDialog, moment) {
 
-    app.directive("seTimeUnitRow", ['ngDialog', '$timeout', '$document', '$http', 'mongoStorage', '$rootScope', '$q',
-        function(ngDialog, $timeout, $document, $http, mongoStorage, $rootScope, $q) {
+    app.directive("seTimeUnitRow", ['ngDialog', '$timeout', '$document', '$http',
+        function(ngDialog, $timeout, $document, $http) {
             return {
                 restrict: 'E',
                 template: template,
@@ -19,7 +18,7 @@ define(['app',
                 transclude: false,
                 require: ['^side-events'],
 
-                link: function($scope, $element, $attr) {
+                link: function($scope, $element) {
 
                         var timeUnit = 900.025; //15 minutes in seconds
                         var intervalDuration; // number on sub time intervals in a col, now a colomm is houw
@@ -29,10 +28,13 @@ define(['app',
                         // ============================================================
                         //
                         // ============================================================
-                        $scope.$watch('conferenceDays', function() {
-                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized)
-                            initTimeIntervals();
+                        var killWw = $scope.$watch('conferenceDays', function() {
+                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized){
+                                initTimeIntervals();
+                                killWw();
+                            }
                         });
+
 
                         //============================================================
                         //
@@ -61,7 +63,7 @@ define(['app',
                                         cell.drag = false;
                                         cell.bag=[];
 
-                                        if(cell.dayTier.isoWeekday()<6)
+                                        //if(prefs.onlyWeekdaysSE && cell.dayTier.isoWeekday()<6)
                                             $scope.timeIntervals.push(cell);
 
 
@@ -71,21 +73,32 @@ define(['app',
                                   });
                                 $scope.room.timeIntervals = $scope.timeIntervals;
 
-                                initOuterGridWidth().then(function() {
-                                    calcColWidths();
-                                    if(!$scope.slotElements)$scope.slotElements={};
-                                    if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
-                                    _.each($scope.bagScopes,function(v,k){
+                                // initOuterGridWidth().then(function() {
 
-                                      var elId ='#'+k;
-                                      var el =  $element.find(elId);
-                                      $scope.slotElements[$scope.room._id].push(el);
+                                    // ============================================================
+                                    //
+                                    // ============================================================
+                                    var killW = $scope.$watch('reservations', function() {
+                                      if(!_.isEmpty($scope.reservations)){
 
+                                          //calcColWidths();
+                                          if(!$scope.slotElements)$scope.slotElements={};
+                                          if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
+                                          _.each($scope.bagScopes,function(v,k){
+
+                                            var elId ='#'+k;
+                                            var el =  $element.find(elId);
+                                            $scope.slotElements[$scope.room._id].push(el);
+
+                                          });
+
+                                        $scope.getReservations();
+                                        killW();
+                                      }
                                     });
 
-                                    $scope.getReservations();
 
-                                });
+                                // });
                             }
                         } //initTimeIntervals
 
@@ -120,67 +133,18 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        function initOuterGridWidth() {
-                            var scrollGridEl;
-                            var deferred = $q.defer();
-                            var countInterval = 0;
-
-                            var cancInterval = setInterval(function() {
-                                $document.ready(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-
-                                    countInterval++;
-
-                                    if ($scope.outerGridWidth && countInterval < 25) {
-                                        clearInterval(cancInterval);
-                                        deferred.resolve(scrollGridEl);
-                                    } else {
-                                        clearInterval(cancInterval);
-                                        deferred.reject('time out');
-                                    }
-                                    if (countInterval > 24) {
-                                        deferred.reject('time out');
-                                        clearInterval(cancInterval);
-                                    }
-                                });
-                            }, 100);
-
-                            return deferred.promise;
-                        } //initOuterGridWidth
-
-                        //============================================================
-                        //
-                        //============================================================
-                        function initIntervalWidth() {
-                            $element.css('max-width',$scope.outerGridWidth);
-                        } //initDayWidth
-
-                        //============================================================
-                        //
-                        //============================================================
-                        function calcColWidths() {
-                           $scope.colWidth = $scope.$parent.colWidth;
-
-                           initIntervalWidth();
-                        } //init
-
-
-                        //============================================================
-                        //
-                        //============================================================
                         $scope.getReservations = function () {
 
                               _.each($scope.collisions[$scope.room._id], function(res) {
                                 embedTypeInRes(res);
                                 loadCollisions(res);
-                              });
+                            });
 
                               _.each($scope.reservations[$scope.room._id], function(res) {
                                 embedTypeInRes(res);
                                 loadReservationsInRow(res);
                               });
-
+                               
                         }; // getReservations
 
 
@@ -223,16 +187,6 @@ define(['app',
                         //============================================================
                         function isblockedTimeInterval(timeInterval, res) {
 
-                          // console.log('timeInterval',timeInterval.format());
-                          // if((
-                          //         (moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
-                          //                 moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))
-                          //       )){
-                          //           console.log('res.end',res.end);
-                          //           console.log('res.start',res.start);
-                          //           console.log('timeInterval',timeInterval.format());
-                          //           console.log('------------------');
-                          // }
 
 
                             return  ((moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
@@ -256,20 +210,6 @@ define(['app',
 
                         } //isResInInterval
 
-
-                        // //============================================================
-                        // //
-                        // //===========================================================
-                        // function embedOrgsSideEvent(res) {
-                        //     if (res.sideEvent && _.isEmpty(res.sideEvent.orgs)) {
-                        //         res.sideEvent.orgs = [];
-                        //         _.each(res.sideEvent.hostOrgs, function(org) {
-                        //             res.sideEvent.orgs.push(_.find(allOrgs, {
-                        //                 '_id': org
-                        //             }));
-                        //         });
-                        //     }
-                        // } //embedOrgsSideEvent
 
                         var typeFound;
                         //============================================================

@@ -16,21 +16,13 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
         },
         link: function($scope,$element) {
 
-            //============================================================
-            //
-            //============================================================
-            // $scope.$watch('room.rowHeight',function(){
-            //   if($scope.room.rowHeight)
-            //     $element.css('height',$scope.room.rowHeight);
+            // //============================================================
+            // //
+            // //============================================================
+            // $scope.$watch('index',function(){
+            //   if($scope.index)
+            //     $scope.room.sort=$scope.index;
             // });
-
-            //============================================================
-            //
-            //============================================================
-            $scope.$watch('index',function(){
-              if($scope.index)
-                $scope.room.sort=$scope.index;
-            });
 
             //============================================================
             //

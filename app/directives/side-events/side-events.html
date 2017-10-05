@@ -1,6 +1,26 @@
 <div ng-class="{'col-xs-10':isOpen,'col-xs-12':!isOpen}" style="padding-left:0px;padding-right:0px;">
 
   <style>
+  /*.se-res{
+      position:absolute;
+      height:19px;
+      background-color:#a7a7a7;
+      z-index:10;
+      overflow:hidden;
+
+  }*/
+  .se-cont{
+
+      max-width:250px;
+      border: 1px dashed  #a6a6a6;
+  }
+  .se-grid-res{
+      height:19px;
+      /*border-right-style: solid;
+      border-right-width: 1px;
+      border-right-color: #fff;*/
+      width:99%;
+  }
     .conference-schedule .control-header {
       min-height: 45px;
 
@@ -78,6 +98,7 @@
 
     .col-stripped {
         background-color: #f9f9f9;
+        border-bottom:none;
     }
 
     .col-stripped-alt {
@@ -207,7 +228,7 @@
 
       <div id="room-col" class="room-col-base" >
         <div class="room-column-header text-center" style="height:40px;line-height:40px;"><span class="pull-left" ng-show="!isOpen" ng-click="isOpen=!isOpen;"><i class="fa fa-arrow-circle-right" ></i></span> Rooms </div>
-        <section dragula='"all-rooms-bag"' dragula-model="rooms">
+        <section >
             <se-room-row ng-show="room.hideRoomSearch==1 || (room.isSideEvent && prefs.onlySERooms && room.hideRoomSearch==='-1') || (!prefs.onlySERooms && room.hideRoomSearch==='-1')" ng-repeat="room in rooms | orderBy:'sort'" index="$index" room="room"  ng-class="{'row-stripped':($index%2)}"></se-room-row>
         </section>
       </div>
@@ -217,7 +238,7 @@
 <!-- time heard row -->
 
 <!-- <div > -->
-        <tier-row-header conference="conference" is-open="isOpen" col-width="colWidth" conference-days="conferenceDays"></tier-row-header>
+        <tier-row-header conference="conference" is-open="isOpen" outer-grid-width="outerGridWidth" col-width="colWidth" conference-days="conferenceDays"></tier-row-header>
 <!-- </div> -->
 
        <!-- END: Actual animated container. -->
