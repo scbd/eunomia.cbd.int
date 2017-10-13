@@ -1,0 +1,399 @@
+<div id="reservations" class="container-fluid" style="height:100%;width:100%">
+
+    <style>
+        input {
+            border: 0;
+            background-color: #EEEEEE;
+            display: inline;
+            position: absolute;
+            top: -1;
+        }
+
+        @media print {
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: #FFF;
+                font-size: 12pt;
+            }
+            .container,
+            .container div {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .template {
+                overflow: hidden;
+            }
+            img {
+                width: 100%;
+            }
+        }
+    </style>
+    <div class="alert alert-danger" ng-show="hasError()">
+        <strong>Error as occured...</strong>
+        <div>{{error}}</div>
+    </div>
+    <div class="row hidden-print">
+        <div class="col-xs-2  ">
+            <div class="form-group ">
+                <label class="control-label" for="parent">Start Date</label>
+                <input id="start-filter" type="text" class="form-control" ng-model="sideEventsCtrl.startFilter" date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" date-picker-min-date="sideEventsCtrl.conference.startObj"
+                    date-picker-max-date="sideEventsCtrl.conference.endObj" current-date="sideEventsCtrl.startFilterObj" ng-change="sideEventsCtrl.changeDate();">
+            </div>
+        </div>
+        <div class="col-xs-2  ">
+            <div class="form-group ">
+                <label class="control-label" for="parent">End Date</label>
+                <input id="end-filter" type="text" class="form-control" ng-model="sideEventsCtrl.endFilter" date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" date-picker-min-date="sideEventsCtrl.conference.startObj"
+                    date-picker-max-date="sideEventsCtrl.conference.endObj" current-date="sideEventsCtrl.endFilterObj" ng-change="sideEventsCtrl.changeDate();">
+            </div>
+        </div>
+        <div class="col-xs-4  ">
+            &nbsp;
+        </div>
+        <div class="col-xs-4  ">
+            <div class="form-group ">
+                <div class="input-group">
+                    <label class="control-label " for="search-res">Search Reservations</label>
+                    <input type="text" id="search-res" class="form-control" ng-model="sideEventsCtrl.searchText" ng-model-options='{ debounce: 1000 }' placeholder="" ng-change="sideEventsCtrl.changeDate()">
+                    <span class="input-group-btn small">
+        <button type="button" class="btn btn-fab btn-fab-mini" ng-click="sideEventsCtrl.searchText='';sideEventsCtrl.changeDate();">
+          <i class="fa fa-search" ng-if="!sideEventsCtrl.searchText"></i> <i class="fa fa-times" ng-if="sideEventsCtrl.searchText"></i>
+        </button>
+      </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row hidden-print">
+
+        <div class="col-xs-4  ">
+            <ui-select multiple ng-model="sideEventsCtrl.searchType" close-on-select="true" append-to-body="true"  ng-change="sideEventsCtrl.changeDate()">
+                <ui-select-match placeholder="Type Search">
+                    <div style="display:inline;background-color:{{$item.color}}">{{$item.title}}</div>
+                </ui-select-match>
+                <ui-select-choices  style="width:100%;" position="down" repeat="type._id as type in sideEventsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
+                    <div style="background-color:{{type.color}}">
+                        <hr style="margin: 0 0 0 0;">
+                        <small>
+                      <span class="text-nowrap">
+                          <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{type.title}} </span>
+                        </span>
+                  </small>
+                    </div>
+
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-xs-4 text-center">
+          <i class="fa fa-file-pdf-o fa-3x pointer" ng-click="sideEventsCtrl.pdf()"></i>
+        </div>
+        <div class="col-xs-4  ">
+            <ui-select multiple ng-model="sideEventsCtrl.searchRoom" close-on-select="true"  ng-change="sideEventsCtrl.changeDate()">
+                <ui-select-match placeholder="Room Search">
+                    <div style="display:inline;background-color:{{$item.color}}">{{$item.acronym}}</div>
+                </ui-select-match>
+                <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="room._id as room in sideEventsCtrl.conference.rooms | propsFilter: {title: $select.search}">
+                    <div style="background-color:{{room.color}}">
+                        <hr style="margin: 0 0 0 0;">
+                        <small>
+                      <span class="text-nowrap">
+                          <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{room.title}} </span>
+                        </span>
+                  </small>
+                    </div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+    <div class="row ">
+        <style>
+            .pointer {
+                cursor: pointer;
+            }
+        </style>
+
+        <div class="container hidden-print" style="width:100%;">
+            <div class="row" ng-show="sideEventsCtrl.count">
+
+                <div class="col-lg-3 col-md-3 col-xs-12 text-no-wrap" style="color:#333;font-size:14px;padding-left:10px;">
+                    <div class="text-no-wrap" style="margin-top:25px;">
+                        <span>
+                          <span class="badge" >{{((sideEventsCtrl.currentPage*sideEventsCtrl.itemsPerPage)+1)}}</span>
+                        <span ng-if="((sideEventsCtrl.currentPage+1)*(sideEventsCtrl.docs.length))===((sideEventsCtrl.currentPage+1)*(sideEventsCtrl.itemsPerPage)) && (sideEventsCtrl.docs.length===sideEventsCtrl.itemsPerPage)">  -  <span class="badge" >{{(sideEventsCtrl.currentPage+1)*(sideEventsCtrl.docs.length)}} </span></span>
+                        <!-- <span ng-if=" !((sideEventsCtrl.currentPage+1)*(sideEventsCtrl.docs.length))">  -  <span class="badge" ><i class="fa fa-spinner fa-spin"></i></span></span> -->
+                        <span ng-if="((sideEventsCtrl.currentPage+1)*(sideEventsCtrl.docs.length))!==((sideEventsCtrl.currentPage+1)*(sideEventsCtrl.itemsPerPage)) && (sideEventsCtrl.docs.length===sideEventsCtrl.itemsPerPage)">  -  <span class="badge" >{{sideEventsCtrl.docs.length}} </span></span>
+                        <span ng-if="sideEventsCtrl.docs.length!==sideEventsCtrl.itemsPerPage">  -  <span class="badge" >{{sideEventsCtrl.count}} </span></span>
+                        of
+                        <span class="badge">{{sideEventsCtrl.count}} </span> records
+                        <span ng-if="sideEventsCtrl.search"> for <span style="color:#009B48;">"{{sideEventsCtrl.search}}"</span></span>
+                        </span>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-7 col-md-7 col-xs-10">
+                    <nav class="pull-right" ng-show="sideEventsCtrl.pages.length>1">
+                        <ul class="pagination">
+                            <li>
+                                <a ng-click="sideEventsCtrl.onPage(sideEventsCtrl.currentPage-1)" href="#" aria-label="Previous" ng-show="sideEventsCtrl.currentPage!==0">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li ng-repeat="page in sideEventsCtrl.pages track by $index" ng-class="{ active : sideEventsCtrl.currentPage===page.index }">
+                                <a href="#" ng-click="sideEventsCtrl.onPage(page.index)">{{page.text}}</a>
+                            </li>
+                            <li>
+                                <a ng-click="sideEventsCtrl.onPage(sideEventsCtrl.currentPage+1)" href="#" aria-label="Next" ng-disabled="(sideEventsCtrl.currentPage+1<_ctrl.pageCount)">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-xs-3 text-nowrap">
+                    <div class="form-group form-inline" style="color:#333;font-size:14px;margin-top:20px;">
+                        <span style="color:#333;font-size:14px;">Records per page:</span>
+                        <select style="display:inline;" class="form-control" ng-model="sideEventsCtrl.itemsPerPage" ng-change="sideEventsCtrl.changeDate()" convert-to-number>
+                            <option ng-value="5" ng-selected="sideEventsCtrl.itemsPerPage===5">5</option>
+                            <option ng-value="10" ng-selected="sideEventsCtrl.itemsPerPage===10">10</option>
+                            <option ng-value="15" ng-selected="sideEventsCtrl.itemsPerPage===15">15</option>
+                            <option ng-value="20" ng-selected="sideEventsCtrl.itemsPerPage===20">20</option>
+                            <option ng-value="50" ng-selected="sideEventsCtrl.itemsPerPage===50">50</option>
+                            <option ng-value="100" ng-selected="sideEventsCtrl.itemsPerPage===100">100</option>
+                            <option ng-value="500" ng-selected="sideEventsCtrl.itemsPerPage===500">500</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class=" hidden-print">
+            <div class="col-xs-12 " ng-show="sideEventsCtrl.showFields">
+                <div class="form-group " style="margin-top:0;">
+
+                    <label class="control-label " for="search-res">Column Selection</label>
+                    <ui-select multiple ng-model="sideEventsCtrl.selectFields" close-on-select="true" append-to-body="true" title=" " theme="bootstrap" spinner-enabled="true" ng-model-options='{ debounce: 1000 }' ng-change="sideEventsCtrl.updateFields()">
+                        <ui-select-match placeholder="Select Fields">
+                            <span class="label label-primary" style="font-size:1em;">{{$item.title}}</span>
+                        </ui-select-match>
+                        <ui-select-choices minimum-input-length="3" style="width:100%;" position="down" repeat="field.title as field in sideEventsCtrl.fields | propsFilter: {title:$select.search}">
+                            <div>
+                                <hr style="margin: 0 0 0 0;">
+                                <small>
+                        <span class="text-nowrap">
+                            <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{field.title}} </span>
+                          </span>
+                    </small>
+                            </div>
+                        </ui-select-choices>
+                    </ui-select>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 ">
+            <!-- <h1>            <div class="form-group label-floating" >
+                  <select class="form-control" ng-model="sideEventsCtrl.venueId" style="height:70px;line-height:70px;font-size:36px;" ng-change="sideEventsCtrl.load()">
+                    <option   ng-repeat="venue in sideEventsCtrl.options.venues track by $index"  value="{{venue._id}}"  ng-selected="sideEventsCtrl.venueId===venue._id">{{venue.acronym}} Rooms  </option>
+                  </select>
+                </div></h1> -->
+      <div class="table-responsive">
+                <table class="table">
+                    <thead hl-sticky="" style="background-color:#bbbbbb;">
+                        <tr>
+                            <th width="2%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()" ng-if="!sideEventsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()"
+                                    ng-if="sideEventsCtrl.showFields"></i></th>
+                            <th width="7%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
+                                <sorter label-name="Date" ng-model="sideEventsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
+                            </th>
+                            <th width="26%" ng-if="sideEventsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
+                                <!-- <sorter label-name="Room" ng-model="sideEventsCtrl.sort" property="room" load="sideEventsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
+                            </th>
+                            <th width="32%" ng-if="sideEventsCtrl.isFieldSelect('Title');">
+                                <sorter label-name="Title" ng-model="sideEventsCtrl.sort" property="title" style="margin-bottom:0px;"></sorter>
+                            </th>
+                            <th width="20%" ng-if="sideEventsCtrl.isFieldSelect('Description');">Description
+                                <!-- <sorter label-name="Title" ng-model="sideEventsCtrl.sort" property="title" load="sideEventsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
+                            </th>
+
+
+
+                            <th width="5%" ng-if="sideEventsCtrl.isFieldSelect('Type');">Type</th>
+                            <th class="hidden-print" width="7%" ng-if="sideEventsCtrl.isFieldSelect('Options');">Options</th>
+                            <th width="7%" ng-if="sideEventsCtrl.isFieldSelect('Agenda Items');">Agenda </th>
+                            <th width="5%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                                <sorter label-name="Modified" ng-model="sideEventsCtrl.sort" property="meta.modifiedOn" style="margin-bottom:0px;"></sorter>
+                            </th>
+
+                        </tr>
+                    </thead>
+                </table>
+
+                <table class="table table-striped table-hover container" id="table-rows">
+                    <tbody>
+                        <!-- | filter:sideEventsCtrl.searchType |orderBy:'title' -->
+                        <!-- ng-repeat="doc in docs  track by $index" -->
+                        <tr ng-if="sideEventsCtrl.loading">
+                            <td colspan="11" class="text-center">
+                              <div class="app-loading"  ng-animate-children>
+                                     <!--
+                                         HACKY CODE WARNING: I'm putting Style block inside directive so that it
+                                         will be removed from the DOM when we remove the directive container.
+                                     -->
+                                     <style type="text/css">
+                                         /*div.app-loading {
+                                             position: fixed ;
+                                         }*/
+                                         div.app-loading div.animated-container {
+                                             background-color: #FFFFFF ;
+                                             bottom: 0px ;
+                                             left: 0px ;
+                                             opacity: 1.0 ;
+                                             position: absolute;
+                                             right: 0px ;
+                                             top: 115px ;
+                                             z-index: 99999999999999 ;
+                                         }
+                                         /* Used to initialize the ng-leave animation state. */
+                                         div.app-loading div.animated-container.ng-leave {
+                                             opacity: 1.0 ;
+                                             transition: all linear 200ms ;
+                                                 -webkit-transition: all linear 200ms ;
+                                         }
+                                         /* Used to set the end properties of the ng-leave animation state. */
+                                         div.app-loading div.animated-container.ng-leave-active {
+                                             opacity: 0 ;
+                                         }
+                                         div.app-loading div.messaging {
+                                             color: #1FA65D ;
+                                             font-family: monospace ;
+                                             left: 0px ;
+                                             margin-top: -37px ;
+                                             position: absolute ;
+                                             right: 0px ;
+                                             text-align: center ;
+                                             top: 30% ;
+                                         }
+                                         div.app-loading h1 {
+                                             font-size: 26px ;
+                                             line-height: 35px ;
+                                             margin: 0px 0px 20px 0px ;
+                                         }
+                                         div.app-loading p {
+                                             font-size: 18px ;
+                                             line-height: 14px ;
+                                             margin: 0px 0px 0px 0px ;
+                                         }
+                                     </style>
+
+
+                                     <!-- BEGIN: Actual animated container. -->
+                                     <div class="animated-container">
+                                         <div class="messaging">
+                                             <h1>
+                                              <br>
+                                                <span class="color-black">Loading Eunomia   </span>
+                                                <br> <br>
+                                                 <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+                                             </h1>
+                                         </div>
+                                     </div>
+                                </div>
+                                     <!-- END: Actual animated container. -->
+                            </td>
+                        </tr>
+                        <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat-start="doc in sideEventsCtrl.docs  track by $index">
+                            <td width="2%">&nbsp;
+                                <!-- <div class="form-group " style="margin-top:10px;" >
+                                  <input class="form-control" id="selected" type="checkbox" ng-model="doc.selected" >
+                              </div> -->
+                            </td>
+                            <td width="7%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
+
+                                {{doc.start |moment:'format':'YYYY-MM-DD'}}
+                                <hr style="margin: 0 0 0 0;">
+                                <strong>Start:</strong> {{doc.start|moment:'format':'HH:mm'}}
+                                <hr style="margin: 0 0 0 0;">
+                                <strong>End:</strong>&nbsp;&nbsp; {{doc.end|moment:'format':'HH:mm'}}
+
+                            </td>
+                            <td  width="25%" ng-if="sideEventsCtrl.isFieldSelect('Room');">
+
+                                {{sideEventsCtrl.getRoom(doc.location.room,'title')}}
+                                <hr style="margin: 0 0 0 0;"> {{sideEventsCtrl.getRoom(doc.location.room,'location')}}
+                            </td>
+                            <td  width="35%"  ng-if="sideEventsCtrl.isFieldSelect('Title');">
+
+                                <span ng-if="doc.sideEvent.id">#{{doc.sideEvent.id}}</span> {{doc.title}}
+                                <section class="visible-print-block">
+                                    <span class="label label-success small" ng-if="doc.open">Open</span><span class="label label-danger" ng-if="!doc.open">Closed to Public</span>
+                                    <span class="label label-info small" ng-if="doc.confirmed">Confirmed</span><span class="label label-default" ng-if="!doc.confirmed">Unconfirmed</span>
+                                    <span class="label label-danger small" ng-if="doc.security">Security</span>
+                                </section>
+                            </td>
+                            <td width="20%" ng-if="sideEventsCtrl.isFieldSelect('Description');">
+
+                                {{doc.description |htmlToPlaintext}}
+
+                            </td>
+
+
+
+
+
+                            <td width="5%" ng-if="sideEventsCtrl.isFieldSelect('Type');">
+                                <div class="form-group label-floating" style="margin-top:10px;background-color: {{sideEventsCtrl.getType(doc.type,'reservation','color')}};">
+                                    {{sideEventsCtrl.getType(doc.type,'reservation','title')}}
+                                </div>
+                            </td>
+                            <td class="hidden-print" width="7%" ng-if="sideEventsCtrl.isFieldSelect('Options');">
+
+                                <span class="label label-success" ng-if="doc.open">Open to Public</span><span class="label label-danger" ng-if="!doc.open">Closed to Public</span>
+                                <br>
+                                <span class="label label-info" ng-if="doc.confirmed">Confirmed</span><span class="label label-default" ng-if="!doc.confirmed">Unconfirmed</span>
+                                <br>
+                                <span class="label label-danger" ng-if="doc.security">Security Needed</span>
+                            </td>
+                            <td width="7%" ng-if="sideEventsCtrl.isFieldSelect('Agenda Items');">
+                                <div ng-repeat="item in doc.agenda.items track by $index">
+                                    <span class="label" style="margin-top:5px;" ng-class="{'label-success':sideEventsCtrl.getPrefix(item)==='CBD','label-primary':sideEventsCtrl.getPrefix(item)==='NP','label-warning':sideEventsCtrl.getPrefix(item)==='CP' }" title="{{sideEventsCtrl.getTitle(item)}}">{{sideEventsCtrl.getPrefix(item)}} {{item.item}}</span>
+                                    <span class="text-uppercase">{{item.status}}</span>
+                                </div>
+                            </td>
+                            <td width="5%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                                {{doc.meta.modifiedOn|moment:'format':'YYYY-mm-dd HH:mm'}}
+                            </td>
+                        </tr>
+                        <tr ng-repeat-end  class="warning" ng-if="sideEventsCtrl.hasDayChange(doc.start,sideEventsCtrl.docs[$index+1].start)">
+                          <td colspan="5">
+                            <div hl-sticky="content-heading" offset-top="60" collection="content" collection-parent="head" sticky-class="warning">
+                              <div  style="background-color:#fcf8e3;"><h2  >{{sideEventsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}</h2></div>
+                            </div>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table ng-if="sideEventsCtrl.docs.length===0">
+                    <tr>
+                        <td colspan="11">
+                            &nbsp; There are 0 reservations for this conference.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- <div class="col-xs-1 col-sm-1  col-md-1  col-lg-1  col-xl-1" style="margin: 0 10px 0 0;">
+            <button ng-click="sideEventsCtrl.edit()" tool-tip type="button" class="btn btn-fab btn-fab hidden-xs hidden-sm" style="margin-top:50px;" data-placement="top" title="" data-original-title="New Room">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div> -->
+    </div>
+    <script>
+        $.material.init();
+    </script>
+</div>
