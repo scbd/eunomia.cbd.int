@@ -4,14 +4,14 @@ define(['app','lodash','moment',
   'directives/sorter',
   'filters/moment',
     'filters/propsFilter',
-    'filters/htmlToPlaintext',
+    'filters/htmlToPlaintext',  'filters/truncate',
 'ngDialog',
 'ui.select',
 
 
 ], function(app, _,moment) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user) {
+return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http) {
       var docDefinition = { content: '' };
       var _ctrl = this;
 
@@ -31,7 +31,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.itemsPerPage=50;
       _ctrl.currentPage=0;
       _ctrl.pages=[];
-      _ctrl.onPage = getReservations;
+      _ctrl.onPage = query;
       _ctrl.changeDate=changeDate;
       _ctrl.getRoom = getRoom;
       _ctrl.getType = getType;
@@ -40,17 +40,18 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.getPrefix=getPrefix;
       _ctrl.hasDayChange = hasDayChange;
       _ctrl.updateFields=updateFields;
+      _ctrl.setStausFilter=setStausFilter
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
-      _ctrl.showFields=true;
+      _ctrl.showFields=false;
       _ctrl.sort = {'start':1};
       _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified'];
       _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'}];
-      init();
-      $scope.$watch('reservationsCtrl.sort',function(){
-        getReservations();
-      });
+      $timeout(init);
+      // $scope.$watch('reservationsCtrl.sort',function(){
+      //   query();
+      // });
       return this;
 
 
@@ -58,145 +59,48 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         //
         //============================================================
         function init() {
+          _ctrl.statusFilter={all:true,request:false,public:false,scheduled:false,archived:false,deleted:false,draft:false}
 
-            moment.tz.setDefault(conference.timezone);
-            _ctrl.conference.startObj = moment(conference.schedule.start);
-            _ctrl.conference.endObj = moment(conference.schedule.end);
 
-            if(localStorage.getItem('reservations-colums'))
-              _ctrl.selectFields=JSON.parse(localStorage.getItem('reservations-colums'));
-            else
-                localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
-
-            if ($location.search().start && $location.search().end) {
-                _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
-                _ctrl.endFilter = moment($location.search().end).format('YYYY-MM-DD HH:mm');
-            } else {
-                _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
-                _ctrl.endFilter = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
-                changeDate();
-            }
-
-            if ($location.search().itemsPerPage)
-                _ctrl.itemsPerPage = $location.search().itemsPerPage;
-
-            $q.all([loadRooms(), loadTypes()]).then(getReservations);
+            $q.all([loadRooms(), loadTypes()]).then(querySideEvents);
 
         } //init
 
         //============================================================
         //
         //============================================================
-        function generatePdf(){
-            docDefinition.content=[{
-                        						style: 'tableExample',
-                        						table: {
-                                        headerRows: 1,
-                                        widths: ['14%','25%', '*','10%', '15%'],
-                        								body: [
-                        										[{ text: 'Date', style: 'tableHeader' },{ text: 'Room', style: 'tableHeader' },{ text: 'Title', style: 'tableHeader' },{ text: 'Type', style: 'tableHeader' },{ text: 'Options', style: 'tableHeader' }],
+        function querySideEvents(){
 
-                        								]
-                        						}
-                        				}];
+                      moment.tz.setDefault(conference.timezone);
+                      _ctrl.conference.startObj = moment(conference.schedule.start);
+                      _ctrl.conference.endObj = moment(conference.schedule.end);
 
-            docDefinition.styles={
-                                  header: {
-                                    fontSize: 9,
-                                    margin: [5, 5, 5, 5]
-                                  },
-                                  footer: {
-                                    fontSize: 9,
-                                    margin: [5, 5, 5, 5]
-                                  },
-                                  subheader: {
-                                    fontSize: 16,
-                                    bold: true,
-                                    margin: [0, 10, 0, 5]
-                                  },
-                                  tableHeader: {
-                                    bold: true,
-                                     fillColor:'#eeeeee',
-                                    fontSize: 13,
-                                    color: 'black'
-                                  }
-                                };
-pdfRows();
+                      if(localStorage.getItem('reservations-colums'))
+                        _ctrl.selectFields=JSON.parse(localStorage.getItem('reservations-colums'));
+                      else
+                          localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
 
-docDefinition.footer=pdfFooter;
-docDefinition.header=pdfHeader;
-        }//itemSelected
-
-        //============================================================
-        //
-        //============================================================
-        function pdfRows(){
-              var row= [];
-              _.each(_ctrl.pdfDocs,function(doc){
-
-                    row= [];
-                    row.push(formatDatePdf(doc));
-                    row.push( formatRoomPdf(doc) || ' ');
-                    row.push(doc.title || ' ');
-                    row.push(getType(doc.type,'reservation','title') || ' ');
-                    row.push(formatOptionsPdf(doc) || ' ');
-
-                    docDefinition.content[0].table.body.push(row);
-              });
-
-        }//pdfRows
-
-        //============================================================
-        //
-        //============================================================
-        function formatOptionsPdf(doc){
-          var options='';
-            if(doc.open)
-              options='Open\n';
-            else
-              options='Closed\n';
-
-            if(doc.confirmed)
-              options+='Confirmed\n';
-            else
-              options+='Unconfirmed\n';
-
-            if(doc.security)
-              options+='Security';
-
-            return options;
-        }//formatOptionsPdf
-
-        //============================================================
-        //
-        //============================================================
-        function formatRoomPdf(doc){
-            return getRoom(doc.location.room,'title')+'\n\n '+getRoom(doc.location.room,'location');
-        }//formatRoomPdf
-
-        //============================================================
-        //
-        //============================================================
-        function formatDatePdf(doc){
-            return moment(doc.start).format('YYYY-MM-DD')+'\n\nStart: '+moment(doc.start).format('HH:mm')+'\n\t\t\t\t\t\t\t\t\tto\nEnd:   '+moment(doc.end).format('HH:mm');
-        }//formatDatePdf
-
-        //============================================================
-        //
-        //============================================================
-        function pdfHeader(){
-
-          return {text:'Showing '+_ctrl.itemsPerPage+' of '+_ctrl.pdfCount + ' Reservations\n From:   '+moment(_ctrl.start).format('YYYY-MM-DD HH:mm')+'   to  '+moment(_ctrl.end).format('YYYY-MM-DD HH:mm'),
-                  style:'header'};
-        }//itemSelected
-
-        //============================================================
-        //
-        //============================================================
-        function pdfFooter(page, pages){
+                      if ($location.search().start) {
+                          _ctrl.startFilter = moment(new Date($location.search().start)).format('YYYY-MM-DD HH:mm');
+                          if($location.search().end)
+                          _ctrl.endFilter = moment(new Date($location.search().end)).format('YYYY-MM-DD HH:mm');
+                      }
 
 
-          return {text:'printed on '+moment().format('YYYY-MM-DD HH:mm')+'  ('+page + ' of ' + pages+')',style:'footer'};
+                      var statProm = _ctrl.setStausFilter($location.search().status,true)
+                      if ($location.search().searchText)
+                          _ctrl.searchText = $location.search().searchText
+
+                      if ($location.search().searchType)
+                          _ctrl.searchType = $location.search().searchType
+
+                      if ($location.search().searchRoom)
+                          _ctrl.searchRoom = $location.search().searchRoom
+
+                      if ($location.search().itemsPerPage)
+                          _ctrl.itemsPerPage = Number($location.search().itemsPerPage);
+
+                      $q.all([statProm]).then(function(){query(0,true).then(query)})
         }//itemSelected
 
       //============================================================
@@ -226,76 +130,92 @@ docDefinition.header=pdfHeader;
           return true;
       }//itemSelected
 
-      //============================================================
+
+      //=======================================================================
       //
-      //============================================================
-    function getPDFReservations(pageIndex) {
+      //=======================================================================
+      function query(pageIndex, facitsOnly) {
+        if (!pageIndex || pageIndex < 0 || Array.isArray(pageIndex)) pageIndex = 0;
 
-          _ctrl.loading = true;
-          var q=buildQuery ();//{'location.conference':conference._id};
+        _ctrl.loading = true;
+        //readQueryString ();
+        var queryParameters = {
+          'q': buildQuery(facitsOnly), //buildQuery(),//buildQuery(),
+          'sort': 'createdDate_dt desc',
+          //  'fl':'key_s,identifier_s',
+          //            'fl': 'thematicArea*,googleMapsUrl_s,country*,relevantInformation*,logo*,treaty*,id,title_*,hostGovernments*,description_t,url_ss,schema_EN_t,date_dt,government_EN_t,schema_s,number_d,aichiTarget_ss,reference_s,sender_s,meeting_ss,recipient_ss,symbol_s,city_EN_t,eventCity_EN_t,eventCountry_EN_t,country_EN_t,startDate_s,endDate_s,body_s,code_s,meeting_s,group_s,function_t,department_t,organization_t,summary_EN_t,reportType_EN_t,completion_EN_t,jurisdiction_EN_t,development_EN_t',
+          'wt': 'json',
+          'start': (_ctrl.currentPage * _ctrl.itemsPerPage) || 0, //$scope.currentPage * $scope.$scope.itemsPerPage,
+          'rows': _ctrl.itemsPerPage,
+          'facet': facitsOnly,
+          'facet.field': ['_state_s'],
+          'facet.limit': 999999,
+          'facet.mincount': 1
+        };
+        if (facitsOnly) queryParameters.rows = 0;
 
-          return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort).then(
-              function(responce) {
-                    _ctrl.pdfCount=responce.count;
-                    _ctrl.pdfDocs=responce.data;
-                    generatePdf();
+        return $http.get('/api/v2013/index/select', {
+          params: queryParameters
+        }).success(function(data) {
 
-                    //pdfMake.createPdf(docDefinition).download();
+          canceler = null;
 
+          if (!_ctrl.count || _ctrl.count < data.response.numFound)
+            _ctrl.count = data.response.numFound;
 
-                    return responce.data;
-              }
-          ).then(function(){pdfMake.createPdf(docDefinition).download();_ctrl.loading = false;}); //
+          _ctrl.start = data.response.start;
+          _ctrl.stop = data.response.start + data.response.docs.length - 1;
+          _ctrl.rows = data.response.docs.length;
 
-      } // getReservations
+          if (facitsOnly) {
+            _ctrl.facits = {}
+            _ctrl.facits.states = readFacets(data.facet_counts.facet_fields._state_s);
+          }
+          refreshPager(pageIndex)
+          _ctrl.docs = data.response.docs;
 
-      //============================================================
-      //
-      //============================================================
-    function getReservations(pageIndex) {
+          changeDate()
+          _ctrl.loading = false;
 
-          _ctrl.loading = true;
-          if(!pageIndex || !Number(pageIndex)) pageIndex=0;
-
-          _ctrl.itemsPerPage=Number(_ctrl.itemsPerPage);
-        var q=buildQuery ();//{'location.conference':conference._id};
-       var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1};
-
-
-
-              return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort,f).then(
-                  function(responce) {
-                        _ctrl.count=responce.count;
-                        _ctrl.docs=responce.data;
-                        refreshPager(pageIndex);
-                        _ctrl.loading = false;
-                        return responce.data;
+        });
+      } // query
+      //=======================================================================
+       //
+       //=======================================================================
+       function readFacets(solrArray) {
+            var facets = {};
+              if(solrArray)
+                  for (var i = 0; i < solrArray.length; i += 2) {
+                      var facet = solrArray[i];
+                      facets[facet] = { symbol: facet, title: facet, count: solrArray[i + 1] }
                   }
-              ); // mongoStorage.getReservations
-
-      } // getReservations
-
+              return facets;
+        };//$scope.readFacets2
       //=======================================================================
       //
       //=======================================================================
-      function buildQuery () {
-          var q = {};
+      function buildQuery (facitsOnly) {
+          var q = [];
 
-          q.start={'$exists':1};
-          q.start={'$ne':null};
-  //        if(_ctrl.conference) q['location.conference']=_ctrl.conference._id;
+          q.push('private_s:EunoAdministrator,Administrator')
+          q.push('schema_s:sideEvent')
+          q.push(`conference_s:${_ctrl.conference._id}`)
+
+          if(facitsOnly)
+            return q.join(' AND ')
+
+          if(getStatusFilter()) q.push(`_state_s:${getStatusFilter()}`)
 
 
           if($location.search().searchType) {
-
               if(!_.isArray($location.search().searchType))
                   _ctrl.searchType=[$location.search().searchType];
               else
                   _ctrl.searchType=$location.search().searchType;
 
-              q['type']={'$in':_ctrl.searchType};
+              q.push('(subType_s:'+_ctrl.searchType.join(' OR subType_s:')+')')
           }
-
+          //
           if($location.search().searchRoom) {
 
               if(!_.isArray($location.search().searchRoom))
@@ -303,44 +223,33 @@ docDefinition.header=pdfHeader;
               else
                   _ctrl.searchRoom=$location.search().searchRoom;
 
-              q['location.room']={'$in':_ctrl.searchRoom};
+              q.push('(reservationRoom_s:'+_ctrl.searchType.join(' OR reservationRoom_s:')+')')
           }
-
+          // //
           if($location.search().searchText ){
               _ctrl.searchText = $location.search().searchText;
-              q['$text'] = {'$search':'"'+_ctrl.searchText+'"'};  // jshint ignore:line
+              q.push(`text_EN_txt:${_ctrl.searchText}`)
           }
-
+          //
           if($location.search().start)
               _ctrl.start = $location.search().start;
-
+          //
           if($location.search().start)
               _ctrl.end = $location.search().end;
 
+          if(_ctrl.start && !_ctrl.end)
+            q.push(`reservationStart_dt:[${moment.utc(new Date(_ctrl.start)).format()} TO *]`)
 
-          if(_ctrl.start && _ctrl.end)
-              q['$and']= [{
-                  'start': {
-                      '$gte': {
-                          '$date': _ctrl.start
-                      }
-                  }
-              }, {
-                  'end': {
-                      '$lt': {
-                          '$date': _ctrl.end
-                      }
-                  }
-              }];
+          if(_ctrl.start && _ctrl.end )
+            q.push(`reservationStart_dt:[ ${moment.utc(new Date(_ctrl.start)).format()} TO ${moment.utc(new Date(_ctrl.end)).format()}]`)
 
-
-          q['meta.status']={'$nin':[ 'deleted', 'archived']};
-  //        q.type={'$in':_ctrl.seTypes};
-          return q;
+          if(Array.isArray(q))
+            return q.join(' AND ');
+          else
+            return ' '
       }
 
       //======================================================
-      //
       //
       //======================================================
       function refreshPager(currentPage)
@@ -376,18 +285,56 @@ docDefinition.header=pdfHeader;
           _ctrl.pageCount   = pageCount ;
       }
 
+            //============================================================
+            //
+            //============================================================
+            function setStausFilter(status, noQuery) {
+              return new Promise(function(resolve, reject) {
+                $timeout(function() {
+                  if(!status) return resolve(false)
+                  for (var s in _ctrl.statusFilter)
+                    _ctrl.statusFilter[s] = false
 
+                  _ctrl.statusFilter[status] = true
+
+                  if (!noQuery)
+                    changeDate()
+
+                  return resolve(resolve)
+                })
+              })
+
+
+            }
+            //============================================================
+            //
+            //============================================================
+            function getStatusFilter() {
+
+              for(var s in _ctrl.statusFilter){
+                if(s!=='all' && _ctrl.statusFilter[s]) return s
+              }
+              return false
+
+            }
       //============================================================
       //
       //============================================================
       function changeDate() {
+        if(_ctrl.startFilter)
+          _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
+        if(_ctrl.endFilter)
+          _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
 
-        _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
-        _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
-        var search = {
-          'end'  :moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format(),
-          'start': moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format(),
-        };
+
+        var search = {};
+        if(_ctrl.endFilterObj)
+        search.end = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format()
+
+        if(_ctrl.startFilter)
+        search.start = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format()
+
+        if(getStatusFilter()) search.status = getStatusFilter()
 
         if(_ctrl.searchText)search.searchText=_ctrl.searchText;
 
@@ -459,13 +406,13 @@ docDefinition.header=pdfHeader;
       //============================================================
       function loadTypes() {
 
-        if(_ctrl.conference.types &&_ctrl.conference.types.reservation && !_.isEmpty(_ctrl.conference.types.reservation)){
+        if(_ctrl.conference.types &&_ctrl.conference.types.sideEvents && !_.isEmpty(_ctrl.conference.types.sideEvents)){
           return $q(function(resolve){resolve(true)});
         }
-        var q = {schema:'reservations'};
+        var q = {schema:'reservations', parent:'570fd0a52e3fa5cfa61d90ee'};
         return mongoStorage.loadDocs('types',q,0,100000,false).then(function(result) {
                  _ctrl.conference.types={};
-                 _ctrl.conference.types.reservation =result.data;
+                 _ctrl.conference.types.sideEvents =result.data;
 
         }).catch(onError);
       } //triggerChanges
