@@ -127,6 +127,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
                   $scope.se=res;
                   loadOrgs($scope.se.hostOrgs).then(function(orgObjs){
                       $scope.se.hostOrgObjs=orgObjs;
+                      if(res.contact && res.contact.country)
                       loadCountry(res.contact.country.identifier).then(function(cObj){
                           $scope.se.countryObj = cObj;
                           ngDialog.open({
@@ -139,6 +140,15 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
                             $scope.loadingRes=false;
 
                       });
+                      else
+                      ngDialog.open({
+                          template: resDialog,
+                          className: 'ngdialog-theme-default',
+                          closeByDocument: true,
+                          plain: true,
+                          scope: $scope
+                      });
+                        $scope.loadingRes=false;
                     });
                 });
             }; //$scope.roomDialog
