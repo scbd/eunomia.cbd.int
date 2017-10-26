@@ -164,7 +164,7 @@
         <div class=" hidden-print">
             <div class="col-xs-12 " >
               <a id="all" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('all')" class="btn " ng-class="{'btn-raised':sideEventsCtrl.statusFilter.all,'btn-default':!sideEventsCtrl.statusFilter.all}">All <span class="badge" >{{sideEventsCtrl.count}}</span></a>
-              <a id="request" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('request')" class="btn "  ng-class="{'btn-raised-danger':sideEventsCtrl.statusFilter.request,'btn-danger':!sideEventsCtrl.statusFilter.request}" ng-if="sideEventsCtrl.facits.states.request.count">Requests <span class="badge" >{{sideEventsCtrl.facits.states.request.count}}</span></a>
+              <a id="request" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('request')" class="btn "  ng-class="{'btn-raised btn-danger':sideEventsCtrl.statusFilter.request,'btn-danger':!sideEventsCtrl.statusFilter.request}" ng-if="sideEventsCtrl.facits.states.request.count">Requests <span class="badge" >{{sideEventsCtrl.facits.states.request.count}}</span></a>
               <a id="public" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('public')" class="btn "  ng-class="{'btn-raised btn-success':sideEventsCtrl.statusFilter.public,'btn-success':!sideEventsCtrl.statusFilter.public}" ng-show="sideEventsCtrl.facits.states.public.count">Unscheduled <span class="badge" ng-show="sideEventsCtrl.facits.states.public.count">{{sideEventsCtrl.facits.states.public.count}}</span></a>
               <a id="scheduled" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('scheduled')"  class="btn "  ng-class="{'btn-raised btn-primary':sideEventsCtrl.statusFilter.scheduled,'btn-primary':!sideEventsCtrl.statusFilter.scheduled}" ng-show="sideEventsCtrl.facits.states.scheduled.count">Scheduled <span class="badge" ng-show="sideEventsCtrl.facits.states.scheduled.count">{{sideEventsCtrl.facits.states.scheduled.count}}</span></a>
               <a id="rejected" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('rejected')" class="btn"  ng-class="{'btn-raised  btn-info':sideEventsCtrl.statusFilter.rejected,'btn-info':!sideEventsCtrl.statusFilter.rejected}" ng-show="sideEventsCtrl.facits.states.rejected.count">Rejected <span class="badge" >{{sideEventsCtrl.facits.states.rejected.count}}</span></a>
@@ -208,27 +208,23 @@
                 <table class="table">
                     <thead hl-sticky="" style="background-color:#bbbbbb;">
                         <tr>
-                            <th width="4%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()" ng-if="!sideEventsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()"
+                            <th width="8%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()" ng-if="!sideEventsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="sideEventsCtrl.toggleFields()"
                                     ng-if="sideEventsCtrl.showFields"></i></th>
-                            <th width="7%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
-                                <sorter label-name="Date" ng-model="sideEventsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
+                            <th width="20%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
+                                <sorter label-name="Date / Request Info" ng-model="sideEventsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
                             </th>
                             <!-- <th width="26%" ng-if="sideEventsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                                 <sorter label-name="Room" ng-model="sideEventsCtrl.sort" property="room" load="sideEventsCtrl.load()" style="margin-bottom:0px;"></sorter>
                             </th> -->
-                            <th width="32%" ng-if="sideEventsCtrl.isFieldSelect('Title');">
-                                <sorter label-name="Title" ng-model="sideEventsCtrl.sort" property="title" style="margin-bottom:0px;"></sorter>
-                            </th>
-                            <th width="20%" ng-if="sideEventsCtrl.isFieldSelect('Description');">Description
-                                <!-- <sorter label-name="Title" ng-model="sideEventsCtrl.sort" property="title" load="sideEventsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
+                            <th width="56%" ng-if="sideEventsCtrl.isFieldSelect('Title');">
+                                <sorter label-name="Host Orgs. / Title / Description" ng-model="sideEventsCtrl.sort" property="title" style="margin-bottom:0px;"></sorter>
                             </th>
 
 
 
-                            <th width="5%" ng-if="sideEventsCtrl.isFieldSelect('Type');">Type</th>
-                            <th class="hidden-print" width="7%" ng-if="sideEventsCtrl.isFieldSelect('Options');">Options</th>
-                            <th width="7%" ng-if="sideEventsCtrl.isFieldSelect('Agenda Items');">Agenda </th>
-                            <th width="5%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                            <th width="10%" ng-if="sideEventsCtrl.isFieldSelect('Type');" class="text-center">Contact</th>
+
+                            <th width="10%" ng-if="sideEventsCtrl.isFieldSelect('Modified');"  class="text-center">
                                 <sorter label-name="Modified" ng-model="sideEventsCtrl.sort" property="meta.modifiedOn" style="margin-bottom:0px;"></sorter>
                             </th>
 
@@ -310,7 +306,7 @@
                             </td>
                         </tr>
                         <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat-start="doc in sideEventsCtrl.docs  track by $index">
-                            <td width="4%">
+                            <td width="8%">
                               <strong>{{doc.key_s}}</strong><br>
                               <span class="label" ng-class="{'label-secondary':(doc._state_s==='draft'),'label-warning':(doc._state_s==='deleted'),'label-info':(doc._state_s==='rejected'),'label-primary':(doc._state_s==='scheduled'),'label-danger':(doc._state_s==='request'),'label-success':(doc._state_s==='public')}">{{doc._state_s.toUpperCase()}}</span>
                               <div class="btn-group btn-group-vertical btn-group-xs hidden-xs hidden-sm hidden-md ">
@@ -321,7 +317,7 @@
 
                               </div>
                             </td>
-                            <td width="8%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
+                            <td width="20%" ng-if="sideEventsCtrl.isFieldSelect('Date');">
                               <span ng-if="!doc.reservationStart_dt" class="text-nowrap">
                               {{doc['drefDate.one_s']}} {{doc['drefDateTime.one_s']}} <br>
                               {{doc['drefDate.two_s']}} {{doc['drefDateTime.two_s']}}<br>
@@ -342,7 +338,7 @@
                                 {{sideEventsCtrl.getRoom(doc.location.room,'title')}}
                                 <hr style="margin: 0 0 0 0;"> {{sideEventsCtrl.getRoom(doc.location.room,'location')}}
                             </td> -->
-                            <td  width="76%"  ng-if="sideEventsCtrl.isFieldSelect('Title');">
+                            <td  width="52%"  ng-if="sideEventsCtrl.isFieldSelect('Title');">
 
                                 <img class="pull-right" ng-src="{{doc.logo_s}}" style="max-width:48px"></img>
                                 <div  ng-if="doc.hostOrgAcronym_ss">
@@ -353,15 +349,16 @@
                                  <strong>{{doc.title_s}}</strong><br>
                                  <!-- {{doc.description_s | htmlToPlaintext}} -->
                                  <hr style="margin: 5px 0 5px 0;">
-                                 {{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
+                                 <div >{{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
                                  <span ng-show="!expandAll">
                                    <span class="text-right" ng-show="(doc.description_s).length>300 && (!doc.truncate || doc.truncate===300)" ng-click="doc.truncate=100000;"><a class="text-nowrap pointer"><span style="white-space: nowrap;">more <i class="fa fa-caret-down"></i></span></a></span >
                                    <span class="text-right" ng-show="doc.truncate===100000" ng-click="doc.truncate=300"><a class="text-nowrap pointer"><span style="white-space: nowrap;">less <i class="fa fa-caret-up"></i></span></a></span >
                                  </span>
-                                 <br ng-if="doc.hostOrgAcronym_ss">
+                                 </div>
+
 
                             </td>
-                            <td width="5%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                            <td width="10%">
                                 <strong ng-if="doc.contactEmail_s">Contact:</strong> <br>
 
                                 {{doc.contactName_s.replace('undefined', ' ').replace('undefined', ' ').replace('undefined', ' ')}} <br>
@@ -371,15 +368,15 @@
                                 {{doc.contactAddress_s}} <span ng-if="doc.contactCity_s">,</span> {{doc.contactCity_s}}<span ng-if="doc.contactCountry_EN_s">,</span> {{doc.contactCountry_EN_s}}
 
                             </td>
-                            <td width="7%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                            <td width="10%" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
                                 <strong>Updated:</strong> <br>
                                 {{doc.updatedDate_dt|moment:'format':'YYYY-MM-DD HH:mm'}}<br>
 
-                                <a ng-href="mailto:{{doc.modifiedByEmail_s}}">{{doc.modifiedBy_s}} </a> <br><br>
+                                <a ng-href="mailto:{{doc.modifiedByEmail_s}}" class="text-nowrap">{{doc.modifiedBy_s}} </a> <br><br>
                                 <strong>Created:</strong><br>
                                 {{doc.createdDate_dt|moment:'format':'YYYY-MM-DD HH:mm'}}<br>
 
-                                <a ng-href="mailto:{{doc.createdByEmail_s}}">{{doc.createdBy_s}}</a>
+                                <a ng-href="mailto:{{doc.createdByEmail_s}}" class="text-nowrap">{{doc.createdBy_s}}</a>
 
                             </td>
                         </tr>
