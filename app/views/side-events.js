@@ -46,8 +46,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.searchRoom=[];
       _ctrl.showFields=false;
       _ctrl.sort = {'start':1};
-      _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified'];
-      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'}];
+      _ctrl.selectFields=['Date','Title','Contact','Modified'];
+      _ctrl.fields=[{title:'Title'},{title:'Date'},{title:'Contact'},{title:'Modified'}];
       $timeout(init);
       // $scope.$watch('reservationsCtrl.sort',function(){
       //   query();

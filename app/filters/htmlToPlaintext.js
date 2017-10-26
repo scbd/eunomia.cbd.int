@@ -11,6 +11,7 @@ define(['app'], function(app) {
       str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
       element.innerHTML = str;
       str = element.textContent;
+      str = str.replace(/\u00a0/gmi, ' ');
       element.textContent = '';
     }
 
