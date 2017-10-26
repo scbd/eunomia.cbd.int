@@ -7,9 +7,11 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
 
         $routeProvider.
             when('/',                                { redirectTo: '/schedule/conference' }).
+            when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'reservations'}).
+            when('/side-events',                     { templateUrl: 'views/side-events.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'side-events'}).
             when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'schedule'}).
-            when('/schedule/reservations',           { templateUrl: 'views/schedule/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'reservations'}).
-            when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events'}).
+
+            when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events-schedule'}).
 
             when('/cctv/frames',                     { templateUrl: 'views/cctv/frames.html',   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
             when('/cctv/frames/:id',                 { templateUrl: 'views/cctv/frame-id.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).

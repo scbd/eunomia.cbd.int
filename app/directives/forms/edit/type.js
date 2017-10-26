@@ -43,9 +43,9 @@ define(['app', 'lodash',
               if(ngModel && ngModel!=='binding'){
                 ngModelSub=ngModel.substring(ngModel.indexOf('.')+1,ngModel.length);
                    if(!$scope.doc[ngModelSub]){
-                     $formGroup = el.closest(".form-group");
+                      $formGroup = el.closest(".form-group");
                       $formGroup.addClass("is-empty");
-                    }//
+                  }//
               }//if(ngModel)
             }/// isEmptyModel
 
@@ -78,7 +78,7 @@ define(['app', 'lodash',
           //
           //============================================================
           $scope.autoTypes = function(typeId,orgs) {
-              $http.get('/api/v2016/reservations/auto-types/'+$scope.conference._id,{params:{typeId:typeId,orgs:orgs}}).then(function(r){
+              $http.put('/api/v2016/reservations/auto-types/'+$scope.conference._id,{typeId:typeId,orgs:orgs}).then(function(r){
                 $scope.message=r.data.message;
               });
 

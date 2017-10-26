@@ -18,9 +18,9 @@ app.use(require('morgan')('dev'));
 app.use('/app',   require('serve-static')(__dirname + '/app_build'));
 app.use('/app',   require('serve-static')(__dirname + '/app', { maxAge: 0 }));
 
-//app.all('/api/*',       function(req, res) { proxy.web(req, res, { target: 'http://localhost:8000', changeOrigin: true } ); } );
-app.all('/api/*',       function(req, res) { proxy.web(req, res, { target: 'https://api.cbddev.xyz', changeOrigin: true } ); } );
-app.all('/socket.io/*', function(req, res) { proxy.web(req, res, { target: 'https://api.cbddev.xyz', changeOrigin: true } ); } );
+app.all('/api/*',       function(req, res) { proxy.web(req, res, { target: 'https://api.cbd.int', changeOrigin: true } ); } );
+//app.all('/api/*',       function(req, res) { proxy.web(req, res, { target: 'https://api.cbddev.xyz', changeOrigin: true } ); } );
+app.all('/socket.io/*', function(req, res) { proxy.web(req, res, { target: 'https://api.cbd.int', changeOrigin: true } ); } );
 
 app.all('/app/*', function(req, res) { res.status(404).send(); } );
 

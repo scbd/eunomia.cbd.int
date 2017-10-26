@@ -36,7 +36,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                         $scope.tabs.details.active =true;
                         $scope.searchT=[];
                         $scope.selectedTime='';
-                        
+
 
                         init();
                         //============================================================
@@ -58,6 +58,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                               $scope.se=r;
                               loadOrgs($scope.se.hostOrgs).then(function(orgObjs){
                                   $scope.se.hostOrgObjs=orgObjs;
+                                  if(r.contact && r.contact.country)
                                   loadCountry(r.contact.country.identifier).then(function(cObj){
                                       $scope.se.countryObj = cObj;
                                       ngDialog.open({
@@ -70,6 +71,16 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                         res.loadingRes=false;
 
                                   });
+                                  else {
+                                    ngDialog.open({
+                                        template: resDialog,
+                                        className: 'ngdialog-theme-default',
+                                        closeByDocument: true,
+                                        plain: true,
+                                        scope: $scope
+                                    });
+                                      res.loadingRes=false;
+                                  }
                                 });
                             });
                         }; //$scope.roomDialog
@@ -569,6 +580,15 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                 else
                                   $rootScope.$broadcast("showInfo"," Blocked reservation successfully moved");
                                   $scope.load($scope.conference._id);
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                        var params = {};
+                                        params.id = res2.data[0]._id;
+                                        var update =res2.data[0];
+                                        update.meta={};
+                                        if (!update.meta.clientOrg) update.meta.clientOrg = 0;
+                                        update.meta.status='scheduled';
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                  });
                               }).catch(onError);
                             } else {
                               q.start = null;
@@ -584,9 +604,20 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                     $rootScope.$broadcast("showInfo"," Blocked side-event tier successfully unscheduled");
                                   $scope.sideEvents=[];
                                   $scope.load($scope.conference._id);
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                        var params = {};
+                                        params.id = res2.data[0]._id;
+                                        var update =res2.data[0];
+                                        update.meta={};
+                                        if (!update.meta.clientOrg) update.meta.clientOrg = 0;
+                                        update.meta.status='published';
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                  });
                               }).catch(onError);
                             }
                         }
+
+
 
                         //============================================================
                         //
