@@ -1,7 +1,7 @@
 define(['app','lodash','moment',
 'services/mongo-storage',
     'directives/date-picker',
-  'directives/sorter',
+  'directives/sorterSolr',
   'filters/moment',
     'filters/propsFilter',
     'filters/htmlToPlaintext',  'filters/truncate',
@@ -11,7 +11,7 @@ define(['app','lodash','moment',
 
 ], function(app, _,moment) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http) {
+return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http','$interval',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http,$interval) {
       var docDefinition = { content: '' };
       var _ctrl = this;
 
@@ -26,7 +26,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
       _ctrl.count = 0;
       _ctrl.options = {};
-      _ctrl.sort = {'title':1};
+
       _ctrl.venueId = conference.venueId;
       _ctrl.itemsPerPage=50;
       _ctrl.currentPage=0;
@@ -41,17 +41,27 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.hasDayChange = hasDayChange;
       _ctrl.updateFields=updateFields;
       _ctrl.setStausFilter=setStausFilter
+      _ctrl.approveDoc = approveDoc
+      _ctrl.cancelDoc = cancelDoc
+      _ctrl.rejectDoc = rejectDoc
+      _ctrl.allScheduled = allScheduled
+      _ctrl.allUnScheduled = allUnScheduled
+      _ctrl.isScheduled=isScheduled
+      _ctrl.isRequest=isRequest
+      _ctrl.isChangingState=isChangingState
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
+      _ctrl.stateChanges=[];
       _ctrl.showFields=false;
-      _ctrl.sort = {'start':1};
+      _ctrl.sort = {'updatedDate_dt':'DESC'};
       _ctrl.selectFields=['Date','Title','Contact','Modified'];
       _ctrl.fields=[{title:'Title'},{title:'Date'},{title:'Contact'},{title:'Modified'}];
       $timeout(init);
-      // $scope.$watch('reservationsCtrl.sort',function(){
-      //   query();
-      // });
+      $scope.$watch('sideEventsCtrl.sort',function(){
+        if(JSON.stringify({'updatedDate_dt':'DESC'})===JSON.stringify(_ctrl.sort)) return
+        query();
+      });
       return this;
 
 
@@ -65,7 +75,41 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
             $q.all([loadRooms(), loadTypes()]).then(querySideEvents);
 
         } //init
+        //============================================================
+        //
+        //============================================================
+        function isRequest(doc) {
+            if(doc._state_s==='request')
+            return true
+            return false
+        } //allScheduled
+        //============================================================
+        //
+        //============================================================
+        function isScheduled(doc) {
+            if(doc._state_s==='scheduled')
+              return true
+            return false
+        } //allScheduled
+        //============================================================
+        //
+        //============================================================
+        function allScheduled() {
+            var response = true
+            if(Array.isArray(_ctrl.docs))
+              for (var doc of _ctrl.docs)
+                  if(!doc.reservationRoom_s) response = false
 
+            return response
+        } //allScheduled
+        function allUnScheduled() {
+            var response = true
+            if(Array.isArray(_ctrl.docs))
+              for (var doc of _ctrl.docs)
+                  if(doc.reservationRoom_s) response = false
+
+            return response
+        } //allScheduled
         //============================================================
         //
         //============================================================
@@ -75,15 +119,15 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
                       _ctrl.conference.startObj = moment(conference.schedule.start);
                       _ctrl.conference.endObj = moment(conference.schedule.end);
 
-                      if(localStorage.getItem('reservations-colums'))
-                        _ctrl.selectFields=JSON.parse(localStorage.getItem('reservations-colums'));
+                      if(localStorage.getItem('se-colums'))
+                        _ctrl.selectFields=JSON.parse(localStorage.getItem('se-colums'));
                       else
-                          localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
+                          localStorage.setItem('se-colums', JSON.stringify(_ctrl.selectFields));
 
                       if ($location.search().start) {
-                          _ctrl.startFilter = moment(new Date($location.search().start)).format('YYYY-MM-DD HH:mm');
+                          _ctrl.startFilter = moment.utc(new Date($location.search().start)).startOf('day').format('YYYY-MM-DD');
                           if($location.search().end)
-                          _ctrl.endFilter = moment(new Date($location.search().end)).format('YYYY-MM-DD HH:mm');
+                          _ctrl.endFilter = moment.utc(new Date($location.search().end)).endOf('day').format('YYYY-MM-DD');
                       }
 
 
@@ -112,12 +156,107 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         if(!meeting) return '';
         return meeting.agenda.prefix;
       }//itemSelected
+      //============================================================
+      //
+      //============================================================
+      function changeStatus(){
+        return mongoStorage.save
+      }//itemSelected
 
+      //=======================================================================
+      //
+      //=======================================================================
+      function stateUpdate(identifier_s,_state_s)  {
+
+          _ctrl.stateChanges.push({identifier_s:identifier_s,_state_s:_state_s})
+
+          var cancelInt = $interval(function(){
+            return $http.get('/api/v2013/index/select', {
+              params:{q:'identifier_s:'+identifier_s,fl:'_state_s,identifier_s'}
+            }).success(function(data) {
+console.log('_ctrl.stateChanges',_ctrl.stateChanges);
+console.log('data.response.docs[0',data.response.docs[0]);
+              var stateChange = _.find(_ctrl.stateChanges,{identifier_s:identifier_s})
+              if(stateChange && stateChange._state_s !== data.response.docs[0]._state_s){
+                var stateChangeIndex = _.findIndex(_ctrl.stateChanges,{identifier_s:identifier_s})
+                _ctrl.stateChanges.splice(stateChangeIndex,1)
+                $interval.cancel(cancelInt)
+
+                query()
+              }
+
+            })
+          },5000,15)
+      }; // archiveOrg
+      //=======================================================================
+      //
+      //=======================================================================
+      function isChangingState(identifier_s)  {
+
+          return _.find(_ctrl.stateChanges,{identifier_s:identifier_s})
+      }; // archiveOrg
+      //=======================================================================
+      //
+      //=======================================================================
+      function approveDoc  (docObj)  {
+
+          var patch = {}
+          patch.meta = {}
+          patch.meta.status = 'published'
+          patch._id = docObj.identifier_s
+
+          mongoStorage.save('inde-side-events', patch).then(function() {
+              _.each(docObj.hostOrgs_ss, function(org) {
+                  mongoStorage.loadDoc('inde-orgs', org).then(function(org) {
+                      if (org.meta.status !== 'published'){
+                          org.meta.status = 'published';
+                          mongoStorage.save('inde-orgs', org);
+                        }
+                  });
+              });
+
+              stateUpdate(docObj.identifier_s,docObj._state_s)
+              $scope.$emit('showSuccess', 'Side Event #' + docObj.key_s + ' is now Under Review');
+
+          }).catch(onError);
+      }; // archiveOrg
+      //=======================================================================
+      //
+      //=======================================================================
+      function rejectDoc  (docObj)  {
+
+          var patch = {}
+          patch.meta = {}
+          patch.meta.status = 'rejected'
+          patch._id = docObj.identifier_s
+
+          mongoStorage.save('inde-side-events', patch).then(function() {
+              stateUpdate(docObj.identifier_s,docObj._state_s)
+              $scope.$emit('showSuccess', 'Side Event #' + docObj.key_s + ' is now rejected');
+
+          }).catch(onError);
+      }; // archiveOrg
+      //=======================================================================
+      //
+      //=======================================================================
+      function cancelDoc  (docObj)  {
+
+          var patch = {}
+          patch.meta = {}
+          patch.meta.status = 'canceled'
+          patch._id = docObj.identifier_s
+
+          mongoStorage.save('inde-side-events', patch).then(function() {
+              stateUpdate(docObj.identifier_s,docObj._state_s)
+              $scope.$emit('showSuccess', 'Side Event #' + docObj.key_s + ' is now canceled');
+
+          }).catch(onError);
+      }; // archiveOrg
       //============================================================
       //
       //============================================================
       function updateFields(){
-        localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
+        localStorage.setItem('se-colums', JSON.stringify(_ctrl.selectFields));
       }//itemSelected
 
       //============================================================
@@ -130,6 +269,13 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           return true;
       }//itemSelected
 
+      //============================================================
+      //
+      //============================================================
+      function getSort(){
+
+       return Object.keys(_ctrl.sort)[0]+' '+ _ctrl.sort[Object.keys(_ctrl.sort)[0]]
+      }//itemSelected
 
       //=======================================================================
       //
@@ -141,7 +287,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         //readQueryString ();
         var queryParameters = {
           'q': buildQuery(facitsOnly), //buildQuery(),//buildQuery(),
-          'sort': 'createdDate_dt desc',
+          'sort': getSort(),//DESC
           //  'fl':'key_s,identifier_s',
           //            'fl': 'thematicArea*,googleMapsUrl_s,country*,relevantInformation*,logo*,treaty*,id,title_*,hostGovernments*,description_t,url_ss,schema_EN_t,date_dt,government_EN_t,schema_s,number_d,aichiTarget_ss,reference_s,sender_s,meeting_ss,recipient_ss,symbol_s,city_EN_t,eventCity_EN_t,eventCountry_EN_t,country_EN_t,startDate_s,endDate_s,body_s,code_s,meeting_s,group_s,function_t,department_t,organization_t,summary_EN_t,reportType_EN_t,completion_EN_t,jurisdiction_EN_t,development_EN_t',
           'wt': 'json',
@@ -160,9 +306,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
           canceler = null;
 
-          if (!_ctrl.count || _ctrl.count < data.response.numFound)
-            _ctrl.count = data.response.numFound;
 
+            _ctrl.count = data.response.numFound
           _ctrl.start = data.response.start;
           _ctrl.stop = data.response.start + data.response.docs.length - 1;
           _ctrl.rows = data.response.docs.length;
@@ -170,11 +315,13 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           if (facitsOnly) {
             _ctrl.facits = {}
             _ctrl.facits.states = readFacets(data.facet_counts.facet_fields._state_s);
+            if (!_ctrl.facits.states.all || _ctrl.facits.states.all < data.response.numFound)
+              _ctrl.facits.states.all = data.response.numFound;
           }
           refreshPager(pageIndex)
           _ctrl.docs = data.response.docs;
 
-          changeDate()
+          //changeDate()
           _ctrl.loading = false;
 
         });
@@ -223,7 +370,16 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
               else
                   _ctrl.searchRoom=$location.search().searchRoom;
 
-              q.push('(reservationRoom_s:'+_ctrl.searchType.join(' OR reservationRoom_s:')+')')
+              q.push('(reservationRoom_s:'+_ctrl.searchRoom.join(' OR reservationRoom_s:')+')')
+          }
+          if($location.search().searchMeeting) {
+
+              if(!_.isArray($location.search().searchMeeting))
+                  _ctrl.searchMeeting=[$location.search().searchMeeting];
+              else
+                  _ctrl.searchMeeting=$location.search().searchMeeting;
+
+              q.push('(meetings_ss:'+_ctrl.searchMeeting.join(' OR meetings_ss:')+')')
           }
           // //
           if($location.search().searchText ){
@@ -322,17 +478,17 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       //============================================================
       function changeDate() {
         if(_ctrl.startFilter)
-          _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
+          _ctrl.startFilterObj = moment.utc(_ctrl.startFilter,'YYYY-MM-DD').startOf('day');
         if(_ctrl.endFilter)
-          _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
+          _ctrl.endFilterObj   = moment.utc(_ctrl.endFilter,'YYYY-MM-DD').endOf('day');
 
 
         var search = {};
         if(_ctrl.endFilterObj)
-        search.end = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format()
+        search.end = moment(_ctrl.endFilterObj).format();
 
-        if(_ctrl.startFilter)
-        search.start = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format()
+        if(_ctrl.startFilterObj)
+        search.start = moment(_ctrl.startFilter).startOf('day').format();
 
         if(getStatusFilter()) search.status = getStatusFilter()
 
@@ -343,7 +499,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
         if(!_.isEmpty(_ctrl.searchRoom))
             search.searchRoom=_ctrl.searchRoom;
-
+        if(!_.isEmpty(_ctrl.searchMeeting))
+                search.searchMeeting=_ctrl.searchMeeting;
         if(_ctrl.itemsPerPage)
             search.itemsPerPage=_ctrl.itemsPerPage;
 
@@ -360,9 +517,10 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           return $q(function(resolve){resolve(true)});
         }
         var q = {'venue':_ctrl.venueId,'meta.status':{'$nin':['deleted','archived']}};
-        return mongoStorage.loadDocs('venue-rooms',q,0,100000,false,_ctrl.sort).then(function(result) {
+        return mongoStorage.loadDocs('venue-rooms',q,0,100000,false).then(function(result) {
 
                  _ctrl.conference.rooms =result.data;
+
         }).catch(onError);
       }
       //============================================================
