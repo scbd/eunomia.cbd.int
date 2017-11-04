@@ -49,6 +49,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.isScheduled=isScheduled
       _ctrl.isRequest=isRequest
       _ctrl.isChangingState=isChangingState
+      _ctrl.setOrgFilter=setOrgFilter
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
@@ -174,8 +175,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
             return $http.get('/api/v2013/index/select', {
               params:{q:'identifier_s:'+identifier_s,fl:'_state_s,identifier_s'}
             }).success(function(data) {
-console.log('_ctrl.stateChanges',_ctrl.stateChanges);
-console.log('data.response.docs[0',data.response.docs[0]);
+
               var stateChange = _.find(_ctrl.stateChanges,{identifier_s:identifier_s})
               if(stateChange && stateChange._state_s !== data.response.docs[0]._state_s){
                 var stateChangeIndex = _.findIndex(_ctrl.stateChanges,{identifier_s:identifier_s})
@@ -294,7 +294,7 @@ console.log('data.response.docs[0',data.response.docs[0]);
           'start': (_ctrl.currentPage * _ctrl.itemsPerPage) || 0, //$scope.currentPage * $scope.$scope.itemsPerPage,
           'rows': _ctrl.itemsPerPage,
           'facet': facitsOnly,
-          'facet.field': ['_state_s'],
+          'facet.field': ['_state_s','hostOrgs_ss'],
           'facet.limit': 999999,
           'facet.mincount': 1
         };
@@ -317,6 +317,10 @@ console.log('data.response.docs[0',data.response.docs[0]);
             _ctrl.facits.states = readFacets(data.facet_counts.facet_fields._state_s);
             if (!_ctrl.facits.states.all || _ctrl.facits.states.all < data.response.numFound)
               _ctrl.facits.states.all = data.response.numFound;
+
+           readFacetsOrgs(data.facet_counts.facet_fields.hostOrgs_ss);
+
+              console.log(_ctrl.facits.states);
           }
           refreshPager(pageIndex)
           _ctrl.docs = data.response.docs;
@@ -338,6 +342,35 @@ console.log('data.response.docs[0',data.response.docs[0]);
                   }
               return facets;
         };//$scope.readFacets2
+        //=======================================================================
+         //
+         //=======================================================================
+         function readFacetsOrgs(solrArray) {
+              var orgs = [];
+              _ctrl.facits.orgs = {};
+                if(solrArray)
+                    for (var i = 0; i < solrArray.length; i += 2) {
+                        var facet = solrArray[i];
+                        orgs.push({ identifier_s: facet, count: solrArray[i + 1] })
+                    }
+                orgs = _.sortBy(orgs,'count').reverse()
+
+                if(!_.isEmpty(orgs))
+                    for (var i = 0; i < 10; i++) {
+
+                      _ctrl.facits.orgs[orgs[i].identifier_s]  = { identifier_s: orgs[i].identifier_s, count: orgs[i].count };
+
+                      mongoStorage.loadDoc('inde-orgs', orgs[i].identifier_s).then(function(org) {
+
+                        _ctrl.facits.orgs[org._id].title = org.title
+                        _ctrl.facits.orgs[org._id].acronym = org.acronym
+
+
+                      });
+
+                    }
+
+          };//$scope.readFacets2
       //=======================================================================
       //
       //=======================================================================
@@ -381,7 +414,12 @@ console.log('data.response.docs[0',data.response.docs[0]);
 
               q.push('(meetings_ss:'+_ctrl.searchMeeting.join(' OR meetings_ss:')+')')
           }
-          // //
+
+          if($location.search().searchHostOrg) {
+              _ctrl.searchHostOrg=$location.search().searchHostOrg;
+              q.push(`hostOrgs_ss:${_ctrl.searchHostOrg}`)
+          }
+
           if($location.search().searchText ){
               _ctrl.searchText = $location.search().searchText;
               q.push(`text_EN_txt:${_ctrl.searchText}`)
@@ -441,6 +479,13 @@ console.log('data.response.docs[0',data.response.docs[0]);
           _ctrl.pageCount   = pageCount ;
       }
 
+      //============================================================
+      //
+      //============================================================
+      function setOrgFilter(id) {
+          _ctrl.searchHostOrg = id
+          changeDate()
+      }
             //============================================================
             //
             //============================================================
@@ -459,8 +504,6 @@ console.log('data.response.docs[0',data.response.docs[0]);
                   return resolve(resolve)
                 })
               })
-
-
             }
             //============================================================
             //
@@ -499,8 +542,12 @@ console.log('data.response.docs[0',data.response.docs[0]);
 
         if(!_.isEmpty(_ctrl.searchRoom))
             search.searchRoom=_ctrl.searchRoom;
+
         if(!_.isEmpty(_ctrl.searchMeeting))
                 search.searchMeeting=_ctrl.searchMeeting;
+
+        if(_ctrl.searchHostOrg)search.searchHostOrg=_ctrl.searchHostOrg;
+
         if(_ctrl.itemsPerPage)
             search.itemsPerPage=_ctrl.itemsPerPage;
 
