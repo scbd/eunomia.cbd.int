@@ -176,6 +176,14 @@
             </div>
         </div>
         <div class=" hidden-print">
+          <div class="col-xs-12 " >
+            <div  ng-if="sideEventsCtrl.facits.orgs" >
+              <span class="btn btn-xs " ng-click="sideEventsCtrl.setOrgFilter()" ng-if="sideEventsCtrl.searchHostOrg" >CLEAR </span>
+            <span ng-repeat="host in sideEventsCtrl.facits.orgs track by $index"> <span class="btn btn-xs " ng-class="{'btn-raised btn-primary':(sideEventsCtrl.searchHostOrg===host.identifier_s)}" ng-click="sideEventsCtrl.setOrgFilter(host.identifier_s)">{{host.acronym}} <span class="badge" >{{host.count}}</span></span> </span>
+            </div>
+          </div>
+
+          </div>
             <div class="col-xs-12 " >
               <a id="all" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('all')" class="btn " ng-class="{'btn-raised':sideEventsCtrl.statusFilter.all,'btn-default':!sideEventsCtrl.statusFilter.all}">All <span class="badge" >{{sideEventsCtrl.facits.states.all}}</span></a>
               <a id="request" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('request')" class="btn "  ng-class="{'btn-raised btn-danger':sideEventsCtrl.statusFilter.request,'btn-danger':!sideEventsCtrl.statusFilter.request}" ng-if="sideEventsCtrl.facits.states.request.count">Requests <span class="badge" >{{sideEventsCtrl.facits.states.request.count}}</span></a>
