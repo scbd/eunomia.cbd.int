@@ -389,7 +389,8 @@ define(['app',
                                 className: 'ngdialog-theme-default',
                                 closeByDocument: true,
                                 plain: true,
-                                scope: $scope
+                                scope: $scope,
+                                width: 800
                             });
 
                         }; //$scope.roomDialog
