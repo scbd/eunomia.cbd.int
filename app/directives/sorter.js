@@ -29,6 +29,7 @@ define(['app'], function(app) {
         //
         //============================================================
         function isSelected() {
+          if(!$scope.binding) return false
             if(!!$scope.binding[$scope.property] && !$scope.direction)
               $scope.direction=$scope.binding[$scope.property];
           return !!$scope.binding[$scope.property];
