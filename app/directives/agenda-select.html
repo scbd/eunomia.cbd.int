@@ -90,7 +90,7 @@
   <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
     <div class="form-group " style="margin-top:10px;" >
 
-      <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items" ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
+      <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items"  ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
 
         <option value=''>{{meeting.EVT_CD}}</option>
        </select>
@@ -133,7 +133,7 @@
 
 
 
-                     <div class="col-xs-12 hand"ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index">
+                     <div class="col-xs-12 hand" ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index" meeting-code="{{item.meeting}}" item-id="{{item.item}}">
                      <div class="col-xs-11 hand"><small class="hand">{{file.symbol}}</small><br><small class="hand">{{file.title.en}}</small></div>
                      <div class="col-xs-1 hand"><a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="deleteFile(item,file)" ><i class="fa fa-trash"></i></a></div>
                     </div>
@@ -141,7 +141,7 @@
 
                  </section>
                  <div >
-                   <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" class="form-control" ng-model="fileToAdd" ng-options="file as file.display for file in getFiles(item.meeting,item.item)" ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;" >
+                   <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" class="form-control" ng-model="fileToAdd" ng-options="file as file.display disable when file.disabled for file in getFiles(item.meeting,item.item)"  ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;" >
 
                       <option value="">-- choose file --</option>
                     </select>
