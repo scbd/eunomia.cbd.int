@@ -97,7 +97,7 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
                             _.each(docs,function(d){
 
                                   if(!Array.isArray(docsByItem[i.item])) docsByItem[i.item] = []
-                                  if(d.agendaItems && ~d.agendaItems.indexOf(i.item) && d.type!=='information')
+                                  if(d.agendaItems && ~d.agendaItems.indexOf(i.item))
                                     docsByItem[i.item].push(d)
                             });
                         });
