@@ -25,7 +25,6 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
 
                         $ctrl.loadDocuments(m).then(function(d){
                           m.files=d;
-                          console.log(m.files)
                         })
 
                   });
@@ -36,7 +35,8 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
             });
 
         }, //link
-        controller: ['$scope','dragulaService',function($scope,dragulaService) {
+        controller: ['$scope','dragulaService','$timeout',function($scope,dragulaService,$timeout) {
+
 
           dragulaService.options($scope, 'agenda-items', {
               removeOnSpill: false,
@@ -82,15 +82,20 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
                             _.defaults(d.metadata, {
                                 printable: ['crp', 'limited', 'non-paper'].indexOf(d.nature)>=0
                             });
-                            d.display = d.symbol + ' ' + d.title.en
+                            //d.display = d.symbol + ' ' + d.title.en
 
+                            if(d.metadata && d.metadata.superseded )
+                              d.disabled =true
+                            d.display = (d.symbol || (d.title||{}).en) + ((d.metadata && d.metadata.superseded && ' - (Superseded by '+d.metadata.superseded+')')||'') ;
+                            d.sortKey = sortKey(d);
 
                             return d;
-                        }).value()
+                        }).sortBy(sortKey).value();
 
                     var docsByItem = {}
                         _.each(meeting.agenda.items,function(i){
                             _.each(docs,function(d){
+
                                   if(!Array.isArray(docsByItem[i.item])) docsByItem[i.item] = []
                                   if(d.agendaItems && ~d.agendaItems.indexOf(i.item))
                                     docsByItem[i.item].push(d)
@@ -108,10 +113,41 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
           //
           //============================================================
           function fileSelected(item,file){
-            if(!Array.isArray(item.files)) item.files = []
-            item.files.push({_id:file._id,display:file.display,symbol:file.symbol,title:file.title})
-          }//fileSelected
+
+            $timeout(function(){
+              if(!Array.isArray(item.files)) item.files = []
+              item.files.push({_id:file._id,display:file.display,symbol:file.symbol,title:file.title})
+              item.files = _(item.files).filter(function(f){return f && !!f._id; }).uniq('_id').value();
+              var originalItem = getAgendaItem(item.meeting,item.item)
+
+              // item was scoped from ng-repeat
+              originalItem.files = item.files
+              buildItemText (item)
+              buildItemText (originalItem)
+            })
+
+
+          }//
           $scope.fileSelected=fileSelected;
+          //============================================================
+          //
+          //============================================================
+          function buildItemText (item){
+            $timeout(function(){
+              item.text=''
+              _.each(item.files,function(file){
+                var isCPR = /.*\b(CRP|L)(\d+)\b.*/i
+                var isAddtional = /.*\b(?:CRP|L)\d+\/ADD(\d+)\b.*/i
+
+                if(isCPR.test(file.symbol)){
+                  if(item.text) item.text += ', '
+                  item.text += file.symbol.replace(isCPR, "$1.$2" )
+                  if(isAddtional.test(file.symbol))
+                    item.text += '/Add.'+file.symbol.replace(isAddtional, "$1" )
+                }
+              });
+            });
+          }//hideAllFiles
           //============================================================
           //
           //============================================================
@@ -132,24 +168,24 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
                   if(i && i._id===file._id)
                     item.files.splice(index,1);
               });
-
+              buildItemText (item)
           }//deleteItem
           $scope.deleteFile=deleteFile;
+
           //============================================================
           //
           //============================================================
           function getAgendaItem(meetingCode,item){
 
               var meeting = _.find($scope.conference.meetings,{EVT_CD:meetingCode})
-              return meeting.agenda
+              return _.find(meeting.agenda.items,{item:Number(item)});
           }//itemSelected
+
           //============================================================
           //
           //============================================================
           function getFile(meetingCode,item,id){
               var files = getFiles(meetingCode,item)
-              console.log('id',id)
-              console.log('_.find(files,{_id:id})',_.find(files,{_id:id}))
               return _.find(files,{_id:id})
           }//itemSelected
 
@@ -246,6 +282,30 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
           }//createAgendaItem
           $scope.itemSelected=itemSelected;
 
+
+          //==============================
+          //
+          //==============================
+          function sortKey(d) {
+
+              var typePos;
+
+                   if(d.type=='in-session' && d.nature=="limited")     typePos = 10;
+              else if(d.type=='in-session' && d.nature=="crp")         typePos = 20;
+              else if(d.type=='in-session' && d.nature=="non-paper")   typePos = 30;
+              else if(d.type=="official")                              typePos = 40;
+              else if(d.type=="information")                           typePos = 50;
+              else if(d.type=="other")                                 typePos = 60;
+              else if(d.type=='in-session' && d.nature=="statement")   typePos = 70;
+
+              return ("000000000" + (typePos   ||9999)).slice(-9) + '_' + // pad with 0 eg: 150  =>  000000150
+                     (d.group||'') + '_' +
+                   //  ((d.metadata||{}).superseded ? '1' : '0') + '_' +
+                     ("000000000" + (d.displayPosition||9999)).slice(-9) + '_' + // pad with 0 eg: 150  =>  000000150
+                     (d.symbol||"").replace(/\b(\d)\b/g, '0$1')
+                                   .replace(/(\/REV)/gi, '0$1')
+                                   .replace(/(\/ADD)/gi, '1$1');
+          }
         } ]//controller
       }; //return
     }]); // directive
