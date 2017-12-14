@@ -117,6 +117,7 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
             $timeout(function(){
               if(!Array.isArray(item.files)) item.files = []
               item.files.push({_id:file._id,display:file.display,symbol:file.symbol,title:file.title})
+              item.files = _(item.files).filter(function(f){return f && !!f._id; }).uniq('_id').value();
               var originalItem = getAgendaItem(item.meeting,item.item)
 
               // item was scoped from ng-repeat
