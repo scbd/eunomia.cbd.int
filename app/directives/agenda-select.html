@@ -130,22 +130,20 @@
 
               <div class="well well-sm col-xs-11 col-xs-offset-1" style="position: relative" ng-show="item.showFiles">
                 <section dragula='"agenda-item-files"' dragula-model="item.files">
-
-
-
                      <div class="col-xs-12 hand" ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index" meeting-code="{{item.meeting}}" item-id="{{item.item}}">
                      <div class="col-xs-11 hand"><small class="hand">{{file.symbol}}</small><br><small class="hand">{{file.title.en}}</small></div>
                      <div class="col-xs-1 hand"><a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="deleteFile(item,file)" ><i class="fa fa-trash"></i></a></div>
                     </div>
-
-
                  </section>
-                 <div >
-                   <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" class="form-control" ng-model="fileToAdd" ng-options="file as file.display disable when file.disabled for file in getFiles(item.meeting,item.item)"  ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;" >
+
+
+
+&nbsp;
+                   <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" class="form-control" ng-model="fileToAdd" ng-options="file as file.display disable when file.disabled for file in getFiles(item.meeting,item.item)"  ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;"  >
 
                       <option value="">-- choose file --</option>
                     </select>
-                 </div>
+
               </div>
 
           </div>
