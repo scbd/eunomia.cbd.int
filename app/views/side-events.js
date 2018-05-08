@@ -11,16 +11,11 @@ define(['app','lodash','moment',
 
 ], function(app, _,moment) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http','$interval',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http,$interval) {
+return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http','$interval','$route',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http,$interval,$route) {
       var docDefinition = { content: '' };
       var _ctrl = this;
+      var token = $route.current.params.token
 
-      _ctrl.pdf = function(){
-
-        //generatePdf();
-        getPDFReservations();
-
-      };
 
       _ctrl.conference=conference;
 
@@ -307,7 +302,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           canceler = null;
 
 
-            _ctrl.count = data.response.numFound
+          _ctrl.count = data.response.numFound
           _ctrl.start = data.response.start;
           _ctrl.stop = data.response.start + data.response.docs.length - 1;
           _ctrl.rows = data.response.docs.length;
@@ -318,7 +313,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
             if (!_ctrl.facits.states.all || _ctrl.facits.states.all < data.response.numFound)
               _ctrl.facits.states.all = data.response.numFound;
 
-           readFacetsOrgs(data.facet_counts.facet_fields.hostOrgs_ss);
+              readFacetsOrgs(data.facet_counts.facet_fields.hostOrgs_ss);
 
               console.log(_ctrl.facits.states);
           }
