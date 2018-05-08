@@ -328,7 +328,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           var q={
                             'location.conference':$scope.conference._id,
                             '$or':[{'sideEvent':{'$exists':true}},{type:'570fd1352e3fa5cfa61d90ef'}],
-                            'start':null,
+                            // 'start':null,
                             'meta.status': {
                                 $nin: ['archived', 'deleted']
                             }
@@ -337,6 +337,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           if(_.isArray(searchT) && !_.isEmpty(searchT)){
                               q.subType={'$in':searchT};
                           }
+
                           if($scope.selectedTime && $scope.selectedTime!=='all'){
 
                               var tier;
@@ -345,9 +346,9 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                               else
                                 tier='lunch';
 
-                              q['$or'] = [{'$and':[{'sideEvent.prefDateOne':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefTimeOne':tier}]},
-                                         {'$and':[{'sideEvent.prefDateTwo':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefTimeTwo':tier}]},
-                                         {'$and':[{'sideEvent.prefDateThree':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefTimeThree':tier}]}
+                              q['$or'] = [{'$and':[{'sideEvent.prefDate.one':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefDateTime.one':tier}]},
+                                         {'$and':[{'sideEvent.prefDate.two':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefDateTime.two':tier}]},
+                                         {'$and':[{'sideEvent.prefDate.three':moment.tz($scope.selectedTime,$scope.conference.timezone).format('(dddd) YYYY/MM/DD')},{'sideEvent.prefDateTime.three':tier}]}
                                        ];
                           }
                           if($scope.search){
