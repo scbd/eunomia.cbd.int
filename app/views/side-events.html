@@ -1,6 +1,15 @@
 <div id="reservations" class="container-fluid" style="height:100%;width:100%">
 
     <style>
+    .visible-print-t {
+      display: none;
+    }
+    @media print {
+      .topper{border-top: 2px solid #000000;}
+      .visible-print-t {
+        display: table-cell;
+      }
+    }
         input {
             border: 0;
             background-color: #EEEEEE;
@@ -88,16 +97,18 @@
             </ui-select>
         </div>
         <div class="col-xs-4 ">
+          <!-- <pre>{{sideEventsCtrl.conference.meetings |json}}</pre> -->
+
           <ui-select multiple ng-model="sideEventsCtrl.searchMeeting" close-on-select="true"  ng-change="sideEventsCtrl.changeDate()">
               <ui-select-match placeholder="Meeting Search">
-                  <div style="display:inline;background-color:{{$item.color}}">{{$item.titleShort}}</div>
+                  <div style="display:inline;background-color:{{$item.color}}">{{$item.EVT_REG_MTG_CD}}</div>
               </ui-select-match>
-              <ui-select-choices  style="width:100%;" position="down" repeat="room._id as room in sideEventsCtrl.conference.meetings | propsFilter: {titleShort: $select.search}">
+              <ui-select-choices  style="width:100%;" position="down" repeat="room._id as room in sideEventsCtrl.conference.meetings | propsFilter: {EVT_REG_MTG_CD: $select.search}">
                   <div >
                       <hr style="margin: 0 0 0 0;">
                       <small>
                     <span class="text-nowrap">
-                        <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{room.titleShort}} </span>
+                        <span  style="padding:0px 0px 0px 1px; vertical-align:middle;">{{room.EVT_REG_MTG_CD}} </span>
                       </span>
                 </small>
                   </div>
@@ -184,15 +195,16 @@
           </div>
 
           </div>
-            <div class="col-xs-12 " >
-              <a id="all" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('all')" class="btn " ng-class="{'btn-raised':sideEventsCtrl.statusFilter.all,'btn-default':!sideEventsCtrl.statusFilter.all}">All <span class="badge" >{{sideEventsCtrl.facits.states.all}}</span></a>
+            <div class="col-xs-12 text-no-wrap" >
+              <a class="hidden-print" id="all" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('all')" class="btn " ng-class="{'btn-raised':sideEventsCtrl.statusFilter.all,'btn-default':!sideEventsCtrl.statusFilter.all}">All <span class="badge" >{{sideEventsCtrl.facits.states.all-sideEventsCtrl.facits.states.draft.count}}</span></a>
+              <a class="visible-print-block" id="all" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('all')" class="btn " ng-class="{'btn-raised':sideEventsCtrl.statusFilter.all,'btn-default':!sideEventsCtrl.statusFilter.all}">All <span class="badge" >{{sideEventsCtrl.facits.states.all}}</span></a>
               <a id="request" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('request')" class="btn "  ng-class="{'btn-raised btn-danger':sideEventsCtrl.statusFilter.request,'btn-danger':!sideEventsCtrl.statusFilter.request}" ng-if="sideEventsCtrl.facits.states.request.count">Requests <span class="badge" >{{sideEventsCtrl.facits.states.request.count}}</span></a>
               <a id="public" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('public')" class="btn "  ng-class="{'btn-raised btn-success':sideEventsCtrl.statusFilter.public,'btn-success':!sideEventsCtrl.statusFilter.public}" ng-show="sideEventsCtrl.facits.states.public.count">Unscheduled <span class="badge" ng-show="sideEventsCtrl.facits.states.public.count">{{sideEventsCtrl.facits.states.public.count}}</span></a>
               <a id="scheduled" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('scheduled')"  class="btn "  ng-class="{'btn-raised btn-primary':sideEventsCtrl.statusFilter.scheduled,'btn-primary':!sideEventsCtrl.statusFilter.scheduled}" ng-show="sideEventsCtrl.facits.states.scheduled.count">Scheduled <span class="badge" ng-show="sideEventsCtrl.facits.states.scheduled.count">{{sideEventsCtrl.facits.states.scheduled.count}}</span></a>
               <a id="rejected" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('rejected')" class="btn"  ng-class="{'btn-raised  btn-info':sideEventsCtrl.statusFilter.rejected,'btn-info':!sideEventsCtrl.statusFilter.rejected}" ng-show="sideEventsCtrl.facits.states.rejected.count">Rejected <span class="badge" >{{sideEventsCtrl.facits.states.rejected.count}}</span></a>
               <a id="archived" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('archived')" class="btn " ng-class="{'btn-raised  btn-warning':sideEventsCtrl.statusFilter.archived,'btn-warning':!sideEventsCtrl.statusFilter.archived}"  ng-show="sideEventsCtrl.facits.states.archived.count">Archived<span class="badge" >{{sideEventsCtrl.facits.states.archived.count}}</span></a>
               <a id="deleted" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('deleted')" class="btn " ng-class="{'btn-raised  btn-warning':sideEventsCtrl.statusFilter.deleted,'btn-warning':!sideEventsCtrl.statusFilter.deleted}"  ng-show="sideEventsCtrl.facits.states.deleted.count">Deleted <span class="badge" >{{sideEventsCtrl.facits.states.deleted.count}}</span></a>
-              <a id="draft" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('draft')" class="btn" ng-class="{'btn-raised  btn-secondary':sideEventsCtrl.statusFilter.draft,'btn-secondary':!sideEventsCtrl.statusFilter.draft}" ng-show="sideEventsCtrl.facits.states.draft.count">Draft <span class="badge" >{{sideEventsCtrl.facits.states.draft.count}}</span></a>
+              <a class="hidden-print" id="draft" href="javascript:void(0)" ng-click="sideEventsCtrl.setStausFilter('draft')" class="btn" ng-class="{'btn-raised  btn-secondary':sideEventsCtrl.statusFilter.draft,'btn-secondary':!sideEventsCtrl.statusFilter.draft}" ng-show="sideEventsCtrl.facits.states.draft.count">Draft <span class="badge" >{{sideEventsCtrl.facits.states.draft.count}}</span></a>
 
             </div>
         </div>
@@ -255,7 +267,7 @@
                 </table> -->
 
                 <table class="table table-striped table-hover container" id="table-rows">
-                  <thead  style="background-color:#bbbbbb;">
+                  <thead  class="hidden-print" style="background-color:#bbbbbb;">
                       <tr>
                           <th width="10%">
                             <div> <sorter-solr label-name="ID #" ng-model="sideEventsCtrl.sort" property="key_s" style="margin-bottom:0px;"></sorter-solr></div>
@@ -271,7 +283,7 @@
                             <div>  <sorter-solr label-name="Preference 2" ng-model="sideEventsCtrl.sort" property="prefTwo_dt" style="margin-bottom:0px;"></sorter-solr></div>
                             <div>  <sorter-solr label-name="Preference 3" ng-model="sideEventsCtrl.sort" property="prefThree_dt" style="margin-bottom:0px;"></sorter-solr></div>
                             <div>  <sorter-solr label-name="Expected #" ng-model="sideEventsCtrl.sort" property="expNumPart_i" style="margin-bottom:0px;"></sorter-solr></div>
-                            </section
+                          </section>
                           </th>
                           <!-- <th width="26%" ng-if="sideEventsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                               <sorter-solr label-name="Room" ng-model="sideEventsCtrl.sort" property="room" load="sideEventsCtrl.load()" style="margin-bottom:0px;"></sorter-solr>
@@ -362,14 +374,33 @@
                                      <!-- END: Actual animated container. -->
                             </td>
                         </tr>
+                        <tr  class="topper" ng-repeat-start="doc in sideEventsCtrl.docs  track by $index" ng-class="{'active': item.$selected}" >
 
-                        <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat="doc in sideEventsCtrl.docs  track by $index">
+                          <td colspan="12" width="100%" class="visible-print-t">
+                            <strong>{{doc.key_s}}</strong>: <strong>{{doc.title_s}}</strong><br>
+                            <hr style="margin: 5px 0 5px 0;">
+                            <div >{{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
+                            <span ng-show="!expandAll">
+                              <span class="text-right" ng-show="(doc.description_s).length>300 && (!doc.truncate || doc.truncate===300)" ng-click="doc.truncate=100000;"><a class="text-nowrap pointer"><span style="white-space: nowrap;">more <i class="fa fa-caret-down"></i></span></a></span >
+                              <span class="text-right" ng-show="doc.truncate===100000" ng-click="doc.truncate=300"><a class="text-nowrap pointer"><span style="white-space: nowrap;">less <i class="fa fa-caret-up"></i></span></a></span >
+                            </span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr id="{{doc._id}}" ng-class="{'active': item.$selected}" ng-repeat-end >
                             <td  >
                               <div >
-                              <strong>{{doc.key_s}}</strong><br>
-                              <span class="label" ng-class="{'label-secondary':(doc._state_s==='draft'),'label-warning':(doc._state_s==='deleted'),'label-info':(doc._state_s==='rejected'),'label-primary':(doc._state_s==='scheduled'),'label-danger':(doc._state_s==='request'),'label-success':(doc._state_s==='public')}"><i ng-if="sideEventsCtrl.isChangingState(doc.identifier_s)" class="fa fa-spinner fa-pulse fa-x2 fa-fw"></i>
+                              <strong class="hidden-print" >{{doc.key_s}}</strong><br>
+                              <div  class="visible-print-block" ng-if="doc.meetingCD_ss" >
+
+                                <span ng-repeat="meeting in doc.meetingCD_ss track by $index"> <span class="label label-default">{{meeting}}</span> </span>
+                                <br>
+                              </div>
+                              <div>
+                                <span class="label" ng-class="{'label-secondary':(doc._state_s==='draft'),'label-warning':(doc._state_s==='deleted'),'label-info':(doc._state_s==='rejected'),'label-primary':(doc._state_s==='scheduled'),'label-danger':(doc._state_s==='request'),'label-success':(doc._state_s==='public')}"><i ng-if="sideEventsCtrl.isChangingState(doc.identifier_s)" class="fa fa-spinner fa-pulse fa-x2 fa-fw"></i>
                                 <span ng-if="!sideEventsCtrl.isChangingState(doc.identifier_s)"><span ng-if="doc._state_s==='public'">Unscheduled</span><span ng-if="doc._state_s!=='public'">{{doc._state_s.toUpperCase()}}</span></span></span><br>
-                              <div style="max-width:168px;" class="btn-group btn-group-vertical btn-group-xs hidden-xs hidden-sm hidden-md ">
+                              </div>
+                              <div class="hidden-print" style="max-width:168px;" class="btn-group btn-group-vertical btn-group-xs hidden-xs hidden-sm hidden-md ">
                                   <section  ng-if="doc._state_s==='request' || doc._state_s==='public'">
                                     <button ng-if="sideEventsCtrl.isRequest(doc)" title="Publish/Approve" class="btn btn-default" ng-click="sideEventsCtrl.approveDoc(doc);" ><i class="material-icons">&#xE8DC;</i> Aprove</button>
                                     <button title="Reject" class="btn btn-default" ng-click="sideEventsCtrl.rejectDoc(doc);" ><i class="material-icons">&#xE8DB;</i> Reject</button>
@@ -380,6 +411,11 @@
                                   <!-- <section  ng-if="doc._state_s==='archived'">
                                     <button title="Cancel" class="btn btn-default" ng-click="cancelDoc(doc);" ><i class="material-icons">&#xE8DD;</i> Cancel</button>
                                   </section > -->
+                              </div>
+                              <div class="visible-print-block" ng-if="doc.hostOrgAcronym_ss" >
+                                <br>
+                                <span class="badge" ng-style="{'background-color':doc.reservationSubTypeColor_s}">{{doc.reservationSubTypeTitle_s}}</span>
+                              <span class="visible-print-block" ng-repeat="host in doc.hostOrgAcronym_ss track by $index"> <span class="label label-default">{{host}}</span> </span>
                               </div>
                             </div>
                             </td>
@@ -395,7 +431,7 @@
 
                             </span>
                             <hr style="margin: 5px 0 5px 0;" ng-if="!doc.reservationStart_dt">
-<div ng-if="!doc.reservationStart_dt"><span class="small" ng-repeat="req in doc.requirements_ss"> {{req }} <span ng-if="!$last">|</span></span></div>
+                              <div ng-if="!doc.reservationStart_dt"><span class="small" ng-repeat="req in doc.requirements_ss"> {{req }} <span ng-if="!$last">|</span></span></div>
                                 <span ng-if="doc.reservationStart_dt">
                                 {{doc.reservationStart_dt |moment:'format':'YYYY-MM-DD HH:mm'}}<br>
                                 <a href="#">{{doc.reservationRoomAcronym_s}}</a>
@@ -403,18 +439,18 @@
                                   </div>
 
 
-                                  <div  ng-if="doc.meetingTitleShort_ss" style="position: absolute; bottom:5px;">
-                                  <span ng-repeat="meeting in doc.meetingTitleShort_ss track by $index"> <span class="label label-default">{{meeting}}</span> </span>
+                                  <div  class="hidden-print" ng-if="doc.meetingCD_ss" style="position: absolute; bottom:5px;" >
+                                  <span ng-repeat="meeting in doc.meetingCD_ss track by $index"> <span class="label label-default">{{meeting}}</span> </span>
                                 </div>
                             </td>
 
-                            <td   ng-if="sideEventsCtrl.isFieldSelect('Title');" style="position: relative;">
+                            <td  class="hidden-print" ng-if="sideEventsCtrl.isFieldSelect('Title');" style="position: relative;">
                                 <img ng-if="doc.logo_s!=='app/images/ic_event_black_48px.svg'"class="pull-right" ng-src="{{doc.logo_s}}" style="max-width:48px"></img>
 
 
-                                 <strong>{{doc.title_s}}</strong><br>
-                                 <hr style="margin: 5px 0 5px 0;">
-                                 <div >{{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
+                                 <strong class="hidden-print">{{doc.title_s}}</strong><br>
+                                 <hr class="hidden-print" style="margin: 5px 0 5px 0;">
+                                 <div class="hidden-print" >{{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
                                  <span ng-show="!expandAll">
                                    <span class="text-right" ng-show="(doc.description_s).length>300 && (!doc.truncate || doc.truncate===300)" ng-click="doc.truncate=100000;"><a class="text-nowrap pointer"><span style="white-space: nowrap;">more <i class="fa fa-caret-down"></i></span></a></span >
                                    <span class="text-right" ng-show="doc.truncate===100000" ng-click="doc.truncate=300"><a class="text-nowrap pointer"><span style="white-space: nowrap;">less <i class="fa fa-caret-up"></i></span></a></span >
@@ -436,7 +472,7 @@
                                 {{doc.contactAddress_s}} <span ng-if="doc.contactCity_s">,</span> {{doc.contactCity_s}}<span ng-if="doc.contactCountry_EN_s">,</span> {{doc.contactCountry_EN_s}}
 
                             </td>
-                            <td  ng-if="sideEventsCtrl.isFieldSelect('Modified');">
+                            <td  class="hidden-print" ng-if="sideEventsCtrl.isFieldSelect('Modified');">
                                 <strong>Updated:</strong> <br>
                                 {{doc.updatedDate_dt|moment:'format':'YYYY-MM-DD HH:mm'}}<br>
 
@@ -449,13 +485,7 @@
                             </td>
                         </tr>
 
-                        <!-- <tr ng-repeat-end  class="warning" ng-if="sideEventsCtrl.hasDayChange(doc.start,sideEventsCtrl.docs[$index+1].start)">
-                          <td colspan="5">
-                            <div hl-sticky="content-heading" offset-top="60" collection="content" collection-parent="head" sticky-class="warning">
-                              <div  style="background-color:#fcf8e3;"><h2  >{{sideEventsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}</h2></div>
-                            </div>
-                          </td>
-                        </tr> -->
+
                     </tbody>
                 </table>
                 <table ng-if="sideEventsCtrl.docs.length===0">
