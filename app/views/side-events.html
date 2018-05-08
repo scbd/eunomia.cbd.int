@@ -376,7 +376,7 @@
                         </tr>
                         <tr  class="topper" ng-repeat-start="doc in sideEventsCtrl.docs  track by $index" ng-class="{'active': item.$selected}" >
 
-                          <td colspan="12" width="100%" class="visible-print-t">
+                          <td colspan="10" width="100%" class="visible-print-t">
                             <strong>{{doc.key_s}}</strong>: <strong>{{doc.title_s}}</strong><br>
                             <hr style="margin: 5px 0 5px 0;">
                             <div >{{doc.description_s | htmlToPlaintext  | truncate:(doc.truncate || 300):' ...'}}
