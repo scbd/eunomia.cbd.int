@@ -323,14 +323,14 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
 
                           $timeout(function(){$scope.sideEvents = [];});
 
-                          var f = {subType:1,type:1,'sideEvent.id':1,'sideEvent.expNumPart':1};
+                          var f = {subType:1,type:1,'meta.status':1,'sideEvent.id':1,'sideEvent.expNumPart':1};
                           var sort ={'sideEvent.id':-1};
                           var q={
                             'location.conference':$scope.conference._id,
-                            '$or':[{'sideEvent':{'$exists':true}},{type:'570fd1352e3fa5cfa61d90ef'}],
+                            '$and':[{'sideEvent':{'$exists':true}},{type:'570fd0a52e3fa5cfa61d90ee'}],
                             // 'start':null,
                             'meta.status': {
-                                $nin: ['archived', 'deleted']
+                                $nin: ['archived', 'deleted','draft']
                             }
                           };
 
