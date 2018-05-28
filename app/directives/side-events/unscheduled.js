@@ -328,7 +328,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           var q={
                             'location.conference':$scope.conference._id,
                             '$and':[{'sideEvent':{'$exists':true}},{type:'570fd0a52e3fa5cfa61d90ee'}],
-                            // 'start':null,
+                            'start':null,
                             'meta.status': {
                                 $nin: ['archived', 'deleted','draft']
                             }
