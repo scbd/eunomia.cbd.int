@@ -4,7 +4,7 @@
   "description": "Eunomia - room scheduling",
   "main": "server.js",
   "dependencies": {
-    "bower": "1.7.0",
+    "bower": "1.8.4",
     "ejs": "2.3.4",
     "express": "4.13.3",
     "http-proxy": "1.11.2",
