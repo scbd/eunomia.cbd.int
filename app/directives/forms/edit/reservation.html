@@ -171,9 +171,16 @@
 
                         <div>
                             <label ng-repeat-start="d in doc.series  track by $index" ng-if="hideCurrentandPastDays(doc,doc.series[$index].date)">
-                                &nbsp;
-                                <span ng-if="isAvailable(doc.series[$index])===-1"><i class="fa fa-spinner fa-spin fa-fw"></i> loading... availbility</span>
-                                <span ng-show="isAvailable(doc.series[$index])>-1"><i style="color:red;" class="fa fa-calendar-times-o" aria-hidden="true" ng-show="!isAvailable(doc.series[$index]);"></i><input  ng-show="isAvailable(doc.series[$index]) || doc.series[$index].selected" type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true"> {{d.date | moment:'format':'dddd YYYY-MM-DD HH:mm'}} </input></span>
+                                &nbsp;{{isAvailable(doc.series[$index])}}
+                                <span ng-if="isAvailable(doc.series[$index])===-1">
+                                  <i class="fa fa-spinner fa-spin fa-fw"></i> loading... availbility
+                                </span>
+                                <span ng-show="isAvailable(doc.series[$index])>-1">
+                                  <i style="color:red;" class="fa fa-calendar-times-o" aria-hidden="true" ng-show="!isAvailable(doc.series[$index]);"></i>
+                                  <input  ng-disabled="!isAvailable(doc.series[$index])" ng-show="isAvailable(doc.series[$index]) || doc.series[$index].selected" type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true">
+                                  {{d.date | moment:'format':'dddd YYYY-MM-DD HH:mm'}}
+                                  </input>
+                                </span>
                             </label>
                             <br ng-repeat-end ng-if="hideCurrentandPastDays(doc,conferenceDays[$index].format())">
                         </div>
