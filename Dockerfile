@@ -1,7 +1,7 @@
 FROM mhart/alpine-node:10.6
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git
+    apk add --no-cache bash git curl
 
 WORKDIR /usr/src/app
 
