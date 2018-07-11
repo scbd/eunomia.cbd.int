@@ -15,7 +15,6 @@ EXPOSE 8000
 
 COPY . ./
 
-RUN unlink /usr/src/app/app/libs
 RUN ln -s /usr/src/app/node_modules/@bower_components /usr/src/app/app/libs
 
 CMD [ "node", "server" ]
