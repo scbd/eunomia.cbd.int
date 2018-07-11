@@ -5,7 +5,7 @@ if(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) { 
 var gitVersion = document.documentElement.attributes['git-version'].value;
 require.config({
     waitSeconds: 120,
-    baseUrl : 'app/',
+    baseUrl : '/app/',
     IESelectorLimit: true,
     paths: {
         'angular'                  : 'libs/angular-flex/angular-flex',
