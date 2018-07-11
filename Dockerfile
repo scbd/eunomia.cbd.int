@@ -5,7 +5,7 @@ RUN apk update && apk upgrade && \
 
 WORKDIR /usr/src/app
 
-COPY package.json bower.json .bowerrc .npmrc ./
+COPY package.json .npmrc ./
 
 RUN yarn
 
@@ -14,5 +14,8 @@ ENV PORT 8000
 EXPOSE 8000
 
 COPY . ./
+
+RUN unlink /usr/src/app/app/libs
+RUN ln -s /usr/src/app/node_modules/@bower_components /usr/src/app/app/libs
 
 CMD [ "node", "server" ]
