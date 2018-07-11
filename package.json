@@ -8,7 +8,6 @@
     "ejs": "2.5.8",
     "express": "^4.16.3",
     "http-proxy": "1.11.2",
-    "morgan": "^1.9.0",
     "serve-static": "^1.13.2",
     "@bower_components/angular": "angular/bower-angular#1.5.11",
     "@bower_components/angular-animate": "angular/bower-angular-animate#1.5",
