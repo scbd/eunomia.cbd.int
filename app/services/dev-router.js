@@ -11,8 +11,11 @@ define(['app'], function(app) {
 
         if ((domain.indexOf('localhost') || ~domain.indexOf('cbddev.xyz') ))
           domain='cbddev.xyz';
-        if (~domain.indexOf('staging.cbd.int'))
+        else if (~domain.indexOf('staging.cbd.int'))
           domain='staging.cbd.int';
+        else
+          domain = 'cbd.int';
+
         var ACCOUNTS_URI = 'https://accounts.' + domain;
 
 
