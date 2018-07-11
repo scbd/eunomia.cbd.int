@@ -13,6 +13,8 @@ package-lock.json
 pids
 logs
 results
+yarn-error.log
+yarn-lock.log
 
 npm-debug.log
 node_modules
