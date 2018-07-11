@@ -1,10 +1,10 @@
-FROM node:4.2
+FROM mhart/alpine-node:10.6
 
 WORKDIR /usr/src/app
 
 COPY package.json bower.json .bowerrc .npmrc ./
 
-RUN npm install -q
+RUN yarn
 
 ENV PORT 8000
 
