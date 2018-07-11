@@ -27,7 +27,7 @@ app.use('/app',   require('serve-static')(__dirname + '/app', { setHeaders: setC
 app.all('/api/*', function(req, res) { proxy.web(req, res, { target: apiUrl, changeOrigin: true } ); } );
 
 app.all('/app/*', function(req, res) { res.status(404).send(); } );
-
+app.get('/*',            function(req, res) { res.render('template', { gitVersion: gitVersion }); });
 // CONFIGURE TEMPLATE
 app.get('/*', function (req, res) {
 	res.cookie('VERSION', process.env.VERSION);
