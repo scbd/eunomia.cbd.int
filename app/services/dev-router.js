@@ -9,7 +9,7 @@ define(['app'], function(app) {
 
         var domain = document.location.hostname.replace(/[^\.]+\./, '');
 
-        if ((domain.indexOf('localhost') || ~domain.indexOf('cbddev.xyz') ))
+        if ((~domain.indexOf('localhost') || ~domain.indexOf('cbddev.xyz') ))
           domain='cbddev.xyz';
         else if (~domain.indexOf('staging.cbd.int'))
           domain='staging.cbd.int';
