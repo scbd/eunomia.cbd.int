@@ -55,7 +55,7 @@ require.config({
         'ui.select'                 : { deps: ['angular'] },
         'hl.sticky'                 : { deps: ['angular'] },
     },
-    urlArgs: 'v=' + gitVersion
+    // urlArgs: 'v=' + gitVersion
 });
 
 // BOOT
