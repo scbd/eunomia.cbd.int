@@ -31,6 +31,8 @@ define(['app',
             //============================================================
             //
             //============================================================
+            if(!$rootScope.user)$rootScope.user={}
+            
             $rootScope.user.isAdmin = function() {
 
                 return _.intersection($rootScope.user.roles, ['Administrator', 'EunoAdministrator']).length > 0;
