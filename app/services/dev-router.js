@@ -9,13 +9,15 @@ define(['app'], function(app) {
 
         var domain = document.location.hostname.replace(/[^\.]+\./, '');
 
-        if ((domain === 'localhost')) domain='cbddev.xyz';
+        if ((domain.indexOf('localhost') || ~domain.indexOf('cbddev.xyz') ))
+          domain='cbddev.xyz';
+        if (~domain.indexOf('staging.cbd.int'))
+          domain='staging.cbd.int';
         var ACCOUNTS_URI = 'https://accounts.' + domain;
 
 
         /***************************************************************************************
          *
-
          ***************************************************************************************/
         function isDev() {
           if((domain == 'localhost' || domain == 'houlahan.local' ||(domain.indexOf('cbddev.xyz') >= 0)) && !production)
