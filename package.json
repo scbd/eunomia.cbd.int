@@ -4,10 +4,6 @@
   "description": "Eunomia - room scheduling",
   "main": "server.js",
   "dependencies": {
-    "ejs": "2.5.8",
-    "express": "^4.16.3",
-    "http-proxy": "1.17",
-    "serve-static": "^1.13.2",
     "@bower_components/angular": "angular/bower-angular#1.5.11",
     "@bower_components/angular-animate": "angular/bower-angular-animate#1.5",
     "@bower_components/angular-bootstrap-colorpicker": "buberdds/angular-bootstrap-colorpicker#3.0.25",
@@ -15,13 +11,13 @@
     "@bower_components/angular-flex": "git://github.com/scbd/angular-flex.git#1.0.1",
     "@bower_components/angular-route": "angular/bower-angular-route#1.4.8",
     "@bower_components/angular-sanitize": "angular/bower-angular-sanitize#1.5",
-    "@bower_components/angular-sticky": "harm-less/angular-sticky#^0.3.0",
+    "@bower_components/angular-sticky": "harm-less/angular-sticky#0.3.0",
     "@bower_components/angular-toastr": "Foxandxss/angular-toastr#1.7.0",
-    "@bower_components/angular-ui-select": "angular-ui/ui-select#^0.19.6",
+    "@bower_components/angular-ui-select": "angular-ui/ui-select#0.19.6",
     "@bower_components/bootstrap": "twbs/bootstrap#3.3.6",
     "@bower_components/bootstrap-material-datetimepicker": "t00rk/bootstrap-material-datepicker#2.7.1",
     "@bower_components/bootstrap-material-design": "FezVrasta/bootstrap-material-design#v0.5.10",
-    "@bower_components/bootstrap-sass": "twbs/bootstrap-sass#~3.3.6",
+    "@bower_components/bootstrap-sass": "twbs/bootstrap-sass#3.3.6",
     "@bower_components/flag-icon-css": "lipis/flag-icon-css#^2.5.0",
     "@bower_components/font-awesome": "FortAwesome/Font-Awesome#4.5.0",
     "@bower_components/iconate": "bitshadow/iconate#*",
@@ -29,20 +25,20 @@
     "@bower_components/lodash": "lodash/lodash#3.9.3",
     "@bower_components/moment": "moment/moment#>= 2.6.0",
     "@bower_components/moment-timezone": "moment/moment-timezone#0.5.3",
-    "@bower_components/momentjs": "moment/moment#~2.10.2",
+    "@bower_components/momentjs": "moment/moment#2.10.2",
     "@bower_components/ng-dialog": "likeastore/ngDialog#1.4.0",
-    "@bower_components/ng-infinite-scroll": "ash-developer/ng-infinite-scroll#^0.0.1",
-    "@bower_components/pdfmake": "bpampuch/pdfmake#^0.1.20",
+    "@bower_components/ng-infinite-scroll": "ash-developer/ng-infinite-scroll#0.0.1",
+    "@bower_components/pdfmake": "bpampuch/pdfmake#0.1.20",
     "@bower_components/require-css": "guybedford/require-css#0.1.8",
     "@bower_components/requirejs": "jrburke/requirejs-bower#2.1.18",
     "@bower_components/requirejs-plugins": "millermedeiros/requirejs-plugins#1.0.3",
-    "@bower_components/requirejs-text": "requirejs/text#2.0.14"
+    "@bower_components/requirejs-text": "requirejs/text#2.0.14",
+    "ejs": "2.5.8",
+    "express": "4.16.3",
+    "http-proxy": "1.17",
+    "serve-static": "1.13.2"
   },
   "engine": "node >= 8",
-  "devDependencies": {},
-  "scripts": {
-    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'app/libs', 'junction') } catch (e) { }\""
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/scbd/eunomia.cbd.int.git"
@@ -51,5 +47,15 @@
   "license": "MIT",
   "engines": {
     "yarn": ">= 1.6.0"
+  },
+  "resolutions": {
+    "debug": "3.1.0",
+    "depd": "1.1.2",
+    "setprototypeof": "1.1.0",
+    "statuses": "1.5.0",
+    "http-errors": "1.6.3",
+    "moment": "2.22.2",
+    "bootstrap": "4.1.2",
+    "jquery": "3.3.1"
   }
 }
