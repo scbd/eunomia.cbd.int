@@ -6,7 +6,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
     app.factory('apiToken', ['$q', '$rootScope', '$window', '$document', '$timeout','devRouter', function($q, $rootScope, $window, $document, $timeout,devRouter) {
 
         var authenticationFrameQ = $q(function(resolve, reject) {
-console.log(devRouter.ACCOUNTS_URI);
+
             var frame = $('<iframe src="' + devRouter.ACCOUNTS_URI + '/app/authorize.html" style="display:none"></iframe>');
 
             $('body').prepend(frame);

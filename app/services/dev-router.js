@@ -19,21 +19,9 @@ define(['app'], function(app) {
         var ACCOUNTS_URI = 'https://accounts.' + domain;
 
 
-        /***************************************************************************************
-         *
-         ***************************************************************************************/
-        function isDev() {
-          if((domain == 'localhost' || domain == 'houlahan.local' ||(domain.indexOf('cbddev.xyz') >= 0)) && !production)
-            return true;
-            else {
-              return '';
-            }
-        }
-
         return {
             ACCOUNTS_URI: ACCOUNTS_URI,
-            DOMAIN: domain,
-            isDev: isDev
+            DOMAIN: domain
         };
     }]);
 });
