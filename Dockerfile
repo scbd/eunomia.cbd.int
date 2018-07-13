@@ -15,6 +15,9 @@ EXPOSE 8000
 
 COPY . ./
 
+
+RUN ln -s /usr/src/app/node_modules/@bower_components /usr/src/app/app/libs
+
 ARG COMMIT
 ENV COMMIT $COMMIT
 

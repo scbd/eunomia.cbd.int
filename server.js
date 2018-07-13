@@ -21,7 +21,6 @@ console.info(`info: IS DEV: ${process.env.IS_DEV}`);
 
 app.set('views', `${__dirname}/app`);
 app.set('view engine', 'ejs');
-app.use('/app/libs',      express.static(__dirname + '/node_modules/@bower_components', { setHeaders: setCustomCacheControl }));
 app.use('/app',   require('serve-static')(__dirname + '/app', { setHeaders: setCustomCacheControl }));
 
 app.all('/api/*', function(req, res) { proxy.web(req, res, { target: apiUrl, changeOrigin: true } ); } );
