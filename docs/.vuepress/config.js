@@ -1,6 +1,6 @@
 const path = require('path')
 module.exports = {
-  base:'/',
+  base:'/eunomia.cbd.int/',
   title: 'Eunomia',
   description: 'Room reservation and manegment system.',
   themeConfig: {
