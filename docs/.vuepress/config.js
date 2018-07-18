@@ -6,6 +6,8 @@ module.exports = {
   themeConfig: {
     repo: 'scbd/eunomia.cbd.int',
     editLinks: true,
+    docsDir: 'docs',
+    docsBranch: 'master',
     lastUpdated: 'Last Updated', // string | boolean
     nav: [
       { text: 'Schedule',         link: '/schedule/' },

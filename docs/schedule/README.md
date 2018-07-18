@@ -8,28 +8,27 @@ sidebar: auto
 ![Conference select gif](https://attachments.cbd.int/apps/eunomia/conference.gif)
 
 ## Change Day
-![Conference select gif](https://attachments.cbd.int/apps/eunomia/change-days.gif)
+![Change day animated gif](https://attachments.cbd.int/apps/eunomia/change-days.gif)
 
-![Conference select gif](https://attachments.cbd.int/apps/eunomia/change-day-2.gif)
+![Change day animated gif](https://attachments.cbd.int/apps/eunomia/change-day-2.gif)
 
 ## Hide Empty
-![Conference select gif](https://attachments.cbd.int/apps/eunomia/hide.gif)
+![Hide empty row animated gif](https://attachments.cbd.int/apps/eunomia/hide.gif)
 
 ## Search
-![Conference select gif](https://attachments.cbd.int/apps/eunomia/search-schedule.gif)
+![Search reservations animated gif](https://attachments.cbd.int/apps/eunomia/search-schedule.gif)
 
 ## Reservation
+![Reservation popup animated gif](https://attachments.cbd.int/apps/eunomia/reservation.gif)
 
 ### Details
+![Reservation details animated gif](https://attachments.cbd.int/apps/eunomia/reservation-details.gif)
 
 ### Options
+![Reservation options](https://attachments.cbd.int/apps/eunomia/reservation-options.png)
+
+### Recurrence
+![Reservation details animated gif](https://attachments.cbd.int/apps/eunomia/reservation-details.gif)
 
 ### CCTV
-
-### Agenda
-
-#### Provisional
-
-#### CCTV
-
-#### Show All Documents
+![Reservation cctv animated gif](https://attachments.cbd.int/apps/eunomia/reservation-cctv.gif)
