@@ -55,3 +55,6 @@ You can view the schedule for specific days by clicking the *next* and *previous
 
 - Click on the CCTV tab to enter any text you would like to show on the CCTV screen
 - When you are done entering the event's details, click on Save to finalize the reservation
+
+### Agenda
+- Click on the Agenda tab to specify the Agenda Items related to the reservation and whether you want them to appear on the CCTV screen 
