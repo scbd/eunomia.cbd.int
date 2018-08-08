@@ -39,15 +39,22 @@ You can view the schedule for specific days by clicking the *next* and *previous
 ### Details
 ![Reservation details animated gif](https://attachments.cbd.int/apps/eunomia/reservation-details.gif)
 
-- Enter your event details such as title, date, time, and location/room. 
-- Make sure you create rooms **before** you start making the reservations otherwise you will not be able to. You can create rooms by clicking on Admin on the top right, then Rooms. 
+- Enter your event details such as title, date, time, and location/room.
 - Use the toggle button to indicate whether your reservation is recurring
-- Information entered in the Details window will be shown on the Reservations page next to the reservation title. 
+- Information entered in the Details window will be shown on the Reservations page next to the reservation title.
+
+::: warning IMPORTANT
+Make sure you create rooms **before** you start making the reservations otherwise you will not be able to.
+:::
+
+::: tip
+You can create rooms by clicking on Admin on the top right, then Rooms.
+:::
 
 ### Options
 ![Reservation options](https://attachments.cbd.int/apps/eunomia/reservation-options.png)
 
-- In the Options tab, you can specify certain options specific to your event such as public accesseibility, confirmation status and security presence at the venue. 
+- In the Options tab, you can specify certain options specific to your event such as public accesseibility, confirmation status and security presence at the venue.
 - Similar to Details, information entered in the Options window will be shown on the Reservations page.
 
 ### CCTV
