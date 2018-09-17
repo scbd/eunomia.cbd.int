@@ -402,15 +402,17 @@
                               </div>
                               <div class="hidden-print" style="max-width:168px;" class="btn-group btn-group-vertical btn-group-xs hidden-xs hidden-sm hidden-md ">
                                   <section  ng-if="doc._state_s==='request' || doc._state_s==='public'">
+                                    <a ng-if="sideEventsCtrl.isRequest(doc)" title="Edit" class="btn btn-default" ng-href="https://www.cbd.int/side-events/manage/events/{{doc.identifier_s}}" target="_blank"><i class="fa fa-pencil fa-2x"></i> Edit</a>
                                     <button ng-if="sideEventsCtrl.isRequest(doc)" title="Publish/Approve" class="btn btn-default" ng-click="sideEventsCtrl.approveDoc(doc);" ><i class="material-icons">&#xE8DC;</i> Aprove</button>
                                     <button title="Reject" class="btn btn-default" ng-click="sideEventsCtrl.rejectDoc(doc);" ><i class="material-icons">&#xE8DB;</i> Reject</button>
                                   </section>
                                   <section  ng-if="doc._state_s==='scheduled'">
                                     <button title="Cancel" class="btn btn-default" ng-click="sideEventsCtrl.cancelDoc(doc);" ><i class="material-icons">&#xE8DD;</i> Cancel</button>
                                   </section >
-                                  <!-- <section  ng-if="doc._state_s==='archived'">
-                                    <button title="Cancel" class="btn btn-default" ng-click="cancelDoc(doc);" ><i class="material-icons">&#xE8DD;</i> Cancel</button>
-                                  </section > -->
+                                  <section  ng-if="doc._state_s==='draft'">
+                                    <a  title="Edit" class="btn btn-default" ng-href="https://www.cbd.int/side-events/manage/events/{{doc.identifier_s}}" target="_blank"><i class="fa fa-pencil fa-2x"></i> Edit</a>
+                                    <!-- <button ng-if="sideEventsCtrl.isRequest(doc)" title="Publish/Approve" class="btn btn-default" ng-click="sideEventsCtrl.approveDoc(doc);" ><i class="material-icons">&#xE8DC;</i> Aprove</button>                          -->
+                                  </section >
                               </div>
                               <div class="visible-print-block" ng-if="doc.hostOrgAcronym_ss" >
                                 <br>
