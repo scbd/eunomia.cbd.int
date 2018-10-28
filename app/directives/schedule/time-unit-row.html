@@ -38,7 +38,7 @@
   <div id="interval-{{$index}}" class="interval-hour relative" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:visible;height:100%;width:{{colWidth}}px;">
 <!-- ng-click="resDialog(sub.res,sub.time);" -->
     <div class="sub-interval" ng-repeat="sub in timeColumn.subIntervals"  ng-click="resDialog(sub.res,sub.time,'details');$event.stopPropagation();" style="position:relative;height:100%;width:25%;">
-      <grid-reservation ng-if="sub.res._id" rooms="rooms" doc="sub.res" start="sub.time" pop-res="resDialog(sub.res,sub.time,'agenda')"></grid-reservation>
+      <grid-reservation ng-if="sub.res._id" rooms="rooms" doc="sub.res" start="sub.time" pop-res="resDialog(sub.res,sub.time,'agenda')" pop-vid="resDialog(sub.res,sub.time,'options')"></grid-reservation>
     </div>
   </div>
 </div>
