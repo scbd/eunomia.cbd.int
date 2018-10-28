@@ -11,6 +11,7 @@ define(['app', 'text!./grid-reservation.html','lodash'], function(app, template,
                     'doc': '=',
                     'start': '=',
                     'popRes': '&',
+                    'popVid': '&'
                 },
                 link: function($scope, $element) {
 

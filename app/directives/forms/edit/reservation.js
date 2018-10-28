@@ -341,6 +341,15 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
+                        $scope.setVideoUrl= function(doc) {
+                            if(doc.video)
+                              doc.videoUrl=$scope.room.videoUrl
+                            else 
+                              doc.videoUrl=''
+                        }; //           
+                        //============================================================
+                        //
+                        //============================================================
                         $scope.changeTab = function(tabName) {
                             _.each($scope.tabs, function(tab) {
                                 tab.active = false;

@@ -66,6 +66,7 @@
       </div>
     </div>
     <span  ng-class="{'red-agenda':doc.agenda.provisional}" style="position:absolute;bottom:1px;right:5px;"><i class="fa fa-list-ol  small" style="cursor:pointer;"  aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i></span>
+    <span  ng-class="{'red-agenda':doc.video}" style="position:absolute;bottom:1px;left:5px;"><i class="fa fa-television  small" style="cursor:pointer;"  aria-hidden="true" ng-if="doc.video" ng-click="popVid();$event.stopPropagation();"></i></span>
   </div>
 
 </div>
