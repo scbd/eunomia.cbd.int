@@ -337,16 +337,7 @@ define(['app', 'lodash',
                                 });
                             });
                         } //init
-
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.setVideoUrl= function(doc) {
-                            if(doc.video)
-                              doc.videoUrl=$scope.room.videoUrl
-                            else 
-                              doc.videoUrl=''
-                        }; //           
+         
                         //============================================================
                         //
                         //============================================================
@@ -450,7 +441,8 @@ define(['app', 'lodash',
                               docClone.start = moment.tz(docClone.start,$scope.conference.timezone).add(k, 'days').format();
                               docClone.end = moment.tz(docClone.end,$scope.conference.timezone).add(k, 'days').format();
                             }
-
+                            if(docClone.videoUrl)docClone.videoUrl=docClone.videoUrl.trim()
+                            
                             if((docClone._id && !isNew) || (!docClone._id && isNew))
                             mongoStorage.save('reservations',docClone).catch(function(error) {
                                 console.log(error);

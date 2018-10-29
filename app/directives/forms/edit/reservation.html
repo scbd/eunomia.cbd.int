@@ -160,7 +160,7 @@
                         <div class="form-group" style="margin-left:10px;margin-top:15px;">
                             <div class="togglebutton">
                                 <label>
-                                    <input type="checkbox" ng-model="doc.video" ng-false-value="false" ng-false-value="true" ng-change="setVideoUrl(doc)">
+                                    <input type="checkbox" ng-model="doc.video" ng-false-value="false" ng-true-value="true" >
                                     <span ng-if="doc.video"><i class="fa fa-television" aria-hidden="true"></i> Video</span><span ng-if="!doc.video">No Video</span>
                                 </label>
                             </div>
@@ -168,8 +168,8 @@
                     </div>
                     <div class="col-xs-8" ng-if="doc.video">
                         <div class="form-group " style="margin-left:10px;margin-top:15px;" >
-                              <label class="control-label" for="title" style="margin: 0 0 0 0;">Url</label>
-                              <input class="form-control" id="title" type="url" ng-model="doc.videoUrl">
+                              <label class="control-label" for="videoUrl" style="margin: 0 0 0 0;">Url</label>
+                              <input class="form-control" id="videoUrl" type="url" ng-model="doc.videoUrl" placeholder="{{room.videoUrl || 'Please type the video url here' }}">
                               <p class="help-block" ng-show="valid">error</p>
                           </div>
                     </div>
