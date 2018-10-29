@@ -111,9 +111,10 @@
                     <div class="form-group" style="margin-left:10px;margin-top:15px;">
                         <div class="togglebutton">
                             <label>
-                                <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-false-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
+                                <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-true-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
                             </label>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -132,7 +133,7 @@
                         <div class="form-group" style="margin-left:10px;margin-top:15px;">
                             <div class="togglebutton">
                                 <label>
-                                    <input type="checkbox" ng-model="doc.open" ng-false-value="false" ng-false-value="true"><span ng-if="doc.open">Open to Public</span><span ng-if="!doc.open">Closed to Public</span>
+                                    <input type="checkbox" ng-model="doc.open" ng-false-value="false" ng-true-value="true"><span ng-if="doc.open">Open to Public</span><span ng-if="!doc.open">Closed to Public</span>
                                 </label>
                             </div>
                         </div>
@@ -141,7 +142,7 @@
                         <div class="form-group" style="margin-left:10px;margin-top:15px;">
                             <div class="togglebutton">
                                 <label>
-                                    <input type="checkbox" ng-model="doc.confirmed" ng-false-value="false" ng-false-value="true"><span ng-if="doc.confirmed">Confirmed Reservation</span><span ng-if="!doc.confirmed">Unconfirmed Reservation</span>
+                                    <input type="checkbox" ng-model="doc.confirmed" ng-false-value="false" ng-true-value="true"><span ng-if="doc.confirmed">Confirmed Reservation</span><span ng-if="!doc.confirmed">Unconfirmed Reservation</span>
                                 </label>
                             </div>
                         </div>
@@ -150,7 +151,7 @@
                         <div class="form-group" style="margin-left:10px;margin-top:15px;">
                             <div class="togglebutton">
                                 <label>
-                                    <input type="checkbox" ng-model="doc.security" ng-false-value="false" ng-false-value="true"><span ng-if="doc.security">Security</span><span ng-if="!doc.security">No Security</span>
+                                    <input type="checkbox" ng-model="doc.security" ng-false-value="false" ng-true-value="true"><span ng-if="doc.security">Security</span><span ng-if="!doc.security">No Security</span>
                                 </label>
                             </div>
                         </div>
