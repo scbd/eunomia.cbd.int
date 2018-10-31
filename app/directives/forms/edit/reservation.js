@@ -32,7 +32,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.isAdmin = function() {
-                            return _.intersection($rootScope.user.roles, ['Administrator', 'EunoAdministrator']).length > 0;
+                            return _.intersection($rootScope.user.roles, [ 'EunoAdministrator']).length > 0;
                         };
 
                         //============================================================

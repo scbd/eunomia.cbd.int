@@ -372,7 +372,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       function buildQuery (facitsOnly) {
           var q = [];
 
-          q.push('private_s:EunoAdministrator,Administrator')
+          q.push('private_s:EunoAdministrator')
           q.push('schema_s:sideEvent')
           q.push(`conference_s:${_ctrl.conference._id}`)
 
