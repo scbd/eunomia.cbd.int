@@ -7,20 +7,20 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
 
         $routeProvider.
             when('/',                                { redirectTo: '/schedule/conference' }).
-            when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'reservations'}).
-            when('/side-events',                     { templateUrl: 'views/side-events.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'side-events'}).
-            when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator','EunoUser']) }, menu:'schedule'}).
+            when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'reservations'}).
+            when('/side-events',                     { templateUrl: 'views/side-events.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'side-events'}).
+            when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'schedule'}).
 
-            when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'side-events-schedule'}).
+            when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'side-events-schedule'}).
 
-            when('/cctv/frames',                     { templateUrl: 'views/cctv/frames.html',   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
-            when('/cctv/frames/:id',                 { templateUrl: 'views/cctv/frame-id.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'cctv-frames'}).
+            when('/cctv/frames',                     { templateUrl: 'views/cctv/frames.html',   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
+            when('/cctv/frames/:id',                 { templateUrl: 'views/cctv/frame-id.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'cctv-frames'}).
 
-            when('/admin/rooms',                     { templateUrl: 'views/admin/rooms.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
-            when('/admin/types/:schema',             { templateUrl: 'views/admin/types.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
-            when('/admin/types/:schema/:parent',     { templateUrl: 'views/admin/side-event-types.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin'}).
-            when('/admin/cctv/feeds',                { templateUrl: 'views/cctv/feeds.html' ,             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
-            when('/admin/cctv/feeds/:id',            { templateUrl: 'views/cctv/feed-id.html' ,           resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['Administrator','EunoAdministrator']) }, menu:'admin' }).
+            when('/admin/rooms',                     { templateUrl: 'views/admin/rooms.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'admin'}).
+            when('/admin/types/:schema',             { templateUrl: 'views/admin/types.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'admin'}).
+            when('/admin/types/:schema/:parent',     { templateUrl: 'views/admin/side-event-types.html',             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'admin'}).
+            when('/admin/cctv/feeds',                { templateUrl: 'views/cctv/feeds.html' ,             resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'admin' }).
+            when('/admin/cctv/feeds/:id',            { templateUrl: 'views/cctv/feed-id.html' ,           resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'admin' }).
 
             when('/404', { templateUrl: 'views/404.html' }).
             when('/403', { templateUrl: 'views/403.html' }).
