@@ -75,13 +75,19 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
                     var start = moment(day).startOf('day').toDate(); //  0:00
                     var end   = moment(day).startOf('day').hour(23).minute(55).toDate(); // 23:55
+                    
+                    var streamId = (eventGroup.conference||{}).streamId;
+                    var selectdFeeds = _(_ctrl.feeds)
+                        .filter(function(f) { return streamId && streamId == f.code; })
+                        .map   (function(f) { return f._id; })
+                        .value()
 
                     return {
                         eventGroup : _ctrl.eventGroup._id,
                         content: { type: 'announcement' },
                         scheduleType : 'continuous',
                         schedules : buildDailySchedules(start, end, 'continuous'),
-                        feeds : [],
+                        feeds : selectdFeeds
                     };
                 }
                 else {
