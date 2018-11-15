@@ -9,7 +9,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
         _ctrl.edit       = edit;
         _ctrl.delete     = del;
         _ctrl.buildSortKey = sortKey;
-        _ctrl.goTo       = goTo;
+        _ctrl.getCctvUrl   = getCctvUrl;
 
         init();
 
@@ -32,7 +32,6 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
             _ctrl.selectedDay     = $location.search().day;
             _ctrl.selectedFeed    = $location.search().feed;
             _ctrl.selectedType    = $location.search().type;
-            _ctrl.selectedDayLink = moment().format();
 
             return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
@@ -57,9 +56,14 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
         //==============================
         //
         //==============================
-        function goTo(feed,day) {
+        function getCctvUrl(feed,day) {
 
-          $window.open('https://www.cbd.int/cctv/help/event-information?streamId='+feed+'&datetime='+day, '_blank');
+            var url = 'https://www.cbd.int/cctv/help/event-information?streamId='+encodeURIComponent(feed);
+
+            if(day)
+                url+= '&datetime='+encodeURIComponent(moment(day).format('YYYY-MM-DDTHH:mm'));
+
+            return url;
 
         }
 

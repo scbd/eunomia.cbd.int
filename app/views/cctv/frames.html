@@ -19,14 +19,14 @@
             <div class="form-group">
                   <div class="input-group">
                   <label for="code" required>As On Day</label>
-                  <input type="text" class="form-control" name="code" ng-model="framesCtrl.selectedDayLink" ng-change="framesCtrl.refresh()"
-                         date-picker="{ switchOnClick: true, time: true, date: true, format: '', clearButton: true }"
+                  <input type="text" placeholder="Now" class="form-control" name="code" ng-model="framesCtrl.selectedDayLink" ng-change="framesCtrl.refresh()"
+                         date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: true }"
                          date-picker-min-date="framesCtrl.eventGroup.schedule.start"
                          date-picker-max-date="framesCtrl.eventGroup.schedule.end">
                          <span class="input-group-btn">
-                         <button type="button" class="btn btn-fab btn-fab-mini" ng-click="framesCtrl.goTo(framesCtrl.selectedFeedLink,framesCtrl.selectedDayLink)">
+                         <a class="btn btn-fab btn-fab-mini" target="_blank" ng-href="{{framesCtrl.getCctvUrl(framesCtrl.selectedFeedLink,framesCtrl.selectedDayLink)}}">
                            <i class="fa fa-link"></i>
-                         </button>
+                         </a>
                        </span>
                 </div>
             </div>
