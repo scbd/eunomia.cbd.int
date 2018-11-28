@@ -239,12 +239,8 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula
           //============================================================
           //
           //============================================================
-          function deleteItem (item){
-
-              _.each($scope.binding.items,function(i,index){
-                  if(i && i.item===item.item )
-                    $scope.binding.items.splice(index,1);
-              });
+          function deleteItem (index){
+            $scope.binding.items.splice(index,1);
           }//deleteItem
           $scope.delete=deleteItem;
 
