@@ -23,8 +23,6 @@ require.config({
         'bm-rip'                   : 'libs/bootstrap-material-design/dist/js/ripples.min',
         'BM-date-picker'           : 'libs/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker',
         'dragula'                  : 'libs/angular-dragula/dist/angular-dragula',
-        'iconate'                  : 'libs/iconate/dist/iconate',
-        'iconateCSS'               : 'libs/iconate/dist/iconate.min',
         'jquery'                   : 'libs/jquery/dist/jquery',
         'linqjs'                   : 'libs/linqjs/linq.min',
         'lodash'                   : 'libs/lodash/lodash',
