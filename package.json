@@ -25,7 +25,6 @@
     "@bower_components/bootstrap-sass": "twbs/bootstrap-sass#3.3.6",
     "@bower_components/flag-icon-css": "lipis/flag-icon-css#^2.5.0",
     "@bower_components/font-awesome": "FortAwesome/Font-Awesome#4.5.0",
-    "@bower_components/iconate": "bitshadow/iconate#*",
     "@bower_components/jquery": "jquery/jquery-dist#2.2.0",
     "@bower_components/lodash": "lodash/lodash#3.9.3",
     "@bower_components/moment": "moment/moment#>= 2.6.0",
