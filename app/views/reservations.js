@@ -43,17 +43,12 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       _ctrl.searchText='';
       _ctrl.searchType=[];
       _ctrl.searchRoom=[];
+      _ctrl.getReservations = getReservations;
       _ctrl.showFields=true;
       _ctrl.sort = {'start':1};
       _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified'];
       _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'}];
-      init();
-      $scope.$watch('reservationsCtrl.sort',function(){
-        getReservations();
-      });
-      $scope.$watch('reservationsCtrl.conference._id',function(){
-        init(true);
-      });
+      init(true);
 
       return this;
 

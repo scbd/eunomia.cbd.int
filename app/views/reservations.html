@@ -208,7 +208,7 @@
                             <th width="2%"><i class="fa fa-columns hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()" ng-if="!reservationsCtrl.showFields"></i><i class="fa fa-times hidden-print pointer" aria-hidden="true" ng-click="reservationsCtrl.toggleFields()"
                                     ng-if="reservationsCtrl.showFields"></i></th>
                             <th width="7%" ng-if="reservationsCtrl.isFieldSelect('Date');">
-                                <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="start" style="margin-bottom:0px;"></sorter>
+                                <sorter label-name="Date" ng-model="reservationsCtrl.sort" property="start" style="margin-bottom:0px;" ng-change="reservationsCtrl.getReservations()"></sorter>
                             </th>
                             <th width="26%" ng-if="reservationsCtrl.isFieldSelect('Room');">Room<span class="hidden-print"> / Location / Capacity</span>
                                 <!-- <sorter label-name="Room" ng-model="reservationsCtrl.sort" property="room" load="reservationsCtrl.load()" style="margin-bottom:0px;"></sorter> -->
