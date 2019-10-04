@@ -51,13 +51,17 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       $scope.$watch('reservationsCtrl.sort',function(){
         getReservations();
       });
+      $scope.$watch('reservationsCtrl.conference._id',function(){
+        init(true);
+      });
+
       return this;
 
 
         //============================================================
         //
         //============================================================
-        function init() {
+        function init(forceNew) {
 
             moment.tz.setDefault(conference.timezone);
             _ctrl.conference.startObj = moment(conference.schedule.start);
@@ -68,7 +72,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
             else
                 localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
 
-            if ($location.search().start && $location.search().end) {
+            if ($location.search().start && $location.search().end  && !forceNew) {
                 _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
                 _ctrl.endFilter = moment($location.search().end).format('YYYY-MM-DD HH:mm');
             } else {
