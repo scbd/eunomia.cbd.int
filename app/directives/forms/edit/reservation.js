@@ -292,28 +292,77 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        function deleteRes() {
+                        function deleteSeries(seriesId) {
+                            var params = {q:{ seriesId:seriesId }};
 
-                            if (confirm('Are you sure you would like to permanently delete this reservation?')) {
-                                var dalObj = _.clone($scope.doc);
-                                dalObj.meta={};
-                                dalObj.meta.status='deleted';
 
-                                return $scope.save(dalObj).then(function() {
-                                    if($scope.doc.sideEvent)
-                                      $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
-                                            var params = {};
-                                            params.id = res2.data[0]._id;
-                                            var update =res2.data[0];
-                                            update.meta={};
-                                            if (!update.meta.clientOrg) update.meta.clientOrg = 0;
-                                            update.meta.status='canceled';
-                                            $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
-                                      });
-                                });
+                            return $http.get('/api/v2016/reservations',{'params': params}).then(function(res){
+                                var series = res.data || []
+                                var promises = []
+                                for (var i = 0; i < series.length; i++) {
+                                    series[i].meta ={};
+                                    series[i].meta.status='deleted';
+                                    promises.push(mongoStorage.save('reservations', series[i]))
+                                }
+                                $q.all(promises).then(function(){
+                                    $rootScope.$broadcast("showInfo", "Reservation Series'" + $scope.doc.title + "' Successfully Deleted.");
+                                })
+                            })
+
+                        } 
+                        $scope.deleteSeries = deleteSeries;
+
+                        function deleteSeriesConfirm(seriesId) {
+
+                            if (confirm('Are you sure you would like to permanently delete this reservation series?')) {
+                                deleteRes().then(function(){ return deleteSeries(seriesId) })
+
+
                             }
                             $scope.closeThisDialog();
                         } //init
+                        $scope.deleteSeriesConfirm = deleteSeriesConfirm;
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.editSeries = function(yes) {
+
+                            $scope.editSeriesFlag = yes;
+                            //$scope.changeTab('details');
+                        }; //$scope.editSeries
+
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function deleteResConfirm() {
+
+                            if (confirm('Are you sure you would like to permanently delete this reservation?')) {
+                                deleteRes()
+                                $scope.closeThisDialog();
+                            }
+                        } 
+                        $scope.deleteResConfirm = deleteResConfirm;
+
+
+                        function deleteRes(){
+                            var dalObj = _.clone($scope.doc);
+                            dalObj.meta={};
+                            dalObj.meta.status='deleted';
+
+                            return $scope.save(dalObj).then(function() {
+                                if($scope.doc.sideEvent)
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                        var params = {};
+                                        params.id = res2.data[0]._id;
+                                        var update =res2.data[0];
+                                        update.meta={};
+                                        if (!update.meta.clientOrg) update.meta.clientOrg = 0;
+                                        update.meta.status='canceled';
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                  });
+                            });
+                        }
                         $scope.deleteRes = deleteRes;
 
                         //============================================================
