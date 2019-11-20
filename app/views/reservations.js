@@ -67,9 +67,11 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
             else
                 localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
 
-            if ($location.search().start && $location.search().end  && !forceNew) {
+            if ($location.search().start && $location.search().end ) {
+  
                 _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
                 _ctrl.endFilter = moment($location.search().end).format('YYYY-MM-DD HH:mm');
+                
             } else {
                 _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
                 _ctrl.endFilter = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
@@ -383,6 +385,7 @@ docDefinition.header=pdfHeader;
 
         _ctrl.startFilterObj = moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm');
         _ctrl.endFilterObj   = moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm');
+
         var search = {
           'end'  :moment(_ctrl.endFilter,'YYYY-MM-DD HH:mm').format(),
           'start': moment(_ctrl.startFilter,'YYYY-MM-DD HH:mm').format(),
@@ -398,7 +401,7 @@ docDefinition.header=pdfHeader;
 
         if(_ctrl.itemsPerPage)
             search.itemsPerPage=_ctrl.itemsPerPage;
-
+console.log(search)
         $location.search(search);
       }
       //=====
