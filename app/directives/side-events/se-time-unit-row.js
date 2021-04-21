@@ -5,7 +5,7 @@ define(['app',
     'moment',
     'ngDialog',
     '../forms/edit/reservation',
-    'css!libs/angular-dragula/dist/dragula.css',
+    'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
     'filters/moment'
 ], function(app, _, template, resDialog, moment) {
 

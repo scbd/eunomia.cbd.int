@@ -7,7 +7,7 @@ define(['app','lodash',
   'directives/forms/edit/room',
   'ngDialog',
   'directives/color-picker',
-    'css!libs/angular-dragula/dist/dragula.css',
+    'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _,deleteDialog,roomDialog) {
 
 return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','dragulaService',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,dragulaService) {

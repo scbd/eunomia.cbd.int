@@ -5,7 +5,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     './time-unit-row',
     './time-unit-row-header',
     './room-row',
-    'css!libs/angular-dragula/dist/dragula.css',
+    'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _, template, moment) {
 
     app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','$location',
