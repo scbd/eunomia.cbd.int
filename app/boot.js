@@ -1,6 +1,7 @@
 (function(document) {
 
-if(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) { console.log = function(){}; }
+var cdnHost   = 'https://cdn.jsdelivr.net';
+//if(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) { console.log = function(){}; }
 
 var gitVersion = document.documentElement.attributes['git-version'].value;
 require.config({
@@ -8,38 +9,33 @@ require.config({
     baseUrl : '/app/',
     IESelectorLimit: true,
     paths: {
-        'angular'                  : 'libs/angular-flex/angular-flex',
-        'angular-animate'          : 'libs/angular-animate/angular-animate.min',
-        'angular-loading-bar'      : 'libs/angular-loading-bar/src/loading-bar',
-        'angular-messages'         : 'libs/angular-messages/angular-messages.min',
-        'angular-route'            : 'libs/angular-route/angular-route',
-        'angular-sanitize'         : 'libs/angular-sanitize/angular-sanitize.min',
-        'angular-storage'          : 'libs/angular-local-storage/dist/angular-local-storage.min',
-        'css'                      : 'libs/require-css/css.min',
-        'bootstrap'                : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min',
-        'bs-colorpicker'           : 'libs/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min',
-        'bs-colorpicker-css'       : 'libs/angular-bootstrap-colorpicker/css/colorpicker.min',
-        'bm'                       : 'libs/bootstrap-material-design/dist/js/material.min',
-        'bm-rip'                   : 'libs/bootstrap-material-design/dist/js/ripples.min',
-        'BM-date-picker'           : 'libs/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker',
-        'dragula'                  : 'libs/angular-dragula/dist/angular-dragula',
-        'jquery'                   : 'libs/jquery/dist/jquery',
-        'linqjs'                   : 'libs/linqjs/linq.min',
-        'lodash'                   : 'libs/lodash/lodash',
-        'moment'                   : 'libs/moment/moment',
-        'moment-timezone'          : 'libs/moment-timezone/builds/moment-timezone-with-data.min',
-        'ngRoute'                  : 'libs/angular-route/angular-route.min',
-        'ngDialog'                 : 'libs/ng-dialog/js/ngDialog',
-        'toastr'                   : 'libs/angular-toastr/dist/angular-toastr.tpls.min',
-        'text'                     : 'libs/requirejs-text/text',
-        'socket.io'                : 'libs/socket.io-1.4.5/index',
-        'ui.select'                : 'libs/angular-ui-select/dist/select',
-        'hl.sticky'                : 'libs/angular-sticky/dist/angular-sticky'
+        'ng': cdnHost + '/npm/angular@1.5.11/angular.min',
+        'angular'                  : cdnHost + '/gh/scbd/angular-flex/angular-flex.min',
+        'angular-animate'          : cdnHost + '/npm/angular-animate@1.5/angular-animate.min',
+        'ngRoute'                  : cdnHost + '/npm/angular-route@1.5/angular-route.min',// maybe 1.4.8
+        'angular-sanitize'         : cdnHost + '/npm/angular-sanitize@1.5/angular-sanitize.min',
+        'css'                      : cdnHost + '/npm//require-css@0.1.8/css.min',
+        'bootstrap'                : cdnHost + '/npm/bootstrap@3.3.6/dist/js/bootstrap.min',
+        'bs-colorpicker'           : cdnHost + '/npm/angular-bootstrap-colorpicker@3.0.25/js/bootstrap-colorpicker-module.min',
+        'bs-colorpicker-css'       : cdnHost + '/npm/angular-bootstrap-colorpicker@3.0.25/css/colorpicker.min',
+        'bm'                       : cdnHost + '/npm/bootstrap-material-design@0.5.10/dist/js/material.min',
+        'bm-rip'                   : cdnHost + '/npm/bootstrap-material-design@0.5.10/dist/js/ripples.min',
+        'BM-date-picker'           : cdnHost + '/npm/bootstrap-material-datetimepicker@2.7.1/js/bootstrap-material-datetimepicker',
+        'dragula'                  : cdnHost + '/gh/scbd/angular-dragula@1.2.6/dist/angular-dragula.min',
+        'jquery'                   : cdnHost + '/npm/jquery@2.2.0/dist/jquery.min',
+        'lodash'                   : cdnHost + '/npm/lodash@3.9.3/index',
+        'moment'                   : cdnHost + '/npm/moment@2.24.0/moment',
+        'moment-timezone'          : cdnHost + '/npm/moment-timezone@0.5.3/builds/moment-timezone-with-data.min',
+        'ngDialog'                 : cdnHost + '/npm/ng-dialog@1.4.0/js/ngDialog.min',
+        'toastr'                   : cdnHost + '/npm/angular-toastr@1.7.0/dist/angular-toastr.tpls.min',
+        'text'                     : cdnHost + '/npm/requirejs-text@2.0.16/text',
+        'ui.select'                : cdnHost + '/npm/ui-select@0.19.6/dist/select.min',
+        'hl.sticky'                : cdnHost + '/npm/angular-sticky-plugin@0.3.0/dist/angular-sticky',
     },
     shim: {
-        'libs/angular/angular'      : { deps: ['jquery'] },
-        'angular'                   : { deps: ['libs/angular/angular'] },
-        'angular-route'             : { deps: ['angular'] },
+        'ng'      : { deps: ['jquery'] },
+        'angular'                   : { deps: [cdnHost + '/npm/angular@1.5.11/angular.min.js',] },
+        'ngRoute'                   : { deps: ['ng'] },
         'angular-sanitize'          : { deps: ['angular'] },
         'angular-animate'           : { deps: ['angular']},
         'bootstrap'                 : { deps: ['jquery']},

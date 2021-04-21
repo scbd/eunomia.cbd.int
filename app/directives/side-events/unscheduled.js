@@ -5,7 +5,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
     'ngDialog',
     'services/mongo-storage',
     './se-room-row',
-    'css!libs/angular-dragula/dist/dragula.css',
+    'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
     'moment',
     'ngDialog',
     'filters/htmlToPlaintext',

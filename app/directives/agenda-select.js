@@ -1,4 +1,4 @@
-define(['app', 'lodash',  'text!./agenda-select.html', 'css!libs/angular-dragula/dist/dragula.css'], function(app, _, template) {
+define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css'], function(app, _, template) {
 
   app.directive("agendaSelect", ['$timeout','dragulaService','$q','$http','$compile',
     function($timeout,dragulaService,$q,$http,$compile) {
