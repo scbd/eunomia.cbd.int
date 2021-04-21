@@ -5,7 +5,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
     './se-time-unit-row',
     './tier-row-header',
     './se-room-row',
-    'css!libs/angular-dragula/dist/dragula.css',
+    'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _, template, moment) {
 
     app.directive("sideEvents", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','dragulaService',

@@ -1,7 +1,7 @@
 define(['app', 'lodash', 'moment',
   'text!directives/forms/edit/room-dialog.html',
   'directives/date-picker',
-  'css!libs/angular-dragula/dist/dragula.css',
+  'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
   'services/mongo-storage',
   'directives/forms/edit/room',
   'directives/side-events/se-grid-reservation',
