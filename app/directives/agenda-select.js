@@ -8,7 +8,7 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
         replace: true,
         transclude: false,
         require: 'agendaSelect',
-        scope: {'binding':'=ngModel',conference:"="},
+        scope: {'binding':'=ngModel',conference:"=", hasMeeting: '&hasMeetingFn'},
         link: function($scope, $element,$attr,$ctrl) {
             $scope.fileToAdd = '';
             var watchKill = $scope.$watch('conference',function(){
@@ -30,13 +30,19 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                   });
                   $ctrl.init();
                   watchKill();
-
               }
             });
 
         }, //link
         controller: ['$scope','dragulaService','$timeout',function($scope,dragulaService,$timeout) {
 
+        //============================================================
+        //
+        //============================================================
+        function isMeetingSelected(code){
+          return $scope.binding?.meetings?.[code]
+        }
+        $scope.isMeetingSelected=isMeetingSelected;
 
           dragulaService.options($scope, 'agenda-items', {
               removeOnSpill: false,
@@ -53,7 +59,7 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
           //============================================================
           function init (){
               if(!$scope.binding )
-               $scope.binding={};
+                $scope.binding={};
 
               if($scope.binding.visible===undefined)
                 $scope.binding.visible = true;
@@ -62,11 +68,8 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                   $scope.binding.items=[];
 
               hideAllFiles($scope.binding.hideFiles)
-
           }//
           this.init=init;
-
-
 
           //============================================================
           //

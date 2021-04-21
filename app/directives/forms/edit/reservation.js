@@ -39,7 +39,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         function init() {
-
+                            $scope.$touched = false
                             $scope.options = {};
                             $scope.tabs = {
                                 'details': {
@@ -618,11 +618,38 @@ define(['app', 'lodash',
                                 });
                             }
                         } //saveSideEvent
+                        
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function isValid(){
+                          $scope.errors=[]
+                          if(!hasMeeting()) $scope.errors.push('Required: at least one meeting must be selected.')
+                          if(!hasMeeting()) return false
+
+                          return true
+                        }
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function hasMeeting(){
+                          if(!$scope?.doc.agenda?.meetings) return false
+
+                          for (const hasMeeting of Object.values($scope.doc.agenda.meetings))
+                            if(hasMeeting)return true
+                          return false
+                        } // hasMeeting
+                        $scope.hasMeetingFn = hasMeeting
 
                         //============================================================
                         //
                         //============================================================
                         $scope.save = function(obj) {
+                            $scope.$touched = true
+                    
+                            if(!isValid()) return 
 
                             if ($scope.isSideEvent() && obj.sideEvent)  {
                                 obj.sideEvent.title = obj.title;

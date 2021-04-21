@@ -64,6 +64,23 @@
     <div class="panel-body">
       <div name="form" class="row">
         <form novalidate>
+
+          <div class="row" style="margin-left:10px;">
+            <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
+              <div  >
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="binding.meetings[meeting.EVT_CD]" ng-false-value="false" ng-false-value="true"><span >{{meeting.EVT_CD}}</span>
+                  </label>
+                </div>
+                <span class="material-input"></span>
+              </div>
+            </div>
+            <div class="col-xs-12" ng-if="!hasMeeting()">
+              <p class="help-block" style="color:red;">Required: at least one meeting must be selected.</p>
+            </div>
+          </div>
+
           <div class="col-xs-4">
             <div class="form-group" style="margin-left:10px;margin-top:15px;">
               <div class="togglebutton">
@@ -92,7 +109,7 @@
             </div>
           </div>
 
-          <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
+          <div ng-if="isMeetingSelected(meeting.EVT_CD)" ng-repeat="meeting in conference.meetings track by $index" class="col-xs-4" >
             <div  class="form-group " style="margin-top:10px;" >
               <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items"  ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
 
