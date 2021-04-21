@@ -1,155 +1,156 @@
 <div>
-<style>
- .agenda-item-row{
-   width:100%;
- }
- /*.handle:hover{cursor:move;}
- .handle:active{cursor:grab;}*/
- .parent {
-    display:table;
- }
- .child {
-    display:table-cell;
-     float: none;
-      white-space: nowrap;
- }
- .child-center {
-    display:table-cell;
-    vertical-align:middle;
-    text-align:center;
-   float: none;
-   white-space: nowrap;
- }
- .child-left {
-    display:table-cell;
-    text-align:left;
-   float: none;
-   white-space: nowrap;
- }
- .child-right {
-    display:table-cell;
-    text-align:right;
-   float: none;
-   white-space: nowrap;
- }
- .debug {
-    border-style: solid;
-    border-width: 1px;
-    color:red;
-}
+  <style>
+  .agenda-item-row{
+    width:100%;
+  }
+  /*.handle:hover{cursor:move;}
+  .handle:active{cursor:grab;}*/
+  .parent {
+      display:table;
+  }
+  .child {
+      display:table-cell;
+      float: none;
+        white-space: nowrap;
+  }
+  .child-center {
+      display:table-cell;
+      vertical-align:middle;
+      text-align:center;
+    float: none;
+    white-space: nowrap;
+  }
+  .child-left {
+      display:table-cell;
+      text-align:left;
+    float: none;
+    white-space: nowrap;
+  }
+  .child-right {
+      display:table-cell;
+      text-align:right;
+    float: none;
+    white-space: nowrap;
+  }
+  .debug {
+      border-style: solid;
+      border-width: 1px;
+      color:red;
+  }
 
-.label.doc-status             { display: inline-block; width:40px;padding-top:4px; padding-bottom:3px; }
-.label.doc-status.pre-session { border: dotted 1px #777;    color: #777;   background: none}
-.label.doc-status.draft { border: solid 1px #777;    color: #777;    background: none}
-.label.doc-status.l     { width:25px;border: solid 1px #5bc0de; color: #5bc0de; background: none}
-.label.doc-status.crp   { border: solid 1px #f0ad4e; color: #f0ad4e; background: none}
+  .label.doc-status             { display: inline-block; width:40px;padding-top:4px; padding-bottom:3px; }
+  .label.doc-status.pre-session { border: dotted 1px #777;    color: #777;   background: none}
+  .label.doc-status.draft { border: solid 1px #777;    color: #777;    background: none}
+  .label.doc-status.l     { width:25px;border: solid 1px #5bc0de; color: #5bc0de; background: none}
+  .label.doc-status.crp   { border: solid 1px #f0ad4e; color: #f0ad4e; background: none}
 
-.file-on {
-   background-color: #e3e3e3;
-   position: relative;
-}
+  .file-on {
+    background-color: #e3e3e3;
+    position: relative;
+  }
 
-.file-off  {
-   background-color:#f1f1f1;
-   position: relative;
-}
+  .file-off  {
+    background-color:#f1f1f1;
+    position: relative;
+  }
 
-</style>
+  </style>
+
   <div class="panel panel-default">
-        <div class="panel-heading"><h4>Agenda Items</h4></div>
+    <div class="panel-heading">
+      <h4>Agenda Items</h4>
+    </div>
+
     <div class="panel-body">
-<div name="form" class="row">
-  <form novalidate>
-  <div class="col-xs-4">
-    <div class="form-group" style="margin-left:10px;margin-top:15px;">
-      <div class="togglebutton">
-        <label>
-          <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-4">
-    <div class="form-group" style="margin-left:10px;margin-top:15px;">
-      <div class="togglebutton">
-        <label>
-          <input type="checkbox" ng-model="binding.visible" ng-false-value="false" ng-false-value="true"><span >Visible on CCTV</span>
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-4">
-    <div class="form-group" style="margin-left:10px;margin-top:15px;">
-      <div class="togglebutton">
-        <label>
-          <input type="checkbox" ng-model="binding.hideFiles" ng-false-value="false" ng-false-value="true" ng-change="hideAllFiles(binding.hideFiles)"><span ng-show="binding.hideFiles">Hide All Documents</span><span ng-show="!binding.hideFiles">Show All Documents</span>
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
-    <div class="form-group " style="margin-top:10px;" >
-
-      <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items"  ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
-
-        <option value=''>{{meeting.EVT_CD}}</option>
-       </select>
-      <span class="material-input"></span>
-      <p class="help-block" ng-show="valid">error</p>
-    </div>
-  </div>
-</form>
-
-</div>
-    </div>
-  <div class="panel-footer">
-    <section dragula='"agenda-items"' dragula-model="binding.items" >
-          <div class="row" ng-repeat="item in binding.items track by $index" style="position: relative">
-
-              <div class="col-xs-1 handle"><span class="label vercenter handle" style="margin-top:5px;" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
-              <div class="col-xs-8 handle"><div class="form-group handle" style="margin: 0 0 0 0;"><input class="form-control handle" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text">  </div></div>
-              <div class="col-xs-1 handle">
-                <div class="form-group handle" style="margin: 0 0 0 0;">
-                  <select class="form-control  handle" ng-model="item.status">
-                      <option value=""></option>
-                      <option value="pre-session">Pre</option>
-                      <option value="draft">Draft</option>
-                      <option value="crp">CRP</option>
-                      <option value="l">L</option>
-                  </select>
-                </div>
+      <div name="form" class="row">
+        <form novalidate>
+          <div class="col-xs-4">
+            <div class="form-group" style="margin-left:10px;margin-top:15px;">
+              <div class="togglebutton">
+                <label>
+                  <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
+                </label>
               </div>
-
-              <div class="col-xs-2 btn-toolbar  handle" >
-                <div class="btn-toolbar  handle" >
-                  <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="delete($index)" ><i class="fa fa-trash"></i></a>
-                  <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="item.showFiles=!item.showFiles" ng-show="getNumFiles(item.meeting,item.item)"> <i class="fa fa-eye-slash" ng-if="item.showFiles"></i><i class="fa fa-eye" ng-if="!item.showFiles"></i> <i class="fa fa-files-o"></i></a>
-                  </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group" style="margin-left:10px;margin-top:15px;">
+              <div class="togglebutton">
+                <label>
+                  <input type="checkbox" ng-model="binding.visible" ng-false-value="false" ng-false-value="true"><span >Visible on CCTV</span>
+                </label>
               </div>
-
-
-              <div class="well well-sm col-xs-11 col-xs-offset-1" style="position: relative" ng-show="item.showFiles">
-                <section dragula='"agenda-item-files"' dragula-model="item.files">
-                     <div class="col-xs-12 hand" ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index" meeting-code="{{item.meeting}}" item-id="{{item.item}}">
-                     <div class="col-xs-11 hand" style="white-space: nowrap;overflow: hidden;margin-top: 10px;padding-left: 0px"><small class="hand"><b>{{file.symbol}}</b></small> <small class="hand" style="white-space:no-wrap;overflow:hidden">{{file.title.en}}</small></div>
-                     <div class="col-xs-1 hand"><a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="deleteFile(item,file)" ><i class="fa fa-trash"></i></a></div>
-                    </div>
-                 </section>
-
-
-
-&nbsp;
-                   <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" style="width:100%" ng-model="fileToAdd" ng-options="file as file.display disable when file.disabled for file in getFiles(item.meeting,item.item)"  ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;"  >
-
-                      <option value="">-- choose file --</option>
-                    </select>
-
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group" style="margin-left:10px;margin-top:15px;">
+              <div class="togglebutton">
+                <label>
+                  <input type="checkbox" ng-model="binding.hideFiles" ng-false-value="false" ng-false-value="true" ng-change="hideAllFiles(binding.hideFiles)"><span ng-show="binding.hideFiles">Hide All Documents</span><span ng-show="!binding.hideFiles">Show All Documents</span>
+                </label>
               </div>
-
+            </div>
           </div>
 
-    </section>
-  </div>
+          <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
+            <div  class="form-group " style="margin-top:10px;" >
+              <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items"  ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
 
-</div>
+                <option value=''>{{meeting.EVT_CD}}</option>
+              </select>
+              <span class="material-input"></span>
+              <p class="help-block" ng-show="valid">error</p>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <section dragula='"agenda-items"' dragula-model="binding.items" >
+        <div class="row" ng-repeat="item in binding.items track by $index" style="position: relative">
+
+            <div class="col-xs-1 handle"><span class="label vercenter handle" style="margin-top:5px;" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
+            <div class="col-xs-8 handle"><div class="form-group handle" style="margin: 0 0 0 0;"><input class="form-control handle" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text">  </div></div>
+            <div class="col-xs-1 handle">
+              <div class="form-group handle" style="margin: 0 0 0 0;">
+                <select class="form-control  handle" ng-model="item.status">
+                    <option value=""></option>
+                    <option value="pre-session">Pre</option>
+                    <option value="draft">Draft</option>
+                    <option value="crp">CRP</option>
+                    <option value="l">L</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-xs-2 btn-toolbar  handle" >
+              <div class="btn-toolbar  handle" >
+                <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="delete($index)" ><i class="fa fa-trash"></i></a>
+                <a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="item.showFiles=!item.showFiles" ng-show="getNumFiles(item.meeting,item.item)"> <i class="fa fa-eye-slash" ng-if="item.showFiles"></i><i class="fa fa-eye" ng-if="!item.showFiles"></i> <i class="fa fa-files-o"></i></a>
+                </div>
+            </div>
+
+
+            <div class="well well-sm col-xs-11 col-xs-offset-1" style="position: relative" ng-show="item.showFiles">
+              <section dragula='"agenda-item-files"' dragula-model="item.files">
+                  <div class="col-xs-12 hand" ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index" meeting-code="{{item.meeting}}" item-id="{{item.item}}">
+                  <div class="col-xs-11 hand" style="white-space: nowrap;overflow: hidden;margin-top: 10px;padding-left: 0px"><small class="hand"><b>{{file.symbol}}</b></small> <small class="hand" style="white-space:no-wrap;overflow:hidden">{{file.title.en}}</small></div>
+                  <div class="col-xs-1 hand"><a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="deleteFile(item,file)" ><i class="fa fa-trash"></i></a></div>
+                  </div>
+              </section>
+
+              &nbsp;
+              <select name="item-files-{{item.meeting}}-{{item.item}}" id="item-files-{{item.meeting}}-{{item.item}}" style="width:100%" ng-model="fileToAdd" ng-options="file as file.display disable when file.disabled for file in getFiles(item.meeting,item.item)"  ng-change="fileSelected(item,fileToAdd); fileToAdd=undefined;"  >
+                  <option value="">-- choose file --</option>
+              </select>
+
+            </div>
+
+        </div>
+      </section>
+    </div>
+
+  </div>
 </div>
