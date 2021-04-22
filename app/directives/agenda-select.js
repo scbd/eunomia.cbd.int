@@ -30,14 +30,23 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                   });
                   $ctrl.init();
                   watchKill();
-
               }
             });
 
         }, //link
         controller: ['$scope','dragulaService','$timeout',function($scope,dragulaService,$timeout) {
 
+          //============================================================
+          //
+          //============================================================
+          function isMeetingSelected(code){
+            return $scope.binding?.meetings?.[code]
+          }
+          $scope.isMeetingSelected=isMeetingSelected;
 
+          //============================================================
+          //
+          //============================================================
           dragulaService.options($scope, 'agenda-items', {
               removeOnSpill: false,
               moves: function (el, container, target) {
@@ -62,11 +71,8 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                   $scope.binding.items=[];
 
               hideAllFiles($scope.binding.hideFiles)
-
           }//
           this.init=init;
-
-
 
           //============================================================
           //

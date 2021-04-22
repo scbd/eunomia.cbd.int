@@ -54,11 +54,11 @@ require.config({
 
 // BOOT
 
-require(['angular', 'app','moment', 'text', 'routes', 'template','bm'], function(ng, app, moment) {
+require(['angular', 'moment', 'app', 'text', 'routes', 'template','bm', 'hl.sticky'], function(ng, moment,app) {
 
     ng.element(document).ready(function () {
-         ng.bootstrap(document, [app.name]);
-         window.moment = moment;
+        window.moment = moment;
+        ng.bootstrap(document, [app.name]);
     });
 
 });

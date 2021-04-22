@@ -62,38 +62,57 @@
     </div>
 
     <div class="panel-body">
-      <div name="form" class="row">
+      <div name="form">
         <form novalidate>
-          <div class="col-xs-4">
-            <div class="form-group" style="margin-left:10px;margin-top:15px;">
-              <div class="togglebutton">
-                <label>
-                  <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
-                </label>
+          <div class="row">
+            <div class="col-xs-4">
+              <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="binding.provisional" ng-false-value="false" ng-false-value="true"><span >Provisional</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-xs-4">
-            <div class="form-group" style="margin-left:10px;margin-top:15px;">
-              <div class="togglebutton">
-                <label>
-                  <input type="checkbox" ng-model="binding.visible" ng-false-value="false" ng-false-value="true"><span >Visible on CCTV</span>
-                </label>
+            <div class="col-xs-4">
+              <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="binding.visible" ng-false-value="false" ng-false-value="true"><span >Visible on CCTV</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-xs-4">
-            <div class="form-group" style="margin-left:10px;margin-top:15px;">
-              <div class="togglebutton">
-                <label>
-                  <input type="checkbox" ng-model="binding.hideFiles" ng-false-value="false" ng-false-value="true" ng-change="hideAllFiles(binding.hideFiles)"><span ng-show="binding.hideFiles">Hide All Documents</span><span ng-show="!binding.hideFiles">Show All Documents</span>
-                </label>
+            <div class="col-xs-4">
+              <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="binding.hideFiles" ng-false-value="false" ng-false-value="true" ng-change="hideAllFiles(binding.hideFiles)"><span ng-show="binding.hideFiles">Hide All Documents</span><span ng-show="!binding.hideFiles">Show All Documents</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
-            <div  class="form-group " style="margin-top:10px;" >
+          <hr/>
+
+          <div class="row">
+            <div class="col-xs-4" ng-repeat="meeting in conference.meetings track by $index">
+              <div  >
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="binding.meetings[meeting.EVT_CD]" ng-false-value="false" ng-false-value="true"><span >{{meeting.EVT_CD}}</span>
+                  </label>
+                </div>
+                <span class="material-input"></span>
+              </div>
+            </div>
+          </div>
+
+          <hr/>
+
+          <div ng-if="isMeetingSelected(meeting.EVT_CD)" ng-repeat="meeting in conference.meetings track by $index" class="col-xs-4" >
+            <div class="form-group " style="margin-top:10px;" >
               <select name="meeting{{meeting._id}}" id="meeting{{meeting._id}}" class="form-control" ng-model="selectedItem" ng-options="item as item.display for item in meeting.agenda.items"  ng-change="itemSelected(meeting,selectedItem); selectedItem=undefined;" >
 
                 <option value=''>{{meeting.EVT_CD}}</option>
