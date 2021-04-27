@@ -8,8 +8,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _, template, moment) {
 
-    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','$location',
-        function($timeout, $document, mongoStorage,$rootScope,$q,$location) {
+    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','$location','$rootScope',
+        function($timeout, $document, mongoStorage,$rootScope,$q,$location, $rootScope) {
             return {
                 restrict: 'E',
                 template: template,
@@ -24,7 +24,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
 
                         init();
-
 
                         //============================================================
                         //
@@ -504,6 +503,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                     }, //link
                     controller: function($scope) {
+
+                      $rootScope.$on('schedule-refresh', () => $timeout(this.resetSchedule,100) );
                       //============================================================
                       // used by child dir, timeRow
                       //============================================================
