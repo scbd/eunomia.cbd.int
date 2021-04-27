@@ -112,11 +112,10 @@
   <div class="row" ng-show="tabs.options.active">
       <div class="col-xs-12">
           <div class="panel panel-default">
-              <div class="panel-heading">
-                  <h4>Options</h4></div>
-              <div class="panel-body">
+              <div class="panel-heading"> <h4>Options</h4></div>
 
-                  <div class="col-xs-12">
+              <div class="panel-body">
+                  <div class="col-xs-4">
                       <div class="form-group" style="margin-left:10px;margin-top:15px;">
                           <div class="togglebutton">
                               <label>
@@ -125,16 +124,16 @@
                           </div>
                       </div>
                   </div>
-                  <div class="col-xs-12">
+                  <div class="col-xs-4">
                       <div class="form-group" style="margin-left:10px;margin-top:15px;">
                           <div class="togglebutton">
-                              <label>
+                              <label  class="text-nowrap">
                                   <input type="checkbox" ng-model="doc.confirmed" ng-false-value="false" ng-true-value="true"><span ng-if="doc.confirmed">Confirmed Reservation</span><span ng-if="!doc.confirmed">Unconfirmed Reservation</span>
                               </label>
                           </div>
                       </div>
                   </div>
-                  <div class="col-xs-12">
+                  <div class="col-xs-4">
                       <div class="form-group" style="margin-left:10px;margin-top:15px;">
                           <div class="togglebutton">
                               <label>
@@ -143,6 +142,9 @@
                           </div>
                       </div>
                   </div>
+
+                  <div class="col-xs-12"> <hr/> </div>
+
                   <div class="col-xs-4">
                       <div class="form-group" style="margin-left:10px;margin-top:15px;">
                           <div class="togglebutton">
@@ -160,6 +162,41 @@
                             <p class="help-block" ng-show="valid">error</p>
                         </div>
                   </div>
+
+                  <div class="col-xs-12"> <hr/>  </div>
+
+                  <div ng-if="doc.links && doc.links.length" class="col-xs-12">
+                    <label>Links</label>
+                    <table class="table table-striped">
+                      <tbody>
+                        <tr ng-repeat="link in doc.links track by $index">
+                          <td><a ng-href="link.url"> {{link.name}}</a></td>
+                          <td   style="width:55px; cursor: pointer;" ng-click="removeLink($index)"><i class="fa fa-trash"></i></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="col-xs-5" >
+                    <div class="form-group " style="margin-left:10px;margin-top:15px;" >
+                      <label class="control-label" for="linkUrl" style="margin: 0 0 0 0;">Name</label>
+                      <input class="form-control" id="linkUrl"  ng-model="addLinkStore.name" placeholder="{{addLinkStore.name}}">
+                      <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-5" ng-if="doc.video">
+                    <div class="form-group " style="margin-left:10px;margin-top:15px;" >
+                      <label class="control-label" for="linkURL" style="margin: 0 0 0 0;">Url</label>
+                      <input class="form-control" id="linkURL" type="url" ng-model="addLinkStore.url" placeholder="{{addLinkStore.url}}">
+                      <p class="help-block" ng-show="valid">error</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-2">
+                    <div class="form-group">
+                      <a href="javascript:void(0)" class="btn btn-default btn-sm btn-block btn-raised" ng-click="addLink(addLinkStore);">Add Link</a>
+                    </div>
+                  </div>
+
               </div>
           </div>
       </div>

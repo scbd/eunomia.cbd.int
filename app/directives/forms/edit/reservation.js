@@ -27,7 +27,26 @@ define(['app', 'lodash',
                 },
 
                 link: function($scope, $element) {
+                        $scope.addLinkStore = { name: '', url: '' }
 
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.removeLink = function(index) {
+                          $scope.doc.links.splice(index, 1)
+                        };
+
+                        //============================================================
+                        //
+                        //============================================================
+                        $scope.addLink = function(linkObj) {
+                          $scope.doc.links = $scope.doc.links || []
+
+                          $scope.doc.links.push(JSON.parse(JSON.stringify(linkObj)))
+                          linkObj.name = ''
+                          linkObj.url = ''
+                        };
+                        
                         //============================================================
                         //
                         //============================================================
@@ -664,6 +683,7 @@ define(['app', 'lodash',
                                 // if(!objClone._id)
                                 //   $scope.conference.changeConference();
                                 $rootScope.$broadcast("showInfo", "Reservation '" + objClone.title + "' Successfully Updated.");
+                                $rootScope.$broadcast('schedule-refresh');
                                 $scope.closeThisDialog();
                             }).catch(function(error) {
                                 console.log(error);
