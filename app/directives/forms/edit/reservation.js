@@ -3,7 +3,8 @@ define(['app', 'lodash',
     'moment',
     '../../color-picker',
     'directives/color-picker',
-    'directives/agenda-select'
+    'directives/agenda-select',
+    'directives/forms/edit/disable-auto-trim'
 ], function(app, _, template, moment) {
 
     app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http','$q',
@@ -27,8 +28,8 @@ define(['app', 'lodash',
                 },
 
                 link: function($scope, $element) {
-                        $scope.addLinkStore = { name: '', url: '' }
-
+                        $scope.addLinkStore = { name: '', url: '', locale: 'en' }
+                        $scope.validLink = true
                         //============================================================
                         //
                         //============================================================
@@ -41,7 +42,8 @@ define(['app', 'lodash',
                         //============================================================
                         $scope.addLink = function(linkObj) {
                           $scope.doc.links = $scope.doc.links || []
-
+                          if(!linkObj.url) return $scope.validLink = false
+                          
                           $scope.doc.links.push(JSON.parse(JSON.stringify(linkObj)))
                           linkObj.name = ''
                           linkObj.url = ''
@@ -59,7 +61,9 @@ define(['app', 'lodash',
                         //============================================================
                         function init() {
 
-                            $scope.options = {};
+                            $scope.options = {
+                              locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh']
+                            };
                             $scope.tabs = {
                                 'details': {
                                     'active': false
@@ -419,6 +423,8 @@ define(['app', 'lodash',
                                 objClone.end = moment.utc(moment.tz(objClone.end,$scope.conference.timezone)).format();
 
                             addLocation(objClone);
+
+                            console.log('objClone', objClone)
                             return objClone;
                         } //initVunues
 
@@ -644,7 +650,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.save = function(obj) {
-
+console.log('obj', obj)
                             if ($scope.isSideEvent() && obj.sideEvent)  {
                                 obj.sideEvent.title = obj.title;
                                 obj.sideEvent.description = obj.description;

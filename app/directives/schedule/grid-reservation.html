@@ -31,7 +31,7 @@
 
   <div id="res-el" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" ng-style="{'background-color':color}" style="border:none;margin:0 0 0 0;overflow:hidden;" data-toggle="popover" data-placement="top" >
     <i class="fa fa-repeat pull-right small" aria-hidden="true" ng-if="doc.seriesId"></i>
-    <div  ng-if="!doc.sideEvent" ng-style="{'width':doc.resWidth+'px'}" style="font-weight:500;display:block;white-space:normal;" >{{doc.typeObj.title}}<span ng-if="doc.title">: {{doc.title}}</span></div>
+    <div  ng-if="!doc.sideEvent" ng-style="{'width':doc.resWidth+'px'}" style="font-weight:500;display:block;white-space:normal;" >{{doc.typeObj.title.toUpperCase()}}<span ng-if="doc.title">{{doc.title}}</span></div>
     <span  ng-if="doc.sideEvent" style="font-weight:500;" >#{{doc.sideEvent.id}} </span>
     <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneLine,'grid-slot-row':!oneLine}">{{doc.sideEvent.title}} </span>
     <span ng-if="doc.sideEvent"  ng-class="{'grid-slot-row-inline':oneTwo,'grid-slot-row':!oneTwo}" ng-if="threeLine">
