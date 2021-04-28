@@ -35,7 +35,7 @@
               <!-- dirty dirty hack-->
               <div class="form-group label-floating">
                   <label class="control-label" for="title">Title</label>
-                  <input class="form-control" id="title" type="text" ng-model="doc.title">
+                  <input disable-auto-trim class="form-control" id="title" type="text" ng-model="doc.title">
                   <p class="help-block" ng-show="valid">error</p>
               </div>
 
@@ -170,24 +170,33 @@
                     <table class="table table-striped">
                       <tbody>
                         <tr ng-repeat="link in doc.links track by $index">
-                          <td><a ng-href="link.url"> {{link.name}}</a></td>
-                          <td   style="width:55px; cursor: pointer;" ng-click="removeLink($index)"><i class="fa fa-trash"></i></td>
+                          <td> <a ng-href="{{link.url}}"> {{link.locale.toUpperCase()}} {{link.name || link.url}}</a> </td>
+                          <td style="width:55px; cursor: pointer;" ng-click="removeLink($index)"><i class="fa fa-trash"></i></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
 
-                  <div class="col-xs-5" >
+                  <div class="col-xs-2" >
                     <div class="form-group " style="margin-left:10px;margin-top:15px;" >
-                      <label class="control-label" for="linkUrl" style="margin: 0 0 0 0;">Name</label>
-                      <input class="form-control" id="linkUrl"  ng-model="addLinkStore.name" placeholder="{{addLinkStore.name}}">
-                      <p class="help-block" ng-show="valid">error</p>
+                      <label class="control-label" for="linkURL" style="margin: 0 0 0 0;">Language</label>
+                      <select id="locale" class="form-control" ng-model="addLinkStore.locale"  >
+                        <option ng-repeat="locale in options.locales track by $index"  ng-value="options.locales[$index]"  >{{locale.toUpperCase()}}</option>
+                      </select>
+                      <span class="material-input"></span>
                     </div>
                   </div>
-                  <div class="col-xs-5" ng-if="doc.video">
+                  <div class="col-xs-4" >
                     <div class="form-group " style="margin-left:10px;margin-top:15px;" >
                       <label class="control-label" for="linkURL" style="margin: 0 0 0 0;">Url</label>
                       <input class="form-control" id="linkURL" type="url" ng-model="addLinkStore.url" placeholder="{{addLinkStore.url}}">
+                      <p class="text-danger" ng-show="!validLink">error: url is required</p>
+                    </div>
+                  </div>
+                  <div class="col-xs-4" >
+                    <div class="form-group " style="margin-left:10px;margin-top:15px;" >
+                      <label class="control-label" for="linkUrl" style="margin: 0 0 0 0;">Name</label>
+                      <input class="form-control" id="linkUrl"  ng-model="addLinkStore.name" placeholder="{{addLinkStore.name}}">
                       <p class="help-block" ng-show="valid">error</p>
                     </div>
                   </div>
