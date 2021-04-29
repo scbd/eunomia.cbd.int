@@ -131,13 +131,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             '$and': [{
                                 'start': {
                                     '$gte': {
-                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').format()
+                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').subtract(3,'hours').format()
                                     }
                                 }
                             }, {
                                 'end': {
                                     '$lt': {
-                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').format()
+                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').add(3,'hours').format()
                                     }
                                 }
                             }],

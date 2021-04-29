@@ -174,14 +174,14 @@ define(['app', 'lodash',
                           //============================================================
                           $scope.$watch('doc.start', function(val, prevVal) {
                               if ($scope.doc.start && val && val !== prevVal) {
-                                  if (!moment.tz($scope.doc.start,$scope.conference.timezone).isSame(moment.tz($scope.doc.end,$scope.conference.timezone), 'day') && $scope.doc.end) {
-                                      var t = moment.utc($scope.doc.end);
-                                      $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
-                                  }
-                                  if(moment.tz($scope.doc.start,$scope.conference.timezone).isSameOrAfter(moment.tz($scope.doc.end,$scope.conference.timezone)) && $scope.doc.end){
-                                    var e = moment.utc($scope.doc.start);
-                                    $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
-                                  }
+                                  // if (!moment.tz($scope.doc.start,$scope.conference.timezone).isSame(moment.tz($scope.doc.end,$scope.conference.timezone), 'day') && $scope.doc.end) {
+                                  //     var t = moment.utc($scope.doc.end);
+                                  //     $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(t.hours(), 'hours').add(t.minutes(), 'minutes').format('YYYY-MM-DD HH:mm');
+                                  // }
+                                  // if($scope.doc.end && moment.tz($scope.doc.start,$scope.conference.timezone).isSameOrAfter(moment.tz($scope.doc.end,$scope.conference.timezone)) ){
+                                  //   var e = moment.utc($scope.doc.start);
+                                  //   $scope.doc.end = moment.utc($scope.doc.start).startOf('day').add(e.hours(), 'hours').add(e.minutes()+30, 'minutes').format('YYYY-MM-DD HH:mm');
+                                  // }
                                   if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
                                       $scope.doc.series = [];
                                       var countDays = 0;

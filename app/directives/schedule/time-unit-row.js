@@ -221,13 +221,13 @@ define(['app',
                                   '$and': [{
                                       'start': {
                                           '$gte': {
-                                              '$date': moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day').format()
+                                              '$date': moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day').subtract(3,'hours').format()
                                           }
                                       }
                                   }, {
                                       'end': {
                                           '$lt': {
-                                              '$date': moment.tz($scope.conferenceDays[$scope.conferenceDays.length - 1],$scope.conference.timezone).endOf('day').format()
+                                              '$date': moment.tz($scope.conferenceDays[$scope.conferenceDays.length - 1],$scope.conference.timezone).endOf('day').add(3,'hours').format()
                                           }
                                       }
                                   }],
@@ -265,8 +265,8 @@ define(['app',
                                 for (var j = 0; j < intervalDuration; j++) {
                                     var interval = $scope.timeIntervals[i].subIntervals[j];
 
-                                    if (isResInTimeInterval(interval, res))
-                                        interval.res = res;
+                                    if (isResInTimeInterval(interval, res, !i))
+                                        return interval.res = res;
                                     else if (!_.isEmpty(interval.res) && isResDeleted(interval.res))
                                         delete(interval.res);
                                 } //for
@@ -278,13 +278,13 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        function isResInTimeInterval(timeInterval, res) {
-
+                        function isResInTimeInterval(timeInterval, res, isFirst) {
+                            const resEnd = moment(res.end).format('X');
                             var resStart = moment(res.start).format('X');
                             var intervalStart = moment(timeInterval.time).format('X');
                             var intervalEnd = moment(timeInterval.time).add(timeUnit, 'seconds').format('X');
 
-                            return (resStart >= intervalStart && resStart < intervalEnd);
+                            return isFirst? (resStart < intervalEnd && resEnd > intervalStart) : (resStart >= intervalStart && resStart < intervalEnd)
 
                         } //isResInInterval
 
@@ -309,10 +309,15 @@ define(['app',
                         //
                         //============================================================
                         function calcResWidth(res) {
-                            var resStart = moment(res.start).format('X');
-                            var resEnd = moment(res.end).format('X');
-                            if (!$scope.colWidth) throw "Error: column width not set timming issue";
-                            var resWidth = Math.ceil((resEnd - resStart) / timeUnit) * ($scope.colWidth / intervalDuration);
+                          const resStart          = moment(res.start).format('X');
+                          const resEnd            = moment(res.end).format('X');
+                          const viewStartDateTime = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes').format('X');
+                          const startsOutOfView   = resStart < viewStartDateTime
+ //                            moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day').subtract(3,'hours').format()
+
+                            if (!$scope.colWidth) throw new Error('Error: column width not set timming issue')
+
+                            var resWidth = startsOutOfView?  Math.ceil((resEnd - viewStartDateTime) / timeUnit) * ($scope.colWidth / intervalDuration): Math.ceil((resEnd - resStart) / timeUnit) * ($scope.colWidth / intervalDuration);
                             return Number(resWidth);
                         } //calcResWidth
 
