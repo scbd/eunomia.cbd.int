@@ -8,8 +8,8 @@ define(['app',
     './grid-reservation'
 ], function(app, _, template, resDialog, moment) {
 
-    app.directive("timeUnitRow", ['ngDialog', '$timeout', '$document', '$http', 'mongoStorage', '$rootScope', '$q',
-        function(ngDialog, $timeout, $document, $http, mongoStorage, $rootScope, $q) {
+    app.directive("timeUnitRow", ['ngDialog', '$timeout', '$document','mongoStorage', '$q','$location', '$route',
+        function(ngDialog, $timeout, $document, mongoStorage,  $q, $location, $route) {
             return {
                 restrict: 'E',
                 template: template,
@@ -387,16 +387,21 @@ define(['app',
                               if(tab)
                                 $scope.tab=tab;
 
+                            const { edit } = $route.current.params
 
                             $scope.editStart = start;
-                            ngDialog.open({
+                            const dialog = ngDialog.open({
                                 template: resDialog,
                                 className: 'ngdialog-theme-default',
                                 closeByDocument: true,
                                 plain: true,
                                 scope: $scope,
-                                width: 800
+                                width: 800,
+                                preCloseCallback: async () => edit? $location.search('edit', null): null
                             });
+
+                            dialog.closePromise.then( async () => edit? $location.search('edit', null): null)
+
 
                         }; //$scope.roomDialog
 

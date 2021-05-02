@@ -43,7 +43,7 @@ require.config({
         'moment'                    : { deps: ['jquery']},
         'bm'                        : { deps: ['bootstrap']},
         'bm-rip'                    : { deps: ['bm']},
-        'BM-date-picker'            : { deps: ['jquery','moment-timezone']},
+        'BM-date-picker'            : { deps: ['jquery','angular','moment-timezone']},
         'dragula'                   : { deps: ['angular','jquery'] },
         'ngRoute'                   : { deps: ['angular'] },
         'ui.select'                 : { deps: ['angular'] },

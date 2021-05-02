@@ -9,7 +9,7 @@ define(['app',
 ], function(app,toastTemplate, _, moment) {
     'use strict';
 
-    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$http', '$injector','mongoStorage',function($rootScope, toastr, $templateCache,$document, $http, $injector,mongoStorage) {
+    app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$injector','mongoStorage', '$route', function($rootScope, toastr, $templateCache,$document, $injector,mongoStorage, $route) {
 
         var _ctrl = this;
 
@@ -114,27 +114,31 @@ define(['app',
                       selectEventGroupId = bestMatch._id;
 
                   _ctrl.eventGroups        = res;
+                  $rootScope.eventGroups   = _ctrl.eventGroups
                   _ctrl.selectEventGroupId = selectEventGroupId;
-                  return eventGroupChange(false);
+                  return eventGroupChange(selectEventGroupId);
             });
         }
 
         //==============================
         //
         //==============================
-        function eventGroupChange(reloadRoute) {
+        function eventGroupChange(selectEventGroupId, reloadRoute=false) {
 
-            var eventGroup = _.find(_ctrl.eventGroups, function(e) {
-                return e._id == _ctrl.selectEventGroupId;
+            const eventGroup = _.find(_ctrl.eventGroups, function(e) {
+                return e._id == (selectEventGroupId || _ctrl.selectEventGroupId);
             });
 
             moment.tz.setDefault(eventGroup.timezone);
             $rootScope.eventGroup = eventGroup;
 
             if(reloadRoute!==false) {
-                $injector.invoke(['$route', function($route) {
-                    $route.reload();
-                }]);
+                // $injector.invoke(['$route', function($route) {
+                //     $route.reload();
+                // }]);
+                $injector.invoke(['$location', function($location) {
+                  $location.url(`/schedule/${eventGroup.code}`)
+              }]);
             }
 
             return eventGroup;

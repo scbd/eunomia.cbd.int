@@ -157,19 +157,14 @@
             </button>
           </div>
           <div class="col-xs-5  ">
-            <div class="form-group" style="margin-top:0px;">
-              <input id="day-filter" type="text" class="form-control" ng-model="day" style="color:#eee;" ng-change="changeDay(day,'true')"
-                     date-picker="{ switchOnClick: true, time: false, date: true, format: 'dddd YYYY-MM-DD', clearButton: false,weekStart: 0 }"
-                     date-picker-min-date="conference.startObj"
-                     date-picker-max-date="conference.endObj"
-                     currentDate="dayObj">
+            <div class="form-group" style="margin-top:0px;" ng-if="day && dayObj && conference.startObj && conference.endObj ">
+              <input id="day-filter" type="text" class="form-control" style="color:#eee;" >
             </div>
           </div>
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
-              <input type="text" class="form-control"  ng-model="startTime" style="color:#eee;" ng-change="changeStartTime('start-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false}"
-                     date-picker-max-date="endTimeObj.format()">
+              <input  ng-model="startTime" id="start-time-filter" type="text" class="form-control" style="color:#eee;" ng-change="changeStartTime('start-time-filter')" >
+
             </div>
           </div>
           <div class="col-xs-1">
@@ -178,8 +173,7 @@
           </div>
           <div class="col-xs-2">
             <div class="form-group" style="margin-top:0px;">
-              <input type="text" class="form-control"  ng-model="endTime" style="color:#eee;" ng-change="changeEndTime('end-time-filter')"
-                     date-picker="{ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false}" >
+              <input id="end-time-filter" type="text" class="form-control"  ng-model="endTime" style="color:#eee;" ng-change="changeEndTime('end-time-filter')" >
 
             </div>
           </div>
