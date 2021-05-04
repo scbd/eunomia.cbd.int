@@ -124,11 +124,11 @@ define(['app',
                             var cancInterval = setInterval(function() {
                                 $document.ready(function() {
                                     scrollGridEl = $document.find('#scroll-grid');
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-
+                                    
                                     countInterval++;
 
-                                    if ($scope.outerGridWidth && countInterval < 25) {
+                                    if (scrollGridEl &&  scrollGridEl.width && countInterval < 25) {
+                                        $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
                                         clearInterval(cancInterval);
                                         deferred.resolve(scrollGridEl);
                                     } else {

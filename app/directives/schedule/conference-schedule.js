@@ -129,7 +129,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                                         $timeout(()=>{
                                           $scope.loading.reservations=false;
-                                          loadReservation()
+                                          
                                         },500);
                                         return reservations;
                                         }
@@ -224,19 +224,24 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                           const searchDay        = getDateTime()
 
+
+
                           getRooms().then(() => $scope.reservations=getReservations())
                           .then(() => {
+                            const elementIsHere = $element.find('#day-filter') && $element.find('#day-filter').bootstrapMaterialDatePicker
+                            
+                            $timeout(() => {
+                              $element.find('#day-filter').bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: false,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 })
+                              $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', searchDay);
+                              $element.find('#day-filter').bootstrapMaterialDatePicker('setMinDate', start);
+                              $element.find('#day-filter').bootstrapMaterialDatePicker('setMaxDate', end);
 
-                            $element.find('#day-filter').bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: false,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 })
-                            $element.find('#day-filter').bootstrapMaterialDatePicker('setDate', searchDay);
-                            $element.find('#day-filter').bootstrapMaterialDatePicker('setMinDate', start);
-                            $element.find('#day-filter').bootstrapMaterialDatePicker('setMaxDate', end);
+                              $element.find('#day-filter').on('change', (e, date) => { $timeout(()=> $location.search('day',date.format()), 100) })
 
-                            $element.find('#day-filter').on('change', (e, date) => { $timeout(()=> $location.search('day',date.format()), 100) })
-
-                            $element.find('#start-time-filter').bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false })
-                            $element.find('#end-time-filter').bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false })
-
+                              $element.find('#start-time-filter').bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false })
+                              $element.find('#end-time-filter').bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false })
+                              loadReservation()
+                            }, elementIsHere? 10 : 1000)
                             prevNextRestrictions();
                           })
 
@@ -295,7 +300,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                         } //initDayTimeSelects
 
                         $scope.timeLine = function() {
-                                if (!$scope.endTime || !$scope.startTime) return;
+                                const scrollGridEl = $document.find('#scroll-grid');
+
+                                if (!scrollGridEl || !scrollGridEl.width || !$scope.endTime || !$scope.startTime) return;
 
                                 if($scope.dayObj && $scope.dayObj.startOf('day').isSame(moment().startOf('day')))
                                     return {
@@ -518,13 +525,13 @@ $rootScope.$on('schedule-refresh', () => $timeout(this.resetSchedule,100) );
                       //============================================================
                       //
                       //============================================================
-                      this.initRowHeight = function() {
+                     function initRowHeight() {
 
                           // $document.ready(function() {
                               $timeout(function() {
                                   var roomColumnEl;
                                   roomColumnEl = $document.find('#room-col');
-                                  if(!roomColumnEl?.height) this.initRowHeight()
+                                  if(!roomColumnEl?.height) return initRowHeight()
                                   $scope.rowHeight = Math.floor(Number(roomColumnEl.height()) / $scope.rooms.length);
                                   if ($scope.rowHeight < 60) $scope.rowHeight = 60;
                                   _.each($scope.rooms, function(room) {
@@ -535,7 +542,8 @@ $rootScope.$on('schedule-refresh', () => $timeout(this.resetSchedule,100) );
                               }, 1000);
                           // });
                       }; //this.initRowHeight
-                      $scope.initRowHeight=this.initRowHeight;
+                      $scope.initRowHeight = initRowHeight;
+                      this.initRowHeight = initRowHeight;
 
             } //return
         };

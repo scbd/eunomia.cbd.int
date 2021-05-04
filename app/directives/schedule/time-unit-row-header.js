@@ -56,11 +56,13 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/m
                         //
                         //============================================================
                         function initOuterGridWidth() {
-                            var scrollGridEl;
+                            
                             $document.ready(function() {
-                                $timeout(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
+                              const scrollGridEl = $document.find('#scroll-grid');
 
+                              if(scrollGridEl && scrollGridEl.width)
+                                $timeout(function() {
+                                  
                                     $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
                                     if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
                                     initDayWidth();
