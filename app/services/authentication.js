@@ -178,10 +178,10 @@ define(['app', 'angular', 'jquery'], function(app, ng, $) {
                     return inProgress;
                 }
 
-            }).catch(function() {
+            }).catch(function(e) {
+                console.error(e)
 
                 return anonymous();
-
             }).then(function(user) {
 
                 setUser(user);

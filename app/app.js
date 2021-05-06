@@ -29,7 +29,7 @@ define(['angular', 'dragula', 'toastr', 'angular-sanitize','ui.select'], functio
     $httpProvider.interceptors.push('authenticationHttpIntercepter');
   }]);
 
-  const accountsUrl = document? document.documentElement.attributes['accounts-url'].value  : 'https://accounts.cbd.int'
+  const accountsUrl = document.documentElement.attributes['accounts-url'].value  
 
   app.value('accountsUrl', accountsUrl);
 

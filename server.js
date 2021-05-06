@@ -15,6 +15,7 @@ console.info(`info: eunomia.cbd.int`)
 console.info(`info: Git version: ${gitVersion}`)
 console.info(`info: API address: ${apiUrl}`)
 console.info(`info: Accounts   : ${accountsUrl}`)
+console.info(`info: port   : ${process.env.PORT }`)
 
 app.set('views', `${__dirname}/app`);
 app.set('view engine', 'ejs');

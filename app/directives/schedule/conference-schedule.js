@@ -231,14 +231,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             .then(() => whenElement('day-filter', $element)
                                         .then(($el)=>{
                                           
-                                          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: true,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 })
+                                          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: false,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 })
                                           $el.bootstrapMaterialDatePicker('setDate', searchDay);
                                           $el.bootstrapMaterialDatePicker('setMinDate', start);
                                           $el.bootstrapMaterialDatePicker('setMaxDate', end);
 
+                                          $el.on('change', (e, date) =>  $timeout(()=> $location.search('day',date.format()), 100))
 
-                                          $el.on('change', (e, date) =>  $timeout(()=> $location.search('day',date.format()), 100), { passive: true } )
-              
                                           
                                           whenElement('start-time-filter', $element)
                                             .then(($startTimeEl)=> {
