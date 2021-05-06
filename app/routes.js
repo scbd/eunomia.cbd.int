@@ -1,4 +1,4 @@
-define(['app', 'lodash', 'services/extended-route',  'services/authentication','services/dev-router'], function(app, _) { 'use strict';
+define(['app', 'lodash', 'services/extended-route',  'services/authentication'], function(app, _) { 'use strict';
 
     app.config(['extendedRouteProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
@@ -10,7 +10,6 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
             when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'reservations'}).
             when('/side-events',                     { templateUrl: 'views/side-events.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'side-events'}).
             
-            //when('/schedule/conference',             { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'schedule'}).
             when('/schedule/:code',                   { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'schedule'}).
 
             when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'side-events-schedule'}).
@@ -45,22 +44,22 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication','
     //============================================================
     function securize(roles) {
 
-        return ['$location', '$window', '$q','authentication','devRouter', function ($location, $window, $q, authentication,devRouter) {
+        return ['$location', '$window', 'authentication', 'accountsUrl', function ($location, $window, authentication, accountsUrl) {
 
             return authentication.getUser().then(function (user) {
 
                 if (!user.isAuthenticated) {
 
+                    constreturnUrl   = $window.encodeURIComponent($window.location.href);
 
-                    var returnUrl   = $window.encodeURIComponent($window.location.href);
+                    console.log(`${accountsUrl}/signin?returnUrl=${returnUrl}`)
+                    //$window.location.href = `${accountsUrl}/signin?returnUrl=${returnUrl}`
 
-                    $window.location.href = devRouter.ACCOUNTS_URI+'/signin?returnUrl=' + returnUrl;
-
-                    return $q(function () {});
+                    return async () => ({})
                 }
-                else if (roles && !_.isEmpty(roles) && _.isEmpty(_.intersection(roles, user.roles))) {
+                else if (roles && !_.isEmpty(roles) && _.isEmpty(_.intersection(roles, user.roles)))
                     $location.url('/403'); // not authorized
-                }
+                
 
                 return user;
             });
