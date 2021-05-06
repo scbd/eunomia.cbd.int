@@ -1,16 +1,18 @@
-define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/moment'], function(app, _, template, moment) {
 
-    app.directive("timeUnitRowHeader", ['$timeout',
-        function($timeout) {
+define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/moment', 'services/when-element'], function(app, _, template, moment ) {
+
+    app.directive("timeUnitRowHeader", ['$timeout','whenElement',
+        function($timeout, whenElement) {
             return {
                 restrict: 'E',
                 template: template,
                 replace: true,
                 transclude: false,
+                // priority  : 1000,
                 scope: {
-                    'day': '=',
-                    'startTime': '=',
-                    'endTime': '=',
+                    'day'           : '=',
+                    'startTime'     : '=',
+                    'endTime'       : '=',
                     'conferenceDays': '='
                 },
                 controller: function($scope, $element, $document) {
@@ -41,8 +43,9 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/m
 
                             if ($scope.startTime && $scope.endTime && $scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
                                 var hours = $scope.endTime.hours() - $scope.startTime.hours();
+
                                 $scope.timeIntervals = [];
-                                var t = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
+                                var t = moment($scope.day).startOf('day').add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
 
                                 for (var i = 0; i < hours + 1; i++) {
                                     $scope.timeIntervals.push(moment(t));
@@ -56,17 +59,15 @@ define(['app', 'lodash', 'text!./time-unit-row-header.html', 'moment','filters/m
                         //
                         //============================================================
                         function initOuterGridWidth() {
-                            var scrollGridEl;
-                            $document.ready(function() {
-                                $timeout(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
+                          whenElement('scroll-grid').
+                            then(($el) => {
+                              // scrollGridEl = $document.find('#scroll-grid');
 
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-                                    if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
-                                    initDayWidth();
-                                    calcColWidths();
-                                });
-                            });
+                              $scope.outerGridWidth = Number($el.width() - 1);
+                              if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
+                              initDayWidth();
+                              calcColWidths();
+                            })
                         } //initOuterGridWidth
 
                         //============================================================

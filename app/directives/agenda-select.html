@@ -121,8 +121,8 @@
       <section dragula='"agenda-items"' dragula-model="binding.items" >
         <div class="row" ng-repeat="item in binding.items track by $index" style="position: relative">
 
-            <div class="col-xs-1 handle"><span class="label vercenter handle" style="margin-top:5px;" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
-            <div class="col-xs-8 handle"><div class="form-group handle" style="margin: 0 0 0 0;"><input class="form-control handle" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text">  </div></div>
+            <div class="col-xs-2 handle"><span class="label vercenter handle" style="margin-top:5px;" ng-class="{'label-success':getPrefix(item)==='CBD','label-primary':getPrefix(item)==='NP','label-warning':getPrefix(item)==='CP' }" title="{{getTitle(item)}}">{{getPrefix(item)}} {{item.item}}</span></div>
+            <div class="col-xs-7 handle"><div class="form-group handle" style="margin: 0 0 0 0;"><input class="form-control handle" type="text" placeholder="{{getTitle(item)}}" ng-model="item.text">  </div></div>
             <div class="col-xs-1 handle">
               <div class="form-group handle" style="margin: 0 0 0 0;">
                 <select class="form-control  handle" ng-model="item.status">

@@ -1,23 +1,20 @@
 // CREATE HTTP SERVER AND PROXY
 
-var app = require('express')();
-var proxy = require('http-proxy').createProxyServer({});
+const app   = require('express')();
+const proxy = require('http-proxy').createProxyServer({});
 
 app.set('views', __dirname + '/app');
 app.set('view engine', 'ejs');
 
-if(!process.env.API_URL)
-  console.warn('warning: evironment API_URL not set. USING default (https://api.cbd.int:443)');
+const apiUrl      =   process.env.API_URL      || 'https://api.cbd.int'
+const accountsUrl =   process.env.ACCOUNTS_URL || 'https://accounts.cbd.int/'
+const gitVersion  = ( process.env.COMMIT || 'UNKNOWN' ).substr(0, 7);
 
 
-var apiUrl = process.env.API_URL || 'https://api.cbd.int:443';
-var gitVersion = (process.env.COMMIT || 'UNKNOWN').substr(0, 7);
-
-
-console.info(`info: eunomia.cbd.int`);
-console.info(`info: Git version: ${gitVersion}`);
-console.info(`info: API address: ${apiUrl}`);
-console.info(`info: IS DEV: ${process.env.IS_DEV}`);
+console.info(`info: eunomia.cbd.int`)
+console.info(`info: Git version: ${gitVersion}`)
+console.info(`info: API address: ${apiUrl}`)
+console.info(`info: Accounts   : ${accountsUrl}`)
 
 app.set('views', `${__dirname}/app`);
 app.set('view engine', 'ejs');
@@ -28,7 +25,7 @@ app.use('/app',      require('serve-static')(__dirname + '/app', { setHeaders: s
 app.all('/api/*', function(req, res) { proxy.web(req, res, { target: apiUrl, changeOrigin: true } ); } );
 
 app.all('/app/*', function(req, res) { res.status(404).send(); } );
-app.get('/*',     function(req, res) { res.render('template', { gitVersion: gitVersion }); });
+app.get('/*',     function(req, res) { res.render('template', { gitVersion, accountsUrl }); });
 
 
 // START SERVER

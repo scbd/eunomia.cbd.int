@@ -7,8 +7,8 @@ define(['app', 'lodash',
     'directives/forms/edit/disable-auto-trim'
 ], function(app, _, template, moment) {
 
-    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http',
-        function($timeout, mongoStorage, $document, $rootScope,$http) {
+    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http', 'whenElement',
+        function($timeout, mongoStorage, $document, $rootScope, $http, whenElement) {
             return {
                 restrict  : 'E'     ,
                 template  : template,
@@ -124,8 +124,8 @@ define(['app', 'lodash',
                                     '_id': $scope.doc.location.room
                                 }).selected = true;
                             }
-                            if(!$scope.doc.agenda)$scope.doc.agenda={};
-                            triggerChanges();
+                            if(!$scope.doc.agenda) $scope.doc.agenda={};
+//triggerChanges();
                             $scope.levelChangeSquare();
 
                             if ($scope.doc.recurrence) {
@@ -336,11 +336,34 @@ define(['app', 'lodash',
                             const { start, end, startT } = $scope.doc
                             const   format       = 'YYYY-MM-DD HH:mm'
 
-                            $element.ready(() => $timeout(() => {
-                                $scope.doc.start = startT        ? moment.tz(start, timezone).format(format) : moment.tz($scope.startObj, timezone).format(format)
-                                $scope.doc.end   = $scope.doc.end? moment.tz(end  , timezone).format(format) : moment.tz(start          , timezone).add(30, 'minutes').format(format)
-                            }))
-                        } //init
+                            $scope.doc.end   = $scope.doc.end? moment.tz(end  , timezone).format(format) : moment.tz($scope.startObj, timezone).add(30, 'minutes').format(format)
+                            $scope.doc.start = startT ? moment.tz(start, timezone).format(format) : $scope.startObj.format(format)
+
+                            whenElement('startT', $element)
+                            .then(($el) => {
+                                                    
+
+                                                    $el.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
+                                                    $el.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.start, timezone));
+                                                    $el.bootstrapMaterialDatePicker('setMinDate', moment.tz($scope.doc.start, timezone));
+                                                    $el.bootstrapMaterialDatePicker('setMaxDate', moment.tz($scope.doc.end, timezone));
+                                                    $timeout($($el).trigger('change'), 100);
+                                                    $.material.init();
+                                                  })
+                                                          
+                            whenElement('endT', $element)
+                              .then(($endTEl) => {
+
+                                                  const setMinDate = moment.tz($scope.doc.start, timezone).add(15, 'minutes')
+                  
+                                                  $endTEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
+                                                  $endTEl.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.end, timezone));
+                                                  $endTEl.bootstrapMaterialDatePicker('setMinDate', setMinDate);
+                                                  $endTEl.bootstrapMaterialDatePicker('setMaxDate', $scope.conferenceDays[$scope.conferenceDays.length-1]);
+                                                  $timeout($($endTEl).trigger('change'), 100);
+                                                  $.material.init();
+                                                })
+                        }
 
                         //============================================================
                         //
@@ -403,7 +426,6 @@ define(['app', 'lodash',
 
                             addLocation(objClone);
 
-                            console.log('objClone', objClone)
                             return objClone;
                         } //initVunues
 

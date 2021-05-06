@@ -1,70 +1,74 @@
-define(['app', 'text!./grid-reservation.html','lodash'], function(app, template,_) {
-    app.directive("gridReservation", [
-        function() {
+define(['app', 'text!./grid-reservation.html','lodash', 'services/when-element'], function(app, template,_) {
+    app.directive("gridReservation", ['whenElement', '$route', 
+        function(whenElement, $route) {
             return {
-                restrict: 'E',
-                template: template,
-                replace: true,
+                restrict  : 'E',
+                template  : template,
+                replace   : true,
                 transclude: false,
-                priority: -100,
                 scope: {
-                    'doc': '=',
-                    'start': '=',
-                    'popRes': '&',
-                    'popVid': '&'
-                },
+                          'doc'   : '=',
+                          'start' : '=',
+                          'popRes': '&',
+                          'popVid': '&'
+                      },
                 link: function($scope, $element) {
-
-                        init();
-                        //============================================================
-                        //
-                        //============================================================
-
-                        function hasAgenda(doc){
-
-                            if(doc.agenda && doc.agenda.items && !_.isEmpty(doc.agenda.items) )
-                              return true;
-                            else
-                              return false;
-
-                        }
-                        $scope.hasAgenda=hasAgenda;
-
-                        //============================================================
-                        //
-                        //============================================================
-                            function init() {
-                            var titleEl = $element.find("#res-el").popover({
-                                placement: 'top',
-                                html: 'true',
-                                container: 'body',
-                                content: function() {
-                                    return $element.find('#pop-title').html();
-                                }
-                            });
+                  
+                  $scope.color = '#dddddd'
+                  $element.ready(init)
 
 
-                            titleEl.on('mouseenter', function() {
-                                titleEl.popover('show');
-                            });
+                  function hasAgenda(doc){
 
-                            titleEl.on('mouseleave', function() {
-                                titleEl.popover('hide');
-                            });
+                      if(doc.agenda && doc.agenda.items && !_.isEmpty(doc.agenda.items) )
+                        return true;
+                      else
+                        return false;
 
-                            $element.on('$destroy', function() {
-                                titleEl.popover('destroy');
-                            });
+                  }
+                  $scope.hasAgenda=hasAgenda;
 
-                            if($scope.doc.typeObj)
-                                $scope.color=$scope.doc.typeObj.color;
 
-                            if($scope.doc.subTypeObj)
-                              $scope.color=$scope.doc.subTypeObj.color;
+                  function init() {
 
-                        } //triggerChanges
+                    whenElement(`res-el-${$scope.doc._id}`, $element)
+                        .then(setPopOver)
+                        .then(() => $scope.$applyAsync(updateColor))
+                        .then(() => $scope.$applyAsync(loadReservation))
 
-                    } //link
+                  } 
+
+                  async function setPopOver(titleEl) {
+
+                    const popOverOptions = {
+                                              placement: 'top',
+                                              html     : 'true',
+                                              container: 'body',
+                                              content  : () => $element.find('#pop-title').html()
+                                            }
+
+                    titleEl.popover(popOverOptions);
+                    titleEl.on('mouseenter', () => titleEl.popover('show'))
+                    titleEl.on('mouseleave', () => titleEl.popover('hide'))
+                    $element.on('$destroy',  () => titleEl.popover('destroy'))
+                  }
+
+                  function updateColor(){
+
+                    if($scope.doc.typeObj) $scope.color=$scope.doc.typeObj.color;
+                    if($scope.doc.subTypeObj) $scope.color=$scope.doc.subTypeObj.color;
+                  }
+
+                  function loadReservation(){
+                    const { edit } = $route.current.params
+
+                    if(!edit || edit !== $scope.doc._id) return
+
+                    whenElement(`res-el-${edit}-outer`, $element)
+                    .then(($outerEl) => $scope.$applyAsync(() => $outerEl.click()))
+                  }
+
+          } //link
             }; //return
         }
     ]);

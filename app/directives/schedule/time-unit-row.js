@@ -5,36 +5,39 @@ define(['app',
     'moment',
     'ngDialog',
     '../forms/edit/reservation',
-    './grid-reservation'
+    './grid-reservation',
+    'services/when-element'
 ], function(app, _, template, resDialog, moment) {
 
-    app.directive("timeUnitRow", ['ngDialog', '$timeout', '$document','mongoStorage', '$q','$location', '$route',
-        function(ngDialog, $timeout, $document, mongoStorage,  $q, $location, $route) {
+    app.directive("timeUnitRow", ['ngDialog', '$timeout', '$document','mongoStorage', '$q','$location', '$route', 'whenElement',
+        function(ngDialog, $timeout, $document, mongoStorage,  $q, $location, $route, whenElement) {
             return {
-                restrict: 'E',
-                template: template,
-                replace: true,
+                restrict  : 'E',
+                template  : template,
+                replace   : true,
                 transclude: false,
                 scope: {
-                    'startTime': '=',
-                    'endTime': '=',
+                    'startTime'     : '=',
+                    'endTime'       : '=',
                     'conferenceDays': '=',
-                    'room': '=',
-                    'rooms': '=',
-                    'day': '=',
-                    'conference':'=',
-                    'reservations':'=',
-                    'options':'='
+                    'room'          : '=',
+                    'rooms'         : '=',
+                    'day'           : '=',
+                    'conference'    : '=',
+                    'reservations'  : '=',
+                    'options'       : '='
                 },
                 require: ['^conferenceSchedule','timeUnitRow'],
                 link: function($scope, $element, $attr, schedule) {
 
-                        $scope.schedule = schedule[0];
+                        var allOrgs; 
+
+                        $scope.schedule        = schedule[0];
                         $scope.timeUnitRowCtrl = schedule[1];
 
-                        var timeUnit = 900.025; //15 minutes in seconds
-                        var intervalDuration, allOrgs; // number on sub time intervals in a col, now a colomm is houw
-                        intervalDuration = 3600 / timeUnit;
+                        const timeUnit         = 900.025; //15 minutes in seconds
+                        const intervalDuration = 3600 / timeUnit; // number on sub time intervals in a col, now a colomm is houw
+
                         $scope.intervalDuration = intervalDuration;
 
 
@@ -74,6 +77,7 @@ define(['app',
                         //
                         //============================================================
                         $scope.$watch('room.rowHeight', function() {
+
                             if ($scope.room.rowHeight)
                                 $element.css('height',$scope.room.rowHeight);
                         });
@@ -90,7 +94,7 @@ define(['app',
 
                                 $scope.timeIntervals = [];
 
-                                var t = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
+                                var t = moment($scope.day).startOf('day').add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes');
 
                                 for (var i = 0; i <= hours; i++) {
                                     var intervalObj = {};
@@ -109,6 +113,8 @@ define(['app',
                                 initOuterGridWidth().then(function() {
                                     calcColWidths();
                                     $scope.getReservations();
+                                    if ($scope.room.rowHeight)
+                                      $element.css('height',$scope.room.rowHeight);
                                 });
                             }
                         } //initTimeIntervals
@@ -117,32 +123,11 @@ define(['app',
                         //
                         //============================================================
                         function initOuterGridWidth() {
-                            var scrollGridEl;
-                            var deferred = $q.defer();
-                            var countInterval = 0;
 
-                            var cancInterval = setInterval(function() {
-                                $document.ready(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-
-                                    countInterval++;
-
-                                    if ($scope.outerGridWidth && countInterval < 25) {
-                                        clearInterval(cancInterval);
-                                        deferred.resolve(scrollGridEl);
-                                    } else {
-                                        clearInterval(cancInterval);
-                                        deferred.reject('time out');
-                                    }
-                                    if (countInterval > 24) {
-                                        deferred.reject('time out');
-                                        clearInterval(cancInterval);
-                                    }
-                                });
-                            }, 100);
-
-                            return deferred.promise;
+                            return whenElement('scroll-grid')
+                            .then(async ($el)=>{
+                              $scope.outerGridWidth = Number($el.width() - 1);
+                            })
                         } //initOuterGridWidth
 
                         //============================================================
@@ -203,6 +188,8 @@ define(['app',
                                      loadReservationsInRow(res);
                                  });
                                  inProgress =false;
+                                 if ($scope.room.rowHeight)
+                                  $element.css('height',$scope.room.rowHeight);
                             });
                         }; // getReservations
 
@@ -251,6 +238,8 @@ define(['app',
                                                 loadReservationsInRow(res);
                                             });
                                         inProgress = false;
+                                        if ($scope.room.rowHeight)
+                                          $element.css('height',$scope.room.rowHeight);
                                     }
                                 ); // mongoStorage.getReservations
                             } // if
@@ -311,7 +300,7 @@ define(['app',
                         function calcResWidth(res) {
                           const resStart          = moment(res.start).format('X');
                           const resEnd            = moment(res.end).format('X');
-                          const viewStartDateTime = moment($scope.day).add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes').format('X');
+                          const viewStartDateTime = moment($scope.day).startOf('day').add($scope.startTime.hours(), 'hours').add($scope.startTime.minutes(), 'minutes').format('X');
                           const startsOutOfView   = resStart < viewStartDateTime
  //                            moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day').subtract(3,'hours').format()
 

@@ -1,19 +1,18 @@
 (function(document) {
 
-var cdnHost   = 'https://cdn.jsdelivr.net';
+const cdnHost     = 'https://cdn.jsdelivr.net'
 //if(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) { console.log = function(){}; }
 
-var gitVersion = document.documentElement.attributes['git-version'].value;
 require.config({
     waitSeconds: 120,
     baseUrl : '/app/',
     IESelectorLimit: true,
     paths: {
-        'ng': cdnHost + '/npm/angular@1.5.11/angular.min',
+        'ng': cdnHost + '/npm/angular@1.8.2/angular.min',
         'angular'                  : cdnHost + '/gh/scbd/angular-flex/angular-flex.min',
-        'angular-animate'          : cdnHost + '/npm/angular-animate@1.5/angular-animate.min',
-        'ngRoute'                  : cdnHost + '/npm/angular-route@1.5/angular-route.min',// maybe 1.4.8
-        'angular-sanitize'         : cdnHost + '/npm/angular-sanitize@1.5/angular-sanitize.min',
+        'angular-animate'          : cdnHost + '/npm/angular-animate@1.8/angular-animate.min',
+        'ngRoute'                  : cdnHost + '/npm/angular-route@1.8/angular-route.min',// maybe 1.4.8
+        'angular-sanitize'         : cdnHost + '/npm/angular-sanitize@1.8/angular-sanitize.min',
         'css'                      : cdnHost + '/npm//require-css@0.1.8/css.min',
         'bootstrap'                : cdnHost + '/npm/bootstrap@3.3.6/dist/js/bootstrap.min',
         'bs-colorpicker'           : cdnHost + '/npm/angular-bootstrap-colorpicker@3.0.25/js/bootstrap-colorpicker-module.min',
@@ -34,7 +33,7 @@ require.config({
     },
     shim: {
         'ng'      : { deps: ['jquery'] },
-        'angular'                   : { deps: [cdnHost + '/npm/angular@1.5.11/angular.min.js',] },
+        'angular'                   : { deps: [cdnHost + '/npm/angular@1.8.2/angular.min.js',] },
         'ngRoute'                   : { deps: ['ng'] },
         'angular-sanitize'          : { deps: ['angular'] },
         'angular-animate'           : { deps: ['angular']},

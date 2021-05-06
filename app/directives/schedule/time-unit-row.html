@@ -1,4 +1,4 @@
-<div class="row-base">
+<div class="row-base" >
   <style>
     .row-base {
       min-height: 40px;
@@ -8,7 +8,10 @@
     }
 
     .interval-hour {
+
       display: inline-block;
+      overflow:visible;
+      position:relative;
     }
 
     .col-stripped {
@@ -21,10 +24,14 @@
 
     .sub-interval {
       display: inline-block;
+      position:relative;
+      width:25%;
+      height:100%;
     }
 
     .sub-interval:hover {
       background-color: #fff;
+
     }
 
     .sub-interval-background {
@@ -34,10 +41,19 @@
       border-width: 1px;
       border-color: #000;
     }
+
+    .reservation{
+      cursor:pointer;
+      position:absolute;
+      height:100%;
+      background-color:#a7a7a7;
+      z-index:10;
+      overflow:hidden;
+    }
   </style>
-  <div id="interval-{{$index}}" class="interval-hour relative" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:visible;height:100%;width:{{colWidth}}px;">
-<!-- ng-click="resDialog(sub.res,sub.time);" -->
-    <div class="sub-interval" ng-repeat="sub in timeColumn.subIntervals"  ng-click="resDialog(sub.res,sub.time,'details');$event.stopPropagation();" style="position:relative;height:100%;width:25%;">
+  <div id="interval-{{$index}}" ng-style="{ height: (room.rowHeight-1)+'px', width: (colWidth)+'px'}" class="interval-hour relative" ng-repeat="timeColumn in timeIntervals" ng-class="{'col-stripped':($index%2),'col-stripped-alt':!($index%2)}" style="overflow:visible;">
+
+    <div class="sub-interval" ng-style="{ height: (room.rowHeight-2)+'px'}"  ng-repeat="sub in timeColumn.subIntervals"  ng-click="resDialog(sub.res,sub.time,'details');$event.stopPropagation();" >
       <grid-reservation ng-if="sub.res._id" rooms="rooms" doc="sub.res" start="sub.time" pop-res="resDialog(sub.res,sub.time,'agenda')" pop-vid="resDialog(sub.res,sub.time,'options')"></grid-reservation>
     </div>
   </div>

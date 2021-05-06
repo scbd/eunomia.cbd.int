@@ -7,20 +7,11 @@ define(['app'], function(app) {
      ***************************************************************************************/
     app.factory('devRouter', [function() {
 
-        var domain = document.location.hostname.replace(/[^\.]+\./, '');
-
-        if ((~domain.indexOf('localhost') || ~domain.indexOf('cbddev.xyz') ))
-          domain='cbddev.xyz';
-        else if (~domain.indexOf('staging.cbd.int'))
-          domain='staging.cbd.int';
-        else
-          domain = 'cbd.int';
-
-        var ACCOUNTS_URI = 'https://accounts.' + domain;
-
+        const domain      = document.location.hostname.replace(/[^\.]+\./, '');
+        const accountsUrl = (document && document.documentElement.attributes['accounts-url'].value)
 
         return {
-            ACCOUNTS_URI: ACCOUNTS_URI,
+            ACCOUNTS_URI: accountsUrl,
             DOMAIN: domain
         };
     }]);
