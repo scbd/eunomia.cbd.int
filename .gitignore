@@ -25,3 +25,4 @@ app_build
 .bower-storage
 bower_components
 docs/.vuepress
+.vscode

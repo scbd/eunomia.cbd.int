@@ -29,7 +29,9 @@ define(['angular', 'dragula', 'toastr', 'angular-sanitize','ui.select'], functio
     $httpProvider.interceptors.push('authenticationHttpIntercepter');
   }]);
 
-  app.value('realm', 'EUNO');
+  const accountsUrl = document? document.documentElement.attributes['accounts-url'].value  : 'https://accounts.cbd.int'
+
+  app.value('accountsUrl', accountsUrl);
 
   return app;
 });

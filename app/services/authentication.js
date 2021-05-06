@@ -1,21 +1,19 @@
 /* jshint sub:true */
 
-define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
+define(['app', 'angular', 'jquery'], function(app, ng, $) {
     'use strict';
 
-    app.factory('apiToken', ['$q', '$rootScope', '$window', '$document', '$timeout','devRouter', function($q, $rootScope, $window, $document, $timeout,devRouter) {
+    app.factory('apiToken', ['$q', '$rootScope', '$window', '$document', '$timeout','accountsUrl', function($q, $rootScope, $window, $document, $timeout, accountsUrl) {
 
-        var authenticationFrameQ = $q(function(resolve, reject) {
+        const authenticationFrameQ = $q(function(resolve, reject) {
 
-            var frame = $('<iframe src="' + devRouter.ACCOUNTS_URI + '/app/authorize.html" style="display:none"></iframe>');
+            const frame = $(`<iframe src="${accountsUrl}/app/authorize.html" style="display:none"></iframe>`);
 
             $('body').prepend(frame);
 
-            var timeout = $timeout(function() {
-                reject('operation timed out (5000ms)');
-            }, 5000);
+            const timeout = $timeout(() => reject('operation timed out (5000ms)'), 5000);
 
-            frame.load(function(evt) {
+            frame.load((evt) => {
                 $timeout.cancel(timeout);
                 resolve(evt.target || evt.srcElement);
             });
@@ -50,7 +48,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
                 var receiveMessage = function(event) {
                     $timeout.cancel(unauthorizedTimeout);
 
-                    if (event.origin != devRouter.ACCOUNTS_URI)
+                    if (event.origin != accountsUrl)
                         return;
 
                     var message = JSON.parse(event.data);
@@ -81,7 +79,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
 
                 authenticationFrame.contentWindow.postMessage(JSON.stringify({
                     type: 'getAuthenticationToken'
-                }), devRouter.ACCOUNTS_URI);
+                }), accountsUrl);
 
                 return pToken;
 
@@ -113,7 +111,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
                         authenticationEmail: email
                     };
 
-                    authenticationFrame.contentWindow.postMessage(JSON.stringify(msg), devRouter.ACCOUNTS_URI);
+                    authenticationFrame.contentWindow.postMessage(JSON.stringify(msg), accountsUrl);
                 }
 
                 if (email) {
@@ -124,11 +122,11 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
 
         return {
             get: getToken,
-            set: setToken
+            // set: setToken
         };
     }]);
 
-    app.factory('authentication', ["$http", "$rootScope", "$q", "apiToken", "$window", "$location","devRouter", function($http, $rootScope, $q, apiToken, $window, $location,devRouter) {
+    app.factory('authentication', ["$http", "$rootScope", "$q", "apiToken", "$window", "$location", function($http, $rootScope, $q, apiToken, $window, $location) {
 
         var currentUser = null;
 
@@ -198,7 +196,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //============================================================
         function signIn(email, password) {
 
-            return $http.post(devRouter.ACCOUNTS_URI + '/api/v2013/authentication/token', {
+            return $http.post(`${accountsUrl}/api/v2013/authentication/token`, {
 
                 "email": email,
                 "password": password
@@ -287,7 +285,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //
         //============================================================
         function goToSignIn() {
-            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signin?&returnUrl=' + encodedReturnUrl();
+            $window.location.href = `${accountsUrl}/signin?&returnUrl=${encodedReturnUrl()}`
         }
 
 
@@ -296,8 +294,8 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //
         //============================================================
         function goToSignOut() {
-            document.cookie = 'authenticationToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signout?returnUrl=' + encodedReturnUrl();
+            document.cookie       = 'authenticationToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+            $window.location.href = `${accountsUrl}/signout?returnUrl=${encodedReturnUrl()}`;
         }
 
         //============================================================
@@ -305,7 +303,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //
         //============================================================
         function signUp() {
-            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/signup?returnUrl=' +  encodedReturnUrl();
+            $window.location.href = `${accountsUrl}/signup?returnUrl=${encodedReturnUrl()}`
         }
 
         //============================================================
@@ -313,7 +311,7 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //
         //============================================================
         function passwordReset() {
-            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/password?returnUrl=' +  encodedReturnUrl();
+            $window.location.href = `${accountsUrl}/password?returnUrl=${encodedReturnUrl()}`
         }
 
         //============================================================
@@ -321,20 +319,11 @@ define(['app', 'angular', 'jquery','./dev-router'], function(app, ng, $) {
         //
         //============================================================
         function editProfile() {
-            $window.location.href = 'https://accounts.' + devRouter.DOMAIN + '/profile?returnUrl='+  encodedReturnUrl();
+            $window.location.href = `${accountsUrl}/profile?returnUrl=${encodedReturnUrl()}`
         }
 
 
-        return {
-            signIn: signIn,
-            signOut: signOut,
-            goToSignIn: goToSignIn,
-            goToSignOut: goToSignOut,
-            signUp: signUp,
-            passwordReset: passwordReset,
-            editProfile: editProfile,
-            getUser: getUser,
-        };
+        return { signIn, signOut, goToSignIn, goToSignOut, signUp, passwordReset, editProfile, getUser }
     }]);
 
     app.factory('authenticationHttpIntercepter', ["$q", "apiToken", '$rootScope', function($q, apiToken, $rootScope) {
