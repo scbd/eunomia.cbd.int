@@ -7,29 +7,31 @@ define(['app', 'lodash',
     'directives/forms/edit/disable-auto-trim'
 ], function(app, _, template, moment) {
 
-    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http','$q',
-        function($timeout, mongoStorage, $document, $rootScope,$http,$q) {
+    app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http',
+        function($timeout, mongoStorage, $document, $rootScope,$http) {
             return {
-                restrict: 'E',
-                template: template,
-                replace: true,
-                transclude: false,
+                restrict  : 'E'     ,
+                template  : template,
+                replace   : true    ,
+                transclude: false   ,
                 scope: {
-                    'doc': '=?',
-                    'conferenceDays': '=?',
-                    'day': '=?',
-                    'startObj': '=?',
-                    'closeThisDialog': '&',
-                    'room': '=?',
-                    'rooms': '=?',
-                    'timeUnitRowCtrl': '=?',
-                    'conference':'=?',
-                    'tab':"=?"
-                },
+                          'doc'            : '=?',
+                          'conferenceDays' : '=?',
+                          'day'            : '=?',
+                          'startObj'       : '=?',
+                          'closeThisDialog': '&',
+                          'room'           : '=?',
+                          'rooms'          : '=?',
+                          'timeUnitRowCtrl': '=?',
+                          'conference'     : '=?',
+                          'tab'            : "=?"
+                      },
 
                 link: function($scope, $element) {
+                        
                         $scope.addLinkStore = { name: '', url: '', locale: 'en' }
-                        $scope.validLink = true
+                        $scope.validLink    = true
+
                         //============================================================
                         //
                         //============================================================
@@ -61,32 +63,16 @@ define(['app', 'lodash',
                         //============================================================
                         function init() {
 
-                            $scope.options = {
-                              locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh']
-                            };
-                            $scope.tabs = {
-                                'details': {
-                                    'active': false
-                                },
-                                'recurrence': {
-                                    'active': false
-                                },
-                                'recurrenceQuestion': {
-                                    'active': false
-                                },
-                                'sideEvent': {
-                                    'active': false
-                                },
-                                'cctv': {
-                                    'active': false
-                                },
-                                'agenda': {
-                                    'active': false
-                                },
-                                'options': {
-                                    'active': false
-                                },
-                            };
+                            $scope.options = { locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'] };
+                            $scope.tabs    = {
+                                                'details'           : { 'active': false },
+                                                'recurrence'        : { 'active': false },
+                                                'recurrenceQuestion': { 'active': false },
+                                                'sideEvent'         : { 'active': false },
+                                                'cctv'              : { 'active': false },
+                                                'agenda'            : { 'active': false },
+                                                'options'           : { 'active': false }
+                                            };
 
                             if($scope.doc._id)
                               mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
@@ -160,6 +146,7 @@ define(['app', 'lodash',
                                 availableApiCall();
                               }
                             });
+
                           //============================================================
                           //
                           //============================================================
@@ -207,7 +194,6 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-
                         function hasAgenda(doc){
                           if(!doc.type) return false;
                             var agendaTypes = ['570fd1ac2e3fa5cfa61d90f5','570fd1cb2e3fa5cfa61d90f7','582330845d4c0e8231238ebf','570fd1552e3fa5cfa61d90f0'];
@@ -219,6 +205,7 @@ define(['app', 'lodash',
 
                         }
                         $scope.hasAgenda=hasAgenda;
+
                         //============================================================
                         //
                         //============================================================
@@ -345,24 +332,16 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         function initMaterial() {
-                            $document.ready(function() {
-                                $timeout(function() {
-                                    if ($scope.doc.startT)
-                                        $scope.doc.start = moment.tz($scope.doc.start,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
-                                    else
-                                        $scope.doc.start = moment.tz($scope.startObj,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
-                                });
+                            const { timezone }   = $scope.conference
+                            const { start, end, startT } = $scope.doc
+                            const   format       = 'YYYY-MM-DD HH:mm'
 
-                                $timeout(function() {
-
-                                    if ($scope.doc.end)
-                                        $scope.doc.end = moment.tz($scope.doc.end,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
-                                    else
-                                        $scope.doc.end = moment.tz($scope.doc.start,$scope.conference.timezone).add(30, 'minutes').format('YYYY-MM-DD HH:mm');
-                                });
-                            });
+                            $element.ready(() => $timeout(() => {
+                                $scope.doc.start = startT        ? moment.tz(start, timezone).format(format) : moment.tz($scope.startObj, timezone).format(format)
+                                $scope.doc.end   = $scope.doc.end? moment.tz(end  , timezone).format(format) : moment.tz(start          , timezone).add(30, 'minutes').format(format)
+                            }))
                         } //init
-         
+
                         //============================================================
                         //
                         //============================================================
@@ -564,56 +543,44 @@ define(['app', 'lodash',
                         // returns true if it does not exist in series
                         //============================================================
                         function availableApiCall() {
-                          var allPromises=[];
-                          var diff = moment($scope.doc.end).diff(moment($scope.doc.start),'minutes');
+                          const allPromises = [];
+                          const diff        = moment($scope.doc.end).diff(moment($scope.doc.start),'minutes');
 
 
                           _.each($scope.doc.series,function(r,index){
-                            var end = moment.utc(moment.tz(r.date,$scope.conference.timezone).add(diff,'minutes')).format();
+                            var end   = moment.utc(moment.tz(r.date,$scope.conference.timezone).add(diff,'minutes')).format();
                             var start = moment.utc(moment.tz(r.date,$scope.conference.timezone)).format();
                             var curRec =_.find($scope.recurrenceSeries,function(j){
                                 return moment(j.start).isSame(r.date);
                             });
 
-                            var params = {q:{
+                            const params = { q : {
+                                                    'meta.status'  : { '$ne': 'deleted' },
+                                                    'location.room': $scope.doc.location.room,
+                                                    $or: [
+                                                          { $and :[ { start: { $gte: { $date: start } } }, { start : { $lt : { $date: end } } } ]},
+                                                          { $and :[ { end  : { $gte: { $date: start } } }, { end   : { $lt : { $date: end } } } ]},
+                                                          { $and :[ { start: { $lt : { $date: start } } }, { end   : { $gte: { $date: end } } } ]}
+                                                        ]
+                                                },
+                                            c : 1
+                                          };
 
-                                        'meta.status':{'$ne':'deleted'},
-                                        'location.room':$scope.doc.location.room,
-                                        '$or':
-                                            [{'$and' :[
-                                              {start :{'$gte':{'$date':start}}},
-                                              {start :{'$lt':{'$date':end}}}
-                                            ]},
-                                             {'$and' :[
-                                               {end  :{'$gte':{'$date':start}}},
-                                               {end  :{'$lt':{'$date':end}}},
-                                             ]},
-                                             {'$and' :[
-                                               {start  :{'$lt':{'$date':start}}},
-                                               {end  :{'$gte':{'$date':end}}},
-                                             ]},
-                                           ]
-                                    },
-                                    c:1
-                                  };
                             if(curRec)params.q._id={'$ne':{'$oid':curRec._id}};
 
-                             allPromises.push($http.get('/api/v2016/reservations',{'params': params}).then(
-                                function(responce) {
+                            allPromises.push($http.get('/api/v2016/reservations',{ params}).then(
+                                ({ data }) =>{
 
-                                    if(responce.data.count){
+                                    if(data.count){
                                       $scope.doc.series[index].available=false;
                                       if(!$scope.recurrenceSeries && _.isEmpty($scope.recurrenceSeries))
                                         $scope.doc.series[index].selected=false;
-                                    }else{
-                                    $scope.doc.series[index].available=true;
-                                      //
+                                    }else
+                                      $scope.doc.series[index].available=true;
 
-                                    }
+                              })); // mongoStorage.getReservations
 
-                                                        })); // mongoStorage.getReservations
-
-                                                      });
+                          });
                         }
 
                         //============================================================
@@ -650,7 +617,6 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.save = function(obj) {
-console.log('obj', obj)
                             if ($scope.isSideEvent() && obj.sideEvent)  {
                                 obj.sideEvent.title = obj.title;
                                 obj.sideEvent.description = obj.description;
@@ -696,7 +662,8 @@ console.log('obj', obj)
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
                             });
                         }; //save
-                        init();
+
+                        $element.ready(init)
                     } //link
             }; //return
         }
