@@ -206,21 +206,7 @@ define(['app', 'lodash',
                         }
                         $scope.hasAgenda=hasAgenda;
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function triggerChanges() {
 
-                            $element.find('input').each(function() {
-                                $timeout($(this).trigger('change'), 100);
-                                if ($(this).attr('id') !== 'test')
-                                    isEmptyModel($(this));
-                            }); //jquery each
-
-                            $element.find('select').each(function() {
-                                $timeout(isEmptyModel($(this)));
-                            }); //jquery each
-                        } //triggerChanges
 
                         //============================================================
                         // adds isEmpty css if ngModel empty
