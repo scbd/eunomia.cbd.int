@@ -95,13 +95,13 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             '$and': [{
                                 'start': {
                                     '$gte': {
-                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').subtract(3,'hours').format()
+                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).startOf('day').subtract(24,'hours').format()
                                     }
                                 }
                             }, {
                                 'end': {
                                     '$lt': {
-                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').add(3,'hours').format()
+                                        '$date': moment.tz($scope.dayObj,$scope.conference.timezone).endOf('day').add(24,'hours').format()
                                     }
                                 }
                             }],
@@ -214,7 +214,6 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                           if(!aMoment.isValid()) throw new Error(`ensureMoment: ${testDateTime} not a valid datetime`)
 
                           return aMoment
-
                         }
 
                         //============================================================
@@ -226,7 +225,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                           const searchDay        = getDateTime()
 
                           getRooms()
-                            .then(() => $scope.reservations=getReservations())
+                            .then(async () => $scope.reservations= await getReservations())
                             .then(async () => ctrl.generateDays())
                             .then(() => whenElement('day-filter', $element)
                                         .then(($el)=>{
@@ -259,6 +258,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             )
                             .then(async () => ctrl.initRowHeight())
                             .then(async() => todayTimeLine())
+
                             
                         } //init
 

@@ -171,10 +171,21 @@
                         </div>
                   </div>
 
-                  <div class="col-xs-12"> <hr/>  </div>
+                  <div class="col-xs-12"> <hr/> </div>
 
+                  <div class="col-xs-2"><label>Links</label></div>
+                  <div class="col-xs-10">
+                    <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                      <div class="togglebutton">
+                          <label>
+                              <input type="checkbox" ng-model="doc.displayLinksImmediately" ng-false-value="false" ng-true-value="true" >
+                              <span ng-if="doc.displayLinksImmediately"><i class="fa fa-link" aria-hidden="true"></i> Display Links Immediately</span><span ng-if="!doc.displayLinksImmediately"><i class="fa fa-link" aria-hidden="true"></i> Display Links After Event End</span>
+                          </label>
+                      </div>
+                    </div>
+                  </div>
                   <div ng-if="doc.links && doc.links.length" class="col-xs-12">
-                    <label>Links</label>
+                    
                     <table class="table table-striped">
                       <tbody>
                         <tr ng-repeat="link in doc.links track by $index">

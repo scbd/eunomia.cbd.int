@@ -315,7 +315,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
               readFacetsOrgs(data.facet_counts.facet_fields.hostOrgs_ss);
 
-              console.log(_ctrl.facits.states);
+
           }
           refreshPager(pageIndex)
           _ctrl.docs = data.response.docs;

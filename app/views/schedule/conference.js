@@ -1,9 +1,9 @@
-define(['app', 'directives/schedule/conference-schedule'
-], function() {
+define(['app','moment', 'directives/schedule/conference-schedule'
+], function(app, moment) {
 
   return ['mongoStorage','eventGroup','$scope','$route', '$location','$rootScope', function(mongoStorage,conf,$scope, $route, $location, $rootScope) {
         $scope.hide = true
-        $scope.conf=conf;
+        $scope.conf = conf;
         mongoStorage.loadOrgs();
 
         const { code, edit } = $route.current.params
@@ -13,17 +13,20 @@ define(['app', 'directives/schedule/conference-schedule'
         $scope.hide = (code === 'xxx') ? true : false
         if(!edit && code === 'xxx') $location.url(`/schedule/${conf.code}`)
 
-
-
         async function getRes(id){
-          const { start, location } = await mongoStorage.loadDoc('reservations', id)
+          try{
+            const { start, location } = await mongoStorage.loadDoc('reservations', id)
+            const   resConf           = ($rootScope.eventGroups.filter(({ _id }) => location.conference === _id))[0]
 
-          const resConf = ($rootScope.eventGroups.filter(({ _id }) => location.conference === _id))[0]
+            $scope.conf = resConf
 
+            const queryParamDay = encodeURIComponent(moment.tz(start,$scope.conf.timezone).startOf('day').format())
 
-          $scope.conf = resConf 
-
-          $location.url(`/schedule/${resConf.code}?day=${start}&edit=${id}`)
+            $location.url(`/schedule/${resConf.code}?day=${queryParamDay}&edit=${encodeURIComponent(id)}`)
+          }catch(e){
+            console.error(e)
+            $location.url(`/schedule/${conf.code}`)
+          }
   
         }
   }];
