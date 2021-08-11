@@ -20,10 +20,7 @@
 
                 <div class="form-group">
                   <label for="code" required>Start</label>
-                  <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.start" ng-change="frameIdCtrl.dateChanged('start')"
-                         date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
-                         date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
-                         date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
+                  <input id="start" type="text" class="form-control" name="code" ng-model="frameIdCtrl.start" ng-change="frameIdCtrl.dateChanged('start')">
                 </div>
 
             </div>
@@ -32,10 +29,7 @@
 
                 <div class="form-group">
                     <label for="code" required>End</label>
-                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.end" ng-change="frameIdCtrl.dateChanged('end')"
-                           date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
-                           date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
-                           date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
+                    <input id="end" type="text" class="form-control" name="code" ng-model="frameIdCtrl.end" ng-change="frameIdCtrl.dateChanged('end')">
                 </div>
 
             </div>

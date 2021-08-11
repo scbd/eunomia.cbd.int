@@ -1,6 +1,6 @@
-define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment'], function(require, _, ng, moment) {
+define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment', 'services/when-element'], function(require, _, ng, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup', function($http, $route, $location, $scope, $q, $compile, eventGroup) {
+    return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup','$document', 'whenElement', function($http, $route, $location, $scope, $q, $compile, eventGroup, $document, whenElement ) {
 
         var _ctrl = this;
 
@@ -98,7 +98,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                     });
                 }
 
-            }).then(function(frame){
+            }).then(async function(frame){
 
                 _ctrl.frame = frame;
 
@@ -110,6 +110,17 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                     return ret;
                 }, {});
 
+
+                const $startEl = await whenElement('start', $document)
+            
+                $startEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format: "YYYY-MM-DD HH:mm", clearButton: false, weekStart: 0 })
+                $startEl.bootstrapMaterialDatePicker('start', moment(_.first(frame.schedules).start).format("YYYY-MM-DD HH:mm"));
+
+                const $endEl = await whenElement('end', $document)
+            
+                $endEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format: "YYYY-MM-DD HH:mm", clearButton: false, weekStart: 0 })
+                $endEl.bootstrapMaterialDatePicker('end', moment(_.last (frame.schedules).end  ).format("YYYY-MM-DD HH:mm"));
+               
                 instantciateFrameType();
             });
         }
