@@ -15,7 +15,7 @@ define(['app', 'text!./announcement.html', 'filters/html-sanitizer'], function(a
                 var htmlEditorTools = element.find("#htmlEditorTools button");
                 var htmlEditor      = element.find("#htmlEditor");
 
-                htmlEditorTools.tooltip();
+                // htmlEditorTools.tooltip();
                 htmlEditor.keypress(function(){ updateHtml();});
                 htmlEditor.keyup   (function(){ updateHtml();});
                 htmlEditor.blur    (function(){ updateHtml();});

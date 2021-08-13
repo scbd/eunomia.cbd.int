@@ -1,6 +1,8 @@
-define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment'], function(require, _, ng, moment) {
+define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment', 'services/when-element',
+        'directives/cctv/frames/schedule', 'directives/cctv/frames/announcement', 'directives/cctv/frames/news',
+       ], function(require, _, ng, moment) {
 
-    return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup', function($http, $route, $location, $scope, $q, $compile, eventGroup) {
+    return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup','$document', 'whenElement', function($http, $route, $location, $scope, $q, $compile, eventGroup, $document, whenElement ) {
 
         var _ctrl = this;
 
@@ -24,17 +26,6 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
 
             updateSchedules()
         };
-
-        //==============================
-        //
-        //==============================
-        $scope.$watch('frameIdCtrl.frame.content.type', function(type, oldType) {
-
-            if(type==oldType)
-                return;
-
-            instantciateFrameType(type);
-        });
 
         init();
 
@@ -98,7 +89,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                     });
                 }
 
-            }).then(function(frame){
+            }).then(async function(frame){
 
                 _ctrl.frame = frame;
 
@@ -110,7 +101,16 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                     return ret;
                 }, {});
 
-                instantciateFrameType();
+
+                const $startEl = await whenElement('start', $document)
+            
+                $startEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format: "YYYY-MM-DD HH:mm", clearButton: false, weekStart: 0 })
+                $startEl.bootstrapMaterialDatePicker('start', moment(_.first(frame.schedules).start).format("YYYY-MM-DD HH:mm"));
+
+                const $endEl = await whenElement('end', $document)
+            
+                $endEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format: "YYYY-MM-DD HH:mm", clearButton: false, weekStart: 0 })
+                $endEl.bootstrapMaterialDatePicker('end', moment(_.last (frame.schedules).end  ).format("YYYY-MM-DD HH:mm"));
             });
         }
 
@@ -216,37 +216,6 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         function close() {
             $location.url($location.path().replace(/(.*)\/[a-z0-9]*/i, '$1'));
         }
-
-        //==============================
-        //
-        //==============================
-        function instantciateFrameType(type) {
-
-            var container = ng.element(document).find('#frameTypeContainer');
-
-            container.empty();
-
-            if(!type)
-                return;
-
-            require(['directives/cctv/frames/'+type], function() { //success
-
-                $scope.$applyAsync(function(){
-
-                    var linkFn    = $compile('<cctv-frame-'+type+' content="frameIdCtrl.frame.content"></cctv-frame-'+type+'>');
-                    var content   = linkFn($scope);
-
-                    container.append(content);
-                });
-
-            }, function(err) { //error
-
-                $scope.$applyAsync(function() {
-                    $scope.$emit('showError', "Unable to load directive for type: "+type+'\n'+err);
-                });
-            });
-        }
-
 
         //==============================
         //

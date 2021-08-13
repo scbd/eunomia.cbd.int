@@ -20,10 +20,7 @@
 
                 <div class="form-group">
                   <label for="code" required>Start</label>
-                  <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.start" ng-change="frameIdCtrl.dateChanged('start')"
-                         date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
-                         date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
-                         date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
+                  <input id="start" type="text" class="form-control" name="code" ng-model="frameIdCtrl.start" ng-change="frameIdCtrl.dateChanged('start')">
                 </div>
 
             </div>
@@ -32,10 +29,7 @@
 
                 <div class="form-group">
                     <label for="code" required>End</label>
-                    <input type="text" class="form-control" name="code" ng-model="frameIdCtrl.end" ng-change="frameIdCtrl.dateChanged('end')"
-                           date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm' }"
-                           date-picker-min-date="frameIdCtrl.eventGroup.schedule.start"
-                           date-picker-max-date="frameIdCtrl.eventGroup.schedule.end">
+                    <input id="end" type="text" class="form-control" name="code" ng-model="frameIdCtrl.end" ng-change="frameIdCtrl.dateChanged('end')">
                 </div>
 
             </div>
@@ -104,7 +98,11 @@
             </div>
         </div>
 
-        <div id="frameTypeContainer" class="row"></div>
+        <div id="frameTypeContainer" class="row">
+            <cctv-frame-announcement ng-if="frameIdCtrl.frame.content.type=='announcement'" content="frameIdCtrl.frame.content"></cctv-frame-announcement>
+            <cctv-frame-news         ng-if="frameIdCtrl.frame.content.type=='news'"         content="frameIdCtrl.frame.content"></cctv-frame-news>
+            <cctv-frame-schedule     ng-if="frameIdCtrl.frame.content.type=='schedule'"     content="frameIdCtrl.frame.content"></cctv-frame-schedule>
+        </div>
 
         <div class="row">
             <div class="col-xs-12">
