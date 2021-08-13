@@ -35,7 +35,7 @@ define(['lodash', 'moment-timezone', 'app', 'directives/date-picker', 'filters/m
 
             return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
-                var feeds      = res.data;
+                var feeds      = res.data || [];
                 var feedsMap   = _.reduce(feeds, function(ret, feed) {
                     ret[feed._id] = feed;
                     return ret;

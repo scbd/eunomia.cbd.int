@@ -98,7 +98,11 @@
             </div>
         </div>
 
-        <div id="frameTypeContainer" class="row"></div>
+        <div id="frameTypeContainer" class="row">
+            <cctv-frame-announcement ng-if="frameIdCtrl.frame.content.type=='announcement'" content="frameIdCtrl.frame.content"></cctv-frame-announcement>
+            <cctv-frame-news         ng-if="frameIdCtrl.frame.content.type=='news'"         content="frameIdCtrl.frame.content"></cctv-frame-news>
+            <cctv-frame-schedule     ng-if="frameIdCtrl.frame.content.type=='schedule'"     content="frameIdCtrl.frame.content"></cctv-frame-schedule>
+        </div>
 
         <div class="row">
             <div class="col-xs-12">

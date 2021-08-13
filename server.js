@@ -7,7 +7,7 @@ app.set('views', __dirname + '/app');
 app.set('view engine', 'ejs');
 
 const apiUrl      =   process.env.API_URL      || 'https://api.cbd.int'
-const accountsUrl =   process.env.ACCOUNTS_URL || 'https://accounts.cbd.int/'
+const accountsUrl =   process.env.ACCOUNTS_URL || 'https://accounts.cbd.int'
 const gitVersion  = ( process.env.COMMIT || 'UNKNOWN' ).substr(0, 7);
 
 
