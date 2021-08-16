@@ -108,7 +108,7 @@ define(['app',
                   var selectEventGroupId = 'TODO';
 
                   var bestMatch = _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
-                                  _.findLast(eventGroups, function(e) { return now.isBefore(e.EndDate); }) ||
+                                  _(eventGroups).sortBy(function(e) { return moment(e.EndDate).diff(now) }).find(function(e) { return now.isBefore(e.EndDate); }) ||
                                   _.first   (eventGroups);
                   if(bestMatch)
                       selectEventGroupId = bestMatch._id;
