@@ -331,8 +331,8 @@ define(['app', 'lodash',
 
                                                     $el.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
                                                     $el.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.start, timezone));
-                                                    $el.bootstrapMaterialDatePicker('setMinDate', moment.tz($scope.doc.start, timezone));
-                                                    $el.bootstrapMaterialDatePicker('setMaxDate', moment.tz($scope.doc.end, timezone));
+                                                    // $el.bootstrapMaterialDatePicker('setMinDate', moment.tz($scope.doc.start, timezone));
+                                                    // $el.bootstrapMaterialDatePicker('setMaxDate', moment.tz($scope.doc.end, timezone));
                                                     $timeout($($el).trigger('change'), 100);
                                                     $.material.init();
                                                   })
