@@ -200,6 +200,7 @@
                     <div class="form-group " style="margin-left:10px;margin-top:15px;" >
                       <label class="control-label" for="linkURL" style="margin: 0 0 0 0;">Language</label>
                       <select id="locale" class="form-control" ng-model="addLinkStore.locale"  >
+                        <option value="">-</option>
                         <option ng-repeat="locale in options.locales track by $index"  ng-value="options.locales[$index]"  >{{locale.toUpperCase()}}</option>
                       </select>
                       <span class="material-input"></span>
