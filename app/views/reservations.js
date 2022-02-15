@@ -247,7 +247,7 @@ docDefinition.header=pdfHeader;
               }
           ).then(function(){pdfMake.createPdf(docDefinition).download();_ctrl.loading = false;}); //
 
-      } // getReservations
+      } 
 
       //============================================================
       //
@@ -258,18 +258,18 @@ docDefinition.header=pdfHeader;
           if(!pageIndex || !Number(pageIndex)) pageIndex=0;
 
           _ctrl.itemsPerPage=Number(_ctrl.itemsPerPage);
-        var q=buildQuery ();//{'location.conference':conference._id};
-       var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1};
+        var q = buildQuery();//{'location.conference':conference._id};
+        var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1};
 
 
 
               return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort,f).then(
-                  function(responce) {
-                        _ctrl.count=responce.count;
-                        _ctrl.docs=responce.data;
+                  function({ count, data }) {
+                        _ctrl.count = count;
+                        _ctrl.docs  = data;
                         refreshPager(pageIndex);
                         _ctrl.loading = false;
-                        return responce.data;
+                        return data;
                   }
               ); // mongoStorage.getReservations
 

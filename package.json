@@ -9,7 +9,7 @@
     "docs:build": "vuepress build docs",
     "docs:deploy": "sh deploy-docs.sh",
     "yarn-upgrade-deps": "yarn upgrade-interactive --latest",
-    "clean-reinstall": "if test -f yarn.lock; then rm yarn.lock; fi && if test -d node_modules; then rm -rf node_modules; fi"
+    "clean-reinstall": "if test -f yarn.lock; then rm yarn.lock; fi && if test -d node_modules; then rm -rf node_modules; fi && yarn"
   },
   "dependencies": {
     "ejs": "2.5.5",
