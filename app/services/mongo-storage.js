@@ -29,18 +29,14 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function loadDoc(schema, _id) {
+        async function loadDoc(schema, _id) {
+          try{
+            const { data } = await $http.get(`/api/v2016/${schema}/${_id}`)
 
-            return $q.when($http.get('/api/v2016/' + schema + '/' + _id)) //}&f={"document":1}'))
-                .then(
-
-                    function(response) {
-                        if (!_.isEmpty(response.data))
-                            return response.data;
-                        else
-                            return false;
-
-                    });
+            return _.isEmpty(data)? false : data
+          }catch(e){
+            console.error('mongo-storage.loadDoc',e.data)
+          }
         }
 
         //============================================================
@@ -224,16 +220,15 @@ define(['app', 'lodash'], function(app, _) {
         //
         //============================================================
         function getAllOrgs() {
+            const cache  = true
+            const q      = { 'meta.status': 'published' }
+            const params = { q }
 
-            var params = {
-                q: {
-                    'meta.status': 'published'
-                }
-            };
-            return $http.get('/api/v2016/inde-orgs', {
-                'params': params,
-                'cache': true
-            });
+            try{
+              return $http.get('/api/v2016/inde-orgs', { params, cache });
+            }catch(e){
+              console.error('mongo-storage.getAllOrgs',e)
+            }
 
         } // getDocs
 
@@ -242,38 +237,41 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function loadOrgs(force) {
+        async function loadOrgs(force) {
 
             if(loadOrgsInProgress) return loadOrgsInProgress;
 
-            loadOrgsInProgress = isModified('inde-orgs').then(
-                function(isModified) {
-                    var params = {};
-                    if (!localStorage.getItem('allOrgs') || isModified || force) {
-                        params = {
-                            q: {
-                                'meta.status': 'published'
-                            }
-                        };
+            const hasBeenModified   = await isModified('inde-orgs')
+            const notInLocalStorage = !localStorage.getItem('allOrgs')
+            const loadFromApi       = force || hasBeenModified || notInLocalStorage
+            const cache             = true
+            const q                 = { 'meta.status': 'published' } 
+            const params            = { q }
 
-                        return $q.all([countries(),$http.get('/api/v2016/inde-orgs', {'params': params})]).then(function(data) {
-                            var orgsAndParties = _.union(data[0], data[1].data);
+            
 
-                            allOrgs = orgsAndParties;
-                            localStorage.setItem('allOrgs', JSON.stringify(orgsAndParties));
-                            return allOrgs;
-                        });
+            if(loadFromApi) {
+              try{
+              const promises = [ countries(), $http.get('/api/v2016/inde-orgs', { params, cache })]//
 
-                    } else {
-                        loadOrgsInProgress = null;
-                        if(_.isEmpty(allOrgs))
-                          allOrgs= JSON.parse(localStorage.getItem('allOrgs'));
-                        return allOrgs;
-                    }
+              return loadOrgsInProgress = $q.all(promises).then((data) =>{
+                        const orgsAndParties = _.union(data[0], data[1].data);
 
-                });
+                        allOrgs = orgsAndParties
+                        localStorage.setItem('allOrgs', JSON.stringify(orgsAndParties));
+                        return orgsAndParties;
+                    });
+              }catch(e){
+                console.error('mongo-storage.loadOrgs', e)
+              }
+            }
 
-                return loadOrgsInProgress;
+          loadOrgsInProgress = null
+            if(_.isEmpty(allOrgs))
+              allOrgs = JSON.parse(localStorage.getItem('allOrgs'));
+
+            return allOrgs;
+
         } // loadDocs
 
         var countriesData;

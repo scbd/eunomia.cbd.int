@@ -169,7 +169,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
           var cancelInt = $interval(function(){
             return $http.get('/api/v2013/index/select', {
               params:{q:'identifier_s:'+identifier_s,fl:'_state_s,identifier_s'}
-            }).success(function(data) {
+            }).then(function(data) {
 
               var stateChange = _.find(_ctrl.stateChanges,{identifier_s:identifier_s})
               if(stateChange && stateChange._state_s !== data.response.docs[0]._state_s){
@@ -297,7 +297,7 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
         return $http.get('/api/v2013/index/select', {
           params: queryParameters
-        }).success(function(data) {
+        }).then(function({ data }) {
 
           canceler = null;
 
