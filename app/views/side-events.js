@@ -1,22 +1,22 @@
 define(['app','lodash','moment',
-'services/mongo-storage',
-    'directives/date-picker',
-  'directives/sorterSolr',
-  'filters/moment',
-    'filters/propsFilter',
-    'filters/htmlToPlaintext',  'filters/truncate',
-'ngDialog',
-'ui.select',
-
+    'services/mongo-storage' ,
+    'directives/date-picker' ,
+    'directives/sorterSolr'  ,
+    'filters/moment'         ,
+    'filters/propsFilter'    ,
+    'filters/htmlToPlaintext',
+    'filters/truncate',
+    'ngDialog'               ,
+    'ui.select'              ,
+    'services/when-element'  ,
 
 ], function(app, _,moment) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user','$http','$interval','$route',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user,$http,$interval,$route) {
-      var docDefinition = { content: '' };
+return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location','$q','$http','$interval','whenElement', function($scope,$document,mongoStorage,$timeout,conference,$location,$q,$http,$interval,whenElement) {
+
       var _ctrl = this;
-      var token = $route.current.params.token
-
-
+      const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
+      
       _ctrl.conference=conference;
 
       _ctrl.count = 0;
@@ -67,10 +67,52 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         function init() {
           _ctrl.statusFilter={all:true,request:false,public:false,scheduled:false,archived:false,deleted:false,draft:false}
 
+          const {timezone } = conference
 
-            $q.all([loadRooms(), loadTypes()]).then(querySideEvents);
+          moment.tz.setDefault(timezone);
 
+          initStartDatePicker().then(initEndDatePicker)
+          $q.all([loadRooms(), loadTypes()]).then(querySideEvents);
         } //init
+
+        async function initStartDatePicker(){
+          const   $el                    = await whenElement('start-filter', $document)
+          const { start: urlStart }      = $location.search()
+          const { timezone, start, end } = getConferenceTiming()
+
+          const dateTimeObject = moment.tz(urlStart || start, timezone)
+
+          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: true,  format: DATE_TIME_FORMAT, clearButton: false, weekStart: 0 });
+          $el.bootstrapMaterialDatePicker('setDate'   , dateTimeObject);
+          $el.bootstrapMaterialDatePicker('setMinDate', moment(_ctrl.startFilter));
+          $el.bootstrapMaterialDatePicker('setMaxDate', end);
+
+          $el.on('change', (e, date) =>  $timeout(()=> $location.search('start',date.format()), 100))
+        }
+
+        async function initEndDatePicker(){
+          const   $el                    = await whenElement('end-filter', $document)
+          const { start: urlStart, end: endUrl }      = $location.search()
+          const { timezone, start, end } = getConferenceTiming()
+
+          const dateTimeObject = moment.tz(endUrl || end, timezone)
+
+          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: true,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 });
+          $el.bootstrapMaterialDatePicker('setDate'   , dateTimeObject);
+          $el.bootstrapMaterialDatePicker('setMinDate', start);
+          $el.bootstrapMaterialDatePicker('setMaxDate', end);
+
+          $el.on('change', (e, date) =>  $timeout(()=> $location.search('end',date.format()), 100))
+        }
+
+
+        function getConferenceTiming(){
+          const { timezone, schedule } = conference
+          const   start                = moment(schedule.start).startOf('day')
+          const   end                  = moment(schedule.end)  .startOf('day').add(1,'day')
+
+          return { timezone, start, end }
+        }
         //============================================================
         //
         //============================================================
@@ -355,13 +397,13 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
 
                       _ctrl.facits.orgs[orgs[i].identifier_s]  = { identifier_s: orgs[i].identifier_s, count: orgs[i].count };
 
-                      mongoStorage.loadDoc('inde-orgs', orgs[i].identifier_s).then(function(org) {
+                      if(orgs[i].identifier_s.length > 2)
+                        mongoStorage.loadDoc('inde-orgs', orgs[i].identifier_s).then(function(org) {
 
-                        _ctrl.facits.orgs[org._id].title = org.title
-                        _ctrl.facits.orgs[org._id].acronym = org.acronym
+                          _ctrl.facits.orgs[org._id].title = org.title
+                          _ctrl.facits.orgs[org._id].acronym = org.acronym
 
-
-                      });
+                        });
 
                     }
 

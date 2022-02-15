@@ -39,15 +39,14 @@
         <div class="col-xs-2  ">
             <div class="form-group ">
                 <label class="control-label" for="parent">Start Date</label>
-                <input id="start-filter" type="text" class="form-control" ng-model="reservationsCtrl.startFilter" date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" date-picker-min-date="reservationsCtrl.conference.startObj"
-                    date-picker-max-date="reservationsCtrl.conference.endObj" current-date="reservationsCtrl.startFilterObj" ng-change="reservationsCtrl.changeDate();">
+                <input id="start-filter" type="text" class="form-control" ng-model="reservationsCtrl.startFilter" ng-change="reservationsCtrl.changeDate();">
+
             </div>
         </div>
         <div class="col-xs-2  ">
             <div class="form-group ">
                 <label class="control-label" for="parent">End Date</label>
-                <input id="end-filter" type="text" class="form-control" ng-model="reservationsCtrl.endFilter" date-picker="{ switchOnClick: true, time: true, date: true, format: 'YYYY-MM-DD HH:mm', clearButton: false,weekStart: 0 }" date-picker-min-date="reservationsCtrl.conference.startObj"
-                    date-picker-max-date="reservationsCtrl.conference.endObj" current-date="reservationsCtrl.endFilterObj" ng-change="reservationsCtrl.changeDate();">
+                <input id="end-filter" type="text" class="form-control" ng-model="reservationsCtrl.endFilter" ng-change="reservationsCtrl.changeDate();">
             </div>
         </div>
         <div class="col-xs-4  ">

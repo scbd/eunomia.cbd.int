@@ -3,10 +3,11 @@ define(['app',
         'text!./side-event.html',
         'moment',
         './se-grid-reservation',
+        'services/when-element'  ,
     ],
     function(app, _, template) {
 
-        app.directive('sideEvent', ['$timeout', 'mongoStorage','$http', function($timeout, mongoStorage,$http) {
+        app.directive('sideEvent', [ 'mongoStorage','$http','whenElement', function(mongoStorage,$http, whenElement) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -18,11 +19,11 @@ define(['app',
                 },
                 template: template,
 
-                link: function($scope,$elem) {
-                    $elem.find('#res-el').hide();
+                link: async function($scope, $elem) {
+                    whenElement('res-el', $elem).then(($el) => $el.hide())
 
 
-                    var subEl=$elem.find('#res-panel');
+                    const subEl = await whenElement('res-panel', $elem)
 
                     if($scope.res.subTypeObj && $scope.res.subTypeObj.color){
                       subEl.css("background-color",$scope.res.subTypeObj.color);
@@ -80,52 +81,7 @@ define(['app',
                         }
                     } //init
                     $scope.deleteRes = deleteRes;
-                },
-                controller: function($scope, $element) {
-                        var titleEl = $element.find("#title").popover({
-                            placement: 'top',
-                            html: 'true',
-                            container: 'body',
-                            content: function() {
-                                return $element.find('#pop-title').html();
-                            }
-                        });
-
-
-                        titleEl.on('mouseenter', function() {
-                            titleEl.popover('show');
-                        });
-                        titleEl.on('mouseleave', function() {
-                            titleEl.popover('hide');
-                        });
-                        $timeout(function() {
-                            if ($scope.res.sideEvent && $scope.res.sideEvent.orgs && $scope.res.sideEvent.orgs.length > 1) {
-                                var orgEl = $element.find("div.num-orgs"); //.popover({ placement: 'bottom', html: 'true'});
-
-                                var orgs = $element.find("#orgs").popover({
-                                    placement: 'bottom',
-                                    html: 'true',
-                                    container: 'body',
-                                    content: function() {
-                                        return $element.find('#pop-orgs').html();
-                                    }
-                                }); //.popover({ placement: 'bottom', html: 'true'});
-
-                                orgEl.on('mouseenter', function() {
-                                    orgs.popover('show');
-                                });
-                                orgEl.on('mouseleave', function() {
-                                    orgs.popover('hide');
-                                });
-                                orgs.on('mouseenter', function() {
-                                    orgs.popover('show');
-                                });
-                                orgs.on('mouseleave', function() {
-                                    orgs.popover('hide');
-                                });
-                            } //
-                        }, 1000);
-                    } //link
+                }
             }; //return
         }]); //directive
 

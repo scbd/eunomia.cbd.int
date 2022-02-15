@@ -1,19 +1,20 @@
 define(['app','lodash','moment',
-'services/mongo-storage',
-    'directives/date-picker',
-  'directives/sorter',
-  'filters/moment',
-    'filters/propsFilter',
+    'services/mongo-storage' ,
+    'directives/date-picker' ,
+    'directives/sorter'      ,
+    'filters/moment'         ,
+    'filters/propsFilter'    ,
     'filters/htmlToPlaintext',
-'ngDialog',
-'ui.select',
-
+    'ngDialog'               ,
+    'ui.select'              ,
+    'services/when-element'  ,
 
 ], function(app, _,moment) {
 
-return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout','eventGroup','$location','$q','user',function($scope,$document,mongoStorage,ngDialog,$rootScope,$timeout,conference,$location,$q,user) {
+return  ['$document','mongoStorage','eventGroup','$location','$q', 'whenElement', '$timeout', function($document,mongoStorage,conference,$location,$q, whenElement, $timeout) {
       var docDefinition = { content: '' };
       var _ctrl = this;
+      const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
       _ctrl.pdf = function(){
 
@@ -57,32 +58,73 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
         //============================================================
         //
         //============================================================
-        function init(forceNew) {
+        function init() {
+            const { schedule, timezone } = conference
+            const { start, end }         = schedule
+          
+            moment.tz.setDefault(timezone);
 
-            moment.tz.setDefault(conference.timezone);
-            _ctrl.conference.startObj = moment(conference.schedule.start);
-            _ctrl.conference.endObj = moment(conference.schedule.end);
+            _ctrl.conference.startObj = moment(start);
+            _ctrl.conference.endObj   = moment(end);
 
             if(localStorage.getItem('reservations-colums'))
               _ctrl.selectFields=JSON.parse(localStorage.getItem('reservations-colums'));
             else
                 localStorage.setItem('reservations-colums', JSON.stringify(_ctrl.selectFields));
 
-            if ($location.search().start && $location.search().end  && !forceNew) {
-                _ctrl.startFilter = moment($location.search().start).format('YYYY-MM-DD HH:mm');
-                _ctrl.endFilter = moment($location.search().end).format('YYYY-MM-DD HH:mm');
-            } else {
-                _ctrl.startFilter = _ctrl.conference.startObj.format('YYYY-MM-DD HH:mm');
-                _ctrl.endFilter = _ctrl.conference.endObj.format('YYYY-MM-DD HH:mm');
-                changeDate();
-            }
+            const { start: urlStart, end: urlEnd, itemsPerPage } = $location.search()
 
+            _ctrl.startFilter = urlStart? moment(urlStart).format(DATE_TIME_FORMAT) : moment(start).format(DATE_TIME_FORMAT);
+            _ctrl.endFilter   = urlEnd?   moment(urlEnd)  .format(DATE_TIME_FORMAT) : moment(end)  .format(DATE_TIME_FORMAT);
+
+            if(!(urlStart && urlEnd)) changeDate();
+            
+            initStartDatePicker().then(initEndDatePicker)
+            
             if ($location.search().itemsPerPage)
                 _ctrl.itemsPerPage = $location.search().itemsPerPage;
 
             $q.all([loadRooms(), loadTypes()]).then(getReservations);
 
         } //init
+
+        async function initStartDatePicker(){
+          const   $el                    = await whenElement('start-filter', $document)
+          const { start: urlStart }      = $location.search()
+          const { timezone, start, end } = getConferenceTiming()
+
+          const dateTimeObject = moment.tz(urlStart || start, timezone)
+
+          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: true,  format: DATE_TIME_FORMAT, clearButton: false, weekStart: 0 });
+          $el.bootstrapMaterialDatePicker('setDate'   , dateTimeObject);
+          $el.bootstrapMaterialDatePicker('setMinDate', moment(_ctrl.startFilter));
+          $el.bootstrapMaterialDatePicker('setMaxDate', end);
+
+          $el.on('change', (e, date) =>  $timeout(()=> $location.search('start',date.format()), 100))
+        }
+
+        async function initEndDatePicker(){
+          const   $el                    = await whenElement('end-filter', $document)
+          const { start: urlStart, end: endUrl }      = $location.search()
+          const { timezone, start, end } = getConferenceTiming()
+
+          const dateTimeObject = moment.tz(endUrl || end, timezone)
+
+          $el.bootstrapMaterialDatePicker({ switchOnClick: true, date: true, year: true, time: true,  format: 'dddd YYYY-MM-DD', clearButton: false, weekStart: 0 });
+          $el.bootstrapMaterialDatePicker('setDate'   , dateTimeObject);
+          $el.bootstrapMaterialDatePicker('setMinDate', start);
+          $el.bootstrapMaterialDatePicker('setMaxDate', end);
+
+          $el.on('change', (e, date) =>  $timeout(()=> $location.search('end',date.format()), 100))
+        }
+
+        function getConferenceTiming(){
+          const { timezone, schedule } = conference
+          const   start                = moment(schedule.start).startOf('day')
+          const   end                  = moment(schedule.end)  .startOf('day').add(1,'day')
+
+          return { timezone, start, end }
+        }
 
         //============================================================
         //
