@@ -48,15 +48,15 @@
         <div class="col-xs-2  ">
             <div class="form-group ">
                 <label class="control-label" for="parent">From</label>
-                <input id="start-filter" type="text" class="form-control" ng-model="sideEventsCtrl.startFilter" date-picker="{  date: true, time: false, format: 'YYYY-MM-DD HH:mm', clearButton: true }" date-picker-min-date="sideEventsCtrl.conference.startObj"
-                    date-picker-max-date="sideEventsCtrl.conference.endObj" current-date="sideEventsCtrl.startFilterObj" ng-change="sideEventsCtrl.changeDate();">
+                <input id="start-filter" type="text" class="form-control" ng-model="sideEventsCtrl.startFilter"  ng-change="sideEventsCtrl.changeDate();">
+
             </div>
         </div>
         <div class="col-xs-2  ">
             <div class="form-group ">
                 <label class="control-label" for="parent">To</label>
-                <input id="end-filter" type="text" class="form-control" ng-model="sideEventsCtrl.endFilter" date-picker="{ date: true,time: false, format: 'YYYY-MM-DD', clearButton: true}" date-picker-min-date="sideEventsCtrl.conference.startObj"
-                    date-picker-max-date="sideEventsCtrl.conference.endObj" current-date="sideEventsCtrl.endFilterObj" ng-change="sideEventsCtrl.changeDate();">
+                <input id="end-filter" type="text" class="form-control" ng-model="sideEventsCtrl.endFilter"  ng-change="sideEventsCtrl.changeDate();">
+
             </div>
         </div>
         <div class="col-xs-4  ">

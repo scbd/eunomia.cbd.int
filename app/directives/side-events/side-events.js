@@ -5,11 +5,12 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
     './se-time-unit-row',
     './tier-row-header',
     './se-room-row',
+    'services/when-element' ,
     'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _, template, moment) {
 
-    app.directive("sideEvents", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','dragulaService',
-        function($timeout, $document, mongoStorage,$rootScope,$q,dragulaService) {
+    app.directive("sideEvents", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','dragulaService', 'whenElement',
+        function($timeout, $document, mongoStorage,$rootScope,$q,dragulaService, whenElement) {
             return {
                 restrict: 'E',
                 template: template,
@@ -295,7 +296,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                         $scope.getReservations = getReservations;
 
                     }, //link
-                    controller: function($scope) {
+                    controller: function($scope, $element) {
 
                       //============================================================
                       // used by child dir, timeRow
@@ -312,9 +313,9 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                       this.initRowHeight = function() {
 
                           $document.ready(function() {
-                              $timeout(function() {
-                                  var roomColumnEl;
-                                  roomColumnEl = $document.find('#room-col');
+                              $timeout(async() => {
+                                  const  roomColumnEl = await whenElement('room-col', $element)
+                                  //roomColumnEl = $document.find('#room-col');
                                   $scope.rowHeight = Math.floor(Number(roomColumnEl.height()) / $scope.rooms.length);
                                   if ($scope.rowHeight < 20) $scope.rowHeight = 20;
                                   _.each($scope.rooms, function(room) {

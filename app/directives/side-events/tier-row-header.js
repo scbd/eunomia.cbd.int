@@ -1,7 +1,7 @@
-define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filters/moment'], function(app, _, template, moment) {
+define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filters/moment', 'services/when-element' ], function(app, _, template, moment) {
 
-    app.directive("tierRowHeader", ['$timeout',
-        function($timeout) {
+    app.directive("tierRowHeader",  ['$timeout','whenElement',
+        function($timeout, whenElement) {
             return {
                 restrict: 'E',
                 template: template,
@@ -59,18 +59,16 @@ define(['app', 'lodash', 'text!./tier-row-header.html', 'moment-timezone','filte
                         //============================================================
                         function initOuterGridWidth() {
                             var scrollGridEl;
-                            $document.ready(function() {
-                                $timeout(function() {
-                                    scrollGridEl = $document.find('#scroll-grid');
-
-                                    $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
-                                    if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
-                                    // initDayWidth();
-                                    calcColWidths();
-                                });
-                            });
+                            $document.ready(() => whenElement('scroll-grid', $element).then(getAndSetOuterGrid));
                         } //initOuterGridWidth
 
+                        function getAndSetOuterGrid(scrollGridEl) {
+                          $scope.outerGridWidth = Number(scrollGridEl.width() - 1);
+
+                          if (!$scope.outerGridWidth) throw "Error: outer grid width not found timing issue.";
+                          // initDayWidth();
+                          calcColWidths();
+                        };
                         // //============================================================
                         // //
                         // //============================================================
