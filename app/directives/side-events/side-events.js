@@ -23,53 +23,30 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                         //
                         //============================================================
                         $scope.$watch('conference',function(){
-                            if($scope.conference)
-                              changeConference();
+                            if(!$scope.conference) return 
+
+                            changeConference();
+                            init();
                         });
 
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$parent.$on('all-rooms-bag.drop-model', function() {
-                              $timeout(moveRoom,1000);
-                        });
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.$on('se-bag.over', function(e, el, target,source) {
 
-                          if(target.attr('id')!==source.attr('id') && target !=='unscheduled-side-events'){
-                              el.find('#res-panel').hide();
-                              el.find('#res-id-shadow').show();
-                              el.find('#res-id-shadow').css('background-color','yellow');
-                          }
-                          if(target.attr('id') ==='unscheduled-side-events' ){
-                            el.find('#res-panel').show();
-                            el.find('#res-id-shadow').hide();
-                            el.find('#res-id-shadow').css('background-color','none');
-                          }
 
-                        });
-                        init();
-
-                        //============================================================
-                        //
-                        //============================================================
                         function init() {
-                              $scope.rooms = [];
-                              $scope.colWidth=0;
-                              $scope.loading ={};
-                              $scope.collisions={};
-                              $scope.loading.rooms=false;
-                              $scope.loading.types=false;
-                              $scope.loading.reservations=true;
-                              $scope.outerGridWidth=0;
-                              $scope.prefs={};
-                              initTypes();
+
+                          
+                          $scope.rooms                       = [];
+                          $scope.loading                     = {};
+                          $scope.collisions                  = {};
+                          $scope.loading       .rooms        = false;
+                          $scope.loading       .types        = false;
+                          $scope.loading       .reservations = true ;
+                          $scope.outerGridWidth              = 0;
+                          $scope.prefs                       = {};
+
+                          initTypes();
+                          ctrl.generateDays()
                         } //init
-                        //============================================================
-                        //
-                        //============================================================
+
                         function initTypes() {
                             if(!_.isEmpty($scope.options.types)) return $q(function(resolve){resolve(true);});
                             return $scope.options.typesProm = mongoStorage.loadTypes('reservations').then(function(result) {
@@ -78,9 +55,6 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                             });
                         } //initTypes()
 
-                        //============================================================
-                        //
-                        //============================================================
                         function initRoomTypes() {
                             if(!_.isEmpty($scope.options.roomTypes)) return $q(function(resolve){resolve(true);});
                             return mongoStorage.loadTypes('venue-rooms').then(function(result) {
@@ -88,28 +62,12 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                                 $scope.options.roomTypes = result;
 
                             });
-                        } //initTypes()
-                        //============================================================
-                        //
-                        //============================================================
-                        function moveRoom() {
-                            var allP=[];
+                        } 
 
-                            if(!_.isEmpty($scope.rooms)){
-                                _.each( $scope.rooms,function(item,index){
-                                  item.sort=index;
-                                  allP.push(mongoStorage.save('venue-rooms',{'_id':item._id,'sort':item.sort,'venue':item.venue}));
-                                });
-                            }
-                        } //init
-
-                        //============================================================
-                        //
-                        //============================================================
                         function changeConference() {
 
                             $q.all([getRooms(),initTypes(),initRoomTypes()]).then(function(){
-                              getReservations();
+                              this.reservations = getReservations();
                             });
 
                             $scope.conference.endObj = moment.tz($scope.conference.EndDate,$scope.conference.timezone).add(1,'day').startOf('day');
@@ -175,64 +133,89 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
                         function collisionQuery(roomIds){
 
+                            const { days, sideEventTimeIntervals } = $scope.conference.timeObjects
+                            const { seTiers } = $scope.conference.schedule.sideEvents
+                            
+
                             $scope.collisions={};
-                             _.each($scope.conferenceDays,function(day){
-                                    var or =[];
-                                    $scope.conference.seTiers.forEach(function(tier){
-                                        var end;
-                                        var start = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds');
-                                        if(moment(start).format('HH')==='13')
-                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
-                                        else
-                                            end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
 
-                                        or.push(
-                                          {'$and' :[
-                                            {start :{'$gte':{'$date':start.format()}}},
-                                            {start :{'$lt':{'$date':end.format()}}}
-                                          ]});
-                                        or.push(
-                                            {'$and' :[
-                                              {end  :{'$gte':{'$date':start.format()}}},
-                                              {end  :{'$lt':{'$date':end.format()}}},
-                                            ]});
-                                        or.push(
-                                            {'$and' :[
-                                              {start  :{'$lt':{'$date':start.format()}}},
-                                              {end  :{'$gte':{'$date':end.format()}}},
-                                            ]});
+                            for (const interval of sideEventTimeIntervals) {
+                              const start = interval.clone()
+                              const end   = (interval.clone()).add(90,'minutes');
+                              const or = []
 
-                                    });
+                              or.push(
+                                {'$and' :[
+                                  {start :{'$gte':{'$date':start.format()}}},
+                                  {start :{'$lt':{'$date':end.format()}}}
+                                ]});
+                              or.push(
+                                  {'$and' :[
+                                    {end  :{'$gte':{'$date':start.format()}}},
+                                    {end  :{'$lt':{'$date':end.format()}}},
+                                  ]});
+                              or.push(
+                                  {'$and' :[
+                                    {start  :{'$lt':{'$date':start.format()}}},
+                                    {end  :{'$gte':{'$date':end.format()}}},
+                                  ]});
+
+                              const f     = { start: 1, end: 1, location: 1, subType: 1, type: 1};
+                              const sort  = { 'start': -1 };
+                              const q     = {
+                                    'location.room'       : { '$in': roomIds },
+                                    'location.conference' : $scope.conference._id,
+                                    'sideEvent'           : { '$exists': false },
+                                    'meta.status'         : { $nin: ['archived', 'deleted'] },
+                                    '$or'                 : or
+                                  };
+                                  mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
+                                      function({ data}) {
+  
+                                            _.each($scope.rooms,function(r){
+                                                if(!$scope.collisions[r._id])$scope.collisions[r._id]=[];
+  
+                                              _.each(data,function(res){
+                                                  if(res.location.room===r._id)
+                                                    $scope.collisions[r._id].push(res);
+                                              });
+  
+                                          });
+  
+                                      return $scope.collisions;
+                                      }
+                                  );
+                            }
+
+                            // _.each(days,function(day){
+                            //         var or =[];
+                            //         seTiers.forEach(function(tier){
+                            //             var end;
+                            //             var start = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds');
+                            //             if(moment(start).format('HH')==='13')
+                            //                 end = moment.utc(moment.tz(day,$scope.conference.timezone).startOf('day')).add(tier.seconds,'seconds').add(90,'minutes');
+
+                            //             or.push(
+                            //               {'$and' :[
+                            //                 {start :{'$gte':{'$date':start.format()}}},
+                            //                 {start :{'$lt':{'$date':end.format()}}}
+                            //               ]});
+                            //             or.push(
+                            //                 {'$and' :[
+                            //                   {end  :{'$gte':{'$date':start.format()}}},
+                            //                   {end  :{'$lt':{'$date':end.format()}}},
+                            //                 ]});
+                            //             or.push(
+                            //                 {'$and' :[
+                            //                   {start  :{'$lt':{'$date':start.format()}}},
+                            //                   {end  :{'$gte':{'$date':end.format()}}},
+                            //                 ]});
+
+                            //         });
 
 
-                                var f = {start:1,end:1,location:1,subType:1,type:1};
-                                var sort ={'start':-1};
-                                var q={
-                                  'location.room':{'$in':roomIds},
-                                  'location.conference':$scope.conference._id,
-                                  'sideEvent':{'$exists':false},
-                                  'meta.status': {
-                                      $nin: ['archived', 'deleted']
-                                  },
-                                   '$or':or
-                                };
-                                mongoStorage.loadDocs('reservations',q, 0,1000000,false,sort,f).then(
-                                    function(responce) {
 
-                                          _.each($scope.rooms,function(r){
-                                              if(!$scope.collisions[r._id])$scope.collisions[r._id]=[];
-
-                                            _.each(responce.data,function(res){
-                                                if(res.location.room===r._id)
-                                                  $scope.collisions[r._id].push(res);
-                                            });
-
-                                        });
-
-                                    return $scope.collisions;
-                                    }
-                                );
-                             });
+                            //  });
                         }
                         //============================================================
                         //
@@ -290,7 +273,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
                               return reservations;
                               }
-                          ); // mongoStorage.getReservations
+                          ); 
 
                         } // getReservations
                         $scope.getReservations = getReservations;
@@ -302,8 +285,6 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                       // used by child dir, timeRow
                       //============================================================
                       this.resetSchedule = function() {
-
-                          //this.initRowHeight();
                           this.generateDays();
                       }; //this.resetSchedule
 
@@ -324,6 +305,73 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                               });
                           });
                       }; //this.initRowHeight
+
+
+
+                      function generateDays() {
+                        const { StartDate, EndDate, timezone, timezoneLink } = $scope.conference
+
+                        const tz = timezoneLink || timezone
+
+                        if(timezoneLink) moment.tz.link(`${timezone}|${timezoneLink}`)
+
+                        const startDate = moment.utc(moment.tz(StartDate,tz)).startOf();
+                        const endDate   = moment.utc(moment.tz(EndDate,tz))  .startOf();
+
+                        const totalDays = moment(endDate).diff(startDate,'days')
+
+                        const days        = []
+                        const timeObjects = { days, totalDays, endDate, startDate, tz }
+
+                        for (let i = 0; i < totalDays; i++) {
+                          const date = moment.utc(moment.tz(startDate,tz)).add(i,'days');
+                          
+                          days.push(date);
+                        }
+
+                        $scope.conference.timeObjects = timeObjects
+
+                        timeObjects.sideEventTimeIntervals = getSideEventTimeIntervals(timeObjects)
+
+                        $document.ready(() => whenElement('scroll-grid', $element).then(getAndSetOuterGrid));
+
+                      } 
+
+                      this.generateDays = generateDays
+
+                      function getSideEventTimeIntervals({ tz, days }){
+                        const { seTiers }              = $scope.conference.schedule.sideEvents
+                        const   sideEventTimeIntervals = []
+
+                        for (const day of days)
+                          for (const tier of seTiers) {
+                            const interval = moment.tz(day, tz).startOf('day').add(tier.seconds,'seconds')
+                            const isM27    = moment.tz(day, tz).startOf('day').isSame('2022-03-27T00:00:00+01:00')
+
+                            
+                            if(isM27) interval.subtract(1, 'hour')
+
+                            sideEventTimeIntervals.push(interval)
+                            
+                          }
+                          
+                        return sideEventTimeIntervals
+                      }
+
+
+                    function getAndSetOuterGrid(scrollGridEl) {
+                      if (!scrollGridEl) throw "Error: outer grid width not found timing issue.";
+
+                      const { timeObjects } = $scope.conference
+                      const outerGridWidth =  Number(scrollGridEl.width() - 1);
+                      const widthNumber = Math.round(Number(outerGridWidth) / Number(timeObjects.sideEventTimeIntervals.length));
+
+                      timeObjects.outerGridWidth =  outerGridWidth
+                      $scope.colWidth = timeObjects.colWidth       = `${widthNumber}px`
+                      $scope.$applyAsync()
+                    };
+
+
             } //return
         };
     }]);

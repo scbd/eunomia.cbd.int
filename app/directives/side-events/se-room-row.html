@@ -1,5 +1,4 @@
 <div id="{{room._id}}" i="{{room.sort}}" class="room-row-base grabable" ng-click="roomDialog(room);" >
-    <div class="col-xs-6 text-nowrap">{{room.acronym}}</div>
-    <!-- <div class="col-xs-6 text-nowrap" ng-if="room.atTable">({{room.capacity}}/{{room.atTable}})- {{room.typeObj.title.substring(0,1)}}</div> -->
-    <div class="col-xs-6 text-nowrap" >({{room.capacity}})- {{room.typeObj.title.substring(0,1)}}</div>
+    <div class="col-xs-12 col-md-12 col-md-6 text-nowrap" style="overflow: hidden; padding-left:0;">{{room.acronym}}</div>
+    <div class="col-md-6 text-nowrap hidden-md hidden-sm hidden-xs" >({{room.capacity}})- {{room.typeObj.title.substring(0,1)}}</div>
 </div>
