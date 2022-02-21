@@ -165,7 +165,7 @@ define(['app', 'angular', 'jquery'], function(app, ng, $) {
 
                 if (!inProgress) {
 
-                    inProgress = $http.get('/api/v2013/authentication/user', {
+                    inProgress = $http.get('https://api.cbd.int/api/v2013/authentication/user', {
                         headers: {
                             Authorization: "Ticket " + token
                         }
@@ -205,7 +205,7 @@ define(['app', 'angular', 'jquery'], function(app, ng, $) {
 
                 var token = res.data;
 
-                return $q.all([token, $http.get('/api/v2013/authentication/user', {
+                return $q.all([token, $http.get('https://api.cbd.int/api/v2013/authentication/user', {
                     headers: {
                         Authorization: "Ticket " + token.authenticationToken
                     }

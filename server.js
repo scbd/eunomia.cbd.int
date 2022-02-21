@@ -1,7 +1,6 @@
 // CREATE HTTP SERVER AND PROXY
 
 const app   = require('express')();
-const proxy = require('http-proxy').createProxyServer({});
 
 app.set('views', __dirname + '/app');
 app.set('view engine', 'ejs');
@@ -23,10 +22,9 @@ app.set('view engine', 'ejs');
 app.use('/app/libs', require('serve-static')(__dirname + '/node_modules/@bower_components', { setHeaders: setCustomCacheControl }));
 app.use('/app',      require('serve-static')(__dirname + '/app', { setHeaders: setCustomCacheControl }));
 
-app.all('/api/*', function(req, res) { proxy.web(req, res, { target: apiUrl, changeOrigin: true } ); } );
 
 app.all('/app/*', function(req, res) { res.status(404).send(); } );
-app.get('/*',     function(req, res) { res.render('template', { gitVersion, accountsUrl }); });
+app.get('/*',     function(req, res) { res.render('template', { gitVersion, accountsUrl, apiUrl }); });
 
 
 // START SERVER
@@ -35,12 +33,6 @@ app.listen(process.env.PORT || 2020, function () {
 	console.log('Server listening on %j', this.address());
 });
 
-// Handle proxy errors ignore
-
-proxy.on('error', function (e,req, res) {
-    console.error('proxy error:', e);
-    res.status(502).send();
-});
 
 process.on('SIGTERM', ()=>process.exit());
 
