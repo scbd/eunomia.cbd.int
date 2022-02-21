@@ -14,19 +14,8 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
           'room': '=',
           'index':'='
         },
-        link: function($scope,$element) {
+        link: function($scope) {
 
-            // //============================================================
-            // //
-            // //============================================================
-            // $scope.$watch('index',function(){
-            //   if($scope.index)
-            //     $scope.room.sort=$scope.index;
-            // });
-
-            //============================================================
-            //
-            //============================================================
             $scope.roomDialog = function(room) {
                 $scope.editRoom = room;
                 ngDialog.open({
@@ -38,12 +27,6 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
                 });
             };//$scope.roomDialog
 
-            //============================================================
-            //
-            //============================================================
-            $scope.shape = function(id) {
-              //  console.log($scope.room);
-            };//$scope.roomDialog
 
           } //link
       }; //return
