@@ -157,7 +157,7 @@
   </style>
   <div class="conference-schedule" >
     <!-- this container is just for viewport height.  Children float so it does not grow as they do -->
-    <div class="app-loading" ng-show="loading.reservations" ng-animate-children>
+    <div class="app-loading" ng-show="loading.reservations || !colWidth" ng-animate-children>
            <!--
                HACKY CODE WARNING: I'm putting Style block inside directive so that it
                will be removed from the DOM when we remove the directive container.
@@ -221,7 +221,7 @@
                    </h1>
                </div>
            </div>
-      </div>
+    </div>
 
 
     <div >
@@ -234,21 +234,15 @@
       </div>
 
         <div id="scroll-grid" class="outer">
-          <div class="scroll-grid">
-<!-- time heard row -->
+          <div ng-if="colWidth" class="scroll-grid">
 
-<!-- <div > -->
         <tier-row-header conference="conference" is-open="isOpen" outer-grid-width="outerGridWidth" col-width="colWidth" conference-days="conferenceDays"></tier-row-header>
-<!-- </div> -->
 
-       <!-- END: Actual animated container. -->
-<!-- room rows start -->
 
         <se-time-unit-row ng-show="room.hideRoomSearch==1 ||(room.isSideEvent && prefs.onlySERooms && room.hideRoomSearch==='-1') || (!prefs.onlySERooms && room.hideRoomSearch==='-1')"  is-open="isOpen" conference="conference" room="rooms[$index]" rooms="rooms"  conference-days="conferenceDays" ng-repeat="room in roomsList = (rooms | orderBy: 'sort')"  ng-class="{'row-stripped':($index%2)}"></se-time-unit-row>
-        <totals rooms="rooms" reservations="reservations" conference="conference" conference-days="conferenceDays"></totals>
-<!-- room rows end -->
-      </div>
-    </div>
+
+          </div>
+        </div>
     </div>
   </div>
 </div>

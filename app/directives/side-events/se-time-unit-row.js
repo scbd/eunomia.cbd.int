@@ -1,22 +1,21 @@
 define(['app',
     'lodash',
     'text!./se-time-unit-row.html',
-    'text!../forms/edit/reservation-dialog.html',
     'moment',
-    'ngDialog',
     '../forms/edit/reservation',
     'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
-    'filters/moment'
-], function(app, _, template, resDialog, moment) {
+    'filters/moment',
+    './se-grid-reservation',
+], function(app, _, template,  moment) {
 
-    app.directive("seTimeUnitRow", ['ngDialog', '$timeout', '$document', '$http',
-        function(ngDialog, $timeout, $document, $http) {
+    app.directive("seTimeUnitRow", [
+        function( ) {
             return {
-                restrict: 'E',
-                template: template,
-                replace: true,
-                transclude: false,
-                require: ['^side-events'],
+                restrict  : 'E'             ,
+                template  : template        ,
+                replace   : true            ,
+                transclude: false           ,
+                require   : ['^side-events'],
 
                 link: function($scope, $element) {
 
@@ -25,116 +24,63 @@ define(['app',
                         intervalDuration = 3600 / timeUnit;
                         var initialized = false;
 
-                        // ============================================================
-                        //
-                        // ============================================================
-                        var killWw = $scope.$watch('conferenceDays', function() {
-                          if(!_.isEmpty($scope.conferenceDays) && !$scope.room.initialized){
-                                initTimeIntervals();
-                                killWw();
-                            }
-                        });
+                        const { tz } = $scope.conference.timeObjects
 
+                        $scope.tz = tz;
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function initTimeIntervals() {
+                        initTimeIntervals()
+
+                        async function initTimeIntervals() {
 
                           initialized=true;
 
-                          if(!_.isObject($scope.bagScopes))
-                            $scope.bagScopes = {};
+                          const { tz, days, startDate, endDate, sideEventTimeIntervals } = $scope.conference.timeObjects
 
-                          $scope.timezone=$scope.conference.timezone;
+                          if(!_.isObject($scope.bagScopes)) $scope.bagScopes = {};
 
-                          if ($scope.conferenceDays && !_.isEmpty($scope.conferenceDays)) {
-                                $scope.firstDay = moment.tz($scope.conferenceDays[0],$scope.conference.timezone).startOf('day');
-                                $scope.lastDay =moment.tz($scope.conferenceDays[$scope.conferenceDays.length-1],$scope.conference.timezone).startOf('day');
+                          $scope.timezone = tz;
 
-                                $scope.timeIntervals=[];
-                                if($scope.conferenceDays && $scope.conferenceDays.length)
-                                  $scope.conferenceDays.forEach(function(item){
-                                    $scope.conference.seTiers.forEach(function(tier){
-                                        var cell ={};
-                                        cell.dayTier = moment.tz(item,$scope.conference.timezone).startOf('day').add(tier.seconds,'seconds');
-                                        cell.id =$scope.room._id+cell.dayTier.format('YYYYMMDDTHHmm');
-                                        cell.room = $scope.room;
-                                        cell.drag = false;
-                                        cell.bag=[];
-
-                                        //if(prefs.onlyWeekdaysSE && cell.dayTier.isoWeekday()<6)
-                                            $scope.timeIntervals.push(cell);
+                          if(!days || !days.length) return 
 
 
-                                        $scope.bagScopes[cell.id]=cell.bag;
-                                    });
+                          $scope.firstDay = startDate;
+                          $scope.lastDay  = endDate;
 
-                                  });
-                                $scope.room.timeIntervals = $scope.timeIntervals;
-
-                                // initOuterGridWidth().then(function() {
-
-                                    // ============================================================
-                                    //
-                                    // ============================================================
-                                    var killW = $scope.$watch('reservations', function() {
-                                      if(!_.isEmpty($scope.reservations)){
-
-                                          //calcColWidths();
-                                          if(!$scope.slotElements)$scope.slotElements={};
-                                          if(!$scope.slotElements[$scope.room._id])$scope.slotElements[$scope.room._id]=[];
-                                          _.each($scope.bagScopes,function(v,k){
-
-                                            var elId ='#'+k;
-                                            var el =  $element.find(elId);
-                                            $scope.slotElements[$scope.room._id].push(el);
-
-                                          });
-
-                                        $scope.getReservations();
-                                        killW();
-                                      }
-                                    });
+                          $scope.timeIntervals=[];
 
 
-                                // });
-                            }
+                          for (const tierDatTime of sideEventTimeIntervals) {
+                            const { room } = $scope
+                            const dayTier  = tierDatTime
+                            const id       = `${room._id}${tierDatTime.format('YYYYMMDDTHHmm')}`
+                            const drag     = false
+                            const bag      = []
+                            const cell     = { dayTier, id, drag, room, bag }
+
+                            $scope.timeIntervals.push(cell);
+                            $scope.bagScopes[cell.id] = cell.bag;
+                          }
+
+                          $scope.room.timeIntervals = $scope.timeIntervals;
+
+
+                          const killW = $scope.$watch('reservations', function() {
+
+                            if(_.isEmpty($scope.reservations)) return
+
+                            if(!$scope.slotElements)$scope.slotElements = {};
+                            if(!$scope.slotElements[$scope.room._id]) $scope.slotElements[$scope.room._id] = [];
+
+                            $scope.getReservations();
+                            killW();
+                          });
+
+
+
                         } //initTimeIntervals
 
-                        //=======================================================================
-                        // import created by and modified by adta for admins
-                        //=======================================================================
-                        function injectUserData(docs) { //jshint ignore:line
 
-                            if(!$scope.users) $scope.users=[];
-                              _.each(docs, function(doc) {
-                                 if(doc.sideEvent && doc.sideEvent.meta){
-                                  $scope.users.push(doc.sideEvent.meta.createdBy);
-                                  $scope.users.push(doc.sideEvent.meta.modifiedBy);
-                                }
-                              });
-
-                            $scope.users=_.uniq($scope.users);
-
-                            if(!_.isEmpty($scope.users))
-                              return $http.get('/api/v2013/userinfos?query='+JSON.stringify({userIDs:$scope.users})).then(function(res){
-                                  _.each(docs, function(doc) {
-                                       if(!_.find(res.data,{userID:doc.sideEvent.meta.createdBy})) throw 'User not found : '+doc.sideEvent.meta.createdBy;
-                                       doc.sideEvent.meta.createdByObj=_.find(res.data,{userID:doc.sideEvent.meta.createdBy});
-
-                                       if(!_.find(res.data,{userID:doc.sideEvent.meta.modifiedBy})) throw 'User not found : '+doc.sideEvent.meta.modifiedBy;
-                                       doc.sideEvent.meta.modifiedByObj=_.find(res.data,{userID:doc.sideEvent.meta.modifiedBy});
-                                 });
-                              });
-                        } //importUserData
-
-
-                        //============================================================
-                        //
-                        //============================================================
                         $scope.getReservations = function () {
-
                               _.each($scope.collisions[$scope.room._id], function(res) {
                                 embedTypeInRes(res);
                                 loadCollisions(res);
@@ -144,13 +90,10 @@ define(['app',
                                 embedTypeInRes(res);
                                 loadReservationsInRow(res);
                               });
-                               
+
                         }; // getReservations
 
 
-                        //============================================================
-                        //
-                        //============================================================
                         function loadReservationsInRow(res) {
 
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
@@ -164,16 +107,14 @@ define(['app',
                             } //for
                         } //loadReservationInRow
 
-                        //============================================================
-                        //
-                        //============================================================
+                        
                         function loadCollisions(res) {
 
                             for (var i = 0; i < $scope.timeIntervals.length; i++) {
 
                                     var interval = $scope.timeIntervals[i];
 
-                                   if (isblockedTimeInterval(interval.dayTier, res)){
+                                  if (isblockedTimeInterval(interval.dayTier, res)){
                                         if(res.subType)
                                           interval.bag.push(res);
                                         else
@@ -182,39 +123,30 @@ define(['app',
                                     }
                             } //for
                         } //loadReservationInRow
-                        //============================================================
-                        //
-                        //============================================================
+
+
                         function isblockedTimeInterval(timeInterval, res) {
+                            return  ((moment.tz(res.start,tz).isSameOrAfter(timeInterval) &&
+                                    moment.tz(res.start,tz).isBefore(moment.tz(timeInterval,tz).add(90,'minutes'))) ||
 
+                                    (moment.tz(res.end,tz).isSameOrAfter(timeInterval) &&
+                                            moment.tz(res.end,tz).isBefore(moment.tz(timeInterval,tz).add(90,'minutes')))||
 
-
-                            return  ((moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
-                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes'))) ||
-
-                                    (moment.tz(res.end,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
-                                            moment.tz(res.end,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))||
-
-                                    (moment.tz(res.start,$scope.conference.timezone).isBefore(timeInterval) &&
-                                            moment.tz(res.end,$scope.conference.timezone).isAfter(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes')))
-
+                                    (moment.tz(res.start,tz).isBefore(timeInterval) &&
+                                            moment.tz(res.end,tz).isAfter(moment.tz(timeInterval,tz).add(90,'minutes')))
                                   );
 
                         } //isResInInterval
-                        //============================================================
-                        //
-                        //============================================================
+
+
                         function isResInTimeInterval(timeInterval, res) {
-                            return  moment.tz(res.start,$scope.conference.timezone).isSameOrAfter(timeInterval) &&
-                                    moment.tz(res.start,$scope.conference.timezone).isBefore(moment.tz(timeInterval,$scope.conference.timezone).add(90,'minutes'));
+                            return  moment.tz(res.start,tz).isSameOrAfter(timeInterval) &&
+                                    moment.tz(res.start,tz).isBefore(moment.tz(timeInterval,tz).add(90,'minutes'));
 
                         } //isResInInterval
 
 
                         var typeFound;
-                        //============================================================
-                        //
-                        //===========================================================
                         function embedTypeInRes(res) {
 
                           if(!typeFound)
