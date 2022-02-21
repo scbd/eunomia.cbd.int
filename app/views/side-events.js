@@ -209,7 +209,7 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
           _ctrl.stateChanges.push({identifier_s:identifier_s,_state_s:_state_s})
 
           var cancelInt = $interval(function(){
-            return $http.get('/api/v2013/index/select', {
+            return $http.get('https://api.cbd.int/api/v2013/index/select', {
               params:{q:'identifier_s:'+identifier_s,fl:'_state_s,identifier_s'}
             }).then(function(data) {
 
@@ -337,7 +337,7 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
         };
         if (facitsOnly) queryParameters.rows = 0;
 
-        return $http.get('/api/v2013/index/select', {
+        return $http.get('https://api.cbd.int/api/v2013/index/select', {
           params: queryParameters
         }).then(function({ data }) {
 

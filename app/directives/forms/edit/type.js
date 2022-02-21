@@ -78,7 +78,7 @@ define(['app', 'lodash',
           //
           //============================================================
           $scope.autoTypes = function(typeId,orgs) {
-              $http.put('/api/v2016/reservations/auto-types/'+$scope.conference._id,{typeId:typeId,orgs:orgs}).then(function(r){
+              $http.put('https://api.cbd.int/api/v2016/reservations/auto-types/'+$scope.conference._id,{typeId:typeId,orgs:orgs}).then(function(r){
                 $scope.message=r.data.message;
               });
 

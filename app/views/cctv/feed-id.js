@@ -30,7 +30,7 @@ define(['lodash'], function(_) {
             }
             else {
 
-                $http.get('/api/v2016/cctv-feeds/'+id).then(function (res) {
+                $http.get('https://api.cbd.int/api/v2016/cctv-feeds/'+id).then(function (res) {
 
                     _ctrl.feed = res.data;
 
@@ -47,8 +47,8 @@ define(['lodash'], function(_) {
             var feed = id ? _.pick(_ctrl.feed, 'title', 'description') :
                             _.pick(_ctrl.feed, 'title', 'description', 'code', 'eventGroup');
 
-            var savePromise = id ? $http.patch('/api/v2016/cctv-feeds/'+id, feed):
-                                   $http.post ('/api/v2016/cctv-feeds',     feed);
+            var savePromise = id ? $http.patch('https://api.cbd.int/api/v2016/cctv-feeds/'+id, feed):
+                                   $http.post ('https://api.cbd.int/api/v2016/cctv-feeds',     feed);
 
             return savePromise.then(function(res) {
 

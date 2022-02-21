@@ -36,7 +36,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
         //==============================
         function init() {
 
-            return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
+            return $http.get('https://api.cbd.int/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
                 _ctrl.feeds = res.data;
 
@@ -83,7 +83,7 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
                 }
                 else {
 
-                    return $http.get('/api/v2016/cctv-frames/'+frameId).then(function (res) {
+                    return $http.get('https://api.cbd.int/api/v2016/cctv-frames/'+frameId).then(function (res) {
                         res.data.scheduleType = res.data.scheduleType || 'daily'; // TMP patch
                         return res.data;
                     });
@@ -122,8 +122,8 @@ define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/da
             var frame = _ctrl.frame;
             var id    = _ctrl.frame._id;
 
-            var savePromise = id ? $http.put ('/api/v2016/cctv-frames/'+id, frame):
-                                   $http.post('/api/v2016/cctv-frames',     frame);
+            var savePromise = id ? $http.put ('https://api.cbd.int/api/v2016/cctv-frames/'+id, frame):
+                                   $http.post('https://api.cbd.int/api/v2016/cctv-frames',     frame);
 
             return savePromise.then(function(res) {
 

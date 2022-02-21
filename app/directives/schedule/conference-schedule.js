@@ -244,7 +244,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                               $scope.startTimeFilterEl = true
                                               $scope.dayFilterEl = $scope.endTimeFilterEl && $scope.startTimeFilterEl
                                               
-                                            })
+                                            }).catch((e)=>console.error(e))
 
                                           
                                           whenElement('end-time-filter', $element)
@@ -252,9 +252,9 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                                               $endTimeEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: false, format: 'HH:mm', clearButton: false })
                                               $scope.endTimeFilterEl = true
                                               $scope.dayFilterEl = $scope.endTimeFilterEl && $scope.startTimeFilterEl
-                                            })
+                                            }).catch((e)=>console.error(e))
                                       
-                                        })
+                                        }).catch((e)=>console.error(e))
                             )
                             .then(async () => ctrl.initRowHeight())
                             .then(async() => todayTimeLine())
@@ -357,7 +357,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             var hours = $scope.endTimeObj.hours() - $scope.startTimeObj.hours();
 
                             setOuterGridWidth($el)
-                            var colWidth = Number($scope.outerGridWidth) / Number(hours);
+                            var colWidth = Number($scope.outerGridWidth) / Number(hours) ;
 
                             var posInterval = colWidth / 60;
                             var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * (posInterval - .1);//jshint ignore:line
