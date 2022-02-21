@@ -1,9 +1,9 @@
-define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
+define(['app', 'lodash', 'text!./se-schedule-header.html',
     'directives/date-picker',
-], function(app, _, template, moment) {
+], function(app, _, template) {
 
-    app.directive("seScheduleHeader", ['$timeout', '$document', 'mongoStorage','$rootScope','$q',
-        function($timeout, $document, mongoStorage,$rootScope,$q) {
+    app.directive("seScheduleHeader", [
+        function() {
             return {
                 restrict: 'E',
                 template: template,
@@ -18,22 +18,7 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                 },
                 link: function($scope, $element,$attr,ctrl) {
 
-                        init();
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function init() {
-                            $scope.startDate = $scope.conference.startObj = moment.tz($scope.conference.StartDate,$scope.conference.timezone).startOf();
-                            $scope.endDate = $scope.conference.endObj = moment.tz($scope.conference.EndDate,$scope.conference.timezone).startOf();
-
-                            ctrl.generateDays();
-                        } //init
-
-
-                        //============================================================
-                        //
-                        //============================================================
                         $scope.searchReservations = function() {
                             if (!$scope.search || $scope.searchsearchRes === ' '){
                               _.each($scope.rooms,function(room){
@@ -48,7 +33,7 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                             }
 
                             _.each($scope.rooms,function(room){
-                              room.hideRoomSearch=0;
+                              room.hideRoomSearch = 0;
                             });
 
                           _.each($scope.bagScopes,function(bag){
@@ -65,49 +50,21 @@ define(['app', 'lodash', 'text!./se-schedule-header.html', 'moment',
                                 return true;
                               }
                           });
-                        }; //searchReservations
+                        }; 
 
-                        //============================================================
-                        //
-                        //============================================================
-                        $scope.countReservations = function() {
-                          var count =0;
-                          _.each($scope.bagScopes,function(bag){
-                              if(!bag.length) return;
-                              count++;
-                          });
+                        $scope.countReservations = () => {
+                          let count = 0;
+
+                          for (const bag in $scope.bagScopes)
+                            if($scope.bagScopes[bag].length) count++;
+                          
                           return count;
-                        }; //searchReservations
-                }, //link
+                        };
+                },
                 controller: function($scope) {
 
-                    //============================================================
-                    //
-                    //============================================================
-                    function generateDays() {
 
-                      var numDays = moment($scope.endDate).diff($scope.startDate,'days')+2;
-
-
-                      $scope.conferenceDays=[];
-                       for (var i = 0; i < numDays; i++) {
-                           var date = moment.tz($scope.startDate,$scope.conference.timezone).add(i,'days');
-                           //if(date.isSameOrBefore($scope.conference.endObj))
-                              $scope.conferenceDays.push(date);
-                       }
-
-                      $scope.startDate = moment.tz($scope.conferenceDays[0],$scope.conference.timezone);
-                      $scope.endDate = moment.tz($scope.conferenceDays[$scope.conferenceDays.length-1],$scope.conference.timezone);
-                      $scope.startDateFormat = moment.tz($scope.conferenceDays[0],$scope.conference.timezone).format('dddd Do MMM');
-                      $scope.endDateFormat = moment.tz($scope.conferenceDays[$scope.conferenceDays.length-1],$scope.conference.timezone).format('dddd Do MMM');
-                    } //dateChangeEffect
-                    this.generateDays=generateDays;
-
-
-
-
-
-                }, //link
+                }
         };//return
     }]);//directive
 });//require

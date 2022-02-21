@@ -1,8 +1,8 @@
-define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/reservation-view-dialog.html','moment',    'ngDialog',
-], function(app, _, template,resDialog, moment) {
+define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/reservation-view-dialog.html','ngDialog', 'services/when-element' ,
+], function(app, _, template,resDialog) {
 
-  app.directive("seGridReservation", ['$timeout','ngDialog','mongoStorage','$http','$q','$window',
-    function($timeout,ngDialog,mongoStorage,$http,$q,$window) {
+  app.directive("seGridReservation", ['ngDialog','mongoStorage','$http','$q','$window',
+    function(ngDialog,mongoStorage,$http,$q,$window) {
       return {
         restrict: 'E',
         template: template,
@@ -67,7 +67,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
             function getRes(id) {
               var params ={parmas:{}};
               //params.q = {'id':1};
-              return $http.get('/api/v2016/inde-side-events/'+id,params).then(
+              return $http.get('https://api.cbd.int/api/v2016/inde-side-events/'+id,params).then(
                   function(responce) {
 
                       return   responce.data;
@@ -81,7 +81,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
               if(!code) return $q(function(resolve){resolve(true);});
                 var params={params:{}};
                 params.params.f = {history:0,meta:0,treaties:0};
-                return $http.get('/api/v2015/countries/'+code.toUpperCase(),params).then(function(res){
+                return $http.get('https://api.cbd.int/api/v2015/countries/'+code.toUpperCase(),params).then(function(res){
                   return res.data;
                 });
             } //loadOrgs
@@ -110,7 +110,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
                         var params={params:{}};
                         params.params.q={'code':{'$in':partiesFormated}};
 
-                        return $http.get('/api/v2015/countries',params).then(function(res){
+                        return $http.get('https://api.cbd.int/api/v2015/countries',params).then(function(res){
                           return responce.data.concat(res.data);
                         });
 
@@ -158,35 +158,8 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
             $scope.oneLine = false;
             $scope.twoLine = false;
             $scope.threeLine = false;
-            init();
 
-            //============================================================
-            //
-            //============================================================
-            function init() {
-
-              var titleEl = $element.find("#res-el").popover({
-                placement: 'top',
-                html: 'true',
-                container: 'body',
-                content: function() {
-                  return $element.find('#pop-title').html();
-                }
-              });
-
-
-              titleEl.on('mouseenter', function() {
-                titleEl.popover('show');
-              });
-              titleEl.on('mouseleave', function() {
-                titleEl.popover('hide');
-              });
-              $element.on('$destroy', function() {
-                titleEl.popover('destroy');
-              });
-            } //triggerChanges
-
-          } //link
+          } 
       }; //return
     }
   ]);

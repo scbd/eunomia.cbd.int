@@ -1,32 +1,32 @@
-<div class="container-fluid" >
-<div class="row  view-header text-center" style="position:relative;margin-left:0px;margin-bottom:0px;height:52px;width:100%;"  >
-  <div class="col-xs-1 ">
-    <div class="view-title text-nowrap" style="line-height:40px;">Side Event Reservations
-       <span class="badge" style="position:absolute;top:6px;left:240px;">{{countReservations()}}</span>
+<div class="container-fluid" style="padding-right:0px;padding-left:0px;">
+  <div class="row  view-header text-center" style="position:relative;margin-left:0px;margin-bottom:0px;height:52px;width:100%;"  >
+    <div class="col-xs-1 ">
+      <div class="view-title text-nowrap" style="line-height:40px;">Side Event Reservations
+        <span class="badge" style="position:absolute;top:6px;left:240px;">{{countReservations()}}</span>
+      </div>
     </div>
-  </div>
-  <div class="col-xs-1 col-xs-offset-3">
+    <div class="col-xs-1 col-xs-offset-3">
 
-  </div>
-  <div class="col-xs-3 " >
+    </div>
+    <div class="col-xs-3 " >
 
-  </div>
-  <div class="col-xs-1">
+    </div>
+    <div class="col-xs-1">
 
-  </div>
-  <div style="position:absolute;top:0px;right:1px;width:220px;">
-    <div >
-      <div class="form-group" style="margin-top:0px;">
-        <div class="input-group">
-          <input type="text" id="searchSe" class="form-control" ng-model="search" placeholder="Search Reservations" ng-change="searchReservations()">
-          <span class="input-group-btn small">
-            <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';searchReservations();">
-              <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
-            </button>
-          </span>
+    </div>
+    <div style="position:absolute;top:0px;right:1px;width:220px;">
+      <div >
+        <div class="form-group" style="margin-top:0px;">
+          <div class="input-group">
+            <input type="text" id="searchSe" class="form-control" ng-model="search" placeholder="Search Reservations" ng-change="searchReservations()">
+            <span class="input-group-btn small">
+              <button type="button" class="btn btn-fab btn-fab-mini" ng-click="search='';searchReservations();">
+                <i class="fa fa-search" ng-if="!search"></i> <i class="fa fa-times" ng-if="search"></i>
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
