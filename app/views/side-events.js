@@ -311,7 +311,7 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
       //============================================================
       function getSort(){
 
-       return Object.keys(_ctrl.sort)[0]+' '+ _ctrl.sort[Object.keys(_ctrl.sort)[0]]
+        return Object.keys(_ctrl.sort)[0]+' '+ _ctrl.sort[Object.keys(_ctrl.sort)[0]]
       }//itemSelected
 
       //=======================================================================
@@ -325,8 +325,7 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
         var queryParameters = {
           'q': buildQuery(facitsOnly), //buildQuery(),//buildQuery(),
           'sort': getSort(),//DESC
-          //  'fl':'key_s,identifier_s',
-          //            'fl': 'thematicArea*,googleMapsUrl_s,country*,relevantInformation*,logo*,treaty*,id,title_*,hostGovernments*,description_t,url_ss,schema_EN_t,date_dt,government_EN_t,schema_s,number_d,aichiTarget_ss,reference_s,sender_s,meeting_ss,recipient_ss,symbol_s,city_EN_t,eventCity_EN_t,eventCountry_EN_t,country_EN_t,startDate_s,endDate_s,body_s,code_s,meeting_s,group_s,function_t,department_t,organization_t,summary_EN_t,reportType_EN_t,completion_EN_t,jurisdiction_EN_t,development_EN_t',
+          'fl':'meetings_ss,key_s,identifier_s,title_s,description_s,meetingCD_ss,_state_s,reservationSubTypeTitle_s,hostOrgAcronym_ss,drefDate.one_s,drefDate.two_s,drefDate.three_s,expNumPart_i,reservationStart_dt,reservationRoomAcronym_s',
           'wt': 'json',
           'start': (_ctrl.currentPage * _ctrl.itemsPerPage) || 0, //$scope.currentPage * $scope.$scope.itemsPerPage,
           'rows': _ctrl.itemsPerPage,
@@ -399,7 +398,7 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
 
                       if(orgs[i].identifier_s.length > 2)
                         mongoStorage.loadDoc('inde-orgs', orgs[i].identifier_s).then(function(org) {
-
+                          if(!_ctrl.facits.orgs[org._id]) return
                           _ctrl.facits.orgs[org._id].title = org.title
                           _ctrl.facits.orgs[org._id].acronym = org.acronym
 
