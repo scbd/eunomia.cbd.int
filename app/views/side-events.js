@@ -53,7 +53,8 @@ return  ['$scope','$document','mongoStorage','$timeout','eventGroup','$location'
       _ctrl.sort = {'updatedDate_dt':'DESC'};
       _ctrl.selectFields=['Date','Title','Contact','Modified'];
       _ctrl.fields=[{title:'Title'},{title:'Date'},{title:'Contact'},{title:'Modified'}];
-      $timeout(init);
+      
+      init()
       $scope.$watch('sideEventsCtrl.sort',function(){
         if(JSON.stringify({'updatedDate_dt':'DESC'})===JSON.stringify(_ctrl.sort)) return
         query();
