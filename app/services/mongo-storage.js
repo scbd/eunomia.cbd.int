@@ -127,7 +127,8 @@ define(['app', 'lodash'], function(app, _) {
                 sk: pageNumber,
                 l: pageLength,
                 s:sort,//{'meta':{'modifiedOn':1}}//{'meta.modifiedOn':1},
-                f:fields
+                f:fields,
+                rp:'primary'
             };
 
 
