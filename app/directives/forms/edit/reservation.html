@@ -11,6 +11,8 @@
     <h2 style="margin-top:13px;" ng-if="!doc._id">New Reservation</h2>
   </div>
 
+  
+
   <div ng-show="!tabs.recurrenceQuestion.active">
     <div class="btn-group btn-group-justified btn-group-raised ">
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
@@ -19,6 +21,7 @@
       <a ng-if="doc.recurrence" href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.recurrence.active}" ng-click="changeTab('recurrence')">Recur.</a>
       <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.cctv.active}" ng-click="changeTab('cctv')">CCTV</a>
       <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.agenda.active}" ng-click="changeTab('agenda')">Agenda</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.interactio.active}" ng-click="changeTab('interactio')">Interactio</a>
     </div>
   </div>
 
@@ -309,6 +312,37 @@
       </section>
   </div>
 
+  <!-- interactio -->
+  <div class="row" ng-show="tabs.interactio.active">
+    <section >
+      <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Interactio</h4></div>
+            <div class="panel-body">
+                <div class="col-xs-12">
+                  <div class="form-group " style="margin-top:10px;" >
+                    <select name="event-map" id="event-map" class="form-control" ng-model="doc.interactioEventId" ng-change="interactioEventHasLinkTemplates(doc.interactioEventId)" ng-options="event.interactioEventId as event.title+' - ('+event.interactioEventId+')' for event in interactioEventsMap" >
+                      <option value=''></option>
+                    </select>
+                    <span class="material-input"></span>
+                    <p class="help-block" ng-show="valid">error</p>
+                  </div>
+
+                  <div ng-if="hasInteractioEventLinkTemplates(doc.interactioEventId)" class="form-group " style="margin-top:10px;" >
+                    <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="template for template in getLinkTemplates(doc.interactioEventId)" >
+                      <option value=''>{{template}}</option>
+                    </select>
+                    <span class="material-input"></span>
+                    <p class="help-block" ng-show="valid">error</p>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+  </div>
+  
   <!-- save-->
   <div class='row' ng-show="!tabs.recurrenceQuestion.active" ng-if="isAdmin()">
     <div class="col-xs-12">
@@ -325,4 +359,8 @@
     $.material.init();
   </script> -->
 
+  <div >
+    <pre>{{doc | json}}</pre>
+  </div>
+  <div class="text-center" ng-click="copyToClipboard(doc._id)">{{doc._id}}</div>
 </div>
