@@ -29,8 +29,63 @@ define(['app', 'lodash',
 
                 link: function($scope, $element) {
                         
-                        $scope.addLinkStore = { name: '', url: '', locale: 'en' }
-                        $scope.validLink    = true
+                        $scope.addLinkStore    = { name: '', url: '', locale: 'en' }
+                        $scope.validLink       = true
+                        $scope.copyToClipboard = copyToClipboard
+
+
+                        //============================================================
+                        //
+                        //============================================================
+                        async function getInteractioEVentsMap(){
+                          const { data: interactioEventsMap } = await $http.get('http://localhost:8000/api/v2022/interactio-events-map')
+
+                          $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
+                        };
+
+                      
+                        //============================================================
+                        //
+                        //============================================================
+                        function addAutoInteractioEvent(interactioEventsMap){
+                          if(!hasDefaultInteractioEvent()) return interactioEventsMap
+
+                          const { interactioEventId, linksTemplate }  = $scope.room
+
+
+                          const interactioEvent = interactioEventsMap.find(({ interactioEventId:id }) => { console.log(`${interactioEventId} === ${id}`,(interactioEventId === id)); return (interactioEventId === id)})
+
+                          const   auto = { ...interactioEvent, title: `AUTO - ${interactioEvent.title}`, interactioEventId, linkTemplates: [ linksTemplate ] }
+
+                          interactioEventsMap.unshift(auto)
+
+                          return interactioEventsMap
+                        }
+
+                        //============================================================
+                        //
+                        //============================================================
+                        function hasDefaultInteractioEvent(){
+                          return $scope.room && $scope.room.interactioEventId
+                        }
+
+                        $scope.hasInteractioEventLinkTemplates = hasInteractioEventLinkTemplates
+                        $scope.getLinkTemplates                = hasInteractioEventLinkTemplates
+
+                      
+                        //============================================================
+                        //
+                        //============================================================  
+                        function hasInteractioEventLinkTemplates(id){
+                          if(!id) return false
+
+                          const found = $scope.interactioEventsMap.find(({ interactioEventId }) => (interactioEventId === id))
+
+                          if(found && found.linksTemplates && found.linksTemplates.length)
+                          return found.linksTemplates
+
+                          return false
+                        }
 
                         //============================================================
                         //
@@ -71,7 +126,8 @@ define(['app', 'lodash',
                                                 'sideEvent'         : { 'active': false },
                                                 'cctv'              : { 'active': false },
                                                 'agenda'            : { 'active': false },
-                                                'options'           : { 'active': false }
+                                                'options'           : { 'active': false },
+                                                'interactio'        : { 'active': false }
                                             };
 
                             if($scope.doc._id)
@@ -125,7 +181,7 @@ define(['app', 'lodash',
                                 }).selected = true;
                             }
                             if(!$scope.doc.agenda) $scope.doc.agenda={};
-//triggerChanges();
+
                             $scope.levelChangeSquare();
 
                             if ($scope.doc.recurrence) {
@@ -189,6 +245,7 @@ define(['app', 'lodash',
                               }
                           });
 
+                          getInteractioEVentsMap()
                         } //init
 
                         //============================================================
@@ -670,6 +727,14 @@ define(['app', 'lodash',
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
                             });
                         }; //save
+
+                        function copyToClipboard(text) {
+                          if (window.clipboardData) { // Internet Explorer
+                              window.clipboardData.setData("Text", text);
+                          } else {
+                            navigator.clipboard.writeText(text);
+                          }
+                        }
 
                         $element.ready(init)
                     } //link

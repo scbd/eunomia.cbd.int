@@ -1,27 +1,24 @@
 define(['app', 'lodash',
   'text!./room.html',
   'moment',
-
   '../../color-picker'
-
 ], function(app, _, template) { //'scbd-services/utilities',
 
-  app.directive("room", ['$timeout','mongoStorage','$rootScope','$location',//"$http", "$filter", "Thesaurus",
+  app.directive("room", ['$timeout','mongoStorage','$rootScope','$location',
     function($timeout,mongoStorage,$rootScope,$location) {
       return {
-        restrict: 'E',
-        template: template,
-        replace: true,
-        transclude: false,
+        restrict  : 'E'     ,
+        template  : template,
+        replace   : true    ,
+        transclude: false   ,
         scope: {'doc':'=?','venue':'=?','closeThisDialog':'&'},
         require:'room',
         link: function($scope, $element,$atrbs,ctrl){
-            ctrl.init();
-
+          ctrl.init();
         },
-        controller: function($scope, $element) { //, $http, $filter, Thesaurus
+        controller: function($scope, $element) { 
 
-            this.init=init;
+            this.init = init;
             //============================================================
             //
             //============================================================
@@ -29,7 +26,7 @@ define(['app', 'lodash',
                 $timeout(function(){$element.find('input').trigger("change");
                     $element.find('select').trigger("change");
                 },200);
-            }//triggerChanges
+            }
 
 
           //============================================================
@@ -42,7 +39,6 @@ define(['app', 'lodash',
                 _.each($scope.options.venues,function(ven){
                       if(ven._id === $scope.doc.venue)
                         ven.selected=true;
-
                 });
               });
           }//initVunues
@@ -51,9 +47,9 @@ define(['app', 'lodash',
           //
           //============================================================
           function initTypes(){
-            var q = {schema:'venue-rooms'};
+            var q = { schema: 'venue-rooms' };
             return mongoStorage.loadDocs('types',q,0,100000,false).then(function(result) {
-                     $scope.options.types =result.data;
+                    $scope.options.types =result.data;
 
                      $scope.initialState=_.cloneDeep($scope.options.types);
                      _.each($scope.options.types,function(type,key){
@@ -100,26 +96,6 @@ define(['app', 'lodash',
           //============================================================
           //
           //============================================================
-          function initVal (){
-              $timeout(function(){
-                $scope.doc.atTable = $scope.doc.atTable || 0;
-                $scope.doc.capacity = $scope.doc.capacity || 0;
-                $scope.doc.sort = $scope.doc.sort || 0;
-                if(!$scope.meta)$scope.meta={};
-                if(!$scope.meta.clinetOrg)
-                  $scope.meta.clinetOrg=0;
-                $timeout(function(){
-                  $element.find('#roomSort').trigger("change");
-                  $element.find('#roomAtTableD').trigger("change");
-                  $element.find('#roomCapacityD').trigger("change");
-
-                });
-              },200);
-
-          }//initVunues
-          //============================================================
-          //
-          //============================================================
           function init() {
               $scope.options={};
 
@@ -127,13 +103,9 @@ define(['app', 'lodash',
               $scope.isSideEvents=($location.path()==='/side-events');
               //updateColorSquare();
 
-
               initVenues().then(function(){
                 initTypes();
-                $timeout(function(){$element.find('#roomNameD').focus();
-triggerChanges();
-              },500);
-                initVal();
+                $timeout(triggerChanges,500);
               });
 
 
