@@ -38,7 +38,7 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         async function getInteractioEVentsMap(){
-                          const { data: interactioEventsMap } = await $http.get('http://localhost:8000/api/v2022/interactio-events-map')
+                          const { data: interactioEventsMap } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map')
 
                           $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
                         };
