@@ -15,7 +15,7 @@ logs
 results
 yarn-error.log
 yarn-lock.log
-
+.yarn*
 npm-debug.log
 node_modules
 app/libs

@@ -38,7 +38,8 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         async function getInteractioEVentsMap(){
-                          const { data: interactioEventsMap } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map')
+                          const s = { 'title': 1 };
+                          const { data: interactioEventsMap } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map', { params: { s } })
 
                           $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
                         };
@@ -53,7 +54,7 @@ define(['app', 'lodash',
                           const { interactioEventId, linksTemplate }  = $scope.room
 
 
-                          const interactioEvent = interactioEventsMap.find(({ interactioEventId:id }) => { console.log(`${interactioEventId} === ${id}`,(interactioEventId === id)); return (interactioEventId === id)})
+                          const interactioEvent = interactioEventsMap.find(({ interactioEventId:id }) => { return (interactioEventId === id)})
 
                           const   auto = { ...interactioEvent, title: `AUTO - ${interactioEvent.title}`, interactioEventId, linkTemplates: [ linksTemplate ] }
 
