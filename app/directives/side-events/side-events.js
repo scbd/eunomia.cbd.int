@@ -1,5 +1,4 @@
 define(['app', 'lodash', 'text!./side-events.html', 'moment',
-    'directives/date-picker',
     'ngDialog',
     'services/mongo-storage',
     './se-time-unit-row',

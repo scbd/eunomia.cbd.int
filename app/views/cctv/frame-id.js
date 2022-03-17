@@ -1,5 +1,5 @@
-define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'directives/date-picker', 'filters/moment', 'services/when-element',
-        'directives/cctv/frames/schedule', 'directives/cctv/frames/announcement', 'directives/cctv/frames/news',
+define(['require', 'lodash', 'angular', 'moment-timezone', 'app', 'filters/moment', 'services/when-element',
+        'directives/cctv/frames/schedule', 'directives/cctv/frames/announcement', 'directives/cctv/frames/news', 'BM-date-picker',
        ], function(require, _, ng, moment) {
 
     return ['$http', '$route', '$location', '$scope', '$q', '$compile', 'eventGroup','$document', 'whenElement', function($http, $route, $location, $scope, $q, $compile, eventGroup, $document, whenElement ) {

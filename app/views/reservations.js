@@ -1,6 +1,5 @@
 define(['app','lodash','moment',
     'services/mongo-storage' ,
-    'directives/date-picker' ,
     'directives/sorter'      ,
     'filters/moment'         ,
     'filters/propsFilter'    ,
@@ -8,7 +7,7 @@ define(['app','lodash','moment',
     'ngDialog'               ,
     'ui.select'              ,
     'services/when-element'  ,
-
+    'BM-date-picker'
 ], function(app, _,moment) {
 
 return  ['$document','mongoStorage','eventGroup','$location','$q', 'whenElement', '$timeout', function($document,mongoStorage,conference,$location,$q, whenElement, $timeout) {

@@ -33,27 +33,28 @@ require.config({
     },
     shim: {
         'ng'      : { deps: ['jquery'] },
-        'angular'                   : { deps: [cdnHost + '/npm/angular@1.8.2/angular.min.js',] },
-        'ngRoute'                   : { deps: ['ng'] },
+        'angular'                   : { deps: [ 'ng'] }, //cdnHost + '/npm/angular@1.8.2/angular.min.js',
+        'ngRoute'                   : { deps: ['angular'] },
         'angular-sanitize'          : { deps: ['angular'] },
         'angular-animate'           : { deps: ['angular']},
-        'bootstrap'                 : { deps: ['jquery']},
+        'bootstrap'                 : { deps: ['angular']},
         'toastr'                    : { deps: ['angular']},
-        'moment'                    : { deps: ['jquery']},
-        'bm'                        : { deps: ['bootstrap']},
+        'moment'                    : { deps: ['angular']},
+        'bm'                        : { deps: ['angular','bootstrap']},
         'bm-rip'                    : { deps: ['bm']},
-        'BM-date-picker'            : { deps: ['jquery','angular','moment-timezone']},
-        'dragula'                   : { deps: ['angular','jquery'] },
+        'moment-timezone'           : { deps: ['moment']},
+        'BM-date-picker'            : { deps: ['bm-rip','moment','moment-timezone']},
+        'dragula'                   : { deps: ['angular'] },
         'ngRoute'                   : { deps: ['angular'] },
-        'ui.select'                 : { deps: ['angular'] },
         'hl.sticky'                 : { deps: ['angular'] },
+        'ui.select' : { deps: ['angular'] },
     },
     // urlArgs: 'v=' + gitVersion
 });
 
 // BOOT
 
-require(['angular', 'moment', 'app', 'text', 'routes', 'template','bm', 'hl.sticky'], function(ng, moment,app) {
+require(['angular', 'moment', 'app', 'text', 'routes', 'template','bm', 'hl.sticky' ], function(ng, moment,app) {
 
     ng.element(document).ready(function () {
         window.moment = moment;

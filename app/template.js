@@ -5,7 +5,8 @@ define(['app',
         'services/authentication',
         'services/mongo-storage',
         'bm',
-        'bm-rip'
+        'bm-rip',
+        'moment',
 ], function(app,toastTemplate, _, moment) {
     'use strict';
 

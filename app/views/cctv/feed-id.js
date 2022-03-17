@@ -1,4 +1,4 @@
-define(['lodash'], function(_) {
+define(['lodash', 'BM-date-picker'], function(_) {
 
     return ['$http', '$route', '$location', '$scope', 'eventGroup', function($http, $route, $location, $scope, eventGroup) {
 

@@ -1,4 +1,4 @@
-define(['app','moment', 'directives/schedule/conference-schedule'
+define(['app','moment', 'directives/schedule/conference-schedule','BM-date-picker',
 ], function(app, moment) {
 
   return ['mongoStorage','eventGroup','$scope','$route', '$location','$rootScope', function(mongoStorage,conf,$scope, $route, $location, $rootScope) {

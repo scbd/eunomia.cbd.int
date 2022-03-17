@@ -1,4 +1,4 @@
-define(['app'], function() {
+define(['app', 'BM-date-picker'], function() {
 
     return ['$http', '$route', '$location', '$scope', 'eventGroup', function($http, $route, $location, $scope, eventGroup) {
 

@@ -1,5 +1,4 @@
 define(['app', 'lodash', 'text!./se-schedule-header.html',
-    'directives/date-picker',
 ], function(app, _, template) {
 
     app.directive("seScheduleHeader", [

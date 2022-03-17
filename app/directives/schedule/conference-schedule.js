@@ -1,5 +1,4 @@
 define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
-    'directives/date-picker',
     'ngDialog',
     'services/mongo-storage',
     'services/when-element',

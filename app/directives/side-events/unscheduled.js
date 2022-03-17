@@ -1,7 +1,6 @@
 define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edit/reservation-view-dialog.html',
 'text!../forms/edit/filter-dialog.html',
 'text!../forms/edit/config-dialog.html',
-    'directives/date-picker',
     'ngDialog',
     'services/mongo-storage',
     'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
