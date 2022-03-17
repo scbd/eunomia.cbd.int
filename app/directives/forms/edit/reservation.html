@@ -331,7 +331,6 @@
 
                   <div ng-if="hasInteractioEventLinkTemplates(doc.interactioEventId)" class="form-group " style="margin-top:10px;" >
                     <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="template for template in getLinkTemplates(doc.interactioEventId)" >
-                      <option value=''>{{template}}</option>
                     </select>
                     <span class="material-input"></span>
                     <p class="help-block" ng-show="valid">error</p>

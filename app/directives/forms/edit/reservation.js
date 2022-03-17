@@ -71,9 +71,20 @@ define(['app', 'lodash',
                         }
 
                         $scope.hasInteractioEventLinkTemplates = hasInteractioEventLinkTemplates
-                        $scope.getLinkTemplates                = hasInteractioEventLinkTemplates
+                        $scope.getLinkTemplates                = getLinkTemplates
 
-                      
+                        function getLinkTemplates(id){
+                          const linksTemplates = hasInteractioEventLinkTemplates(id)
+
+                          if(!linksTemplates) return false
+
+                          if(linksTemplates && linksTemplates.length > 1) return linksTemplates
+
+                          $scope.doc.linksTemplate = linksTemplates[0]
+
+                          return linksTemplates
+                        }
+
                         //============================================================
                         //
                         //============================================================  
