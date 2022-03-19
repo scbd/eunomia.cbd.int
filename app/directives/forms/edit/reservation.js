@@ -89,7 +89,7 @@ define(['app', 'lodash',
                         //
                         //============================================================  
                         function hasInteractioEventLinkTemplates(id){
-                          if(!id) return false
+                          if(!id || !$scope.interactioEventsMap) return false
 
                           const found = $scope.interactioEventsMap.find(({ interactioEventId }) => (interactioEventId === id))
 

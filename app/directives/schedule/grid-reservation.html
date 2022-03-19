@@ -66,6 +66,7 @@
         <span ng-if="doc.open" class="text-center small" style="color:blue;">Open<br></span>
         <span ng-if="!doc.open" class="text-center small" style="color:red;">Closed<br></span>
         <span ng-if="doc.security" class="text-center small" style="color:red;">Security<br></span>
+        <span ng-if="doc.interactioEventId"><br/> Interactio: {{doc.interactioEventId}} / {{doc.linksTemplate}}</span>
       </div>
     </div>
     <span  class="small" style="position:absolute;bottom:1px;right:20px; font-weight: 600"><span ng-if="value" ng-repeat="(meeting, value) in doc.agenda.meetings track by $index">{{meeting}} </span> </span>
