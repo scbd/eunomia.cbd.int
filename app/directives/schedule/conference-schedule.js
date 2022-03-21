@@ -8,8 +8,8 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
     'css!https://cdn.jsdelivr.net/gh/scbd/angular-dragula@1.2.6/dist/dragula.min.css',
 ], function(app, _, template, moment) {
 
-    app.directive("conferenceSchedule", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','$location','$rootScope','$route', 'whenElement',
-        function($timeout, $document, mongoStorage,$rootScope,$q,$location, $rootScope, $route, whenElement) {
+    app.directive("conferenceSchedule", ['$timeout', '$http', 'mongoStorage','$rootScope','$q','$location','$rootScope','$route', 'whenElement',
+        function($timeout, $http, mongoStorage,$rootScope,$q,$location, $rootScope, $route, whenElement) {
             return {
                 restrict  : 'E'                ,
                 template  : template           ,
@@ -29,7 +29,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                           $scope.startTimeFilterEl = false
                           $scope.endTimeFilterEl = false
                           $scope.dayFilterEl = false
-
+                            getInteractioEventsMap()
                             getConferenceTiming()
                             getDateTime()
                             $scope.isLoading=isLoading;
@@ -62,6 +62,14 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             
                         } //init
                         $scope.init= init
+
+
+                        async function getInteractioEventsMap(){
+                          const s = { 'title': 1 };
+                          const { data } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map', { params: { s } })
+
+                          $scope.interactioEventsMap = data
+                        };
 
 
                         //============================================================

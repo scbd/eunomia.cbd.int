@@ -25,7 +25,8 @@ define(['app',
                     'day'           : '=',
                     'conference'    : '=',
                     'reservations'  : '=',
-                    'options'       : '='
+                    'options'       : '=',
+                    'interactioEventsMap' : '=',
                 },
                 require: ['^conferenceSchedule','timeUnitRow'],
                 link: function($scope, $element, $attr, schedule) {

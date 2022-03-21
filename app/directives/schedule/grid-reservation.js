@@ -10,13 +10,22 @@ define(['app', 'text!./grid-reservation.html','lodash', 'services/when-element']
                           'doc'   : '=',
                           'start' : '=',
                           'popRes': '&',
-                          'popVid': '&'
+                          'popVid': '&',
+                          'interactioEventsMap' : '=',
                       },
                 link: function($scope, $element) {
                   
                   $scope.color = '#dddddd'
                   $element.ready(init)
 
+                  function getInteractioEventsTitle(interactioEventId){
+                 
+                    const event = ($scope.interactioEventsMap || []).find((e) => e.interactioEventId === interactioEventId)
+
+                    return event? `${event.title} (${interactioEventId})` : interactioEventId
+                  }
+
+                  $scope.getInteractioEventsTitle = getInteractioEventsTitle
 
                   function hasAgenda(doc){
 

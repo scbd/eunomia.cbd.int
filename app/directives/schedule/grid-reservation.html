@@ -66,12 +66,16 @@
         <span ng-if="doc.open" class="text-center small" style="color:blue;">Open<br></span>
         <span ng-if="!doc.open" class="text-center small" style="color:red;">Closed<br></span>
         <span ng-if="doc.security" class="text-center small" style="color:red;">Security<br></span>
-        <span ng-if="doc.interactioEventId"><br/> Interactio: {{doc.interactioEventId}} / {{doc.linksTemplate}}</span>
+        <img ng-if="doc.interactioEventId" src="https://attachments.cbd.int/interactio.svg" style="max-width: 20px;"/>
+        <span ng-if="doc.interactioEventId" class="text-nowrap">
+          <br/> {{getInteractioEventsTitle(doc.interactioEventId)}} <br/> {{doc.linksTemplate}}
+        </span>
       </div>
     </div>
     <span  class="small" style="position:absolute;bottom:1px;right:20px; font-weight: 600"><span ng-if="value" ng-repeat="(meeting, value) in doc.agenda.meetings track by $index">{{meeting}} </span> </span>
     <span  ng-class="{'red-agenda':doc.agenda.provisional}" style="position:absolute;bottom:1px;right:5px;"><i class="fa fa-list-ol  small" style="cursor:pointer;"  aria-hidden="true" ng-if="hasAgenda(doc)" ng-click="popRes();$event.stopPropagation();"></i></span>
     <span  ng-class="{'red-agenda':doc.video}" style="position:absolute;bottom:1px;left:5px;"><i class="fa fa-television  small" style="cursor:pointer;"  aria-hidden="true" ng-if="doc.video" ng-click="popVid();$event.stopPropagation();"></i></span>
+    <img ng-if="doc.interactioEventId" src="https://attachments.cbd.int/interactio.svg" style="max-width: 20px; position: absolute; top: 2px; right: 2px;"/>
   </div>
 
 </div>

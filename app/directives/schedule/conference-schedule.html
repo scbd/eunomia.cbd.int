@@ -215,7 +215,7 @@
             </div>
             <!-- room rows start -->
             <div  ng-repeat="room in roomsList = (rooms | orderBy: 'sort')" >
-              <time-unit-row ng-style="{ height: room.rowHeight+'px' }" ng-show="room.hideRoomSearch==='-1' || room.hideRoomSearch==1" options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
+              <time-unit-row  interactio-events-map="interactioEventsMap" ng-style="{ height: room.rowHeight+'px' }" ng-show="room.hideRoomSearch==='-1' || room.hideRoomSearch==1" options="options"  start-time="startTimeObj" reservations="reservations" conference="conference" rooms="rooms" day="dayObj" end-time="endTimeObj" conference-days="conferenceDays" room="room" ng-class="{'row-stripped':($index%2)}"></time-unit-row>
             </div>
             <!-- room rows end -->
           </div>
