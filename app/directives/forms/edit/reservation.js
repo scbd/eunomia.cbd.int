@@ -400,25 +400,36 @@ define(['app', 'lodash',
 
                                                     $el.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
                                                     $el.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.start, timezone));
-                                                    // $el.bootstrapMaterialDatePicker('setMinDate', moment.tz($scope.doc.start, timezone));
-                                                    // $el.bootstrapMaterialDatePicker('setMaxDate', moment.tz($scope.doc.end, timezone));
                                                     $timeout($($el).trigger('change'), 100);
                                                     $.material.init();
                                                   })
-                                                          
                             whenElement('endT', $element)
-                              .then(($endTEl) => {
-
-                                                  const setMinDate = moment.tz($scope.doc.start, timezone).add(15, 'minutes')
-                  
-                                                  $endTEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
-                                                  $endTEl.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.end, timezone));
-                                                  $endTEl.bootstrapMaterialDatePicker('setMinDate', setMinDate);
-                                                  $endTEl.bootstrapMaterialDatePicker('setMaxDate', $scope.conferenceDays[$scope.conferenceDays.length-1]);
-                                                  $timeout($($endTEl).trigger('change'), 100);
-                                                  $.material.init();
-                                                })
+                            .then(($endTEl) => {
+  
+                                                const setMinDate = moment.tz($scope.doc.start, timezone).add(15, 'minutes')
+                
+                                                $endTEl.bootstrapMaterialDatePicker({ switchOnClick: true, time: true, date: true, format, clearButton: false, weekStart: 0 })
+                                                $endTEl.bootstrapMaterialDatePicker('setDate', moment.tz($scope.doc.end, timezone));
+                                                
+                                                $endTEl.bootstrapMaterialDatePicker('setMaxDate', $scope.conferenceDays[$scope.conferenceDays.length-1]);
+                                                setMinEndDate()
+                                                $.material.init();
+                                              })
                         }
+
+                        function setMinEndDate(){
+                          whenElement('endT', $element)
+                            .then(($endTEl) => {
+                          const { timezone }   = $scope.conference
+                          const setMinDate     = moment.tz($scope.doc.start, timezone).add(15, 'minutes')
+
+                          $endTEl.bootstrapMaterialDatePicker('setMinDate', setMinDate);
+
+                          $timeout($($endTEl).trigger('change'), 100);
+                          console.log('setMinEndDate')
+                            })
+                        }
+                        $scope.setMinEndDate = setMinEndDate
 
                         //============================================================
                         //
