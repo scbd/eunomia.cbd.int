@@ -109,7 +109,7 @@ define(['app',
                   var eventGroups = res;
                   var selectEventGroupId = 'TODO';
 
-                  var bestMatch = _.find    (eventGroups, function(e) { return e.code==$route.current.params.code;  }) ||
+                  var bestMatch = _.find    (eventGroups, function(e) { return !!$route.current.params.code && e.code==$route.current.params.code;  }) ||
                                   _.find    (eventGroups, function(e) { return e._id==selectEventGroupId;    }) ||
                                   _(eventGroups).sortBy(function(e) { return moment(e.EndDate).diff(now) }).find(function(e) { return now.isBefore(e.EndDate); }) ||
                                   _.first   (eventGroups);
