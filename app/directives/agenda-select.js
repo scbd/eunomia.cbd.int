@@ -80,7 +80,7 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
           function loadDocuments(meeting){
 
 
-                return $http.get('https://api.cbd.int/api/v2016/meetings/'+meeting.EVT_CD+'/documents', { params: {  } }).then(function(res){
+                return $http.get('/api/v2016/meetings/'+meeting.EVT_CD+'/documents', { params: {  } }).then(function(res){
 
                     var docs = _(res.data).map(function(d) {
                             d.metadata = d.metadata || {};

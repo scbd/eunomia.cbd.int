@@ -67,7 +67,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
             function getRes(id) {
               var params ={parmas:{}};
               //params.q = {'id':1};
-              return $http.get('https://api.cbd.int/api/v2016/inde-side-events/'+id,params).then(
+              return $http.get('/api/v2016/inde-side-events/'+id,params).then(
                   function(responce) {
 
                       return   responce.data;
@@ -81,7 +81,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
               if(!code) return $q(function(resolve){resolve(true);});
                 var params={params:{}};
                 params.params.f = {history:0,meta:0,treaties:0};
-                return $http.get('https://api.cbd.int/api/v2015/countries/'+code.toUpperCase(),params).then(function(res){
+                return $http.get('/api/v2015/countries/'+code.toUpperCase(),params).then(function(res){
                   return res.data;
                 });
             } //loadOrgs
@@ -110,7 +110,7 @@ define(['app', 'lodash', 'text!./se-grid-reservation.html', 'text!../forms/edit/
                         var params={params:{}};
                         params.params.q={'code':{'$in':partiesFormated}};
 
-                        return $http.get('https://api.cbd.int/api/v2015/countries',params).then(function(res){
+                        return $http.get('/api/v2015/countries',params).then(function(res){
                           return responce.data.concat(res.data);
                         });
 

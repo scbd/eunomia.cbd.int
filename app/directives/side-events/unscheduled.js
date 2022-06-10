@@ -181,7 +181,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
 
 
                         function getRes(id) {
-                          return $http.get('https://api.cbd.int/api/v2016/inde-side-events/'+encodeURIComponent(id))
+                          return $http.get('/api/v2016/inde-side-events/'+encodeURIComponent(id))
                                   .then(({ data }) => data);
                         } 
 
@@ -191,7 +191,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           const f      = { history:0, meta:0, treaties:0 }
                           const params = { f }
 
-                          return $http.get('https://api.cbd.int/api/v2015/countries/'+encodeURIComponent(code.toUpperCase()), { params })
+                          return $http.get('/api/v2015/countries/'+encodeURIComponent(code.toUpperCase()), { params })
                                   .then(({ data }) => data);
                         } //loadOrgs
 
@@ -216,7 +216,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                     var params={params:{}};
                                     params.params.q={'code':{'$in':partiesFormated}};
 
-                                    return $http.get('https://api.cbd.int/api/v2015/countries',params).then(function(res){
+                                    return $http.get('/api/v2015/countries',params).then(function(res){
                                       return responce.data.concat(res.data);
                                     });
 
@@ -321,7 +321,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                             $scope.users=_.uniq($scope.users);
 
                             if(!_.isEmpty($scope.users))
-                            return $http.get('https://api.cbd.int/api/v2013/userinfos?query='+JSON.stringify({userIDs:$scope.users})).then(function(res){
+                            return $http.get('/api/v2013/userinfos?query='+JSON.stringify({userIDs:$scope.users})).then(function(res){
                                 _.each(docs, function(doc) {
                                      if(!_.find(res.data,{userID:doc.sideEvent.meta.createdBy})) throw 'User not found : '+doc.sideEvent.meta.createdBy;
                                      doc.sideEvent.meta.createdByObj=_.find(res.data,{userID:doc.sideEvent.meta.createdBy});
@@ -478,14 +478,14 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                 else
                                   $rootScope.$broadcast("showInfo"," Blocked reservation successfully moved");
                                   $scope.load($scope.conference._id);
-                                  $http.get('https://api.cbd.int/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
                                         var params = {};
                                         params.id = res2.data[0]._id;
                                         var update =res2.data[0];
                                         update.meta={};
                                         if (!update.meta.clientOrg) update.meta.clientOrg = 0;
                                         update.meta.status='scheduled';
-                                        $http.patch('https://api.cbd.int/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
                                   });
                               }).catch(onError);
                             } else {
@@ -502,14 +502,14 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                     $rootScope.$broadcast("showInfo"," Blocked side-event tier successfully unscheduled");
                                   $scope.sideEvents=[];
                                   $scope.load($scope.conference._id);
-                                  $http.get('https://api.cbd.int/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':r.sideEvent.id},f:{'id':1}}}).then(function(res2){
                                         var params = {};
                                         params.id = res2.data[0]._id;
                                         var update =res2.data[0];
                                         update.meta={};
                                         if (!update.meta.clientOrg) update.meta.clientOrg = 0;
                                         update.meta.status='published';
-                                        $http.patch('https://api.cbd.int/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
                                   });
                               }).catch(onError);
                             }

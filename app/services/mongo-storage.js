@@ -9,7 +9,7 @@ define(['app', 'lodash'], function(app, _) {
         //
         //============================================================
         function save(schema, doc) {
-            var url = 'https://api.cbd.int/api/v2016/' + schema;
+            var url = '/api/v2016/' + schema;
 
             var params = {};
             if (!doc.meta) doc.meta ={};
@@ -31,7 +31,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         async function loadDoc(schema, _id) {
           try{
-            const { data } = await $http.get(`https://api.cbd.int/api/v2016/${schema}/${_id}`)
+            const { data } = await $http.get(`/api/v2016/${schema}/${_id}`)
 
             return _.isEmpty(data)? false : data
           }catch(e){
@@ -79,12 +79,12 @@ define(['app', 'lodash'], function(app, _) {
                             '$in': typeArr
                         }
                     });
-                    return $http.get('https://api.cbd.int/api/v2016/reservations', {
+                    return $http.get('/api/v2016/reservations', {
                         'params': params
                     });
                 });
             } else
-                return $http.get('https://api.cbd.int/api/v2016/reservations', {
+                return $http.get('/api/v2016/reservations', {
                     'params': params
                 });
         } // getDocs
@@ -106,7 +106,7 @@ define(['app', 'lodash'], function(app, _) {
 
             params.q.seriesId=seriesId;
 
-            return   $http.get('https://api.cbd.int/api/v2016/reservations/', {
+            return   $http.get('/api/v2016/reservations/', {
                   'params': params
               });
         } // getReccurences
@@ -133,7 +133,7 @@ define(['app', 'lodash'], function(app, _) {
 
 
            if(!count)
-              return $http.get('https://api.cbd.int/api/v2016/' + schema, {'params': params});
+              return $http.get('/api/v2016/' + schema, {'params': params});
            else
               return injectCount(schema,params);
         }
@@ -145,15 +145,15 @@ define(['app', 'lodash'], function(app, _) {
 
             var promises=[];
 
-            promises[0]=$http.get('https://api.cbd.int/api/v2016/' + schema, {'params':_.clone(params)});
+            promises[0]=$http.get('/api/v2016/' + schema, {'params':_.clone(params)});
             params.c=1;
-            promises[1]=$http.get('https://api.cbd.int/api/v2016/' + schema, {'params': params});
+            promises[1]=$http.get('/api/v2016/' + schema, {'params': params});
 
            if(!params.q['meta.status'] || _.isObject(params.q['meta.status']))
               _.each(['draft','request','published','canceled','rejected','archived'], function(status) {
                   var tempP = _.cloneDeep(params);
                   tempP.q['meta.status']=status;
-                  promises.push($http.get('https://api.cbd.int/api/v2016/' + schema, {'params': tempP}));
+                  promises.push($http.get('/api/v2016/' + schema, {'params': tempP}));
               });
 
             return $q.all(promises).then(function(res){
@@ -187,7 +187,7 @@ define(['app', 'lodash'], function(app, _) {
                     },
 
                 };
-                return $http.get('https://api.cbd.int/api/v2016/' + schema, {
+                return $http.get('/api/v2016/' + schema, {
                     'params': params,
                     'cache': cache
                 });
@@ -198,7 +198,7 @@ define(['app', 'lodash'], function(app, _) {
                         'meta.status': status
                     }
                 };
-                return $http.get('https://api.cbd.int/api/v2016/' + schema, {
+                return $http.get('/api/v2016/' + schema, {
                     'params': params,
                     'cache': cache
                 });
@@ -210,7 +210,7 @@ define(['app', 'lodash'], function(app, _) {
                         }
                     }
                 };
-                return $http.get('https://api.cbd.int/api/v2016/' + schema, {
+                return $http.get('/api/v2016/' + schema, {
                     'params': params,
                     'cache': cache
                 });
@@ -226,7 +226,7 @@ define(['app', 'lodash'], function(app, _) {
             const params = { q }
 
             try{
-              return $http.get('https://api.cbd.int/api/v2016/inde-orgs', { params, cache });
+              return $http.get('/api/v2016/inde-orgs', { params, cache });
             }catch(e){
               console.error('mongo-storage.getAllOrgs',e)
             }
@@ -253,7 +253,7 @@ define(['app', 'lodash'], function(app, _) {
 
             if(loadFromApi) {
               try{
-              const promises = [ countries(), $http.get('https://api.cbd.int/api/v2016/inde-orgs', { params, cache })]//
+              const promises = [ countries(), $http.get('/api/v2016/inde-orgs', { params, cache })]//
 
               return loadOrgsInProgress = $q.all(promises).then((data) =>{
                         const orgsAndParties = _.union(data[0], data[1].data);
@@ -285,7 +285,7 @@ define(['app', 'lodash'], function(app, _) {
             });
 
             if (!localStorage.getItem('countries'))
-                return $http.get('https://api.cbd.int/api/v2015/countries', {
+                return $http.get('/api/v2015/countries', {
                     cache: true
                 }).then(function(o) {
                     var countries = $filter("orderBy")(o.data, "name.en");
@@ -319,7 +319,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         function getConferenceRooms(id) {
 
-            return $http.get('https://api.cbd.int/api/v2016/conferences/' + id + '/rooms', {});
+            return $http.get('/api/v2016/conferences/' + id + '/rooms', {});
         } // getConferenceRooms
 
         //============================================================
@@ -339,7 +339,7 @@ define(['app', 'lodash'], function(app, _) {
                     'start': -1
                 }
             };
-            return $http.get('https://api.cbd.int/api/v2016/conferences', {
+            return $http.get('/api/v2016/conferences', {
                 'params': params,
                 'cache': true
             });
@@ -358,7 +358,7 @@ define(['app', 'lodash'], function(app, _) {
                     'parent': type
                 }
             };
-            return $http.get('https://api.cbd.int/api/v2016/types', {
+            return $http.get('/api/v2016/types', {
                 'params': params
             }).then(function(responce) {
                 _.each(responce.data, function(t) {
@@ -374,7 +374,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         function syncSideEvents(conferenceId) {
             if (!conferenceId) throw "Error no confrence selected to sync";
-            return $http.get('https://api.cbd.int/api/v2016/reservations/sync/side-events/' + conferenceId);
+            return $http.get('/api/v2016/reservations/sync/side-events/' + conferenceId);
         }
 
         var conferences = [];
@@ -401,7 +401,7 @@ define(['app', 'lodash'], function(app, _) {
                              f : {Title:1,MajorEventIDs:1,StartDate:1,EndDate:1,timezone:1,schedule:1,venueId:1,seTiers:1,"conference.streamId":1, code:1}
                           };
                         numPromises++;
-                        allPromises[1]= $http.get('https://api.cbd.int/api/v2016/conferences', {
+                        allPromises[1]= $http.get('/api/v2016/conferences', {
                             'params': params
                         }).then(function(res) {
                               var oidArray = [];
@@ -415,7 +415,7 @@ define(['app', 'lodash'], function(app, _) {
                                           });
                                       });
 
-                                      allPromises.push($http.get("https://api.cbd.int/api/v2016/meetings", {
+                                      allPromises.push($http.get("/api/v2016/meetings", {
                                           params: {
                                               q: {
                                                   _id: {
@@ -469,7 +469,7 @@ define(['app', 'lodash'], function(app, _) {
                             f:{parent:1,title:1,color:1}
                           };
 
-                        return $http.get('https://api.cbd.int/api/v2016/types', {
+                        return $http.get('/api/v2016/types', {
                             'params': params
                         }).then(function(res) {
 
@@ -508,7 +508,7 @@ define(['app', 'lodash'], function(app, _) {
 
             isModifiedInProgress[schema]= $q(function(resolve, reject) {
 
-                $http.get('https://api.cbd.int/api/v2016/' + schema + '/last-modified').then(function(lastModified) {
+                $http.get('/api/v2016/' + schema + '/last-modified').then(function(lastModified) {
 
                     if (!lastModified.data) reject('Error: no date returned');
 

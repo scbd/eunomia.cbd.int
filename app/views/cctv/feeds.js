@@ -16,7 +16,7 @@ define(['app', 'BM-date-picker'], function() {
         //==============================
         function load() {
 
-            $http.get('https://api.cbd.int/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function (res) {
+            $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function (res) {
 
                 _ctrl.feeds = res.data;
 
@@ -43,7 +43,7 @@ define(['app', 'BM-date-picker'], function() {
                 ]
             };
 
-            return $http.get('https://api.cbd.int/api/v2016/cctv-frames', { params: { q: query, c: 1 } }).then(function(res) {
+            return $http.get('/api/v2016/cctv-frames', { params: { q: query, c: 1 } }).then(function(res) {
 
                 if(res.data.count) {
                     $scope.$emit('showWarning', "Feed cannot be deleted, it's not empty");
@@ -53,7 +53,7 @@ define(['app', 'BM-date-picker'], function() {
                 if(!confirm("Delete this entry?"))
                     return;
 
-                return $http.delete('https://api.cbd.int/api/v2016/cctv-feeds/'+id).then(function() {
+                return $http.delete('/api/v2016/cctv-feeds/'+id).then(function() {
 
                     $scope.$emit('showSuccess', 'Feed deleted');
 

@@ -67,14 +67,14 @@ define(['app',
 
                             return mongoStorage.save('reservations',dalObj).then(function() {
                                 if($scope.res.sideEvent)
-                                  $http.get('https://api.cbd.int/api/v2016/inde-side-events/',{params:{q:{'id':$scope.res.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                  $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.res.sideEvent.id},f:{'id':1}}}).then(function(res2){
                                         var params = {};
                                         params.id = res2.data[0]._id;
                                         var update =res2.data[0];
                                         update.meta={};
                                         if (!update.meta.clientOrg) update.meta.clientOrg = 0;
                                         update.meta.status='canceled';
-                                        $http.patch('https://api.cbd.int/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                        $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
                                   });
                               $scope.load();
                             });

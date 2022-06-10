@@ -66,7 +66,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
 
                         async function getInteractioEventsMap(){
                           const s = { 'title': 1 };
-                          const { data } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map', { params: { s } })
+                          const { data } = await $http.get('/api/v2022/interactio-events-map', { params: { s } })
 
                           $scope.interactioEventsMap = data
                         };
