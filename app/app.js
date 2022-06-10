@@ -37,5 +37,7 @@ function config(toastrConfig, $httpProvider) {
   });
 
   $httpProvider.useApplyAsync(true);
+
   $httpProvider.interceptors.push('authenticationHttpIntercepter');
+  $httpProvider.interceptors.push('apiRebase');
 }

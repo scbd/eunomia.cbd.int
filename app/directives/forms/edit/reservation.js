@@ -38,8 +38,9 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         async function getInteractioEVentsMap(){
+                          const q = { 'conferenceId': { $oid: $scope.conference._id }};
                           const s = { 'title': 1 };
-                          const { data: interactioEventsMap } = await $http.get('https://api.cbd.int/api/v2022/interactio-events-map', { params: { s } })
+                          const { data: interactioEventsMap } = await $http.get('/api/v2022/interactio-events-map', { params: { q, s } })
 
                           $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
                         };
@@ -368,14 +369,14 @@ define(['app', 'lodash',
 
                                 return $scope.save(dalObj).then(function() {
                                     if($scope.doc.sideEvent)
-                                      $http.get('https://api.cbd.int/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
+                                      $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
                                             var params = {};
                                             params.id = res2.data[0]._id;
                                             var update =res2.data[0];
                                             update.meta={};
                                             if (!update.meta.clientOrg) update.meta.clientOrg = 0;
                                             update.meta.status='canceled';
-                                            $http.patch('https://api.cbd.int/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
+                                            $http.patch('/api/v2016/inde-side-events/'+res2.data[0]._id,update,params);
                                       });
                                 });
                             }
@@ -656,7 +657,7 @@ define(['app', 'lodash',
 
                             if(curRec)params.q._id={'$ne':{'$oid':curRec._id}};
 
-                            allPromises.push($http.get('https://api.cbd.int/api/v2016/reservations',{ params}).then(
+                            allPromises.push($http.get('/api/v2016/reservations',{ params}).then(
                                 ({ data }) =>{
 
                                     if(data.count){

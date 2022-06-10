@@ -64,6 +64,9 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="hidden-xs">
+              <a>{{eventGroup.timezone}}</a>
+            </li>
+            <li class="hidden-xs">
                 <a>
                   <select style="color:inherit;background-color:inherit;border:none" ng-model="templateCtrl.selectEventGroupId" ng-options="o._id as o.Title.en for o in templateCtrl.eventGroups"  ng-change="templateCtrl.eventGroupChange(templateCtrl.selectEventGroupId,true)">
                   </select>

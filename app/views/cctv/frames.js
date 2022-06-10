@@ -33,7 +33,7 @@ define(['lodash', 'moment-timezone', 'app', 'filters/moment', 'BM-date-picker'],
             _ctrl.selectedFeed    = $location.search().feed;
             _ctrl.selectedType    = $location.search().type;
 
-            return $http.get('https://api.cbd.int/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
+            return $http.get('/api/v2016/cctv-feeds', { params : { q : { eventGroup : eventGroup._id } }}).then(function(res) {
 
                 var feeds      = res.data || [];
                 var feedsMap   = _.reduce(feeds, function(ret, feed) {
@@ -98,7 +98,7 @@ define(['lodash', 'moment-timezone', 'app', 'filters/moment', 'BM-date-picker'],
                 query['content.type'] = _ctrl.selectedType;
             }
 
-            return $http.get('https://api.cbd.int/api/v2016/cctv-frames', { params : { q : query }}).then(function (res) {
+            return $http.get('/api/v2016/cctv-frames', { params : { q : query }}).then(function (res) {
 
                 _ctrl.frames = res.data;
 
@@ -137,7 +137,7 @@ define(['lodash', 'moment-timezone', 'app', 'filters/moment', 'BM-date-picker'],
             if(!confirm("Delete this entry?"))
                 return;
 
-            return $http.delete('https://api.cbd.int/api/v2016/cctv-frames/'+id).then(function() {
+            return $http.delete('/api/v2016/cctv-frames/'+id).then(function() {
 
                 $scope.$emit('showSuccess', 'Frame deleted');
 
