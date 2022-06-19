@@ -227,6 +227,7 @@
                             <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
                                 <sorter label-name="Modified" ng-model="reservationsCtrl.sort" property="meta.modifiedOn" style="margin-bottom:0px;" ng-change="reservationsCtrl.getReservations()"></sorter>
                             </th>
+                            <th width="5%" ng-if="reservationsCtrl.isFieldSelect('Interactio');">Interactio</th>
 
                         </tr>
                     </thead>
@@ -365,6 +366,10 @@
                             </td>
                             <td width="5%" ng-if="reservationsCtrl.isFieldSelect('Modified');">
                                 {{doc.meta.modifiedOn|moment:'format':'YYYY-MM-DD HH:mm'}}
+                            </td>
+                            <td width="5%" ng-if="reservationsCtrl.isFieldSelect('Interactio');">
+                                <div ng-if="::doc.interactioEventId"><a target="interactio" ng-href="https://panel.interactio.eu/event/{{doc.interactioEventId}}">{{doc.interactioEventId}} <i class="fa fa-external-link"></i></a></div>
+                                <div ng-if="::doc.interactioEventId">{{doc.linksTemplate}}</div>
                             </td>
                         </tr>
                         <tr ng-repeat-end  class="warning" ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">

@@ -46,8 +46,8 @@ return  ['$document','mongoStorage','eventGroup','$location','$q', 'whenElement'
       _ctrl.getReservations = getReservations;
       _ctrl.showFields=true;
       _ctrl.sort = {'start':1};
-      _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified'];
-      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'}];
+      _ctrl.selectFields=['Date','Room','Title','Type','Options','Agenda Items','Modified', 'Interactio'];
+      _ctrl.fields=[{title:'Title'},{title:'Description'},{title:'Room'},{title:'Date'},{title:'Type'},{title:'Options'},{title:'Agenda Items'},{title:'CCTV Message'},{title:'Modified'},{title:'Interactio'}];
 
       init(true);
 
@@ -300,7 +300,7 @@ docDefinition.header=pdfHeader;
 
           _ctrl.itemsPerPage=Number(_ctrl.itemsPerPage);
         var q = buildQuery();//{'location.conference':conference._id};
-        var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1};
+        var f = {title:1,start:1,end:1,location:1,'sideEvent.title':1,'sideEvent.id':1,type:1,agenda:1,seriesId:1,'meta.modifiedOn':1, interactioEventId: 1, linksTemplate:1};
 
 
 
