@@ -69,23 +69,6 @@ define(['app', 'lodash',
           //============================================================
           //
           //============================================================
-          $scope.save = function(){
-              var room = _.cloneDeep($scope.doc);
-              //_.each(venue.rooms, function(room){
-                  delete(room.bookings);
-                  delete(room.changed);
-                  delete(room.history);
-            //  });
-              return mongoStorage.save('venue-rooms',room,room._id).then(function(){
-                          $rootScope.$broadcast("showInfo","Room Successfully Updated.");
-              }).catch(function(error){
-                  console.log(error);
-                  $rootScope.$broadcast("showError","There was an error saving your data to the server.");
-              });
-          };//initVunues
-          //============================================================
-          //
-          //============================================================
           $scope.changeTab = function(tabName){
               _.each($scope.tabs,function(tab){
                   tab.active=false;
@@ -110,6 +93,7 @@ define(['app', 'lodash',
 
 
           }//triggerChanges
+
 
         } //controlledr
       }; //return
