@@ -182,6 +182,11 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       //
       //============================================================
       function save (obj){
+
+          if (isNullOrUndefined(obj.sort)) delete obj.sort
+          if (isNullOrUndefined(obj.atTable)) delete obj.atTable
+          if (isNullOrUndefined(obj.capacity)) delete obj.capacity
+
           return mongoStorage.save('venue-rooms', cleanDoc(obj),obj._id).then(function(){
                       $rootScope.$broadcast("showInfo","Room '"+obj.title+"' Successfully Updated.");
                       loadRooms();
@@ -190,6 +195,10 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
               $rootScope.$broadcast("showError","There was an error saving your Room details: '"+obj.title+"' to the server.");
           });
       }//save
+
+      function isNullOrUndefined(value){
+        return value === null || typeof variable == 'undefined'
+      }
 
       //============================================================
       //
