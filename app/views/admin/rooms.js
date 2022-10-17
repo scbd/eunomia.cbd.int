@@ -197,7 +197,8 @@ return  ['$scope','$document','mongoStorage','ngDialog','$rootScope','$timeout',
       }//save
 
       function isNullOrUndefined(value){
-        return value === null || typeof variable == 'undefined'
+
+        return value === null || typeof value == 'undefined'
       }
 
       //============================================================
