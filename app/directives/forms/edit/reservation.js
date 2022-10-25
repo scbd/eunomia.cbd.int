@@ -45,7 +45,7 @@ define(['app', 'lodash',
                           $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
                         };
 
-                      
+
                         //============================================================
                         //
                         //============================================================
@@ -157,9 +157,9 @@ define(['app', 'lodash',
                                           if(!isBefore ) countDays++;
 
                                           if(startDay)
-                                            $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
+                                            $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:false};
                                           else{
-                                            $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
+                                            $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:false};
 
                                           }
                                       });
@@ -247,9 +247,9 @@ define(['app', 'lodash',
                                           if(!isBefore ) countDays++;
 
                                           if(startDay)
-                                            $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:true};
+                                            $scope.doc.series[k] = {date:moment($scope.doc.start).format(),selected:false};
                                           else{
-                                            $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:true};
+                                            $scope.doc.series[k] = isBefore  ? {date:moment(day).add(countDays,'days').format(),selected:false} : {date:moment($scope.doc.start).add(countDays,'days').format(),selected:false};
 
                                           }
                                       });
@@ -363,7 +363,7 @@ define(['app', 'lodash',
                         function deleteRes() {
 
                             if (confirm('Are you sure you would like to permanently delete this reservation?')) {
-                                var dalObj = _.clone($scope.doc);
+                                var dalObj = _.clone( $scope.doc);
                                 dalObj.meta={};
                                 dalObj.meta.status='deleted';
 
@@ -381,8 +381,27 @@ define(['app', 'lodash',
                                 });
                             }
                             $scope.closeThisDialog();
-                        } //init
+                        } 
                         $scope.deleteRes = deleteRes;
+
+                        async function deleteSeries() {
+
+                            if (confirm('Are you sure you would like to permanently delete all reservations in series?')) {
+                                const status = 'deleted'
+                                const meta   = { status }
+                                const res           = { _id: $scope.doc._id, meta }
+                                const recurrences    = $scope.doc.series.filter(({ _id }) => _id) 
+
+                                for (const rec of recurrences) {
+                                    const _id    = rec._id
+
+                                    await mongoStorage.save('reservations', { _id, meta })
+                                }
+                            }
+                            $rootScope.$broadcast('schedule-refresh');
+                            $scope.closeThisDialog();
+                        } 
+                        $scope.deleteSeries = deleteSeries;
 
                         //============================================================
                         //
@@ -427,7 +446,6 @@ define(['app', 'lodash',
                           $endTEl.bootstrapMaterialDatePicker('setMinDate', setMinDate);
 
                           $timeout($($endTEl).trigger('change'), 100);
-                          console.log('setMinEndDate')
                             })
                         }
                         $scope.setMinEndDate = setMinEndDate
@@ -620,12 +638,13 @@ define(['app', 'lodash',
                                             saveRec(doc, daysCount,true);
                                         } else if(v.selected && !isNewReservationInSeries(v.date)){ //edit
                                             saveRec(doc, k);
-                                        }else if(!v.selected && !isNewReservationInSeries(v.date) ){
-                                            deleteRec(v.date);
                                         }
+                                        // else if(!v.selected && !isNewReservationInSeries(v.date) ){
+                                        //     deleteRec(v.date);
+                                        // }
 
                                     });
-                                } else throw "Error thrying to update reccurences but reccurrence is empty.";
+                                }
                             }
                         } //
                         //============================================================
@@ -652,7 +671,7 @@ define(['app', 'lodash',
                                                           { $and :[ { start: { $lt : { $date: start } } }, { end   : { $gte: { $date: end } } } ]}
                                                         ]
                                                 },
-                                            c : 1
+                                            // c : 1
                                           };
 
                             if(curRec)params.q._id={'$ne':{'$oid':curRec._id}};
@@ -660,8 +679,10 @@ define(['app', 'lodash',
                             allPromises.push($http.get('/api/v2016/reservations',{ params}).then(
                                 ({ data }) =>{
 
-                                    if(data.count){
+                                    if(data.length){
                                       $scope.doc.series[index].available=false;
+                                      if($scope.doc.seriesId === data[0].seriesId)
+                                        $scope.doc.series[index]._id = data[0]._id
                                       if(!$scope.recurrenceSeries && _.isEmpty($scope.recurrenceSeries))
                                         $scope.doc.series[index].selected=false;
                                     }else

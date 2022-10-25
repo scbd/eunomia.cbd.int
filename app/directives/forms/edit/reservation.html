@@ -101,7 +101,8 @@
                   <div class="form-group" style="margin-left:10px;margin-top:15px;">
                       <div class="togglebutton">
                           <label>
-                              <input type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-true-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span><span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
+                              <input ng-click="doc.recurrence = true; save(doc);" type="checkbox" ng-model="doc.recurrence" ng-false-value="false" ng-true-value="true"><span ng-if="!doc.recurrence">Would you like this reservation to recur?</span>
+                              <span ng-if="doc.recurrence"><a ng-click="changeTab('recurrence')">Edit Recurrences</a></span>
                           </label>
                       </div>
 
@@ -240,23 +241,27 @@
           <div class="col-xs-12">
               <div class="panel panel-default">
                   <div class="panel-heading">
-                      <h4>Add or Delete from Recurrence Set</h4></div>
+                      <h4>Add to Recurrence Set</h4></div>
                   <div class="panel-body">
-
+                      <div class="form-group ">
+                        <div ng-if="doc.recurrence" class="btn-group btn-group-justified btn-group-raised">
+                          <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="deleteSeries();" ng-if="doc._id">Delete Series</a>
+                        </div>
+                      </div>
                       <div>
-                          <label ng-repeat-start="d in doc.series  track by $index" ng-if="hideCurrentandPastDays(doc,doc.series[$index].date)">
-                              &nbsp;{{isAvailable(doc.series[$index])}}
+                          <div ng-repeat="d in doc.series  track by $index" ng-if="hideCurrentandPastDays(doc,doc.series[$index].date)">
+                              <!-- &nbsp;{{isAvailable(doc.series[$index])}} -->
                               <span ng-if="isAvailable(doc.series[$index])===-1">
-                                <i class="fa fa-spinner fa-spin fa-fw"></i> loading... availbility
+                                <i class="fa fa-spinner fa-spin fa-fw"></i> loading... availability
                               </span>
-                              <span ng-show="isAvailable(doc.series[$index])>-1">
-                                <i style="color:red;" class="fa fa-calendar-times-o" aria-hidden="true" ng-show="!isAvailable(doc.series[$index]);"></i>
-                                <input  ng-disabled="!isAvailable(doc.series[$index])" ng-show="isAvailable(doc.series[$index]) || doc.series[$index].selected" type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true">
-                                {{d.date | moment:'format':'dddd YYYY-MM-DD HH:mm'}}
-                                </input>
-                              </span>
-                          </label>
-                          <br ng-repeat-end ng-if="hideCurrentandPastDays(doc,conferenceDays[$index].format())">
+
+                              <div ng-show="isAvailable(doc.series[$index])>-1">
+                                <i style="color:red;cursor: not-allowed;" class="fa fa-calendar-times-o" aria-hidden="true" ng-show="!isAvailable(doc.series[$index]);"></i>
+                                <input  style="cursor: pointer;" ng-disabled="!isAvailable(doc.series[$index])" ng-show="isAvailable(doc.series[$index]) || doc.series[$index].selected" type="checkbox" ng-model="doc.series[$index].selected" ng-false-value="false" ng-true-value="true"/>
+                                <label>{{d.date | moment:'format':'YYYY-MM-DD HH:mm - dddd '}} </label>
+                                <span ng-show="!isAvailable(doc.series[$index]) && !doc.series[$index]._id" ><b>(Not in Series)</b></span>
+                              </div>
+                            </div>
                       </div>
                   </div>
 
@@ -349,6 +354,9 @@
         <div class="btn-group btn-group-justified btn-group-raised">
           <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="deleteRes();" ng-if="doc._id">Delete</a>
           <a href="javascript:void(0)" class="btn btn-default btn-block btn-raised" ng-click="save(doc);">Save</a>
+        </div>
+        <div ng-if="doc.recurrence" class="btn-group btn-group-justified btn-group-raised">
+          <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="deleteSeries();" ng-if="doc._id">Delete Series</a>
         </div>
       </div>
     </div>
