@@ -97,6 +97,13 @@
                       <span class="help-block"></span>
                   </div>
               </div>
+              <div class="col-xs-12">
+                <div class="form-group label-floating">
+                    <label for="notes" class="control-label">Internal Notes</label>
+                    <textarea class="form-control" rows="3" id="notes" ng-model="doc.notes"></textarea>
+                    <span class="help-block"></span>
+                </div>
+            </div>
               <div class="col-xs-12" ng-if="!doc.parent && !doc.sideEvent && isAdmin()" >
                   <div class="form-group" style="margin-left:10px;margin-top:15px;">
                       <div class="togglebutton">
