@@ -174,11 +174,11 @@ docDefinition.header=pdfHeader;
         function pdfRows(){
               var row= [];
               _.each(_ctrl.pdfDocs,function(doc){
-
+                    const notes = doc.notes? `\n\n\n\nNOTES: ${doc.notes}` : ' '
                     row= [];
                     row.push(formatDatePdf(doc));
                     row.push( formatRoomPdf(doc) || ' ');
-                    row.push(doc.title || ' ');
+                    row.push((doc.title || ' ')+notes );
                     row.push(getType(doc.type,'reservation','title') || ' ');
                     row.push(formatOptionsPdf(doc) || ' ');
 
