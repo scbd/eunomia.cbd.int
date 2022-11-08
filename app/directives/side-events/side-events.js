@@ -307,6 +307,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
 
 
+
                       function generateDays() {
                         const { StartDate, EndDate, timezone, timezoneLink } = $scope.conference
 
@@ -323,9 +324,11 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                         const timeObjects = { days, totalDays, endDate, startDate, tz }
 
                         for (let i = 0; i < totalDays; i++) {
+              
                           const date = moment.utc(moment.tz(startDate,tz)).add(i,'days');
-                          
-                          days.push(date);
+
+                          if(!isExcludedDay(date))
+                            days.push(date);
                         }
 
                         $scope.conference.timeObjects = timeObjects
@@ -337,6 +340,23 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
                       } 
 
                       this.generateDays = generateDays
+
+
+                      function isExcludedDay(date){
+                        const {  timezone, timezoneLink, schedule } = $scope.conference
+
+                        const tz = timezoneLink || timezone
+
+                        const excludedDays = (schedule?.sideEvents?.excludedDayTier || []).filter(({ tier })=> !tier)
+
+                        for (const { day } of excludedDays) {
+                          const theDay = moment.utc(moment.tz(day,tz)).startOf();
+
+                          if(theDay.isSame(date, 'day')) return true
+                        }
+                        
+                        return false
+                      }
 
                       function getSideEventTimeIntervals({ tz, days }){
                         const { seTiers }              = $scope.conference.schedule.sideEvents
