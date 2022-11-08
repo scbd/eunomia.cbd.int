@@ -363,7 +363,7 @@ define(['app', 'lodash', 'text!./side-events.html', 'moment',
 
                       const { timeObjects } = $scope.conference
                       const outerGridWidth =  Number(scrollGridEl.width() - 1);
-                      const widthNumber = Math.round(Number(outerGridWidth) / Number(timeObjects.sideEventTimeIntervals.length));
+                      const widthNumber = Math.round(Number(3000) / Number(timeObjects.sideEventTimeIntervals.length));
 
                       timeObjects.outerGridWidth =  outerGridWidth
                       $scope.colWidth = timeObjects.colWidth       = `${widthNumber}px`
