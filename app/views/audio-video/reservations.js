@@ -10,7 +10,8 @@ define(['app', 'lodash', 'moment', 'jquery',
     'BM-date-picker'
 ], function (app, _, moment, $) {
 
-    return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout) {
+    return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', '$rootScope', '$http', 'user', '$scope',
+            function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout, $rootScope, $http, user, $scope) {
        
         var _ctrl = this;
         var DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
@@ -67,6 +68,9 @@ define(['app', 'lodash', 'moment', 'jquery',
         }, {
             title: 'Interactio'
         }];
+        _ctrl.isYoutube = isYoutube;
+        _ctrl.showYoutubeLinks = showYoutubeLinks;
+        _ctrl.copyToClipboard = copyToClipboard;
 
         init(true);
 
@@ -277,7 +281,9 @@ define(['app', 'lodash', 'moment', 'jquery',
                 seriesId: 1,
                 'meta.modifiedOn': 1,
                 interactioEventId: 1,
-                linksTemplate: 1
+                linksTemplate: 1,
+                links:1,
+                youtubeLive:1
             };
 
 
@@ -287,6 +293,7 @@ define(['app', 'lodash', 'moment', 'jquery',
                     count,
                     data
                 }) {
+                    console.log(count)
                     _ctrl.count = count;
                     _ctrl.docs = data;
                     refreshPager(pageIndex);
@@ -534,14 +541,53 @@ define(['app', 'lodash', 'moment', 'jquery',
                 error = res.data;
         }
 
-        // //============================================================
-        // //
-        // //============================================================
-        // $document.ready(function () {
-        //     $.material.init();
-        //     $.material.input();
-        //     $.material.ripples();
-        // });
+        function isYoutube(url) {
+            return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url||'');
+        }
+
+        function showYoutubeLinks(doc){
+            doc.showYoutubeLinks = !doc.showYoutubeLinks;
+
+            if(doc.showYoutubeLinks && !doc.youtubeKeysLoaded && hasRights()){
+                doc.loadingKeys = true;
+
+                $http.get(`/api/v2016/reservations/${doc._id}/youtube-broadcast`)
+                .then((res)=>{
+                    const youtubeDetails = res.data
+                    youtubeDetails.forEach(element => {
+                        
+                        const link = doc.links.find(e=>{
+                            ///{isYoutube(e.url) && e._id == `${doc._id}_${e.locale}`
+                            if(isYoutube(e.url)){
+                                const urlCode = e.url.replace('https://youtu.be/', '');
+                                return urlCode == element.broadcast.id
+                            } 
+                        });
+                        if(link){
+                            link.broadcast = element.broadcast;
+                            link.stream    = element.stream;
+                            doc.youtubeKeysLoaded = true;
+                        }
+                    });
+                })
+                .finally(function(){
+                    doc.loadingKeys = false;
+                })
+            }
+        }
+
+        function hasRights() {
+            const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess']
+            return _.intersection(user.roles, adminRoles).length > 0;
+        };
+        function copyToClipboard(text) {
+            if (window.clipboardData) { // Internet Explorer
+                window.clipboardData.setData("Text", text);
+            } else {
+              navigator.clipboard.writeText(text);
+            }
+            $scope.$emit('showSuccess', `Successfully copied(${text.substr(0, 6)}...) to clipboard.`);
+        }
     }];
 
 });

@@ -21,8 +21,8 @@
                                 <div class="form-group ">
                                     <label class="control-label" for="parent">Start Date</label>
                                     <input id="start-filter" type="text" class="form-control"
-                                        ng-model="publicReservationsCtrl.startFilter"
-                                        ng-change="publicReservationsCtrl.changeDate();">
+                                        ng-model="reservationsCtrl.startFilter"
+                                        ng-change="reservationsCtrl.changeDate();">
 
                                 </div>
                             </div>
@@ -30,8 +30,8 @@
                                 <div class="form-group ">
                                     <label class="control-label" for="parent">End Date</label>
                                     <input id="end-filter" type="text" class="form-control"
-                                        ng-model="publicReservationsCtrl.endFilter"
-                                        ng-change="publicReservationsCtrl.changeDate();">
+                                        ng-model="reservationsCtrl.endFilter"
+                                        ng-change="reservationsCtrl.changeDate();">
                                 </div>
                             </div>
                             <div class="col-xs-4  ">
@@ -39,7 +39,7 @@
                                     <div class="input-group">
                                         <label class="control-label " for="search-res">Hybrid only</label>
                                         <input type="checkbox" id="search-res" class="form-control" style="height: 20px;"
-                                            ng-model="publicReservationsCtrl.isHybridOnly" ng-change="publicReservationsCtrl.hybridOnlyChange()">
+                                            ng-model="reservationsCtrl.isHybridOnly" ng-change="reservationsCtrl.hybridOnlyChange()">
                                     </div>
                                 </div>
                             </div>
@@ -47,14 +47,14 @@
 
                         <div class="row ">
                             <div class="col-xs-6  ">
-                                <ui-select style="border: 1px solid #eee;" multiple ng-model="publicReservationsCtrl.searchType" close-on-select="true"
-                                    append-to-body="true" ng-change="publicReservationsCtrl.searchTypeChange()">
+                                <ui-select style="border: 1px solid #eee;" multiple ng-model="reservationsCtrl.searchType" close-on-select="true"
+                                    append-to-body="true" ng-change="reservationsCtrl.searchTypeChange()">
                                     <ui-select-match placeholder="Type Search">
                                         <div style="display:inline;background-color:{{$item.color}}">{{$item.title}}
                                         </div>
                                     </ui-select-match>
                                     <ui-select-choices style="width:100%;" position="down"
-                                        repeat="type._id as type in publicReservationsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
+                                        repeat="type._id as type in reservationsCtrl.conference.types.reservation | propsFilter: {title: $select.search}">
                                         <div style="background-color:{{type.color}}">
                                             <hr style="margin: 0 0 0 0;">
                                             <small>
@@ -70,14 +70,14 @@
                                 </ui-select>
                             </div>
                             <div class="col-xs-6  ">
-                                <ui-select style="border: 1px solid #eee;" multiple ng-model="publicReservationsCtrl.searchRoom" close-on-select="true"
-                                    ng-change="publicReservationsCtrl.searchRoomChange()">
+                                <ui-select style="border: 1px solid #eee;" multiple ng-model="reservationsCtrl.searchRoom" close-on-select="true"
+                                    ng-change="reservationsCtrl.searchRoomChange()">
                                     <ui-select-match placeholder="Room Search">
                                         <div style="display:inline;background-color:{{$item.color}}">({{$item.location}}) - </span>{{$item.title}}
                                         </div>
                                     </ui-select-match>
                                     <ui-select-choices minimum-input-length="3" style="width:100%;" position="down"
-                                        repeat="room._id as room in publicReservationsCtrl.conference.rooms | propsFilter: {title: $select.search}">
+                                        repeat="room._id as room in reservationsCtrl.conference.rooms | propsFilter: {title: $select.search}">
                                         <div style="background-color:{{room.color}}">
                                             <hr style="margin: 0 0 0 0;">
                                             <small>
@@ -103,60 +103,60 @@
                         <div class="row ">
                            
                             <div class="container " style="width:100%;">
-                                <div class="row" ng-show="publicReservationsCtrl.count">
+                                <div class="row" ng-show="reservationsCtrl.count">
 
                                     <div class="col-lg-3 col-md-3 col-xs-12 text-no-wrap"
                                         style="color:#333;font-size:14px;padding-left:10px;">
                                         <div class="text-no-wrap" style="margin-top:25px;">
                                             <span>
                                                 <span
-                                                    class="badge">{{((publicReservationsCtrl.currentPage*publicReservationsCtrl.itemsPerPage)+1)}}</span>
+                                                    class="badge">{{((reservationsCtrl.currentPage*reservationsCtrl.itemsPerPage)+1)}}</span>
                                                 <span
-                                                    ng-if="((publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.docs.length))===((publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.itemsPerPage)) && (publicReservationsCtrl.docs.length===publicReservationsCtrl.itemsPerPage)">
+                                                    ng-if="((reservationsCtrl.currentPage+1)*(reservationsCtrl.docs.length))===((reservationsCtrl.currentPage+1)*(reservationsCtrl.itemsPerPage)) && (reservationsCtrl.docs.length===reservationsCtrl.itemsPerPage)">
                                                     - <span
-                                                        class="badge">{{(publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.docs.length)}}
+                                                        class="badge">{{(reservationsCtrl.currentPage+1)*(reservationsCtrl.docs.length)}}
                                                     </span></span>
-                                                <!-- <span ng-if=" !((publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.docs.length))">  -  <span class="badge" ><i class="fa fa-spinner fa-spin"></i></span></span> -->
+                                                <!-- <span ng-if=" !((reservationsCtrl.currentPage+1)*(reservationsCtrl.docs.length))">  -  <span class="badge" ><i class="fa fa-spinner fa-spin"></i></span></span> -->
                                                 <span
-                                                    ng-if="((publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.docs.length))!==((publicReservationsCtrl.currentPage+1)*(publicReservationsCtrl.itemsPerPage)) && (publicReservationsCtrl.docs.length===publicReservationsCtrl.itemsPerPage)">
-                                                    - <span class="badge">{{publicReservationsCtrl.docs.length}}
+                                                    ng-if="((reservationsCtrl.currentPage+1)*(reservationsCtrl.docs.length))!==((reservationsCtrl.currentPage+1)*(reservationsCtrl.itemsPerPage)) && (reservationsCtrl.docs.length===reservationsCtrl.itemsPerPage)">
+                                                    - <span class="badge">{{reservationsCtrl.docs.length}}
                                                     </span></span>
                                                 <span
-                                                    ng-if="publicReservationsCtrl.docs.length!==publicReservationsCtrl.itemsPerPage">
-                                                    - <span class="badge">{{publicReservationsCtrl.count}} </span></span>
+                                                    ng-if="reservationsCtrl.docs.length!==reservationsCtrl.itemsPerPage">
+                                                    - <span class="badge">{{reservationsCtrl.count}} </span></span>
                                                 of
-                                                <span class="badge">{{publicReservationsCtrl.count}} </span> records
-                                                <span ng-if="publicReservationsCtrl.search"> for <span
-                                                        style="color:#009B48;">"{{publicReservationsCtrl.search}}"</span></span>
+                                                <span class="badge">{{reservationsCtrl.count}} </span> records
+                                                <span ng-if="reservationsCtrl.search"> for <span
+                                                        style="color:#009B48;">"{{reservationsCtrl.search}}"</span></span>
                                             </span>
 
                                         </div>
                                     </div>
 
                                     <div class="col-lg-7 col-md-7 col-xs-10">
-                                        <nav class="pull-right" ng-show="publicReservationsCtrl.pages.length>1">
+                                        <nav class="pull-right" ng-show="reservationsCtrl.pages.length>1">
                                             <ul class="pagination">
                                                 <li>
-                                                    <a ng-click="publicReservationsCtrl.onPage(publicReservationsCtrl.currentPage-1)"
-                                                        href="#" aria-label="Previous" ng-disabled="publicReservationsCtrl.currentPage==0"
-                                                        ng-if="publicReservationsCtrl.currentPage!==0">
+                                                    <a ng-click="reservationsCtrl.onPage(reservationsCtrl.currentPage-1)"
+                                                        href="#" aria-label="Previous" ng-disabled="reservationsCtrl.currentPage==0"
+                                                        ng-if="reservationsCtrl.currentPage!==0">
                                                         <span aria-hidden="true">&laquo;</span>
                                                     </a>
-                                                    <span aria-disabled="true"  style="color: #7c7c7c;" disabled  ng-if="publicReservationsCtrl.currentPage==0">&laquo;</span>
+                                                    <span aria-disabled="true"  style="color: #7c7c7c;" disabled  ng-if="reservationsCtrl.currentPage==0">&laquo;</span>
                                                 </li>
-                                                <li ng-repeat="page in publicReservationsCtrl.pages track by $index" ng-if="page.text > 0"
-                                                    ng-class="{ active : publicReservationsCtrl.currentPage===page.index }">
+                                                <li ng-repeat="page in reservationsCtrl.pages track by $index" ng-if="page.text > 0"
+                                                    ng-class="{ active : reservationsCtrl.currentPage===page.index }">
                                                     <a href="#"
-                                                        ng-click="publicReservationsCtrl.onPage(page.index)">{{page.text}}</a>
+                                                        ng-click="reservationsCtrl.onPage(page.index)">{{page.text}}</a>
                                                 </li>
                                                 <li>
-                                                    <a ng-click="publicReservationsCtrl.onPage(publicReservationsCtrl.currentPage+1)"
+                                                    <a ng-click="reservationsCtrl.onPage(reservationsCtrl.currentPage+1)"
                                                         href="#" aria-label="Next"
-                                                        ng-if="(publicReservationsCtrl.currentPage<publicReservationsCtrl.pageCount)"
+                                                        ng-if="(reservationsCtrl.currentPage<reservationsCtrl.pageCount)"
                                                         >
                                                         <span aria-hidden="true">&raquo;</span>
                                                     </a>
-                                                    <span aria-disabled="true" style="color: #7c7c7c;" disabled  ng-if="(publicReservationsCtrl.currentPage>=publicReservationsCtrl.pageCount)">&raquo;</span>
+                                                    <span aria-disabled="true" style="color: #7c7c7c;" disabled  ng-if="(reservationsCtrl.currentPage>=reservationsCtrl.pageCount)">&raquo;</span>
                                                 </li>
                                             </ul>
                                         </nav>
@@ -167,22 +167,22 @@
                                             style="color:#333;font-size:14px;margin-top:20px;">
                                             <span style="color:#333;font-size:14px;">Records per page:</span>
                                             <select style="display:inline;" class="form-control"
-                                                ng-model="publicReservationsCtrl.itemsPerPage"
-                                                ng-change="publicReservationsCtrl.changeDate()" convert-to-number>
-                                                <option ng-value="5" ng-selected="publicReservationsCtrl.itemsPerPage===5">5
+                                                ng-model="reservationsCtrl.itemsPerPage"
+                                                ng-change="reservationsCtrl.changeDate()" convert-to-number>
+                                                <option ng-value="5" ng-selected="reservationsCtrl.itemsPerPage===5">5
                                                 </option>
-                                                <option ng-value="10" ng-selected="publicReservationsCtrl.itemsPerPage===10">
+                                                <option ng-value="10" ng-selected="reservationsCtrl.itemsPerPage===10">
                                                     10</option>
-                                                <option ng-value="15" ng-selected="publicReservationsCtrl.itemsPerPage===15">
+                                                <option ng-value="15" ng-selected="reservationsCtrl.itemsPerPage===15">
                                                     15</option>
-                                                <option ng-value="20" ng-selected="publicReservationsCtrl.itemsPerPage===20">
+                                                <option ng-value="20" ng-selected="reservationsCtrl.itemsPerPage===20">
                                                     20</option>
-                                                <option ng-value="50" ng-selected="publicReservationsCtrl.itemsPerPage===50">
+                                                <option ng-value="50" ng-selected="reservationsCtrl.itemsPerPage===50">
                                                     50</option>
                                                 <option ng-value="100"
-                                                    ng-selected="publicReservationsCtrl.itemsPerPage===100">100</option>
+                                                    ng-selected="reservationsCtrl.itemsPerPage===100">100</option>
                                                 <option ng-value="500"
-                                                    ng-selected="publicReservationsCtrl.itemsPerPage===500">500</option>
+                                                    ng-selected="reservationsCtrl.itemsPerPage===500">500</option>
                                             </select>
                                         </div>
                                     </div>
@@ -195,7 +195,7 @@
                                     <table class="table table-striped table-hover container" id="table-rows">
                                         <tbody>
                                            
-                                            <tr ng-if="publicReservationsCtrl.loading">
+                                            <tr ng-if="reservationsCtrl.loading">
                                                 <td colspan="11" class="text-center">
                                                     <div class="app-loading" ng-animate-children>                                                       
                                                         <style type="text/css">
@@ -270,9 +270,10 @@
                                                 <td>Description</td>
                                                 <td>Type</td>
                                                 <td>Interactio</td>
+                                                <td>Youtube</td>
                                             </tr>
                                             <tr id="{{doc._id}}" ng-class="{'active': item.$selected}"
-                                                ng-repeat-start="doc in publicReservationsCtrl.docs  track by $index">                                                
+                                                ng-repeat-start="doc in reservationsCtrl.docs  track by $index">                                                
                                                 <td>
                                                     {{doc.start |moment:'format':'DD MMM YYYY'}}
                                                 </td>
@@ -284,7 +285,7 @@
                                                 </td>
                                                 <td>
                                                     <span ng-if="doc.location.room">
-                                                        ({{publicReservationsCtrl.getRoom(doc.location.room,'location')}}) - {{publicReservationsCtrl.getRoom(doc.location.room,'title')}}                                                        
+                                                        ({{reservationsCtrl.getRoom(doc.location.room,'location')}}) - {{reservationsCtrl.getRoom(doc.location.room,'title')}}                                                        
                                                     </span>
                                                 </td>
                                                 <td>
@@ -308,8 +309,8 @@
 
                                                 <td>
                                                     <div class="form-group label-floating"
-                                                        style="margin-top:10px;background-color: {{publicReservationsCtrl.getType(doc.type,'reservation','color')}};">
-                                                        {{publicReservationsCtrl.getType(doc.type,'reservation','title')}}
+                                                        style="margin-top:10px;background-color: {{reservationsCtrl.getType(doc.type,'reservation','color')}};">
+                                                        {{reservationsCtrl.getType(doc.type,'reservation','title')}}
                                                     </div>
                                                 </td>
                                                 
@@ -319,15 +320,48 @@
                                                             <i class="fa fa-external-link"></i></a></div>
                                                     <div ng-if="::doc.interactioEventId">{{doc.linksTemplate}}</div>
                                                 </td>
+                                                <td>
+                                                    <button ng-if="doc.youtubeLive" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showYoutubeLinks(doc)">Show Youtube links</spaa>
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="doc.showYoutubeLinks">
+                                                <td></td>
+                                                <td colspan="7">
+                                                    <table class="table table-stripped">
+                                                        <thead>
+                                                            <th>Language</th>
+                                                            <th>Name</th>
+                                                            <th>Url</th>
+                                                            <th>Key</th>
+                                                        </thead>
+                                                        <tr ng-repeat="link in doc.links">
+                                                            <td>{{link.locale.toUpperCase()}}</td>
+                                                            <td>{{link.name}}</td>
+                                                            <td><a href="{{link.url}}" target="_blank">{{link.url}}</a></td>
+                                                            <td>
+                                                                <span ng-if="doc.loadingKeys">
+                                                                    <i class="fa fa-spin fa-spinner"></i> loading keys...
+                                                                </span>
+                                                                <span ng-if="!doc.loadingKeys && link.stream">
+                                                                    <a  ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.streamName)" href="#">
+                                                                        {{link.stream.cdn.ingestionInfo.streamName}}
+                                                                        <i class="fa fa-clone" style="cursor:pointer"></i>
+                                                                    </a>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td></td>
                                             </tr>
                                             <tr ng-repeat-end class="warning"
-                                                ng-if="publicReservationsCtrl.hasDayChange(doc.start,publicReservationsCtrl.docs[$index+1].start)">
+                                                ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
                                                 <td colspan="8">
                                                     <div hl-sticky="content-heading" offset-top="60"
                                                         collection="content" collection-parent="head"
                                                         sticky-class="warning">
                                                         <div style="background-color:#fcf8e3;">
-                                                            <h4>{{publicReservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}
+                                                            <h4>{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}
                                                             </h4>
                                                         </div>
                                                     </div>
@@ -335,7 +369,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <table ng-if="publicReservationsCtrl.docs.length===0">
+                                    <table ng-if="reservationsCtrl.docs.length===0">
                                         <tr>
                                             <td colspan="11">
                                                 &nbsp; There are 0 reservations for this conference.
