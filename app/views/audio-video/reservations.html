@@ -332,13 +332,13 @@
                                                             <th>Language</th>
                                                             <th>Name</th>
                                                             <th>Url</th>
-                                                            <th>Key</th>
+                                                            <th ng-if="reservationsCtrl.canAccessKeys">Key</th>
                                                         </thead>
                                                         <tr ng-repeat="link in doc.links">
                                                             <td>{{link.locale.toUpperCase()}}</td>
                                                             <td>{{link.name}}</td>
                                                             <td><a href="{{link.url}}" target="_blank">{{link.url}}</a></td>
-                                                            <td>
+                                                            <td ng-if="reservationsCtrl.canAccessKeys">
                                                                 <span ng-if="doc.loadingKeys">
                                                                     <i class="fa fa-spin fa-spinner"></i> loading keys...
                                                                 </span>

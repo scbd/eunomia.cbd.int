@@ -13,6 +13,7 @@ define(['app', 'lodash', 'moment', 'jquery',
     return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', '$rootScope', '$http', 'user', '$scope',
             function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout, $rootScope, $http, user, $scope) {
        
+        const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess'];    
         var _ctrl = this;
         var DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
@@ -71,6 +72,8 @@ define(['app', 'lodash', 'moment', 'jquery',
         _ctrl.isYoutube = isYoutube;
         _ctrl.showYoutubeLinks = showYoutubeLinks;
         _ctrl.copyToClipboard = copyToClipboard;
+        
+        _ctrl.canAccessKeys        = _.intersection(user.roles, adminRoles).length > 0;
 
         init(true);
 
@@ -548,7 +551,7 @@ define(['app', 'lodash', 'moment', 'jquery',
         function showYoutubeLinks(doc){
             doc.showYoutubeLinks = !doc.showYoutubeLinks;
 
-            if(doc.showYoutubeLinks && !doc.youtubeKeysLoaded && hasRights()){
+            if(doc.showYoutubeLinks && !doc.youtubeKeysLoaded && _ctrl.canAccessKeys){
                 doc.loadingKeys = true;
 
                 $http.get(`/api/v2016/reservations/${doc._id}/youtube-broadcast`)
@@ -576,10 +579,6 @@ define(['app', 'lodash', 'moment', 'jquery',
             }
         }
 
-        function hasRights() {
-            const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess']
-            return _.intersection(user.roles, adminRoles).length > 0;
-        };
         function copyToClipboard(text) {
             if (window.clipboardData) { // Internet Explorer
                 window.clipboardData.setData("Text", text);
