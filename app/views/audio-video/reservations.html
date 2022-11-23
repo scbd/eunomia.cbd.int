@@ -325,8 +325,8 @@
                                                 </td>
                                             </tr>
                                             <tr ng-if="doc.showYoutubeLinks">
-                                                <td></td>
-                                                <td colspan="7">
+                                                
+                                                <td colspan="9">
                                                     <table class="table table-stripped">
                                                         <thead>
                                                             <th>Language</th>
@@ -352,11 +352,10 @@
                                                         </tr>
                                                     </table>
                                                 </td>
-                                                <td></td>
                                             </tr>
                                             <tr ng-repeat-end class="warning"
                                                 ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
-                                                <td colspan="8">
+                                                <td colspan="9">
                                                     <div hl-sticky="content-heading" offset-top="60"
                                                         collection="content" collection-parent="head"
                                                         sticky-class="warning">
