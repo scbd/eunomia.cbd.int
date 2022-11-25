@@ -332,7 +332,8 @@
                                                             <th>Language</th>
                                                             <th>Name</th>
                                                             <th>Url</th>
-                                                            <th ng-if="reservationsCtrl.canAccessKeys">Key</th>
+                                                            <th ng-if="reservationsCtrl.canAccessKeys">Key</th>                                                            
+                                                            <th ng-if="reservationsCtrl.canAccessKeys">Manage Url</th>
                                                         </thead>
                                                         <tr ng-repeat="link in doc.links">
                                                             <td>{{link.locale.toUpperCase()}}</td>
@@ -348,6 +349,9 @@
                                                                         <i class="fa fa-clone" style="cursor:pointer"></i>
                                                                     </a>
                                                                 </span>
+                                                            </td>
+                                                            <td>
+                                                                <a href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio</a>
                                                             </td>
                                                         </tr>
                                                     </table>
