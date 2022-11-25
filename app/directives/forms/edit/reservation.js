@@ -32,7 +32,7 @@ define(['app', 'lodash',
                         $scope.addLinkStore    = { name: '', url: '', locale: 'en' }
                         $scope.validLink       = true
                         $scope.copyToClipboard = copyToClipboard
-
+                        $scope.youtube         = { live : false }
 
                         //============================================================
                         //
@@ -164,6 +164,10 @@ define(['app', 'lodash',
                                           }
                                       });
                                   }
+                                  if(!_.isEmpty($scope.doc.youtubeLive||{}))
+                                    $scope.youtube.live = true;
+                                  else 
+                                    $scope.youtube.live = false;
                               });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
@@ -779,6 +783,13 @@ define(['app', 'lodash',
                           } else {
                             navigator.clipboard.writeText(text);
                           }
+                        }
+
+                        $scope.onYoutubeLiveChange = function(youtubeLive){
+                            // if(!youtubeLive)
+                            //     $scope.doc.youtubeLive = undefined
+                            // else
+                                $scope.doc.youtubeLive = {}
                         }
 
                         $element.ready(init)
