@@ -68,7 +68,7 @@
         <span ng-if="doc.security" class="text-center small" style="color:red;">Security<br></span>
         <img ng-if="doc.interactioEventId" src="https://attachments.cbd.int/interactio.svg" style="max-width: 20px;"/>
         <span ng-if="doc.interactioEventId" class="text-nowrap">
-          <br/> {{getInteractioEventsTitle(doc.interactioEventId)}} <br/> {{doc.linksTemplate}}
+          <br/> <span ng-bind-html="getInteractioEventsTitle(doc.interactioEventId)"></span> <br/> {{doc.linksTemplate}}
         </span>
       </div>
     </div>

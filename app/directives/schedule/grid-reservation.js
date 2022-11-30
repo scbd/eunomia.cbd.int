@@ -22,7 +22,7 @@ define(['app', 'text!./grid-reservation.html','lodash', 'services/when-element']
                  
                     const event = ($scope.interactioEventsMap || []).find((e) => e.interactioEventId === interactioEventId)
 
-                    return event? `${event.title} (${interactioEventId})` : interactioEventId
+                    return event? `${event.title} <br/> (${interactioEventId})` : interactioEventId
                   }
 
                   $scope.getInteractioEventsTitle = getInteractioEventsTitle
