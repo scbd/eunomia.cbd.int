@@ -192,12 +192,26 @@
                         </div>
                       </div>      
                       <div class="panel-body" ng-show="youtube.live">
-                          <div><strong>Youtube live languages </strong></div>
-                          <div class="col-xs-4" ng-repeat="locale in options.locales track by $index">
+
+                          <div><strong>Youtube live event </strong></div>
+                          <div class="col-xs-12" >
+                            <div class="form-group " style="margin-left:10px;margin-top:15px;" >
+                              <select id="youtubeEvent" class="form-control" ng-model="youtube.selectedEvent"  >
+                                <option value="">-</option>
+                                <option ng-repeat="event in options.youtubeEvents track by $index"  ng-value="event.event"  >{{event.event}}</option>
+                              </select>
+                              <span class="material-input"></span>
+                            </div>
+                          </div>
+                          <div>
+                            <strong>Youtube live languages </strong> 
+                            <span ng-if="options.youtubeEvents.length && !youtube.selectedEvent" style="color: red;">(will be enable after youtube event is selected)</span>
+                          </div>
+                          <div class="col-xs-4" ng-repeat="locale in options.locales track by $index" ng-show="options.youtubeEvents.length && youtube.selectedEvent">
                             <div class="form-group" style="margin-left:10px;margin-top:15px;">
                                 <div class="togglebutton">
                                     <label>
-                                        <input type="checkbox" ng-model="doc.youtubeLive[locale]" ng-false-value="false" ng-true-value="true"><span>{{locale.toUpperCase()}}</span>
+                                        <input type="checkbox" ng-model="youtube.languages[locale]" ng-false-value="false" ng-true-value="true"><span>{{locale.toUpperCase()}}</span>
                                     </label>
                                 </div>
                             </div>
