@@ -10,8 +10,8 @@ define(['app', 'lodash', 'moment', 'jquery',
     'BM-date-picker'
 ], function (app, _, moment, $) {
 
-    return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', '$rootScope', '$http', 'user', '$scope',
-            function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout, $rootScope, $http, user, $scope) {
+    return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', '$rootScope', '$http', 'user', '$scope', 'accountsUrl',
+            function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout, $rootScope, $http, user, $scope, accountsUrl) {
        
         const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess'];    
         var _ctrl = this;
@@ -70,11 +70,13 @@ define(['app', 'lodash', 'moment', 'jquery',
             title: 'Interactio'
         }];
         _ctrl.isYoutube = isYoutube;
-        _ctrl.showYoutubeLinks = showYoutubeLinks;
+        _ctrl.showLinks = showLinks;
         _ctrl.copyToClipboard = copyToClipboard;
         
         _ctrl.canAccessKeys        = _.intersection(user.roles, adminRoles).length > 0;
-
+        _ctrl.returnUrl = encodeURI(window.location.href);
+        _ctrl.isSignedIn = user.isAuthenticated;
+        _ctrl.accountsUrl = accountsUrl;
         init(true);
 
         return this;
@@ -105,14 +107,14 @@ define(['app', 'lodash', 'moment', 'jquery',
             } = $location.search()
 
             if(urlStart)
-                _ctrl.startFilter = moment(urlStart).format(DATE_TIME_FORMAT) 
+                _ctrl.startFilter = moment(urlStart).format('YYYY-MM-DD')+' 00:00'; 
             else if (moment(start) > moment())
                 _ctrl.startFilter = moment(start).format('YYYY-MM-DD')+' 00:00';
             else 
-                _ctrl.startFilter = moment().format('YYYY-MM-DD')+' 00:00';
+                _ctrl.startFilter = moment().format('YYYY-MM-DD HH:mm');
                 
             if(urlEnd)
-                _ctrl.endFilter = moment(urlEnd).format(DATE_TIME_FORMAT)  
+                _ctrl.endFilter = moment(urlEnd).format('YYYY-MM-DD')+' 23:59' 
             else if (moment(_ctrl.startFilter) > moment())
                 _ctrl.endFilter = moment(_ctrl.startFilter).add(1, 'days').format('YYYY-MM-DD')+' 23:59';
             else 
@@ -286,7 +288,7 @@ define(['app', 'lodash', 'moment', 'jquery',
                 interactioEventId: 1,
                 linksTemplate: 1,
                 links:1,
-                youtubeLive:1
+                youtube:1
             };
 
 
@@ -548,34 +550,44 @@ define(['app', 'lodash', 'moment', 'jquery',
             return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url||'');
         }
 
-        function showYoutubeLinks(doc){
-            doc.showYoutubeLinks = !doc.showYoutubeLinks;
+        function showLinks(doc){
+            doc.showLinks = !doc.showLinks;
 
-            if(doc.showYoutubeLinks && !doc.youtubeKeysLoaded && _ctrl.canAccessKeys){
-                doc.loadingKeys = true;
+            if(doc.showLinks){
+                if(!doc.youtubeKeysLoaded && _ctrl.canAccessKeys){
+                    doc.loadingKeys = true;
 
-                $http.get(`/api/v2016/reservations/${doc._id}/youtube-broadcast`)
-                .then((res)=>{
-                    const youtubeDetails = res.data
-                    youtubeDetails.forEach(element => {
-                        
-                        const link = doc.links.find(e=>{
-                            ///{isYoutube(e.url) && e._id == `${doc._id}_${e.locale}`
-                            if(isYoutube(e.url)){
-                                const urlCode = e.url.replace('https://youtu.be/', '');
-                                return urlCode == element.broadcast.id
-                            } 
+                    $http.get(`/api/v2016/reservations/${doc._id}/youtube-broadcast`)
+                    .then((res)=>{
+                        const youtubeDetails = res.data
+                        youtubeDetails.forEach(element => {
+                            
+                            const link = doc.links.find(e=>{
+                                ///{isYoutube(e.url) && e._id == `${doc._id}_${e.locale}`
+                                if(isYoutube(e.url)){
+                                    const urlCode = e.url.replace('https://youtu.be/', '');
+                                    return urlCode == element.broadcast.id
+                                } 
+                            });
+                            if(link){
+                                link.broadcast = element.broadcast;
+                                link.stream    = element.stream;
+                                doc.youtubeKeysLoaded = true;
+                            }
                         });
-                        if(link){
-                            link.broadcast = element.broadcast;
-                            link.stream    = element.stream;
-                            doc.youtubeKeysLoaded = true;
-                        }
-                    });
-                })
-                .finally(function(){
-                    doc.loadingKeys = false;
-                })
+                    })
+                    .finally(function(){
+                        doc.loadingKeys = false;
+                    })
+                }
+
+                if(!doc.youtubeKeysLoaded && _.intersection(user.roles, ['Administrator', 'EunoAdministrator']).length > 0 && doc.interactioEventId){
+                    
+                    $http.get(`/api/v2022/interactio-events-map`, {params : {q : { interactioEventId :doc.interactioEventId }}})
+                    .then((res)=>{
+                        doc.interactioShareLinks = res.data[0];
+                    })
+                }
             }
         }
 

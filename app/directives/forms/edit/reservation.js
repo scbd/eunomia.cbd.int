@@ -32,7 +32,7 @@ define(['app', 'lodash',
                         $scope.addLinkStore    = { name: '', url: '', locale: 'en' }
                         $scope.validLink       = true
                         $scope.copyToClipboard = copyToClipboard
-                        $scope.youtube         = { live : false }
+                        $scope.youtube         = { live : false, event : {}, languages : {} }
 
                         //============================================================
                         //
@@ -131,7 +131,10 @@ define(['app', 'lodash',
                         //============================================================
                         function init() {
 
-                            $scope.options = { locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'] };
+                            $scope.options = { 
+                              locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'],
+                              youtubeEvents : $scope.conference?.conference?.youtubeEvents
+                            };
                             $scope.tabs    = {
                                                 'details'           : { 'active': false },
                                                 'recurrence'        : { 'active': false },
@@ -164,10 +167,11 @@ define(['app', 'lodash',
                                           }
                                       });
                                   }
-                                  if(!_.isEmpty($scope.doc.youtubeLive||{}))
-                                    $scope.youtube.live = true;
-                                  else 
-                                    $scope.youtube.live = false;
+                                  if(!_.isEmpty($scope.doc.youtube)){
+                                    $scope.youtube = $scope.doc.youtube;
+                                    if($scope.youtube?.event)
+                                      $scope.youtube.selectedEvent = $scope.youtube?.event.event
+                                  }
                               });
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
@@ -743,6 +747,21 @@ define(['app', 'lodash',
 
                             if(!objClone.start || !objClone.end ) throw "Error missing start or end time or location.";
 
+                            if($scope.youtube?.live){
+
+                              objClone.youtube = objClone.youtube || {};
+                              objClone.youtube.live = $scope.youtube?.live;
+                              objClone.youtube.languages = $scope.youtube?.languages;
+
+                              if($scope.youtube?.selectedEvent)
+                                objClone.youtube.event = $scope.options.youtubeEvents.find(e=>e.event == $scope.youtube.selectedEvent);
+                              else 
+                                objClone.youtube.event = undefined;
+                            }
+                            else{
+                              objClone.youtube = {};
+                            }
+
                             return mongoStorage.save('reservations', objClone).then(function(res) {
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
@@ -786,10 +805,9 @@ define(['app', 'lodash',
                         }
 
                         $scope.onYoutubeLiveChange = function(youtubeLive){
-                            // if(!youtubeLive)
-                            //     $scope.doc.youtubeLive = undefined
-                            // else
-                                $scope.doc.youtubeLive = {}
+                        
+                            $scope.doc.youtube = undefined;
+                            $scope.youtube.selectedEvent = undefined;
                         }
 
                         $element.ready(init)
