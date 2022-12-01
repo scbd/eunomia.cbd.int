@@ -11,7 +11,10 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ui-select@0.19.6/dist/select.min.css">    
         <div class="panel panel-default">
             <div class="panel-body">
-
+                
+                <div class="row" ng-if="!reservationsCtrl.isSignedIn">
+                    <a class="btn btn-default pull-right" href="{{reservationsCtrl.accountsUrl}}/signin?returnUrl={{reservationsCtrl.returnUrl}}">Sign In</a>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Filters</div>
                     <div class="panel-body">
@@ -269,8 +272,7 @@
                                                 <td>Title</td>
                                                 <td>Description</td>
                                                 <td>Type</td>
-                                                <td>Interactio</td>
-                                                <td>Youtube</td>
+                                                <td>Links</td>
                                             </tr>
                                             <tr id="{{doc._id}}" ng-class="{'active': item.$selected}"
                                                 ng-repeat-start="doc in reservationsCtrl.docs  track by $index">                                                
@@ -315,18 +317,12 @@
                                                 </td>
                                                 
                                                 <td>
-                                                    <div ng-if="::doc.interactioEventId"><a target="interactio"
-                                                            ng-href="https://panel.interactio.eu/event/{{doc.interactioEventId}}">{{doc.interactioEventId}}
-                                                            <i class="fa fa-external-link"></i></a></div>
-                                                    <div ng-if="::doc.interactioEventId">{{doc.linksTemplate}}</div>
-                                                </td>
-                                                <td>
-                                                    <button ng-if="doc.youtubeLive" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showYoutubeLinks(doc)">Show Youtube links</spaa>
+                                                    <button ng-if="doc.youtubeLive || doc.interactioEventId" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
                                                 </td>
                                             </tr>
-                                            <tr ng-if="doc.showYoutubeLinks">
+                                            <tr ng-if="doc.showLinks">
                                                 
-                                                <td colspan="9">
+                                                <td colspan="8">
                                                     <table class="table table-stripped">
                                                         <thead>
                                                             <th>Language</th>
@@ -350,13 +346,39 @@
                                                                     </a>
                                                                 </span>
                                                             </td>
-                                                            <td>
+                                                            <td  ng-if="reservationsCtrl.canAccessKeys">
                                                                 <a href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio</a>
                                                             </td>
                                                         </tr>
                                                     </table>
                                                 </td>
                                             </tr>
+                                            <tr ng-if="doc.showLinks && doc.interactioEventId">
+                                                
+                                                <td colspan="9">
+                                                    Interaction Event Id : 
+                                                    <a target="interactio" ng-href="https://panel.interactio.eu/event/{{doc.interactioEventId}}">
+                                                        {{doc.interactioEventId}} 
+                                                        <i class="fa fa-external-link"></i>
+                                                    </a>
+                                                    <div>{{doc.linksTemplate}}</div>
+                                                    <table class="table table-stripped" ng-if="doc.interactioShareLinks">
+                                                        <thead>
+                                                            <th>Title</th>
+                                                            <th>Code</th>
+                                                            <th>URL</th>
+                                                        </thead>
+                                                        <tr ng-repeat="link in doc.interactioShareLinks.preSharedLinks">
+                                                            <td>{{link.title}}</td>
+                                                            <td>{{link.code}}</td>                                                            
+                                                            <td>
+                                                                <a href="{{link.url}}" target="_blank">{{link.url}}</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+
                                             <tr ng-repeat-end class="warning"
                                                 ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
                                                 <td colspan="9">
