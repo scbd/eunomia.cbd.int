@@ -334,7 +334,7 @@
                                                     <button ng-if="doc.youtube || doc.interactioEventId" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
                                                 </td>
                                             </tr>
-                                            <tr ng-if="doc.showLinks">
+                                            <tr ng-if="doc.showLinks && doc.links && doc.links.length" class="danger">
                                                 
                                                 <td colspan="8">
                                                     <table class="table table-stripped">
@@ -367,7 +367,7 @@
                                                     </table>
                                                 </td>
                                             </tr>
-                                            <tr ng-if="doc.showLinks && doc.interactioEventId">
+                                            <tr ng-repeat-end ng-if="doc.showLinks && doc.interactioEventId" class="success">
                                                 
                                                 <td colspan="9">
                                                     Interaction Event Id : 
@@ -375,7 +375,6 @@
                                                         {{doc.interactioEventId}} 
                                                         <i class="fa fa-external-link"></i>
                                                     </a>
-                                                    <div>{{doc.linksTemplate}}</div>
                                                     <table class="table table-stripped" ng-if="doc.interactioShareLinks">
                                                         <thead>
                                                             <th>Title</th>
