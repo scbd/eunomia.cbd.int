@@ -274,8 +274,22 @@
                                                 <td>Type</td>
                                                 <td>Links</td>
                                             </tr>
-                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected}"
-                                                ng-repeat-start="doc in reservationsCtrl.docs  track by $index">                                                
+
+                                            <tr ng-repeat-start="doc in reservationsCtrl.docs  track by $index" class="warning"
+                                                ng-if="$first || reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index-1].start)">
+                                                <td colspan="9">
+                                                    <div hl-sticky="content-heading" offset-top="60"
+                                                        collection="content" collection-parent="head"
+                                                        sticky-class="warning">
+                                                        <div style="background-color:#fcf8e3;">
+                                                            <h4>{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY (dddd)'}}
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected}">                                                
                                                 <td>
                                                     {{doc.start |moment:'format':'DD MMM YYYY'}}
                                                 </td>
@@ -376,20 +390,6 @@
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                </td>
-                                            </tr>
-
-                                            <tr ng-repeat-end class="warning"
-                                                ng-if="reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index+1].start)">
-                                                <td colspan="9">
-                                                    <div hl-sticky="content-heading" offset-top="60"
-                                                        collection="content" collection-parent="head"
-                                                        sticky-class="warning">
-                                                        <div style="background-color:#fcf8e3;">
-                                                            <h4>{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY'}}
-                                                            </h4>
-                                                        </div>
-                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
