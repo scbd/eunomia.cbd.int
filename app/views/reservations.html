@@ -368,7 +368,7 @@
                                 {{doc.meta.modifiedOn|moment:'format':'YYYY-MM-DD HH:mm'}}
                             </td>
                             <td width="5%" ng-if="reservationsCtrl.isFieldSelect('Interactio');">
-                                <div ng-if="::doc.interactioEventId"><a target="interactio" ng-href="https://panel.interactio.eu/event/{{doc.interactioEventId}}">{{doc.interactioEventId}} <i class="fa fa-external-link"></i></a></div>
+                                <div ng-if="::doc.interactioEventId"><a target="interactio" ng-href="https://cbd.interactio.com/access/event/{{doc.interactioEventId}}">{{doc.interactioEventId}} <i class="fa fa-external-link"></i></a></div>
                                 <div ng-if="::doc.interactioEventId">{{doc.linksTemplate}}</div>
                             </td>
                         </tr>
