@@ -581,12 +581,11 @@ define(['app', 'lodash', 'moment', 'jquery',
                     })
                 }
 
-                if(!doc.youtubeKeysLoaded && _.intersection(user.roles, ['Administrator', 'EunoAdministrator']).length > 0 && doc.interactioEventId){
-                    
+                if(doc.interactioEventId){
                     $http.get(`/api/v2022/interactio-events-map`, {params : {q : { interactioEventId :doc.interactioEventId }}})
-                    .then((res)=>{
-                        doc.interactioShareLinks = res.data[0];
-                    })
+                    .then (function(res) { return (res.data[0]||{}).preSharedLinks; })
+                    .catch(function(err) { return null })
+                    .then (function(psl) {doc.interactioShareLinks=psl});
                 }
             }
         }
