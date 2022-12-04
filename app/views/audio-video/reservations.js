@@ -77,7 +77,13 @@ define(['app', 'lodash', 'moment', 'jquery',
         _ctrl.returnUrl = encodeURI(window.location.href);
         _ctrl.isSignedIn = user.isAuthenticated;
         _ctrl.accountsUrl = accountsUrl;
+        _ctrl.setAutoRefresh = setAutoRefresh;
+
         init(true);
+
+        $scope.$on('$destroy', function(){
+            _ctrl.autoRefresh = false
+        })
 
         return this;
 
@@ -160,6 +166,8 @@ define(['app', 'lodash', 'moment', 'jquery',
                 $.material.init();
             });
 
+            _ctrl.autoRefresh = true;
+            setAutoRefresh();
         } //init
 
         function initStartDatePicker() {
@@ -300,9 +308,21 @@ define(['app', 'lodash', 'moment', 'jquery',
                     count,
                     data
                 }) {
-                    console.log(count)
                     _ctrl.count = count;
+                    let openLinkDocs = [];
+                    if(_ctrl.docs){
+                        openLinkDocs = _ctrl.docs.filter(e=>e.showLinks);
+                    }
                     _ctrl.docs = data;
+
+                    if(openLinkDocs.length){
+                        openLinkDocs.forEach(e=>{
+                            let doc = _ctrl.docs.find(d=>d._id == e._id)
+                            // doc.showLinks=true;
+                            showLinks(doc);
+                        })
+                    }
+
                     refreshPager(pageIndex);
                     _ctrl.loading = false;
                     return data;
@@ -599,6 +619,19 @@ define(['app', 'lodash', 'moment', 'jquery',
               navigator.clipboard.writeText(text);
             }
             $scope.$emit('showSuccess', `Successfully copied(${text.substr(0, 6)}...) to clipboard.`);
+        }
+
+        function setAutoRefresh(){
+            if(_ctrl.autoRefresh)
+                refreshPage();
+            else
+                refreshPageTimeout();
+        }
+        function refreshPage(){
+            $timeout(function(){
+                getReservations();
+                setAutoRefresh();
+            }, 5*60*1000)
         }
     }];
 

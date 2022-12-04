@@ -100,7 +100,14 @@
                 </div>
 
                 <div class="panel panel-default">
-                    <div class="panel-heading">Reservations</div>
+                    <div class="panel-heading">
+                        Reservations
+                        <div class="pull-right" style="position: relative;top: -15px;">
+                            <input type="checkbox" id="auto-refresh" 
+                                ng-model="reservationsCtrl.autoRefresh" ng-change="reservationsCtrl.setAutoRefresh()">
+                            <label class="control-label " style="font-size: 16px;font-weight: bolder;color: black;top: 25px;" for="auto-refresh">Auto refresh (5 min)</label>
+                        </div>
+                    </div>
                     <div class="panel-body">
 
                         <div class="row ">
@@ -323,64 +330,77 @@
                                                 </td>
                                                 
                                                 <td>
-                                                    <button ng-if="doc.youtube || doc.interactioEventId" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
+                                                    <button ng-if="Object.keys(doc.youtube||{}).length || doc.interactioEventId" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
                                                 </td>
                                             </tr>
-                                            <tr ng-if="doc.showLinks && doc.links && doc.links.length" class="danger">
-                                                
-                                                <td colspan="8">
-                                                    <table class="table table-stripped">
-                                                        <thead>
-                                                            <th>Language</th>
-                                                            <th>Name</th>
-                                                            <th>Url</th>
-                                                            <th ng-if="reservationsCtrl.canAccessKeys">Key</th>                                                            
-                                                            <th ng-if="reservationsCtrl.canAccessKeys">Manage Url</th>
-                                                        </thead>
-                                                        <tr ng-repeat="link in doc.links">
-                                                            <td>{{link.locale.toUpperCase()}}</td>
-                                                            <td>{{link.name}}</td>
-                                                            <td><a href="{{link.url}}" target="_blank">{{link.url}}</a></td>
-                                                            <td ng-if="reservationsCtrl.canAccessKeys">
-                                                                <span ng-if="doc.loadingKeys">
-                                                                    <i class="fa fa-spin fa-spinner"></i> loading keys...
-                                                                </span>
-                                                                <span ng-if="!doc.loadingKeys && link.stream">
-                                                                    <a  ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.streamName)" href="#">
-                                                                        {{link.stream.cdn.ingestionInfo.streamName}}
-                                                                        <i class="fa fa-clone" style="cursor:pointer"></i>
-                                                                    </a>
-                                                                </span>
-                                                            </td>
-                                                            <td  ng-if="reservationsCtrl.canAccessKeys">
-                                                                <a href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio</a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            <tr ng-repeat-end ng-if="doc.showLinks && doc.interactioEventId" class="success">
+                                            <tr ng-if="doc.showLinks && doc.interactioEventId" class="success">
                                                 
                                                 <td colspan="9">
-                                                    Interaction Event Id : 
-                                                    <a target="interactio" ng-href="https://cbd.interactio.com/access/event/{{doc.interactioEventId}}">
-                                                        {{doc.interactioEventId}} 
-                                                        <i class="fa fa-external-link"></i>
-                                                    </a>
-                                                    <table class="table table-stripped" ng-if="doc.interactioEvent">
-                                                        <thead>
-                                                            <th>Title <em style="font-weight: normal">{{doc.interactioEvent.title}}</em></th>
-                                                            <th>Code</th>
-                                                            <th>URL</th>
-                                                        </thead>
-                                                        <tr ng-repeat="link in doc.interactioEvent.preSharedLinks">
-                                                            <td>{{link.title}}</td>
-                                                            <td>{{link.code}}</td>                                                            
-                                                            <td>
-                                                                <a href="{{link.url}}" target="_blank">{{link.url}}</a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+                                                    <div class="panel panel-success">
+                                                        <div class="panel-heading">Interactio Links</div>
+                                                        <div class="panel-body">
+                                                            <div class="" style="border: 1px solid green;padding: 10px;">
+                                                                <strong> Interactio Event Id : 
+                                                                    <a target="interactio" ng-href="https://cbd.interactio.com/access/event/{{doc.interactioEventId}}">
+                                                                        {{doc.interactioEventId}} 
+                                                                        <i class="fa fa-external-link"></i>
+                                                                    </a>
+                                                                </strong>
+                                                            </div>
+                                                            <table class="table table-stripped" ng-if="doc.interactioEvent">
+                                                                <thead>
+                                                                    <th>Title <em style="font-weight: normal">{{doc.interactioEvent.title}}</em></th>
+                                                                    <th>Code</th>
+                                                                    <th>URL</th>
+                                                                </thead>
+                                                                <tr ng-repeat="link in doc.interactioEvent.preSharedLinks">
+                                                                    <td>{{link.title}}</td>
+                                                                    <td>{{link.code}}</td>                                                            
+                                                                    <td>
+                                                                        <a href="{{link.url}}" target="_blank">{{link.url}}</a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat-end  ng-if="doc.showLinks && doc.links && doc.links.length" class="danger">
+                                                
+                                                <td colspan="8">
+                                                    <div class="panel panel-warning">
+                                                        <div class="panel-heading">Youtube Links</div>
+                                                        <div class="panel-body">
+                                                            <table class="table table-stripped">
+                                                                <thead>
+                                                                    <th>Language</th>
+                                                                    <th>Name</th>
+                                                                    <th>Url</th>
+                                                                    <th ng-if="reservationsCtrl.canAccessKeys">Key</th>                                                            
+                                                                    <th ng-if="reservationsCtrl.canAccessKeys">Manage Url</th>
+                                                                </thead>
+                                                                <tr ng-repeat="link in doc.links">
+                                                                    <td>{{link.locale.toUpperCase()}}</td>
+                                                                    <td>{{link.name}}</td>
+                                                                    <td><a href="{{link.url}}" target="_blank">{{link.url}}</a></td>
+                                                                    <td ng-if="reservationsCtrl.canAccessKeys">
+                                                                        <span ng-if="doc.loadingKeys">
+                                                                            <i class="fa fa-spin fa-spinner"></i> loading keys...
+                                                                        </span>
+                                                                        <span ng-if="!doc.loadingKeys && link.stream">
+                                                                            <a  ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.streamName)" href="#">
+                                                                                {{link.stream.cdn.ingestionInfo.streamName}}
+                                                                                <i class="fa fa-clone" style="cursor:pointer"></i>
+                                                                            </a>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td  ng-if="reservationsCtrl.canAccessKeys">
+                                                                        <a href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio</a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
