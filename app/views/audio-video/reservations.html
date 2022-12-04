@@ -375,13 +375,14 @@
                                                         {{doc.interactioEventId}} 
                                                         <i class="fa fa-external-link"></i>
                                                     </a>
-                                                    <table class="table table-stripped" ng-if="doc.interactioShareLinks">
+                                                    {{doc.interactioEvent}
+                                                    <table class="table table-stripped" ng-if="doc.interactioEvent">
                                                         <thead>
-                                                            <th>Title</th>
+                                                            <th>Title <em style="font-weight: normal">{{doc.interactioEvent.title}}</em></th>
                                                             <th>Code</th>
                                                             <th>URL</th>
                                                         </thead>
-                                                        <tr ng-repeat="link in doc.interactioShareLinks">
+                                                        <tr ng-repeat="link in doc.interactioEvent.preSharedLinks">
                                                             <td>{{link.title}}</td>
                                                             <td>{{link.code}}</td>                                                            
                                                             <td>
