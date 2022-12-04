@@ -288,7 +288,9 @@ define(['app', 'lodash', 'moment', 'jquery',
                 interactioEventId: 1,
                 linksTemplate: 1,
                 links:1,
-                youtube:1
+                youtube:1,
+                open:1,
+                confirmed:1,
             };
 
 

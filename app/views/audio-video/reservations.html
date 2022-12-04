@@ -289,9 +289,12 @@
                                                 </td>
                                             </tr>
 
-                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected}">                                                
+                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected, 'danger':!doc.confirmed }">                                                
                                                 <td>
                                                     {{doc.start |moment:'format':'DD MMM YYYY'}}
+                                                    <span class="label label-warning"" ng-if="!doc.confirmed">
+                                                        Unconfirmed
+                                                    </span>                                                
                                                 </td>
                                                 <td>
                                                     {{doc.start|moment:'format':'HH:mm'}}
@@ -307,17 +310,6 @@
                                                 <td>
                                                     <span ng-if="doc.sideEvent.id">#{{doc.sideEvent.id}}</span>
                                                     {{doc.title}}
-                                                    <section class="visible-print-block">
-                                                        <span class="label label-success small"
-                                                            ng-if="doc.open">Open</span><span class="label label-danger"
-                                                            ng-if="!doc.open">Closed to Public</span>
-                                                        <span class="label label-info small"
-                                                            ng-if="doc.confirmed">Confirmed</span><span
-                                                            class="label label-default"
-                                                            ng-if="!doc.confirmed">Unconfirmed</span>
-                                                        <span class="label label-danger small"
-                                                            ng-if="doc.security">Security</span>
-                                                    </section>
                                                 </td>
                                                 <td>
                                                     {{doc.description |htmlToPlaintext}}
