@@ -330,7 +330,7 @@
                                                 </td>
                                                 
                                                 <td>
-                                                    <button ng-if="Object.keys(doc.youtube||{}).length || doc.interactioEventId" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
+                                                    <button ng-if="reservationsCtrl.canShowLinks(doc)" class="btn btn-primary btn-sm" ng-click="reservationsCtrl.showLinks(doc)">Show links</button>                                                    
                                                 </td>
                                             </tr>
                                             <tr ng-if="doc.showLinks && doc.interactioEventId" class="success">
