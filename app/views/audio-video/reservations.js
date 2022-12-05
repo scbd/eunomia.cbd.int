@@ -16,6 +16,7 @@ define(['app', 'lodash', 'moment', 'jquery',
         const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess'];    
         var _ctrl = this;
         var DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
+        var sinceLastReload = new moment();
 
         _ctrl.conference = conference;
 
@@ -78,6 +79,7 @@ define(['app', 'lodash', 'moment', 'jquery',
         _ctrl.isSignedIn = user.isAuthenticated;
         _ctrl.accountsUrl = accountsUrl;
         _ctrl.setAutoRefresh = setAutoRefresh;
+        _ctrl.canShowLinks = canShowLinks;
 
         init(true);
 
@@ -624,14 +626,20 @@ define(['app', 'lodash', 'moment', 'jquery',
         function setAutoRefresh(){
             if(_ctrl.autoRefresh)
                 refreshPage();
-            else
-                refreshPageTimeout();
         }
         function refreshPage(){
             $timeout(function(){
+                if(moment().diff(sinceLastReload, 'hours') > 1){
+                    window.location.reload();
+                    return;
+                }
                 getReservations();
                 setAutoRefresh();
             }, 5*60*1000)
+        }
+
+        function canShowLinks(doc){
+            return Object.keys(doc.youtube||{}).length || doc.interactioEventId
         }
     }];
 
