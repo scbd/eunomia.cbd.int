@@ -372,7 +372,8 @@
             <div class="panel-body">
                 <div class="col-xs-12">
                   <div class="form-group " style="margin-top:10px;" >
-                    <select name="event-map" id="event-map" class="form-control" ng-model="doc.interactioEventId" ng-change="interactioEventHasLinkTemplates(doc.interactioEventId)" ng-options="event.interactioEventId as event.title+' - ('+event.interactioEventId+')' for event in interactioEventsMap" >
+                    <select name="event-map" id="event-map" class="form-control" ng-model="doc.interactioEventId" ng-change="interactioEventHasLinkTemplates(doc.interactioEventId)" 
+                            ng-options="event.interactioEventId as getInteractioEventTitle(event) group by getInteractioEventGrouping(event) for event in interactioEventsMap" >
                       <option value=''></option>
                     </select>
                     <span class="material-input"></span>
