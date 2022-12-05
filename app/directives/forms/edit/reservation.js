@@ -37,39 +37,92 @@ define(['app', 'lodash',
                         //============================================================
                         //
                         //============================================================
-                        async function getInteractioEVentsMap(){
-                          const q = { 'conferenceId': { $oid: $scope.conference._id }};
+                        async function loadInteractioEventsMap(){
+                          const q = { $or: [
+                            { conferenceId: { $oid: $scope.conference._id } },
+                            { conferenceId: { $exists: false } },
+                          ]};
                           const s = { 'title': 1 };
-                          const { data: interactioEventsMap } = await $http.get('/api/v2022/interactio-events-map', { params: { q, s } })
+                          const { data } = await $http.get('/api/v2022/interactio-events-map', { cache:true, params: { q, s } })
+                          const interactioEventsMap = sortInteractioEvent(data);
 
-                          $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
+                          $scope.$apply(()=>{
+                            $scope.interactioEventsMap = interactioEventsMap
+                          });
                         };
 
-
                         //============================================================
                         //
                         //============================================================
-                        function addAutoInteractioEvent(interactioEventsMap){
-                          if(!hasDefaultInteractioEvent()) return interactioEventsMap
+                        function sortInteractioEvent(interactioEvents) {
 
-                          const { interactioEventId, linksTemplate }  = $scope.room
+                          const res               = $scope.doc;
+                          const roomId            = res?.location?.room;
+                          const reservationTypeId = res?.type;
+                          const sideEventId       = res?.sideEvent?.id;
+                          const interactioEventId = $scope.rooms.find(o=>o._id == roomId)?.interactioEventId;
+                          const eventIds          = Object.keys(res?.agenda?.meetings || {});
+                          const agendaItems       = (res?.agenda?.items || []).reduce((r,v)=>{
+                            r[v.meeting] = r[v.meeting] || [];
+                            r[v.meeting].push(v.item)
+                            return r;
+                          }, {});
 
+                          interactioEvents = _.sortBy(interactioEvents, (o) => {
+                            let score = 0;
 
-                          const interactioEvent = interactioEventsMap.find(({ interactioEventId:id }) => { return (interactioEventId === id)})
+                            if(o.reservationTypeId && o.reservationTypeId == reservationTypeId) score+=5;
+                            if(o.roomId            && o.roomId            == roomId)            score+=5;
+                            if(o.sideEventId       && o.sideEventId       == sideEventId)       score+=20;
+                            if(o.interactioEventId && o.interactioEventId == interactioEventId) score+=20;
+                            if(o.endTime           && new Date(o.endTime)  <  new Date())       score-=100
+                            if(o.eventIds) {
+                              o.eventIds.forEach(eventId=>{
+                                if(eventIds.includes(eventId)) score++;
+                              });
+                            }
+                            if(o.agendaItems) {
+                              const keys = Object.keys(o.agendaItems);
+                              keys.forEach(key=>{
+                                const resItems =   agendaItems[key] || [];
+                                const ievItems = o.agendaItems[key] || [];
+                                score += _.intersection(resItems, ievItems).length;
+                              });
+                            }
 
-                          const   auto = { ...interactioEvent, title: `AUTO - ${interactioEvent.title}`, interactioEventId, linkTemplates: [ linksTemplate ] }
+                            o.score = score;
 
-                          interactioEventsMap.unshift(auto)
+                            return `${1000-score}_${o.title}`
+                                   .replace(/\d+/g, t=> `${t}`.padStart(6, '0'))
+                                   .replace(/#/g,   t=> 'z')
+                                   .toLocaleLowerCase()
+                          });
 
-                          return interactioEventsMap
+                          return interactioEvents;
                         }
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function hasDefaultInteractioEvent(){
-                          return $scope.room && $scope.room.interactioEventId
-                        }
+                        $scope.getInteractioEventGrouping = function(event){
+
+                          const bestScore = $scope.interactioEventsMap[0].score;
+
+                          if(event.score && event.score == bestScore) return 'Best match(es)';
+                          if(event.score > 0)                         return 'Good match(es)';
+
+                          return 'Other(s)';
+                        };
+
+                        $scope.getInteractioEventTitle = function(event){
+
+                          const { title, interactioEventId, score } = event;
+                          const expired = score<0;
+                          
+                          let newTitle = `${expired ? '* EXPIRED * ' : ''} ${title} - (${interactioEventId})`
+
+                          if(score>0) newTitle += `(score: ${score})`;
+
+                          return newTitle;
+                        };
+
 
                         $scope.hasInteractioEventLinkTemplates = hasInteractioEventLinkTemplates
                         $scope.getLinkTemplates                = getLinkTemplates
@@ -266,8 +319,11 @@ define(['app', 'lodash',
                               }
                           });
 
-                          getInteractioEVentsMap()
                         } //init
+
+                        $scope.$watch('tabs.interactio.active', function(visible){
+                          if(visible) loadInteractioEventsMap()
+                        })
 
                         //============================================================
                         //
