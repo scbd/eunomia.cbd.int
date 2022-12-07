@@ -17,10 +17,9 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                   _.each($scope.conference.meetings,function(m){
                         if(!m.agenda)
                           m.agenda={};
-
                         _.each(m.agenda.items,function(i){
                               if(i.item>-1)
-                                i.display=i.item+' '+(i.shortTitle || i.title);
+                                i.display=(i.code||i.item)+' '+(i.shortTitle || i.title);
                         });
 
                         $ctrl.loadDocuments(m).then(function(d){
@@ -307,6 +306,15 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                      (d.symbol||"").replace(/\b(\d)\b/g, '0$1')
                                    .replace(/(\/REV)/gi, '0$1')
                                    .replace(/(\/ADD)/gi, '1$1');
+          }
+
+          $scope.agendaItemText = function (item){
+
+            var meeting = _.find($scope.conference.meetings,{EVT_CD:item.meeting});
+            var agItem  = _.find(meeting.agenda.items,{item:Number(item.item)});
+            
+            return agItem?.code||agItem?.item || item;
+
           }
         } ]//controller
       }; //return
