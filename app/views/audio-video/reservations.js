@@ -26,7 +26,7 @@ define(['app', 'lodash', 'moment', 'jquery',
             'title': 1
         };
         _ctrl.venueId = conference.venueId;
-        _ctrl.itemsPerPage = 50;
+        _ctrl.itemsPerPage = 500;
         _ctrl.currentPage = 0;
         _ctrl.pages = [];
         _ctrl.searchRoomChange = searchRoomChange;
@@ -373,13 +373,13 @@ define(['app', 'lodash', 'moment', 'jquery',
                 q['$and'] = [{
                     'start': {
                         '$gte': {
-                            '$date': _ctrl.start
+                            '$date': moment(_ctrl.start).toDate()
                         }
                     }
                 }, {
                     'end': {
                         '$lt': {
-                            '$date': _ctrl.end
+                            '$date': moment(_ctrl.end).toDate()
                         }
                     }
                 }];
