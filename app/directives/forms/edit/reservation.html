@@ -62,7 +62,7 @@
                       <label class="control-label" for="parent">Type</label>
 
                       <select id="parent" class="form-control" ng-model="doc.type" ng-change="loadSubTypes(doc.type)" ng-disabled="isSideEvent()">
-                          <option ng-repeat="parent in options.types track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+                          <option ng-repeat="parent in (options.types | orderBy:'title') track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
                       </select>
                       <span class="material-input"></span>
                       <p class="help-block" ng-show="valid">error</p>
@@ -84,7 +84,7 @@
                       <label class="control-label" for="roomList">Room</label>
 
                       <select id="roomList" class="form-control" ng-model="doc.location.room">
-                          <option ng-repeat="room in rooms track by $index" value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.title}}</option>
+                          <option ng-repeat="room in (rooms | orderBy:'localName') track by room._id " value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.localName}} | {{room.title}}</option>
                       </select>
                       <span class="material-input"></span>
                       <p class="help-block" ng-show="valid">error</p>
