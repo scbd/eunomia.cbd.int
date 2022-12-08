@@ -283,7 +283,7 @@
                                             </tr>
 
                                             <tr ng-repeat-start="doc in reservationsCtrl.docs  track by $index" class="warning"
-                                                ng-if="$first || reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index-1].start)">
+                                                ng-if="$first || reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index-1].start) && !$last">
                                                 <td colspan="9">
                                                     <div hl-sticky="content-heading" offset-top="60"
                                                         collection="content" collection-parent="head"

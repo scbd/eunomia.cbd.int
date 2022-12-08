@@ -305,7 +305,7 @@ define(['app', 'lodash', 'moment', 'jquery',
 
 
 
-            return mongoStorage.loadDocs('reservations', q, pageIndex, _ctrl.itemsPerPage, true, _ctrl.sort, f).then(
+            return mongoStorage.loadDocs('reservations', q, pageIndex == 0 ? 0 : pageIndex*_ctrl.itemsPerPage, _ctrl.itemsPerPage, true, _ctrl.sort, f).then(
                 function ({
                     count,
                     data
