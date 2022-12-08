@@ -119,14 +119,14 @@ define(['app', 'lodash', 'moment', 'jquery',
             else if (moment(start) > moment())
                 _ctrl.startFilter = moment(start).format('YYYY-MM-DD')+' 00:00';
             else 
-                _ctrl.startFilter = moment().format('YYYY-MM-DD HH:mm');
+                _ctrl.startFilter = moment().format('YYYY-MM-DD')+' 00:00';
                 
             if(urlEnd)
-                _ctrl.endFilter = moment(urlEnd).format('YYYY-MM-DD')+' 23:59' 
+                _ctrl.endFilter = moment(urlEnd).format('YYYY-MM-DD')//+' 23:59' 
             else if (moment(_ctrl.startFilter) > moment())
-                _ctrl.endFilter = moment(_ctrl.startFilter).add(1, 'days').format('YYYY-MM-DD')+' 23:59';
+                _ctrl.endFilter = moment(_ctrl.startFilter).add(1, 'days').format('YYYY-MM-DD')//+' 23:59';
             else 
-                _ctrl.endFilter = moment().add(1, 'days').format('YYYY-MM-DD')+' 23:59';
+                _ctrl.endFilter = moment().add(1, 'days').format('YYYY-MM-DD')//+' 23:59';
                 
             
             if (_ctrl.startFilter)
@@ -379,7 +379,7 @@ define(['app', 'lodash', 'moment', 'jquery',
                 }, {
                     'end': {
                         '$lt': {
-                            '$date': moment(_ctrl.end).toDate()
+                            '$date': moment(moment(_ctrl.end).format('YYYY-MM-DD')+' 23:59').toDate()
                         }
                     }
                 }];
