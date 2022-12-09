@@ -6,6 +6,7 @@
             border: 1px solid #eee;
             background-color: #eee;
         }
+
     </style>
     <div class="" style="padding:20px">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ui-select@0.19.6/dist/select.min.css">    
@@ -280,13 +281,12 @@
                                                 <td>Links</td>
                                             </tr>
 
-                                            <tr ng-repeat-start="doc in reservationsCtrl.docs  track by $index" class="warning"
+                                            <tr ng-repeat-start="doc in reservationsCtrl.docs  track by $index" class="info"
                                                 ng-if="$first || reservationsCtrl.hasDayChange(doc.start,reservationsCtrl.docs[$index-1].start) && !$last">
                                                 <td colspan="9">
                                                     <div hl-sticky="content-heading" offset-top="60"
-                                                        collection="content" collection-parent="head"
-                                                        sticky-class="warning">
-                                                        <div style="background-color:#fcf8e3;">
+                                                        collection="content" collection-parent="head">
+                                                        <div >
                                                             <h4>{{reservationsCtrl.docs[$index+1].start |moment:'format':'MMMM Do YYYY (dddd)'}}
                                                             </h4>
                                                         </div>
@@ -294,7 +294,7 @@
                                                 </td>
                                             </tr>
 
-                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected, 'danger':!doc.confirmed }">                                                
+                                            <tr id="{{doc._id}}" ng-class="{'active': item.$selected, 'danger':!doc.confirmed, 'warning':!reservationsCtrl.isToday(doc.start) }">                                                
                                                 <td>
                                                     {{doc.start |moment:'format':'DD MMM YYYY'}}
                                                     <span class="label label-warning"" ng-if="!doc.confirmed">
@@ -314,7 +314,12 @@
                                                 </td>
                                                 <td>
                                                     <span ng-if="doc.sideEvent.id">#{{doc.sideEvent.id}}</span>
-                                                    {{doc.title}}
+                                                    {{doc.title}}<br>
+                                                    <small class="" ng-class="{ 
+                                                        'label' :        reservationsCtrl.minutesSince(doc.meta.modifiedOn) < 12.0 * 60,
+                                                        'label-danger' : reservationsCtrl.minutesSince(doc.meta.modifiedOn) < 1.5  * 60
+                                                    }"
+                                                    >{{doc.meta.modifiedOn|moment:'fromNow'}}</small>
                                                 </td>
                                                 <td>
                                                     {{doc.description |htmlToPlaintext}}
@@ -344,6 +349,11 @@
                                                                         <i class="fa fa-external-link"></i>
                                                                     </a>
                                                                 </strong>
+
+                                                                <a target="interactioPanel" ng-href="https://cbd.interactio.com/panel/event/{{doc.interactioEventId}}">
+                                                                    Panel
+                                                                    <i class="fa fa-external-link"></i>
+                                                                </a>
                                                             </div>
                                                             <table class="table table-stripped" ng-if="doc.interactioEvent">
                                                                 <thead>
