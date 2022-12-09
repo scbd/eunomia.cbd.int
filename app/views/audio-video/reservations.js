@@ -119,7 +119,7 @@ define(['app', 'lodash', 'moment', 'jquery',
             else if (moment(start) > moment())
                 _ctrl.startFilter = moment(start).format('YYYY-MM-DD')+' 00:00';
             else 
-                _ctrl.startFilter = moment().format('YYYY-MM-DD')+' 00:00';
+                _ctrl.startFilter = moment().format('YYYY-MM-DD HH:mm');
                 
             if(urlEnd)
                 _ctrl.endFilter = moment(urlEnd).format('YYYY-MM-DD')//+' 23:59' 
