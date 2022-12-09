@@ -80,6 +80,12 @@ define(['app', 'lodash', 'moment', 'jquery',
         _ctrl.accountsUrl = accountsUrl;
         _ctrl.setAutoRefresh = setAutoRefresh;
         _ctrl.canShowLinks = canShowLinks;
+        _ctrl.minutesSince = function(date) {
+            return ((new Date() - moment(date).toDate())/1000/60); 
+        }
+        _ctrl.isToday = function(date) {
+            return moment().format('yyy-MM-dd') == moment(date).format('yyy-MM-dd');
+        }
 
         init(true);
 
