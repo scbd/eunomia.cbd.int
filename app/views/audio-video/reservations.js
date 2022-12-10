@@ -378,14 +378,14 @@ define(['app', 'lodash', 'moment', 'jquery',
             if (_ctrl.start && _ctrl.end)
                 q['$and'] = [{
                     'start': {
-                        '$gte': {
-                            '$date': moment(_ctrl.start).toDate()
+                        '$lt': {
+                            '$date': moment(_ctrl.end).add(1, 'days').toDate()
                         }
                     }
                 }, {
                     'end': {
-                        '$lt': {
-                            '$date': moment(moment(_ctrl.end).format('YYYY-MM-DD')+' 23:59').toDate()
+                        '$gt': {
+                            '$date': moment(_ctrl.start).toDate()
                         }
                     }
                 }];
