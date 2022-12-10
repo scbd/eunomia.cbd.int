@@ -16,16 +16,11 @@ define(['app', 'text!./grid-reservation.html','lodash', 'services/when-element']
                 link: function($scope, $element) {
                   
                   $scope.color = '#dddddd'
+                  $scope.interactioEvent = ($scope.interactioEventsMap || []).find((e) => e.interactioEventId === $scope.doc.interactioEventId);
+                  
                   $element.ready(init)
 
-                  function getInteractioEventsTitle(interactioEventId){
-                 
-                    const event = ($scope.interactioEventsMap || []).find((e) => e.interactioEventId === interactioEventId)
 
-                    return event? `${event.title} (${interactioEventId})` : interactioEventId
-                  }
-
-                  $scope.getInteractioEventsTitle = getInteractioEventsTitle
 
                   function hasAgenda(doc){
 
