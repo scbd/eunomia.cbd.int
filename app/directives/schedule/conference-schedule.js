@@ -117,7 +117,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             }
                           };
 
-                          var f = {open:1,confirmed:1,title:1,start:1,end:1,location:1,linksTemplate:1,interactioEventId:1,'sideEvent.title':1,'sideEvent.hostOrgs':1,'sideEvent.id':1,type:1,video:1,agenda:1,seriesId:1};
+                          var f = {open:1,confirmed:1,title:1,start:1,end:1,location:1,linksTemplate:1,interactioEventId:1,'sideEvent.title':1,'sideEvent.hostOrgs':1,'sideEvent.id':1,type:1,video:1,videoUrl:1,agenda:1,seriesId:1};
 
                                 return mongoStorage.loadDocs('reservations',q, 0,1000000,false,{},f).then(
                                     function(responce) {
