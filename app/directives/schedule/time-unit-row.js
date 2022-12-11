@@ -370,6 +370,8 @@ define(['app',
                         //============================================================
                         $scope.resDialog = function(doc, start, tab) {
 
+                            if(doc) doc = _.cloneDeep(doc); //Prevent side effect
+
                               if(!doc || !doc._id)
                                 $scope.editRes = {};
                               else
