@@ -380,12 +380,18 @@
                     <p class="help-block" ng-show="valid">error</p>
                   </div>
 
-                  <div ng-if="hasInteractioEventLinkTemplates(doc.interactioEventId)" class="form-group " style="margin-top:10px;" >
-                    <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="template for template in getLinkTemplates(doc.interactioEventId)" >
+                  <div ng-if="doc.interactioEventId" class="form-group " style="margin-top:10px;" >
+                    <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="t.value as t.title for t in linksTemplates" >
                     </select>
                     <span class="material-input"></span>
                     <p class="help-block" ng-show="valid">error</p>
                   </div>
+
+                  <div ng-if="interactioDoubleBooking" class="alert alert-danger " >
+                    <b>This Intercatio event is already booked by reservation</b>: <br>
+                    {{interactioDoubleBooking.start|moment:'format':'YYYY-MM-DD HH:mm'}} - {{interactioDoubleBooking.end|moment:'format':'HH:mm'}} - {{interactioDoubleBooking.title}}
+                  </div>
+                  <div ng-if="doc.interactioEventId && !doc.linksTemplate" class="alert alert-info " >This Intercatio event will not be shown on the calendar</div>
                 </div>
             </div>
         </div>
