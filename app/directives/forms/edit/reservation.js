@@ -33,6 +33,7 @@ define(['app', 'lodash',
                         $scope.validLink       = true
                         $scope.copyToClipboard = copyToClipboard
                         $scope.youtube         = { live : false, event : {}, languages : {} }
+                        $scope.linksTemplates = [];
 
                         //============================================================
                         //
@@ -48,6 +49,7 @@ define(['app', 'lodash',
 
                           $scope.$apply(()=>{
                             $scope.interactioEventsMap = interactioEventsMap
+                            updateLinksTemplates();
                           });
                         };
 
@@ -123,35 +125,50 @@ define(['app', 'lodash',
                           return newTitle;
                         };
 
+                        $scope.$watch('doc.interactioEventId', updateLinksTemplates);
 
-                        $scope.hasInteractioEventLinkTemplates = hasInteractioEventLinkTemplates
-                        $scope.getLinkTemplates                = getLinkTemplates
+                        function updateLinksTemplates(){
+                          const id = $scope.doc.interactioEventId;
+                          
+                          const linksTemplates =  (($scope.interactioEventsMap||[]).find(({ interactioEventId }) => (interactioEventId === id))||{}).linksTemplates || []
 
-                        function getLinkTemplates(id){
-                          const linksTemplates = hasInteractioEventLinkTemplates(id)
+                          $scope.linksTemplates =  [
+                            { value: undefined, title: "please select..."},
+                            { value: null,      title: "NO CONNECT BUTTON or PRIVATE"},
+                            ...linksTemplates.map(value => ({ value, title: _.startCase(value)}))
+                          ];
 
-                          if(!linksTemplates) return false
+                          if($scope.doc.linksTemplate===undefined && linksTemplates.length==1)
+                            $scope.doc.linksTemplate = linksTemplates[0]
 
-                          if(linksTemplates && linksTemplates.length > 1) return linksTemplates
+                          if($scope.doc.linksTemplate && !linksTemplates.includes($scope.doc.linksTemplate)) {
+                            $scope.doc.linksTemplate = linksTemplates.length==1 ? linksTemplates[0] : undefined;
+                          }
 
-                          $scope.doc.linksTemplate = linksTemplates[0]
-
-                          return linksTemplates
+                          checkDoubleIntercatioBooking();
                         }
 
-                        //============================================================
-                        //
-                        //============================================================  
-                        function hasInteractioEventLinkTemplates(id){
-                          if(!id || !$scope.interactioEventsMap) return false
+                        function checkDoubleIntercatioBooking(){
 
-                          const found = $scope.interactioEventsMap.find(({ interactioEventId }) => (interactioEventId === id))
+                          $scope.interactioDoubleBooking = null;
+                          const { interactioEventId, start, end, _id } = $scope.doc;
 
-                          if(found && found.linksTemplates && found.linksTemplates.length)
-                          return found.linksTemplates
+                          if(!interactioEventId) return;
 
-                          return false
+                          const q = {
+                            interactioEventId,
+                            "end" :   { $gt: { $date : moment(start).toDate() }},
+                            "start" : { $lt: { $date : moment(end).toDate() }}
+                          };
+
+                          if(_id) q._id = {$ne : { $oid: _id }}
+
+                          $http.get('/api/v2016/reservations', { params : { q } }).then(({ data })=>{
+                            $scope.interactioDoubleBooking = data[0];
+                          })
+
                         }
+                        
 
                         //============================================================
                         //
