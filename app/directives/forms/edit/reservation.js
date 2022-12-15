@@ -157,6 +157,7 @@ define(['app', 'lodash',
 
                           const q = {
                             interactioEventId,
+                            'meta.status'  : { $ne: 'deleted' },
                             "end" :   { $gt: { $date : moment(start).toDate() }},
                             "start" : { $lt: { $date : moment(end).toDate() }}
                           };
