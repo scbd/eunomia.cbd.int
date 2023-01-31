@@ -32,73 +32,144 @@ define(['app', 'lodash',
                         $scope.addLinkStore    = { name: '', url: '', locale: 'en' }
                         $scope.validLink       = true
                         $scope.copyToClipboard = copyToClipboard
-
+                        $scope.youtube         = { live : false, event : {}, languages : {} }
+                        $scope.linksTemplates = [];
 
                         //============================================================
                         //
                         //============================================================
-                        async function getInteractioEVentsMap(){
-                          const q = { 'conferenceId': { $oid: $scope.conference._id }};
+                        async function loadInteractioEventsMap(){
+                          const q = { $or: [
+                            { conferenceId: { $oid: $scope.conference._id } },
+                            { conferenceId: { $exists: false } },
+                          ]};
                           const s = { 'title': 1 };
-                          const { data: interactioEventsMap } = await $http.get('/api/v2022/interactio-events-map', { params: { q, s } })
+                          const { data } = await $http.get('/api/v2022/interactio-events-map', { cache:true, params: { q, s } })
+                          const interactioEventsMap = sortInteractioEvent(data);
 
-                          $scope.interactioEventsMap = addAutoInteractioEvent(interactioEventsMap)
+                          $scope.$apply(()=>{
+                            $scope.interactioEventsMap = interactioEventsMap
+                            updateLinksTemplates();
+                          });
                         };
 
-
                         //============================================================
                         //
                         //============================================================
-                        function addAutoInteractioEvent(interactioEventsMap){
-                          if(!hasDefaultInteractioEvent()) return interactioEventsMap
+                        function sortInteractioEvent(interactioEvents) {
 
-                          const { interactioEventId, linksTemplate }  = $scope.room
+                          const res               = $scope.doc;
+                          const roomId            = res?.location?.room;
+                          const reservationTypeId = res?.type;
+                          const sideEventId       = res?.sideEvent?.id;
+                          const interactioEventId = $scope.rooms.find(o=>o._id == roomId)?.interactioEventId;
+                          const eventIds          = Object.keys(res?.agenda?.meetings || {});
+                          const agendaItems       = (res?.agenda?.items || []).reduce((r,v)=>{
+                            r[v.meeting] = r[v.meeting] || [];
+                            r[v.meeting].push(v.item)
+                            return r;
+                          }, {});
 
+                          interactioEvents = _.sortBy(interactioEvents, (o) => {
+                            let score = 0;
 
-                          const interactioEvent = interactioEventsMap.find(({ interactioEventId:id }) => { return (interactioEventId === id)})
+                            if(o.reservationTypeId && o.reservationTypeId == reservationTypeId) score+=5;
+                            if(o.roomId            && o.roomId            == roomId)            score+=5;
+                            if(o.sideEventId       && o.sideEventId       == sideEventId)       score+=20;
+                            if(o.interactioEventId && o.interactioEventId == interactioEventId) score+=20;
+                            if(o.endTime           && new Date(o.endTime)  <  new Date())       score-=100
+                            if(o.eventIds) {
+                              o.eventIds.forEach(eventId=>{
+                                if(eventIds.includes(eventId)) score++;
+                              });
+                            }
+                            if(o.agendaItems) {
+                              const keys = Object.keys(o.agendaItems);
+                              keys.forEach(key=>{
+                                const resItems =   agendaItems[key] || [];
+                                const ievItems = o.agendaItems[key] || [];
+                                score += _.intersection(resItems, ievItems).length;
+                              });
+                            }
 
-                          const   auto = { ...interactioEvent, title: `AUTO - ${interactioEvent.title}`, interactioEventId, linkTemplates: [ linksTemplate ] }
+                            o.score = score;
 
-                          interactioEventsMap.unshift(auto)
+                            return `${1000-score}_${o.title}`
+                                   .replace(/\d+/g, t=> `${t}`.padStart(6, '0'))
+                                   .replace(/#/g,   t=> 'z')
+                                   .toLocaleLowerCase()
+                          });
 
-                          return interactioEventsMap
+                          return interactioEvents;
                         }
 
-                        //============================================================
-                        //
-                        //============================================================
-                        function hasDefaultInteractioEvent(){
-                          return $scope.room && $scope.room.interactioEventId
+                        $scope.getInteractioEventGrouping = function(event){
+
+                          const bestScore = $scope.interactioEventsMap[0].score;
+
+                          if(event.score && event.score == bestScore) return 'Best match(es)';
+                          if(event.score > 0)                         return 'Good match(es)';
+
+                          return 'Other(s)';
+                        };
+
+                        $scope.getInteractioEventTitle = function(event){
+
+                          const { title, interactioEventId, score } = event;
+                          const expired = score<0;
+                          
+                          let newTitle = `${expired ? '* EXPIRED * ' : ''} ${title} - (${interactioEventId})`
+
+                          if(score>0) newTitle += `(score: ${score})`;
+
+                          return newTitle;
+                        };
+
+                        $scope.$watch('doc.interactioEventId', updateLinksTemplates);
+
+                        function updateLinksTemplates(){
+                          const id = $scope.doc.interactioEventId;
+                          
+                          const linksTemplates =  (($scope.interactioEventsMap||[]).find(({ interactioEventId }) => (interactioEventId === id))||{}).linksTemplates || []
+
+                          $scope.linksTemplates =  [
+                            { value: undefined, title: "please select..."},
+                            { value: null,      title: "NO CONNECT BUTTON or PRIVATE"},
+                            ...linksTemplates.map(value => ({ value, title: _.startCase(value)}))
+                          ];
+
+                          if($scope.doc.linksTemplate===undefined && linksTemplates.length==1)
+                            $scope.doc.linksTemplate = linksTemplates[0]
+
+                          if($scope.doc.linksTemplate && !linksTemplates.includes($scope.doc.linksTemplate)) {
+                            $scope.doc.linksTemplate = linksTemplates.length==1 ? linksTemplates[0] : undefined;
+                          }
+
+                          checkDoubleIntercatioBooking();
                         }
 
-                        $scope.hasInteractioEventLinkTemplates = hasInteractioEventLinkTemplates
-                        $scope.getLinkTemplates                = getLinkTemplates
+                        function checkDoubleIntercatioBooking(){
 
-                        function getLinkTemplates(id){
-                          const linksTemplates = hasInteractioEventLinkTemplates(id)
+                          $scope.interactioDoubleBooking = null;
+                          const { interactioEventId, start, end, _id } = $scope.doc;
 
-                          if(!linksTemplates) return false
+                          if(!interactioEventId) return;
 
-                          if(linksTemplates && linksTemplates.length > 1) return linksTemplates
+                          const q = {
+                            interactioEventId,
+                            'meta.status'  : { $ne: 'deleted' },
+                            "end" :   { $gt: { $date : moment(start).toDate() }},
+                            "start" : { $lt: { $date : moment(end).toDate() }}
+                          };
 
-                          $scope.doc.linksTemplate = linksTemplates[0]
+                          if(_id) q._id = {$ne : { $oid: _id }}
 
-                          return linksTemplates
+                          $http.get('/api/v2016/reservations', { params : { q } }).then(({ data })=>{
+                            $scope.interactioDoubleBooking = data[0];
+                          })
+
                         }
-
-                        //============================================================
-                        //
-                        //============================================================  
-                        function hasInteractioEventLinkTemplates(id){
-                          if(!id || !$scope.interactioEventsMap) return false
-
-                          const found = $scope.interactioEventsMap.find(({ interactioEventId }) => (interactioEventId === id))
-
-                          if(found && found.linksTemplates && found.linksTemplates.length)
-                          return found.linksTemplates
-
-                          return false
-                        }
+                        
 
                         //============================================================
                         //
@@ -131,7 +202,10 @@ define(['app', 'lodash',
                         //============================================================
                         function init() {
 
-                            $scope.options = { locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'] };
+                            $scope.options = { 
+                              locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'],
+                              youtubeEvents : $scope.conference?.conference?.youtubeEvents
+                            };
                             $scope.tabs    = {
                                                 'details'           : { 'active': false },
                                                 'recurrence'        : { 'active': false },
@@ -163,6 +237,11 @@ define(['app', 'lodash',
 
                                           }
                                       });
+                                  }
+                                  if(!_.isEmpty($scope.doc.youtube)){
+                                    $scope.youtube = $scope.doc.youtube;
+                                    if($scope.youtube?.event)
+                                      $scope.youtube.selectedEvent = $scope.youtube?.event.event
                                   }
                               });
 
@@ -258,8 +337,11 @@ define(['app', 'lodash',
                               }
                           });
 
-                          getInteractioEVentsMap()
                         } //init
+
+                        $scope.$watch('tabs.interactio.active', function(visible){
+                          if(visible) loadInteractioEventsMap()
+                        })
 
                         //============================================================
                         //
@@ -739,6 +821,21 @@ define(['app', 'lodash',
 
                             if(!objClone.start || !objClone.end ) throw "Error missing start or end time or location.";
 
+                            if($scope.youtube?.live){
+
+                              objClone.youtube = objClone.youtube || {};
+                              objClone.youtube.live = $scope.youtube?.live;
+                              objClone.youtube.languages = $scope.youtube?.languages;
+
+                              if($scope.youtube?.selectedEvent)
+                                objClone.youtube.event = $scope.options.youtubeEvents.find(e=>e.event == $scope.youtube.selectedEvent);
+                              else 
+                                objClone.youtube.event = undefined;
+                            }
+                            else{
+                              objClone.youtube = {};
+                            }
+
                             return mongoStorage.save('reservations', objClone).then(function(res) {
                                 $timeout(function() {
                                     if (res.data.id) obj._id = res.data.id;
@@ -779,6 +876,12 @@ define(['app', 'lodash',
                           } else {
                             navigator.clipboard.writeText(text);
                           }
+                        }
+
+                        $scope.onYoutubeLiveChange = function(youtubeLive){
+                        
+                            $scope.doc.youtube = undefined;
+                            $scope.youtube.selectedEvent = undefined;
                         }
 
                         $element.ready(init)

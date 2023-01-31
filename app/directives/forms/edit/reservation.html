@@ -62,7 +62,7 @@
                       <label class="control-label" for="parent">Type</label>
 
                       <select id="parent" class="form-control" ng-model="doc.type" ng-change="loadSubTypes(doc.type)" ng-disabled="isSideEvent()">
-                          <option ng-repeat="parent in options.types track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
+                          <option ng-repeat="parent in (options.types | orderBy:'title') track by $index" ng-style="{'background-color':parent.color}" value="{{parent._id}}" ng-if="parent._id" ng-selected="parent.selected">{{parent.title}}</option>
                       </select>
                       <span class="material-input"></span>
                       <p class="help-block" ng-show="valid">error</p>
@@ -84,7 +84,7 @@
                       <label class="control-label" for="roomList">Room</label>
 
                       <select id="roomList" class="form-control" ng-model="doc.location.room">
-                          <option ng-repeat="room in rooms track by $index" value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.title}}</option>
+                          <option ng-repeat="room in (rooms | orderBy:'localName') track by room._id " value="{{room._id}}" ng-if="room._id" ng-selected="room.selected">{{room.localName}} | {{room.title}}</option>
                       </select>
                       <span class="material-input"></span>
                       <p class="help-block" ng-show="valid">error</p>
@@ -180,6 +180,44 @@
                             <input class="form-control" id="videoUrl" type="url" ng-model="doc.videoUrl" placeholder="{{room.videoUrl || 'Please type the video url here' }}">
                             <p class="help-block" ng-show="valid">error</p>
                         </div>
+                  </div>
+
+                  <div class="col-xs-12" > 
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <div class="togglebutton">
+                          <label>
+                              <input type="checkbox" ng-change="onYoutubeLiveChange(youtube.live)" ng-model="youtube.live" ng-false-value="false" ng-true-value="true"><strong>Youtube Live</strong>
+                          </label>
+                        </div>
+                      </div>      
+                      <div class="panel-body" ng-show="youtube.live">
+
+                          <div><strong>Youtube live event </strong></div>
+                          <div class="col-xs-12" >
+                            <div class="form-group " style="margin-left:10px;margin-top:15px;" >
+                              <select id="youtubeEvent" class="form-control" ng-model="youtube.selectedEvent"  >
+                                <option value="">-</option>
+                                <option ng-repeat="event in options.youtubeEvents track by $index"  ng-value="event.event"  >{{event.event}}</option>
+                              </select>
+                              <span class="material-input"></span>
+                            </div>
+                          </div>
+                          <div>
+                            <strong>Youtube live languages </strong> 
+                            <span ng-if="options.youtubeEvents.length && !youtube.selectedEvent" style="color: red;">(will be enable after youtube event is selected)</span>
+                          </div>
+                          <div class="col-xs-4" ng-repeat="locale in options.locales track by $index" ng-show="options.youtubeEvents.length && youtube.selectedEvent">
+                            <div class="form-group" style="margin-left:10px;margin-top:15px;">
+                                <div class="togglebutton">
+                                    <label>
+                                        <input type="checkbox" ng-model="youtube.languages[locale]" ng-false-value="false" ng-true-value="true"><span>{{locale.toUpperCase()}}</span>
+                                    </label>
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="col-xs-12"> <hr/> </div>
@@ -334,19 +372,26 @@
             <div class="panel-body">
                 <div class="col-xs-12">
                   <div class="form-group " style="margin-top:10px;" >
-                    <select name="event-map" id="event-map" class="form-control" ng-model="doc.interactioEventId" ng-change="interactioEventHasLinkTemplates(doc.interactioEventId)" ng-options="event.interactioEventId as event.title+' - ('+event.interactioEventId+')' for event in interactioEventsMap" >
+                    <select name="event-map" id="event-map" class="form-control" ng-model="doc.interactioEventId" ng-change="interactioEventHasLinkTemplates(doc.interactioEventId)" 
+                            ng-options="event.interactioEventId as getInteractioEventTitle(event) group by getInteractioEventGrouping(event) for event in interactioEventsMap" >
                       <option value=''></option>
                     </select>
                     <span class="material-input"></span>
                     <p class="help-block" ng-show="valid">error</p>
                   </div>
 
-                  <div ng-if="hasInteractioEventLinkTemplates(doc.interactioEventId)" class="form-group " style="margin-top:10px;" >
-                    <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="template for template in getLinkTemplates(doc.interactioEventId)" >
+                  <div ng-if="doc.interactioEventId" class="form-group " style="margin-top:10px;" >
+                    <select name="links-template" id="links-template" class="form-control" ng-model="doc.linksTemplate" ng-options="t.value as t.title for t in linksTemplates" >
                     </select>
                     <span class="material-input"></span>
                     <p class="help-block" ng-show="valid">error</p>
                   </div>
+
+                  <div ng-if="interactioDoubleBooking" class="alert alert-danger " >
+                    <b>This Intercatio event is already booked by reservation</b>: <br>
+                    {{interactioDoubleBooking.start|moment:'format':'YYYY-MM-DD HH:mm'}} - {{interactioDoubleBooking.end|moment:'format':'HH:mm'}} - {{interactioDoubleBooking.title}}
+                  </div>
+                  <div ng-if="doc.interactioEventId && !doc.linksTemplate" class="alert alert-info " >This Intercatio event will not be shown on the calendar</div>
                 </div>
             </div>
         </div>

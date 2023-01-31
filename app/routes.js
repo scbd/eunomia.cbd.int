@@ -7,7 +7,10 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
 
         $routeProvider.
             when('/',                                { redirectTo: '/schedule/xxx' }).
+            
             when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'reservations'}).
+            when('/reservations/av',                 { templateUrl: 'views/audio-video/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : resolveUser() }, menu:'av'}).
+
             when('/side-events',                     { templateUrl: 'views/side-events.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'side-events'}).
 
             when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'side-events-schedule'}).
@@ -48,7 +51,7 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
         return ['$location', '$window', 'authentication', 'accountsUrl', function ($location, $window, authentication, accountsUrl) {
 
             return authentication.getUser().then(function (user) {
-
+                
                 if (!user.isAuthenticated) {
 
                     const returnUrl   = $window.encodeURIComponent($window.location.href);
@@ -63,6 +66,15 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
 
                 return user;
             });
+        }];
+    }
+
+    function resolveUser() {
+
+        return ['authentication', function (authentication) {
+
+            return authentication.getUser();
+
         }];
     }
 });
