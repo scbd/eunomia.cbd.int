@@ -381,7 +381,7 @@ define(['app', 'lodash'], function(app, _) {
         //============================================================
         //
         //============================================================
-        function loadConferences(force) {
+        function loadConferences(force, institution = 'CBD') {
             var allPromises = [];
             var numPromises= 1;
             var modified = true;
@@ -393,12 +393,12 @@ define(['app', 'lodash'], function(app, _) {
                     if (modified) {
                         params = {
                             q: {
-
+                                  institution,
                                   timezone: { $exists: true },
                                   venueId:  { $exists: true } // TMP for compatibility with coference collection;
                             },
                              s : { StartDate : -1 },
-                             f : {Title:1,MajorEventIDs:1,StartDate:1,EndDate:1,timezone:1,schedule:1,venueId:1,seTiers:1,"conference.streamId":1, code:1, 'conference.youtubeEvents':1}
+                             f : {institution:1, Title:1,MajorEventIDs:1,StartDate:1,EndDate:1,timezone:1,schedule:1,venueId:1,seTiers:1,"conference.streamId":1, code:1, 'conference.youtubeEvents':1}
                           };
                         numPromises++;
                         allPromises[1]= $http.get('/api/v2016/conferences', {
@@ -536,8 +536,22 @@ define(['app', 'lodash'], function(app, _) {
             return isModifiedInProgress[schema];
         }
 
+        async function getInstitutions(){
+            params = {
+                q: {
+                      institution: { $exists: true },
+                      timezone: { $exists: true },
+                      venueId:  { $exists: true } // TMP for compatibility with coference collection;
+                },
+                 f : { institution: 1 }
+              };
+              
+            const { data } = await $http.get('/api/v2016/conferences', { params })
 
-        return {
+            return Array.from(new Set(data.map(({ institution }) => institution ).filter((x)=> x!=='DISABLED')))
+        }
+
+        return { getInstitutions, 
             loadTypes:loadTypes,
             loadConferences:loadConferences,
             getRecurrences:getRecurrences,

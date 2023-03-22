@@ -14,8 +14,9 @@ define(['app',
     app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$injector','mongoStorage', '$route', function($rootScope, toastr, $templateCache,$document, $injector,mongoStorage, $route) {
 
         var _ctrl = this;
-
-        _ctrl.eventGroupChange = eventGroupChange;
+        _ctrl.selectInstitution = 'CBD';
+        _ctrl.eventGroupChange  = eventGroupChange;
+        _ctrl.institutionChange = institutionChange;
 
         $rootScope.eventGroup = initEventGroups();
 
@@ -102,9 +103,10 @@ define(['app',
         //==============================
         //
         //==============================
-        function initEventGroups() {
+        async function initEventGroups(reloadRoute= false) {
+            _ctrl.institutions      = _ctrl.institutions? _ctrl.institutions : await mongoStorage.getInstitutions()
 
-            return mongoStorage.loadConferences(true).then(function(res){
+            return mongoStorage.loadConferences(true, _ctrl.selectInstitution).then(function(res){
                   var now = moment(new Date());
                   var eventGroups = res;
                   var selectEventGroupId = 'TODO';
@@ -119,8 +121,15 @@ define(['app',
                   _ctrl.eventGroups        = res;
                   $rootScope.eventGroups   = _ctrl.eventGroups
                   _ctrl.selectEventGroupId = selectEventGroupId;
-                  return eventGroupChange(selectEventGroupId);
+                  return eventGroupChange(selectEventGroupId, reloadRoute);
             });
+        }
+
+        //==============================
+        //
+        //==============================
+        async function institutionChange(){
+            return initEventGroups(true)
         }
 
         //==============================
@@ -140,7 +149,7 @@ define(['app',
                 //     $route.reload();
                 // }]);
                 $injector.invoke(['$location', function($location) {
-                  $location.url(`/schedule/${eventGroup.code}`)
+                  $location.url(`/schedule/${eventGroup.institution}/${eventGroup.code}`)
               }]);
             }
 
