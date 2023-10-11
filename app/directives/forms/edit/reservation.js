@@ -1,11 +1,12 @@
 define(['app', 'lodash',
     'text!./reservation.html',
     'moment',
+    'data/languages',
     '../../color-picker',
     'directives/color-picker',
     'directives/agenda-select',
     'directives/forms/edit/disable-auto-trim'
-], function(app, _, template, moment) {
+], function(app, _, template, moment, languages) {
 
     app.directive("reservation", ['$timeout', 'mongoStorage', '$document', '$rootScope','$http', 'whenElement',
         function($timeout, mongoStorage, $document, $rootScope, $http, whenElement) {
@@ -202,8 +203,10 @@ define(['app', 'lodash',
                         //============================================================
                         function init() {
 
+                          
+
                             $scope.options = { 
-                              locales: ['ar', 'en', 'es', 'fr', 'ru', 'zh'],
+                              languages: {...languages },
                               youtubeEvents : $scope.conference?.conference?.youtubeEvents
                             };
                             $scope.tabs    = {

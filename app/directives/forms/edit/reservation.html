@@ -207,11 +207,11 @@
                             <strong>Youtube live languages </strong> 
                             <span ng-if="options.youtubeEvents.length && !youtube.selectedEvent" style="color: red;">(will be enable after youtube event is selected)</span>
                           </div>
-                          <div class="col-xs-4" ng-repeat="locale in options.locales track by $index" ng-show="options.youtubeEvents.length && youtube.selectedEvent">
+                          <div class="col-xs-4" ng-repeat="(locale, name) in options.languages track by locale" ng-show="options.youtubeEvents.length && youtube.selectedEvent">
                             <div class="form-group" style="margin-left:10px;margin-top:15px;">
                                 <div class="togglebutton">
                                     <label>
-                                        <input type="checkbox" ng-model="youtube.languages[locale]" ng-false-value="false" ng-true-value="true"><span>{{locale.toUpperCase()}}</span>
+                                        <input type="checkbox" ng-model="youtube.languages[locale]" ng-false-value="false" ng-true-value="true"><span>{{name}}</span>
                                     </label>
                                 </div>
                             </div>
@@ -238,7 +238,14 @@
                     <table class="table table-striped">
                       <tbody>
                         <tr ng-repeat="link in doc.links track by $index">
-                          <td> <a ng-href="{{link.url}}"> {{link.locale.toUpperCase()}} {{link.name || link.url}}</a> </td>
+                          <td> 
+                            <a ng-href="{{link.url}}"> 
+                              <span ng-if="link.locale">
+                              [{{ options.languages[link.locale] || link.locale.toUpperCase() }}]
+                            </span> 
+                            {{link.name || link.url}}
+                            </a> 
+                          </td>
                           <td style="width:55px; cursor: pointer;" ng-click="removeLink($index)"><i class="fa fa-trash"></i></td>
                         </tr>
                       </tbody>
@@ -250,7 +257,7 @@
                       <label class="control-label" for="linkURL" style="margin: 0 0 0 0;">Language</label>
                       <select id="locale" class="form-control" ng-model="addLinkStore.locale"  >
                         <option value="">-</option>
-                        <option ng-repeat="locale in options.locales track by $index"  ng-value="options.locales[$index]"  >{{locale.toUpperCase()}}</option>
+                        <option ng-repeat="(locale, name) in options.languages track by locale"  ng-value="locale"  >{{name}}</option>
                       </select>
                       <span class="material-input"></span>
                     </div>
