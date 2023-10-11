@@ -12,7 +12,7 @@ define(['app','moment', 'directives/schedule/conference-schedule','BM-date-picke
 
         $scope.hide = (code === 'xxx') ? true : false
 
-        if(!edit && code === 'xxx') $location.url(`/schedule/${conf.institution}/${conf.code}`)
+        if(!edit && code === 'xxx') $location.url(`/${conf.institution}/${conf.code}/schedule`)
 
         async function getRes(id){
           try{
@@ -23,10 +23,10 @@ define(['app','moment', 'directives/schedule/conference-schedule','BM-date-picke
 
             const queryParamDay = encodeURIComponent(moment.tz(start,resConf.timezone).startOf('day').format())
 
-            $location.url(`/schedule/${resConf.institution}/${resConf.code}?day=${queryParamDay}&edit=${encodeURIComponent(id)}`)
+            $location.url(`/${resConf.institution}/${resConf.code}/schedule?day=${queryParamDay}&edit=${encodeURIComponent(id)}`)
           }catch(e){
             console.error(e)
-            $location.url(`/schedule/${conf.institution}/${conf.code}`)
+            $location.url(`/${conf.institution}/${conf.code}/schedule`)
           }
   
         }

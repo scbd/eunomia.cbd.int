@@ -6,7 +6,7 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
         $locationProvider.hashPrefix('!');
 
         $routeProvider.
-            when('/',                                { redirectTo: '/schedule/yyy/xxx' }).
+            when('/',                                { redirectTo: '/yyy/xxx/schedule' }).
             
             when('/reservations',                    { templateUrl: 'views/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'reservations'}).
             when('/reservations/av',                 { templateUrl: 'views/audio-video/reservations.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : resolveUser() }, menu:'av'}).
@@ -15,8 +15,9 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
 
             when('/schedule/side-events',            { templateUrl: 'views/schedule/side-events.html', resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'side-events-schedule'}).
 
-            when('/schedule/:institution/:code',     { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'schedule'}).
-
+            when('/:institution/:code/schedule',     { templateUrl: 'views/schedule/conference.html',  resolveController: true,  resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) }, menu:'schedule'}).
+/*obsolete*/when('/schedule/:institution/:code',     { redirectTo: '/:institution/:code/schedule' }).
+/*obsolete*/when('/schedule/:code',                  { template: "<div>Redirecting...</div>", controller: ['$location', 'eventGroup', handleOldSheduleUrl], resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator','EunoUser']) } }).
 
             when('/cctv/frames',                     { templateUrl: 'views/cctv/frames.html',   resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, reloadOnSearch: false, menu:'cctv-frames'}).
             when('/cctv/frames/:id',                 { templateUrl: 'views/cctv/frame-id.html', resolveController: true, resolve : { eventGroup : currentEventGroup(), user : securize(['EunoAdministrator']) }, menu:'cctv-frames'}).
@@ -40,6 +41,18 @@ define(['app', 'lodash', 'services/extended-route',  'services/authentication'],
         return ['$rootScope', '$q', function ($rootScope, $q) {
             return $q.when($rootScope.eventGroup);
         }];
+    }
+
+    //============================================================
+    //
+    //
+    //============================================================
+    function handleOldSheduleUrl($location, eventGroup) {
+
+        var institution = eventGroup.institution || 'CBD';
+        var code        = eventGroup.code;
+
+        $location.path([institution, code, 'schedule'].map(encodeURIComponent).join('/'));
     }
 
     //============================================================
