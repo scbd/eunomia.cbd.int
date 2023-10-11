@@ -149,7 +149,7 @@ define(['app',
                 //     $route.reload();
                 // }]);
                 $injector.invoke(['$location', function($location) {
-                  $location.url(`/schedule/${eventGroup.institution}/${eventGroup.code}`)
+                  $location.url(`/${eventGroup.institution}/${eventGroup.code}/schedule`)
               }]);
             }
 
