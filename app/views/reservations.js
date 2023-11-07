@@ -286,9 +286,17 @@ docDefinition.header=pdfHeader;
 
                     return responce.data;
               }
-          ).then(function(){pdfMake.createPdf(docDefinition).download();_ctrl.loading = false;}); //
+          ).then(function(){
+            const { code, institution } = _ctrl.conference;
+            const filename = `${toFileSafe(institution)}-${toFileSafe(code)}-resevations-${toFileSafe(moment().format('YYYY-MM-DDTHH:mm:ss'))}.pdf`;
+            pdfMake.createPdf(docDefinition).download(filename);_ctrl.loading = false;
+          }); //
 
       } 
+
+      function toFileSafe(t) {
+        return t.replace(/[^-_.a-z0-9]/gi, '_');
+      }
 
       //============================================================
       //
@@ -324,7 +332,7 @@ docDefinition.header=pdfHeader;
 
           q.start={'$exists':1};
           q.start={'$ne':null};
-  //        if(_ctrl.conference) q['location.conference']=_ctrl.conference._id;
+          q['location.conference']=_ctrl.conference._id;
 
 
           if($location.search().searchType) {
