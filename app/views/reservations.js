@@ -324,7 +324,7 @@ docDefinition.header=pdfHeader;
 
           q.start={'$exists':1};
           q.start={'$ne':null};
-  //        if(_ctrl.conference) q['location.conference']=_ctrl.conference._id;
+          q['location.conference']=_ctrl.conference._id;
 
 
           if($location.search().searchType) {
