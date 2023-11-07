@@ -286,9 +286,17 @@ docDefinition.header=pdfHeader;
 
                     return responce.data;
               }
-          ).then(function(){pdfMake.createPdf(docDefinition).download();_ctrl.loading = false;}); //
+          ).then(function(){
+            const { code, institution } = _ctrl.conference;
+            const filename = `${toFileSafe(institution)}-${toFileSafe(code)}-resevations-${toFileSafe(moment().format('YYYY-MM-DDTHH:mm:ss'))}.pdf`;
+            pdfMake.createPdf(docDefinition).download(filename);_ctrl.loading = false;
+          }); //
 
       } 
+
+      function toFileSafe(t) {
+        return t.replace(/[^-_.a-z0-9]/gi, '_');
+      }
 
       //============================================================
       //
