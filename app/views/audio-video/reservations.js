@@ -343,61 +343,59 @@ define(['app', 'lodash', 'moment', 'jquery',
         //
         //=======================================================================
         function buildQuery() {
-            var q = {};
+            var $and = []
 
-            q.start = {
-                '$exists': 1
-            };
-            q.start = {
-                '$ne': null
-            };
-            //        if(_ctrl.conference) q['location.conference']=_ctrl.conference._id;
+            $and.push({ start : { $exists : 1 } });
+            $and.push({ start : { $ne : null } });
 
 
             if (_ctrl.searchType?.length) {
-                q['type'] = {
-                    '$in': _ctrl.searchType
-                };
+                $and.push({ type : { $in : _ctrl.searchType } });
             }
 
             if (_ctrl.searchRoom?.length) {
-
-                q['location.room'] = {
-                    '$in': _ctrl.searchRoom
-                };
+                $and.push({ 'location.room' : { $in: _ctrl.searchRoom } });
             }
 
             if ($location.search().searchText) {
                 _ctrl.searchText = $location.search().searchText;
-                q['$text'] = {
+
+                $and.push({ '$text' : {
                     '$search': '"' + _ctrl.searchText + '"'
-                }; // jshint ignore:line
+                } });
             }
 
 
-            if (_ctrl.start && _ctrl.end)
-                q['$and'] = [{
+            if (_ctrl.start && _ctrl.end) {
+                $and.push({
                     'start': {
                         '$lt': {
                             '$date': moment(_ctrl.end).add(1, 'days').toDate()
                         }
                     }
-                }, {
+                })
+                $and.push({
                     'end': {
                         '$gt': {
                             '$date': moment(_ctrl.start).toDate()
                         }
                     }
-                }];
+                });
+            }
 
-            if(_ctrl.isHybridOnly)
-                q.interactioEventId = { $exists : true}
+            if(_ctrl.isHybridOnly) {
 
-            q['meta.status'] = {
+                $and.push({$or :[
+                    { interactioEventId : { $exists : true} },
+                    { 'youtube.live':true}
+                ]});
+            }
+
+            $and.push({'meta.status' : {
                 '$nin': ['deleted', 'archived']
-            };
-            //        q.type={'$in':_ctrl.seTypes};
-            return q;
+            }});
+
+            return { $and };
         }
 
         //======================================================
