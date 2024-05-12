@@ -396,8 +396,16 @@
                                                                             <i class="fa fa-spin fa-spinner"></i> loading keys...
                                                                         </span>
                                                                         <span ng-if="!doc.loadingKeys && link.stream">
-                                                                            <a  ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.streamName)" href="#">
+                                                                            <a class="text-nowrap pb-1" ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.streamName)" href="#">
                                                                                 {{link.stream.cdn.ingestionInfo.streamName}}
+                                                                                <i class="fa fa-clone" style="cursor:pointer"></i>
+                                                                            </a><br>
+                                                                            <a  class="text-nowrap pb-1" ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.ingestionAddress)" href="#">
+                                                                                {{link.stream.cdn.ingestionInfo.ingestionAddress}}
+                                                                                <i class="fa fa-clone" style="cursor:pointer"></i>
+                                                                            </a><br>
+                                                                            <a  class="text-nowrap pb-1" ng-click="reservationsCtrl.copyToClipboard(link.stream.cdn.ingestionInfo.backupIngestionAddress)" href="#">
+                                                                                {{link.stream.cdn.ingestionInfo.backupIngestionAddress}}
                                                                                 <i class="fa fa-clone" style="cursor:pointer"></i>
                                                                             </a>
                                                                         </span>
