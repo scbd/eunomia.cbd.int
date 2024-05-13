@@ -394,7 +394,7 @@
                                                                     <td>{{link.name}}</td>
                                                                     <td>
                                                                         <a class="text-nowrap" href="{{link.url}}" target="_blank">{{link.url}} <i class="fa fa-external-link" aria-hidden="true"></i></a><br>
-                                                                        <a class="text-nowrap" ng-if="reservationsCtrl.canAccessKeys" href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio <i class="fa fa-external-link" aria-hidden="true"></i></a>
+                                                                        <a class="text-nowrap" ng-if="link.broadcast.id" href="https://studio.youtube.com/video/{{link.broadcast.id}}/livestreaming" target="_blank">Youtube Studio <i class="fa fa-external-link" aria-hidden="true"></i></a>
                                                                     </td>
                                                                     <td ng-if="reservationsCtrl.canAccessKeys">
                                                                         <span ng-if="doc.loadingKeys">
