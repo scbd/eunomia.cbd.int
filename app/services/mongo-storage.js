@@ -454,7 +454,7 @@ define(['app', 'lodash'], function(app, _) {
                     $timeout(function(){
                       clearInterval(timeOut);
                       reject('Error: getting conferences timed out 5 seconds');
-                    },5000);
+                    },30000);
                 });
         } // loadDocs
 
