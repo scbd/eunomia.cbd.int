@@ -220,9 +220,8 @@ define(['app', 'lodash',
                                                 'interactio'        : { 'active': false }
                                             };
 
-                            if($scope.doc._id)
-                              mongoStorage.loadDoc('reservations',$scope.doc._id).then(function(res){
-                                  $scope.doc=res;
+                            if($scope.doc._id) {
+                                  let res = $scope.doc; // NOW LOADED FROM PARENT
                                   $scope.doc.start=moment.tz(res.start,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
                                   $scope.doc.end=moment.tz(res.end,$scope.conference.timezone).format('YYYY-MM-DD HH:mm');
                                   if(!$scope.doc.series || _.isEmpty($scope.doc.series)){
@@ -246,7 +245,7 @@ define(['app', 'lodash',
                                     if($scope.youtube?.event)
                                       $scope.youtube.selectedEvent = $scope.youtube?.event.event
                                   }
-                              });
+                            }
 
                             if($scope.tab) $timeout($scope.changeTab($scope.tab),100);
                             else $scope.changeTab('details');
