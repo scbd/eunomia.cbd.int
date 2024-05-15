@@ -275,7 +275,7 @@ docDefinition.header=pdfHeader;
           _ctrl.loading = true;
           var q=buildQuery ();//{'location.conference':conference._id};
 
-          return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort).then(
+          return mongoStorage.loadDocs('reservations',q, pageIndex,_ctrl.itemsPerPage,true,_ctrl.sort, {history:0}).then(
               function(responce) {
                     _ctrl.pdfCount=responce.count;
                     _ctrl.pdfDocs=responce.data;
@@ -462,7 +462,7 @@ docDefinition.header=pdfHeader;
           return $q(function(resolve){resolve(true)});
         }
         var q = {'venue':_ctrl.venueId,'meta.status':{'$nin':['deleted','archived']}};
-        return mongoStorage.loadDocs('venue-rooms',q,0,100000,false,_ctrl.sort).then(function(result) {
+        return mongoStorage.loadDocs('venue-rooms',q,0,100000,false,_ctrl.sort, {history:0, meta:0 }).then(function(result) {
 
                  _ctrl.conference.rooms =result.data;
         }).catch(onError);
@@ -512,7 +512,7 @@ docDefinition.header=pdfHeader;
           return $q(function(resolve){resolve(true)});
         }
         var q = {schema:'reservations'};
-        return mongoStorage.loadDocs('types',q,0,100000,false).then(function(result) {
+        return mongoStorage.loadDocs('types',q,0,100000,false, false, {history:0}).then(function(result) {
                  _ctrl.conference.types={};
                  _ctrl.conference.types.reservation =result.data;
 
