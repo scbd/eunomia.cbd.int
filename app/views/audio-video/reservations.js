@@ -459,7 +459,7 @@ define(['app', 'lodash', 'moment', 'jquery',
                     '$nin': ['deleted', 'archived']
                 }
             };
-            return mongoStorage.loadDocs('venue-rooms', q, 0, 100000, false, _ctrl.sort).then(function (result) {
+            return mongoStorage.loadDocs('venue-rooms', q, 0, 100000, false, _ctrl.sort, {history:0, meta:0 }).then(function (result) {
 
                 _ctrl.conference.rooms = result.data;
             }).catch(onError);
@@ -517,7 +517,7 @@ define(['app', 'lodash', 'moment', 'jquery',
             var q = {
                 schema: 'reservations'
             };
-            return mongoStorage.loadDocs('types', q, 0, 100000, false).then(function (result) {
+            return mongoStorage.loadDocs('types', q, 0, 100000, false, false, {history:0}).then(function (result) {
                 _ctrl.conference.types = {};
                 _ctrl.conference.types.reservation = result.data;
 
