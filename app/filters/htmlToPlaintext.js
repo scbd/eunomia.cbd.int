@@ -15,7 +15,9 @@ define(['app'], function(app) {
       element.textContent = '';
     }
 
-    return str;
+    return str.replace(/\n{2,}/g, '\n\n')
+              .replace(/[\t]/g, '  ')
+              .trim();
   }
 
   return decodeHTMLEntities;

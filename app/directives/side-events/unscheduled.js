@@ -97,12 +97,12 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
 
                             for(let i=1; i<=numDays; i++)
                             {
-                              const dayOfWeekInt = moment(StartDate).startOf().add(i,'days').isoWeekday()
+                              const dayOfWeekInt = moment(StartDate).startOf('day').add(i,'days').isoWeekday()
 
                               if(!sideEventVisibleDays.includes(dayOfWeekInt)) continue
                               
                               for (const { seconds } of seTiers) {
-                                const dateTime = moment(StartDate).startOf().add(i,'days').add(seconds,'seconds').subtract(1,'hours')
+                                const dateTime = moment(StartDate).startOf('day').add(i,'days').add(seconds,'seconds').subtract(1,'hours')
                                 const title    = dateTime.format('dddd MMM Do @ HH:mm')
                                 const value    = dateTime.format()
 

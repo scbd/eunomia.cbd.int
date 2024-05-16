@@ -368,7 +368,14 @@ define(['app',
                         //============================================================
                         //
                         //============================================================
-                        $scope.resDialog = function(doc, start, tab) {
+                        $scope.resDialog = async function(doc, start, tab) {
+
+                            if(doc) {
+                                $scope.$root.globalBlocker = true
+                                doc = await mongoStorage.loadDoc('reservations', doc._id);
+                            }
+
+                            $scope.$apply(()=>{
 
                             if(doc) doc = _.cloneDeep(doc); //Prevent side effect
 
@@ -392,9 +399,11 @@ define(['app',
                                 preCloseCallback: async () => edit? $location.search('edit', null): null
                             });
 
-                            dialog.closePromise.then( async () => edit? $location.search('edit', null): null)
+                            dialog.closePromise.then( async () => edit? $location.search('edit', null): null);
+                            delete $scope.$root.globalBlocker;
 
 
+                          })
                         }; //$scope.roomDialog
 
                     }, //link
