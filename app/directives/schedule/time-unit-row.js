@@ -370,12 +370,12 @@ define(['app',
                         //============================================================
                         $scope.resDialog = async function(doc, start, tab) {
 
-                            if(doc) {
+                            if(doc?._id) {
                                 $scope.$root.globalBlocker = true
                                 doc = await mongoStorage.loadDoc('reservations', doc._id);
                             }
 
-                            $scope.$apply(()=>{
+
 
                             if(doc) doc = _.cloneDeep(doc); //Prevent side effect
 
@@ -403,7 +403,7 @@ define(['app',
                             delete $scope.$root.globalBlocker;
 
 
-                          })
+                   
                         }; //$scope.roomDialog
 
                     }, //link
