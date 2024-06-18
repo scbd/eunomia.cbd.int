@@ -76,15 +76,28 @@ define(['app', 'lodash',
               $scope.tabs[tabName].active=true;
           };//initVunues
 
+
+          function onChangeInterpretationOnSite(interpretationOnSite){
+            console.log('onChangeInterpretationOnSite',$scope);
+            if(!interpretationOnSite) return delete $scope.doc.interpretationBooths;
+
+            $scope.doc.interpretationBooths= 3
+          }
+          $scope.onChangeInterpretationOnSite=onChangeInterpretationOnSite;
+
+          function save (){
+            if($scope.form.$invalid) return;
+
+            $scope.closeThisDialog({ value: 'save' });
+          }
+          $scope.save=save;
           //============================================================
           //
           //============================================================
           function init() {
               $scope.options={};
 
-              $scope.tabs={'details':{'active':true},'resources':{'active':false},'compound':{'active':false}};
-              $scope.isSideEvents=($location.path()==='/side-events');
-              //updateColorSquare();
+              $scope.tabs={'details':{'active':true},'resources':{'active':false},'options':{'active':false}};
 
               initVenues().then(function(){
                 initTypes();

@@ -15,18 +15,45 @@
   <div class="form-group label-floating">
       <div> &nbsp;</div>
   </div>
-  <div>
-    <div class="btn-group btn-group-justified btn-group-raised hidden-xs">
-      <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
-      <!-- <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('resources')">Resources</a>
-      <a href="javascript:void(0)" class="btn" ng-class="{'active':tabs.compound.active}" ng-click="changeTab('compound')">Compound</a> -->
+<form name="form" novalidate>
+
+ 
+    <div class="btn-group btn-group-justified btn-group-raised ">
+      <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('resources')">Resources</a>
     </div>
-    <div class="btn-group btn-group-justified btn-group-raised hidden-md hidden-lg hidden-xl">
-      <a href="javascript:void(0)" class="btn btn-xs btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Details</a>
-      <!-- <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.resources.active}" ng-click="changeTab('resources')">Resources</a>
-      <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.compound.active}" ng-click="changeTab('compound')">Compound</a> -->
-    </div>
+ 
+    <div class="row" ng-show="tabs.resources.active">
+
+      <div class="col-xs-12" >
+        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+          <div class="togglebutton">
+            <label>
+              <input type="checkbox" ng-model="doc.interpretationRemote" ng-false-value="false" ng-false-value="true"> Remote Interpretation Available
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" >
+        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+          <div class="togglebutton">
+            <label>
+              <input type="checkbox" ng-change="onChangeInterpretationOnSite(doc.interpretationOnSite)" ng-model="doc.interpretationOnSite" ng-false-value="false" ng-false-value="true"> On-site Interpretation Available
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-xs-offset-3" ng-if="doc.interpretationOnSite">
+        <div class="form-group label-floating" >
+          <label class="control-label" for="interpretationBooths">Number of Booths</label>
+          <input class="form-control" id="interpretationBooths" name="interpretationBooths" type="number"  ng-model="doc.interpretationBooths" min="1"  max="6">
+          <p class="help-block" ng-show="!form.interpretationBooths.$valid">Must be between 1 and 6</p>
+        </div>
+      </div>
+
   </div>
+
   <div class="row" ng-show="tabs.details.active">
     <div class="col-xs-8">
       <!-- dirty dirty hack jquery change removing value from first input fix-->
@@ -36,15 +63,15 @@
       <!-- dirty dirty hack-->
       <div class="form-group label-floating">
         <label class="control-label" for="roomNameD">Name</label>
-        <input class="form-control" id="roomNameD" type="text" ng-model="doc.title">
-        <p class="help-block" ng-show="valid">error</p>
+        <input class="form-control" id="roomNameD" name="roomNameD" type="text" ng-model="doc.title" required>
+        <p class="help-block" ng-show="!form.roomNameD.$valid">Name is required</p>
       </div>
     </div>
     <div class="col-xs-4">
       <div class="form-group label-floating">
         <label class="control-label" for="roomAcronymD">Acronym</label>
-        <input class="form-control" id="roomAcronymD" type="text" ng-model="doc.acronym">
-        <p class="help-block" ng-show="valid">error</p>
+        <input class="form-control" id="roomAcronymD" name="roomAcronymD" type="text" ng-model="doc.acronym" required>
+        <p class="help-block" ng-show="!form.roomAcronymD.$valid">Acronym is required</p>
       </div>
     </div>
 
@@ -94,49 +121,27 @@
         <p class="help-block" ng-show="valid">error</p>
       </div>
     </div>
-    <!-- <div class="row"> -->
 
-    <!-- <div class="col-xs-6">
-
-      <div class="form-group label-floating">
-        <label class="control-label" for="roomLocationD">Venue </label>
-        <select id="roomLocationD" class="form-control" ng-model="doc.venue">
-          <option ng-repeat="venDocObj in options.venues" value="{{venDocObj._id}}" ng-if="venDocObj._id" ng-selected="doc.venue===venDocObj._id">{{venDocObj.acronym}} </option>
-        </select>
-        <span class="material-input"></span>
-        <p class="help-block" ng-show="valid">error</p>
-      </div>
-    </div> -->
     <div class="col-xs-6">
         <color-picker  binding="doc.color" float-label></color-picker>
     </div>
-    <div class="col-xs-8 col-xs-offset-2" ng-if="isSideEvents">
-      <div class="form-group" style="margin-left:10px;margin-top:15px;">
-        <div class="togglebutton">
-          <label>
-            <input type="checkbox" ng-model="doc.seHidden" ng-false-value="false" ng-false-value="true"> Hide from Side Events
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="col-xs-4">
 
-    </div>
   </div>
 <div class='row'>
   <div class="col-xs-12">
     <div class="form-group hidden-xs">
       <div class="btn-group btn-group-justified btn-group-raised">
-        <a href="javascript:void(0)" class="btn btn-default  btn-block btn-raised" ng-click="closeThisDialog({value:'save'});">Save</a>
+        <a href="javascript:void(0)" ng-disabled="!form.$valid" class="btn btn-default  btn-block btn-raised" ng-click="save()">Save</a>
       </div>
     </div>
     <div class="form-group hidden-md hidden-lg hidden-xl">
       <div class="btn-group btn-group-justified btn-group-raised">
-        <a href="javascript:void(0)" class="btn btn-default btn-xs btn-block btn-raised" ng-click="closeThisDialog({value:'save'});">Save</a>
+        <a href="javascript:void(0)" ng-disabled="!form.$valid" class="btn btn-default btn-xs btn-block btn-raised" ng-click="save()">Save</a>
       </div>
     </div>
   </div>
 </div>
+</form>
     <script>
       $.material.init();
     </script>
