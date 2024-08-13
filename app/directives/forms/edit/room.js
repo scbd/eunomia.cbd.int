@@ -78,7 +78,7 @@ define(['app', 'lodash',
 
 
           function onChangeInterpretationOnSite(interpretationOnSite){
-            console.log('onChangeInterpretationOnSite',$scope);
+          
             if(!interpretationOnSite) return delete $scope.doc.interpretationBooths;
 
             $scope.doc.interpretationBooths= 3
@@ -104,7 +104,7 @@ define(['app', 'lodash',
                 $timeout(triggerChanges,500);
               });
 
-
+              $scope.doc.hybrid=true;
           }//triggerChanges
 
 

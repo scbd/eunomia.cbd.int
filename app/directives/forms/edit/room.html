@@ -51,7 +51,15 @@
           <p class="help-block" ng-show="!form.interpretationBooths.$valid">Must be between 1 and 6</p>
         </div>
       </div>
-
+      <div class="col-xs-12" >
+        <div class="form-group" style="margin-left:10px;margin-top:15px;">
+          <div class="togglebutton">
+            <label>
+              <input type="checkbox"  ng-model="doc.hybrid" ng-false-value="false" ng-false-value="true"> Hybrid Equipped
+            </label>
+          </div>
+        </div>
+      </div>
   </div>
 
   <div class="row" ng-show="tabs.details.active">
