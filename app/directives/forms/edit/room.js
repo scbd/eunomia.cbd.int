@@ -104,7 +104,8 @@ define(['app', 'lodash',
                 $timeout(triggerChanges,500);
               });
 
-              $scope.doc.hybrid=true;
+              if(!$scope.doc?._id)
+                $scope.doc.hybrid=true;
           }//triggerChanges
 
 
