@@ -13,8 +13,8 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
     
 ], function(app, _, template,moment,resDialog,filterDialog,configDialog) {
 
-    app.directive("unscheduled", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','dragulaService','$http','$document','ngDialog','whenElement',
-        function($timeout, $document, mongoStorage,$rootScope,$q,dragulaService,$http,$document,ngDialog, whenElement) {
+    app.directive("unscheduled", ['$timeout', '$document', 'mongoStorage','$rootScope','$q','dragulaService','$http','$document','ngDialog','whenElement','$window',
+        function($timeout, $document, mongoStorage,$rootScope,$q,dragulaService,$http,$document,ngDialog, whenElement, $window) {
             return {
                 restrict: 'E',
                 template: template,
@@ -47,6 +47,23 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                               this.remove();
                             });
                         }// removeDropIndicators
+
+                        $scope.changeTab = function(tabName){
+                          _.each($scope.tabs,function(tab){
+                              tab.active=false;
+                          });
+                          $scope.tabs[tabName].active=true;
+                        };
+
+                        $scope.displayLang = (langObject)=>{
+                          if(!langObject || !_.isPlainObject(langObject)) return;
+            
+                          return Object.keys(langObject).join(', ').toUpperCase();
+                        }
+
+                        $scope.goTo = function(url) {
+                          $window.open(url,'_blank');
+                        }; //goto
 
                         //============================================================
                         //
