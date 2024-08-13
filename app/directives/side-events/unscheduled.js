@@ -73,6 +73,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                           if(res.sideEvent)
                             getRes(res.sideEvent.id).then(function(r){
                               $scope.se=r;
+
                               loadOrgs($scope.se.hostOrgs).then(function(orgObjs){
                                   $scope.se.hostOrgObjs=orgObjs;
                                   if(r.contact && r.contact.country)
@@ -252,7 +253,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
 
                           // $timeout(function(){$scope.sideEvents = [];});
 
-                          var f = {subType:1,type:1,'meta.status':1,'sideEvent.id':1,'sideEvent.expNumPart':1};
+                          var f = {subType:1,type:1,'meta.status':1,'sideEvent.id':1,'sideEvent.expNumPart':1, 'sideEvent.requirements':1 };
                           var sort ={'sideEvent.id':-1};
                           var q={
                             'location.conference':$scope.conference._id,
@@ -295,7 +296,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                       $scope.options.types=_.clone($scope.options.types);
                                       if($scope.options.types){
                                         $scope.sideEvents.forEach(function(res){
-
+                                              res.sideEvent.reqCode = getReqCode(res);
                                               var type  = _.find($scope.options.types,{'_id':res.type});
 
                                               var subType = _.find(type.children,{'_id':res.subType});
@@ -304,6 +305,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                                                 res.subTypeObj=subType;
 
                                               res.loadingRes=false;
+
                                         });
 
                                         var blocked =_.find($scope.options.types,{'title':'Blocked'});
@@ -324,6 +326,25 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                         } //initMeeting
                         $scope.load=load;
 
+                    function getReqCode(res){
+                        let code = '';
+                        
+                        const { sideEvent } = res;
+                        const { requirements } = sideEvent;
+
+                        const isHybrid = requirements?.hybrid?.required;
+                        const isRemote = requirements?.interpretationType === 'online';
+                        const isOnsite = requirements?.interpretationType === 'onsite';
+                        const isInterpret = requirements?.interpretation && (!isRemote && !isOnsite);
+
+
+                        if(isHybrid) code += 'H';
+                        if(isInterpret) code += 'I';
+                        if(isRemote) code += 'R';
+                        if(isOnsite) code += 'O';
+
+                        return code? `[ ${code} ]` : ''
+                    }
                         //=======================================================================
                         // import created by and modified by adta for admins
                         //=======================================================================

@@ -16,6 +16,8 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
         },
         link: function($scope) {
 
+            $scope.room.reqCode = getCode($scope.room);
+            
             $scope.roomDialog = function(room) {
                 $scope.editRoom = room;
                 ngDialog.open({
@@ -27,7 +29,16 @@ define(['app', 'text!./se-room-row.html','text!../forms/edit/room-dialog.html',
                 });
             };//$scope.roomDialog
 
+            function getCode(room){
+              let code ='';
 
+              if(room.hybrid) code += 'H';
+              if(room.interpretationRemote) code += 'R';
+              if(room.interpretationOnSite) code += 'O';
+              if(room.interpretationBooths) code += `${room.interpretationBooths}`;
+
+              return code? `${code}`:'';
+            }
           } //link
       }; //return
     }

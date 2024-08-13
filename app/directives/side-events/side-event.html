@@ -3,13 +3,17 @@
   <div  ng-show="loadingRes" id="res-el" class="text-center"  ><b>#{{res.sideEvent.id}}</b></div>
 
   <div  ng-show="!loadingRes" id="res-panel" class="text-center se" ng-style="{'background-color':res.subTypeObj.color}" style="line-hieght:20px;">
-      <span ng-if="res.sideEvent" class="pull-left" style="font-size:10px;margin-top:3px;"><i class="fa fa-users"></i> {{res.sideEvent.expNumPart}}</span>
+      <span ng-if="res.sideEvent" class="pull-left" style="font-size:10px;margin-top:3px;"><i class="fa fa-users"></i> {{res.sideEvent.expNumPart}} &nbsp;</span>
+
       <span ng-if="res.sideEvent"><b>#{{res.sideEvent.id}}</b></span>
-      <span ng-if="!res.sideEvent" class="pull-left" style="font-size:10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span ng-if="!res.sideEvent" class="pull-left" style="font-size:10px;">&nbsp;</span>
+      
       <span ng-show="!res.sideEvent">- <i class="fa fa-calendar-times-o" aria-hidden="true"></i> -</span>
+
       <span class="pull-right " style="cursor:pointer;line-height:20px;">
             <i style="margin-top:3px;" ng-click="deleteRes();$event.stopPropagation();" class="fa fa-trash pull-right"></i>
       </span>
+      <span ng-if="res.sideEvent.reqCode" class="pull-right" style="font-size:12px;margin-top:3px;"> {{res.sideEvent.reqCode }}</span>
   </div>
 <div ng-show="loadingRes"  class="text-center"><i  class="fa fa-spinner fa-pulse  fa-fw"></i></div>
 </div>
