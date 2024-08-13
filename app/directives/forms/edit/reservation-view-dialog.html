@@ -7,7 +7,7 @@
     <div class="btn-group btn-group-justified btn-group-raised ">
       <a href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.details.active}" ng-click="changeTab('details')">Request Details</a>
       <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.contact.active}" ng-click="changeTab('contact')">Contact</a>
-      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.other.active}" ng-click="changeTab('other')">Other</a>
+      <a  href="javascript:void(0)" class="btn btn-xs" ng-class="{'active':tabs.other.active}" ng-click="changeTab('other')">Requirements</a>
     </div>
   </div>
 
@@ -96,10 +96,35 @@
                   </th>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Description</td>
-                    <td>{{se.description |  htmlToPlaintext}} </td>
+                  <tr ng-if="se.requirements.catering">
+                    <td>Catering</td>
+                    <td>{{!!se.requirements.catering}} </td>
                   </tr>
+                  <tr ng-if="se.requirements.hybrid.required">
+                    <td>Hybrid</td>
+                    <td>{{!!se.requirements.hybrid.required}} </td>
+                  </tr>
+                  <tr ng-if="se.requirements.streaming">
+                    <td>Streaming</td>
+                    <td>{{!!se.requirements.streaming}} </td>
+                  </tr>
+                  <tr ng-if="se.requirements.interpretation">
+                    <td>Interpretation</td>
+                    <td>{{!!se.requirements.interpretation}} </td>
+                  </tr>
+                  <tr ng-if="se.requirements.interpretationType">
+                    <td>Interpretation Type</td>
+                    <td>{{se.requirements.interpretationType}} </td>
+                  </tr>
+                  <tr ng-if="se.requirements.interpretationLangs">
+                    <td>Languages</td>
+                    <td>{{displayLang(se.requirements.interpretationLangs)}} </td>
+                  </tr>
+                  <tr ng-if="se.requirements.other">
+                    <td>Other</td>
+                    <td>{{se.requirements.other}}</td>
+                  </tr>
+
                 </tbody>
             </table>
     </div>
