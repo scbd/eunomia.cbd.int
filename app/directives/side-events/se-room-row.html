@@ -1,4 +1,10 @@
 <div id="{{room._id}}" i="{{room.sort}}" class="room-row-base grabable" ng-click="roomDialog(room);" >
-    <div class="col-xs-12 col-md-12 col-md-4 text-nowrap" style="overflow: hidden; padding-left:0;">{{room.acronym}}</div>
-    <div class="col-md-8 text-nowrap hidden-md hidden-sm hidden-xs" ><span>{{room.reqCode}}</span> <span ng-if="room.capacity">({{room.capacity}})</span> <span ng-if="room.typeObj.title">- {{room.typeObj.title.substring(0,1)}} </span></div>
+    <div class="col-xs-12 text-nowrap" style="overflow: hidden; padding-left:0; text-align: right;">
+        <span class="float-left small">{{room.acronym}} - </span>
+        <div  style="display: inline-block; ">
+            <span class="small muted" ng-if="room.capacity">({{room.capacity}} <span class="small muted" ng-if="room.typeObj.title">{{room.typeObj.title.substring(0,1)}}</span>) <span ng-if="room.reqCode">-</span></span> 
+            
+            <span class="small" ng-if="room.reqCode">{{room.reqCode}} </span> 
+        </div>
+    </div>
 </div>
