@@ -16,6 +16,17 @@ define(['app','lodash', 'text!./room-row.html','text!../forms/edit/room-dialog.h
         },
         link: function($scope,$element) {
 
+          $scope.room.reqCode = getCode($scope.room);
+            function getCode(room){
+              let code ='';
+
+              if(room.hybrid) code += 'H';
+              if(room.interpretationRemote) code += 'R';
+              if(room.interpretationOnSite) code += 'O';
+              if(room.interpretationBooths) code += `${room.interpretationBooths}`;
+
+              return code? `${code}`:'';
+          }
             //============================================================
             //
             //============================================================

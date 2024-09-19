@@ -1,7 +1,8 @@
-<div id="{{room._id}}" i="{{room.sort}}" ng-style="{ height: room.rowHeight+'px' }" class="room-row-base grabable text-center" ng-click="roomDialog(room);" >
+<div id="{{room._id}}" i="{{room.sort}}" ng-style="{ height: room.rowHeight+'px' }" class="room-row-base grabable text-center text-nowrap" ng-click="roomDialog(room);"  style="overflow: hidden;">
+    <div ng-if="room.reqCode" class="small" style="position:absolute;right:5px;"><strong>( {{room.reqCode }} )</strong></div>
     <div class="small"><strong>{{room.acronym}}</strong></div>
-    <div class="small" ng-if="room.atTable">({{room.capacity}}/{{room.atTable}})</div>
-    <div class="small" ng-if="!room.atTable">({{room.capacity}})</div>
+    <div class="small" ng-if="room.atTable">({{room.capacity}}/{{room.atTable}}) </div>
+    <div class="small" ng-if="!room.atTable">({{room.capacity}}) </div>
     <hr style="padding:0;margin:0;">
-    <div class="small text-nowrap" >[{{room.location}}]</div>
+    <div class="small text-nowrap" >[ {{room.location}} <span ng-if="room.localName">- {{room.localName}}</span> ]</div>
 </div>

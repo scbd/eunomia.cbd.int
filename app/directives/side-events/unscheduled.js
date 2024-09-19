@@ -503,7 +503,7 @@ define(['app', 'lodash', 'text!./unscheduled.html', 'moment', 'text!../forms/edi
                               if(!container.attr('room')) throw 'Error: room id not set in element';
 
                               // if(moment(q.start).format('HH')==='13')
-                              q.end = r.end =startDate.add(90,'minutes').format();
+                              q.end = r.end =startDate.add(80,'minutes').format();
 
                               q.location = r.location = {};
                               q.location.venue =r.location.venue= $scope.conference.venueId;
