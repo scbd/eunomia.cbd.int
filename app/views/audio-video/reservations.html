@@ -374,7 +374,7 @@
                                                                         <a href="{{'https://cbd.interactio.com/listen/search?eventCode='+doc.interactioEvent.listenerCode}}" target="_blank">Listener App</a>
                                                                         /
                                                                         <a href="{{'/app/views/interactio/listener.html?title='+encodeURIComponent(doc.title)+'&type='+encodeURIComponent(reservationsCtrl.getType(doc.type,'reservation','title'))+'&code='+encodeURIComponent(doc.interactioEvent.listenerCode)+'&sideEventId='+encodeURIComponent(doc.sideEvent.id||'')}}" target="_blank">
-                                                                            <i class="fa fa-qrcode"></i>
+                                                                            <i class="fa fa-qrcode fa-2x"></i>
                                                                         </a>
                                                                     </td>
                                                                 </tr>
@@ -383,6 +383,7 @@
                                                                     <td>{{link.code}}</td>                                                            
                                                                     <td>
                                                                         <a href="{{link.url}}" target="_blank">{{link.url}}</a>
+                                                                        <span class="label label-success" ng-if="link.isPublic">Public</span>
                                                                     </td>
                                                                 </tr>
                                                             </table>
