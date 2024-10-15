@@ -8,9 +8,21 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
   <style>
-    html,
-    body {
-      height: 100%;
+    @media screen {
+      html,
+      body {
+        height: 100%;
+      }
+    }
+
+    @media print {
+      body {
+        padding-top: 1in;
+      }
+      
+      .m-5 {
+        margin: 0.5cm !important;
+      }
     }
 
     h1 {
@@ -50,7 +62,7 @@
 
   <img class="m-5" style="height:150px;position: absolute;bottom:0px;left:0px"
     src="https://www.cbd.int/app/images/cop-16/cop-16-logo-200.png">
-  <img class="m-5" style="height:120px;position: absolute;bottom:0px;right:0px"
+  <img class="m-5 print-no-margin" style="height:120px;position: absolute;bottom:0px;right:0px"
     src="https://www.cbd.int/themes/custom/bootstrap_sass/images/CBD_logo_green.png">
 
   <div class="container-sm h-100">
