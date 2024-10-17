@@ -380,7 +380,7 @@ define(['app',
                             if(doc) doc = _.cloneDeep(doc); //Prevent side effect
 
                               if(!doc || !doc._id)
-                                $scope.editRes = {};
+                                $scope.editRes = { displayLinksImmediately:true };
                               else
                                 $scope.editRes=doc;
                               if(tab)
