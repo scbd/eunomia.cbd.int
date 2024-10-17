@@ -632,11 +632,20 @@ define(['app', 'lodash', 'moment', 'jquery',
                     })
                 }
 
-                if(doc.interactioEventId){
+                if(doc.isInteractio && !doc.interactioEvent){
                     $http.get(`/api/v2022/interactio-events-map`, {params : {q : { interactioEventId :doc.interactioEventId }}})
                     .then (function(res) { return (res.data[0]||{}); })
                     .catch(function(err) { return null })
                     .then (function(evt) {doc.interactioEvent=evt});
+                }
+
+                if(doc.isUnWebTV) {
+                    for(let link of doc.links.filter(o=>isUnWebTV(o.url) && !o.unWebTvMetas)) {
+                        $q.when(getWebTvMetas(link.url)).then(metas=> { 
+                            link.unWebTvMetas = metas 
+                        });
+                    }
+
                 }
             }
         }
@@ -670,6 +679,28 @@ define(['app', 'lodash', 'moment', 'jquery',
                 || doc.isInteractio 
                 || doc.isUnWebTV
                 || doc.isYoutube
+        }
+
+
+        async function getWebTvMetas(url) { 
+            try {
+
+                url = new URL(url);
+
+                const [ ,locale, code] = /^\/(\w+)\/.*\/(\w+)$/.exec(url.pathname)
+
+                const res  = await fetch(`/api/unwebtv/${locale}/${code}`);
+                const meta = await res.json()
+
+                return meta;
+            }
+            catch(e) {
+                return { 
+                    title : 'No able to retreive UN Webtv Information', 
+                    description : e.message, 
+                    date: null 
+                }
+            }
         }
     }];
 

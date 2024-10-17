@@ -333,9 +333,9 @@
                                                 </td>
                                                 
                                                 <td>
-                                                    <i ng-if="doc.isUnWebTV"  class="text-info fa fa-tv " aria-hidden="true"></i>
-                                                    <i ng-if="doc.isYoutube" class="fa fa-youtube-play text-danger" aria-hidden="true"></i>
-                                                    <img ng-if="doc.isInteractio" src="/app/images/interactio.svg" style="max-width: 14px"/>
+                                                    <i ng-if="doc.isUnWebTV" title="UN WebTV" class="text-info fa fa-tv " aria-hidden="true"></i>
+                                                    <i ng-if="doc.isYoutube" title="Youtube"class="fa fa-youtube-play text-danger" aria-hidden="true"></i>
+                                                    <img ng-if="doc.isInteractio" title="Interactio" src="/app/images/interactio.svg" style="max-width: 14px"/>
     
                                                     <a href="#" ng-if="reservationsCtrl.canShowLinks(doc)" class="text-nowrap" ng-click="reservationsCtrl.showLinks(doc)">
                                                         Show links
@@ -401,11 +401,17 @@
                                                                 <thead>
                                                                     <th>Language</th>
                                                                     <th>Url</th>
+                                                                    <th>UN WebTV</th>
                                                                 </thead>
                                                                 <tr ng-repeat="link in doc.links">
                                                                     <td>{{link.locale.toUpperCase() || 'All'}}</td>
                                                                     <td>
                                                                         <a class="text-nowrap" href="{{link.url}}" target="_blank">{{link.url}} <i class="fa fa-external-link" aria-hidden="true"></i></a><br>
+                                                                    </td>
+                                                                    <td>
+                                                                        ({{link.unWebTvMetas.date.substring(0,10)}}) 
+                                                                        <b>{{link.unWebTvMetas.title}}</b>
+                                                                        <div><i>{{link.unWebTvMetas.description}}</i></div>
                                                                     </td>
                                                                 </tr>
                                                             </table>
