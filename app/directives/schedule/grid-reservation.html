@@ -38,7 +38,7 @@
     <span class="pull-right">
       <span  ng-if="hasVideo()" ng-class="{'red-agenda':doc.video}" style="text-shadow: 1px 1px #888;"><i class="fa fa-television  small" style="cursor:pointer;"  aria-hidden="true" ng-click="popVid();$event.stopPropagation();"></i></span>
       <i class="fa fa-headphones" ng-if="interactioEvent.languages.length"></i>
-      <img  ng-style="{ opacity: doc.linksTemplate ? 1 : 0.25 }"  ng-if="doc.interactioEventId" src="https://attachments.cbd.int/interactio.svg" style="max-width: 14px;"/>
+      <img  ng-style="{ opacity: doc.linksTemplate ? 1 : 0.25 }"  ng-if="doc.interactioEventId" src="/app/images/interactio.svg" style="max-width: 14px;"/>
       <i class="fa fa-repeat" aria-hidden="true" ng-if="doc.seriesId"></i>
     </span>
 
@@ -75,7 +75,7 @@
       </div>
       <div ng-if="doc.interactioEventId" style="margin-top:5px">
 
-          <img class="pull-right" src="https://attachments.cbd.int/interactio.svg" style="max-width: 20px;"/> 
+          <img class="pull-right" src="/app/images/interactio.svg" style="max-width: 20px;"/> 
           {{interactioEvent.title}} <br>
           Calendar access type: 
           <span ng-if="!doc.linksTemplate" class="label label-danger">not on calendar</span>

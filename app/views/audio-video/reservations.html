@@ -39,7 +39,7 @@
                             <div class="col-xs-4  ">
                                 <div class="form-group ">
                                     <div class="input-group">
-                                        <label class="control-label " for="search-res">Hybrid only</label>
+                                        <label class="control-label " for="search-res">Hybrid / Streamed only</label>
                                         <input type="checkbox" id="search-res" class="form-control" style="height: 20px;"
                                             ng-model="reservationsCtrl.isHybridOnly" ng-change="reservationsCtrl.hybridOnlyChange()">
                                     </div>
@@ -333,13 +333,16 @@
                                                 </td>
                                                 
                                                 <td>
-                                                    <i ng-if="doc.youtube.live" class="fa fa-youtube-play" aria-hidden="true"></i>                                                
+                                                    <i ng-if="doc.isUnWebTV" title="UN WebTV" class="text-info fa fa-tv " aria-hidden="true"></i>
+                                                    <i ng-if="doc.isYoutube" title="Youtube"class="fa fa-youtube-play text-danger" aria-hidden="true"></i>
+                                                    <img ng-if="doc.isInteractio" title="Interactio" src="/app/images/interactio.svg" style="max-width: 14px"/>
+    
                                                     <a href="#" ng-if="reservationsCtrl.canShowLinks(doc)" class="text-nowrap" ng-click="reservationsCtrl.showLinks(doc)">
                                                         Show links
                                                     </a>    
                                                 </td>
                                             </tr>
-                                            <tr ng-if="doc.showLinks && doc.interactioEventId" class="success">
+                                            <tr ng-if="doc.showLinks && doc.isInteractio" class="success">
                                                 
                                                 <td colspan="9">
                                                     <div class="panel panel-success">
@@ -364,11 +367,23 @@
                                                                     <th>Code</th>
                                                                     <th>URL</th>
                                                                 </thead>
+                                                                <tr ng-if="doc.interactioEvent.listenerCode">
+                                                                    <td>Listener App</td>
+                                                                    <td>{{doc.interactioEvent.listenerCode}}</td>                                                            
+                                                                    <td>
+                                                                        <a href="{{'https://cbd.interactio.com/listen/search?eventCode='+doc.interactioEvent.listenerCode}}" target="_blank">Listener App</a>
+                                                                        /
+                                                                        <a href="{{'/app/views/interactio/listener.html?title='+encodeURIComponent(doc.title)+'&type='+encodeURIComponent(reservationsCtrl.getType(doc.type,'reservation','title'))+'&code='+encodeURIComponent(doc.interactioEvent.listenerCode)+'&sideEventId='+encodeURIComponent(doc.sideEvent.id||'')}}" target="_blank">
+                                                                            <i class="fa fa-qrcode fa-2x"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
                                                                 <tr ng-repeat="link in doc.interactioEvent.preSharedLinks">
                                                                     <td>{{link.title}}</td>
                                                                     <td>{{link.code}}</td>                                                            
                                                                     <td>
                                                                         <a href="{{link.url}}" target="_blank">{{link.url}}</a>
+                                                                        <span class="label label-success" ng-if="link.isPublic">Public</span>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -376,7 +391,35 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr ng-repeat-end  ng-if="doc.showLinks && doc.links && doc.links.length" class="danger">
+                                            <tr ng-if="doc.showLinks && doc.isUnWebTV" class="info">
+                                                
+                                                <td colspan="8">
+                                                    <div class="panel panel-info">
+                                                        <div class="panel-heading">UN WebTV</div>
+                                                        <div class="panel-body">
+                                                            <table class="table table-stripped">
+                                                                <thead>
+                                                                    <th>Language</th>
+                                                                    <th>Url</th>
+                                                                    <th>UN WebTV</th>
+                                                                </thead>
+                                                                <tr ng-repeat="link in doc.links">
+                                                                    <td>{{link.locale.toUpperCase() || 'All'}}</td>
+                                                                    <td>
+                                                                        <a class="text-nowrap" href="{{link.url}}" target="_blank">{{link.url}} <i class="fa fa-external-link" aria-hidden="true"></i></a><br>
+                                                                    </td>
+                                                                    <td>
+                                                                        ({{link.unWebTvMetas.date.substring(0,10)}}) 
+                                                                        <b>{{link.unWebTvMetas.title}}</b>
+                                                                        <div><i>{{link.unWebTvMetas.description}}</i></div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat-end  ng-if="doc.showLinks && doc.isYoutube" class="danger">
                                                 
                                                 <td colspan="8">
                                                     <div class="panel panel-warning">

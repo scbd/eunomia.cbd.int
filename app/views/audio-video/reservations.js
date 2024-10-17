@@ -12,7 +12,9 @@ define(['app', 'lodash', 'moment', 'jquery',
 
     return ['$document', 'mongoStorage', 'eventGroup', '$location', '$q', 'whenElement', '$timeout', '$rootScope', '$http', 'user', '$scope', 'accountsUrl',
             function ($document, mongoStorage, conference, $location, $q, whenElement, $timeout, $rootScope, $http, user, $scope, accountsUrl) {
-       
+
+        $scope.encodeURIComponent = encodeURIComponent;
+        
         const adminRoles = ['Administrator', 'EunoAdministrator', 'EunomiaYoutubeReadAccess'];    
         var _ctrl = this;
         var DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm'
@@ -71,6 +73,7 @@ define(['app', 'lodash', 'moment', 'jquery',
             title: 'Interactio'
         }];
         _ctrl.isYoutube = isYoutube;
+        _ctrl.isUnWebTV = isUnWebTV;
         _ctrl.showLinks = showLinks;
         _ctrl.copyToClipboard = copyToClipboard;
         
@@ -321,12 +324,27 @@ define(['app', 'lodash', 'moment', 'jquery',
                     if(_ctrl.docs){
                         openLinkDocs = _ctrl.docs.filter(e=>e.showLinks);
                     }
+
+                    data = data.map(doc=>{
+                        const links = (doc.links||[]);
+                        
+                        return { 
+                            ...doc,
+                            isYoutube:    links.some(o=>isYoutube(o.url)) || doc.youtube?.live,
+                            isUnWebTV:    links.some(o=>isUnWebTV(o.url)),
+                            isInteractio: !!doc.interactioEventId,
+                        }
+                    });
+
+                    if(_ctrl.isHybridOnly) data = data.filter(o=>o.isYoutube || o.isUnWebTV || o.isInteractio);
+
                     _ctrl.docs = data;
 
                     if(openLinkDocs.length){
                         openLinkDocs.forEach(e=>{
                             let doc = _ctrl.docs.find(d=>d._id == e._id)
                             // doc.showLinks=true;
+
                             showLinks(doc);
                         })
                     }
@@ -387,7 +405,8 @@ define(['app', 'lodash', 'moment', 'jquery',
 
                 $and.push({$or :[
                     { interactioEventId : { $exists : true} },
-                    { 'youtube.live':true}
+                    { 'youtube.live':true},
+                    { links: { $exists: true, $ne: [] } }
                 ]});
             }
 
@@ -578,6 +597,10 @@ define(['app', 'lodash', 'moment', 'jquery',
             return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url||'');
         }
 
+        function isUnWebTV(url) {
+            return /^https?:\/\/webtv\.un\.org\//i.test(url || '')
+        }
+
         function showLinks(doc){
             doc.showLinks = !doc.showLinks;
 
@@ -609,11 +632,20 @@ define(['app', 'lodash', 'moment', 'jquery',
                     })
                 }
 
-                if(doc.interactioEventId){
+                if(doc.isInteractio && !doc.interactioEvent){
                     $http.get(`/api/v2022/interactio-events-map`, {params : {q : { interactioEventId :doc.interactioEventId }}})
                     .then (function(res) { return (res.data[0]||{}); })
                     .catch(function(err) { return null })
                     .then (function(evt) {doc.interactioEvent=evt});
+                }
+
+                if(doc.isUnWebTV) {
+                    for(let link of doc.links.filter(o=>isUnWebTV(o.url) && !o.unWebTvMetas)) {
+                        $q.when(getWebTvMetas(link.url)).then(metas=> { 
+                            link.unWebTvMetas = metas 
+                        });
+                    }
+
                 }
             }
         }
@@ -643,7 +675,32 @@ define(['app', 'lodash', 'moment', 'jquery',
         }
 
         function canShowLinks(doc){
-            return Object.keys(doc.youtube||{}).length || doc.interactioEventId
+            return !!Object.keys(doc.youtube||{}).length
+                || doc.isInteractio 
+                || doc.isUnWebTV
+                || doc.isYoutube
+        }
+
+
+        async function getWebTvMetas(url) { 
+            try {
+
+                url = new URL(url);
+
+                const [ ,locale, code] = /^\/(\w+)\/.*\/(\w+)$/.exec(url.pathname)
+
+                const res  = await fetch(`/api/unwebtv/${locale}/${code}`);
+                const meta = await res.json()
+
+                return meta;
+            }
+            catch(e) {
+                return { 
+                    title : 'No able to retreive UN Webtv Information', 
+                    description : e.message, 
+                    date: null 
+                }
+            }
         }
     }];
 
