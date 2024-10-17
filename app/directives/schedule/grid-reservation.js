@@ -20,7 +20,22 @@ define(['app', 'text!./grid-reservation.html','lodash', 'services/when-element']
                   
                   $element.ready(init)
 
+                  function isYoutube(url) {
+                    return /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url||'');
+                  }
+        
+                  function isUnWebTV(url) {
+                    return /^https?:\/\/webtv\.un\.org\//i.test(url || '')
+                  }
 
+                  $scope.hasVideo = function(){
+                    const doc = $scope.doc;
+                    const links = doc?.links || [];
+
+                    return doc.videoUrl
+                        || links.some(o=>isYoutube(o.url))
+                        || links.some(o=>isUnWebTV(o.url))
+                  }
 
                   function hasAgenda(doc){
 
