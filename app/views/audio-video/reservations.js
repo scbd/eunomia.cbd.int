@@ -689,7 +689,7 @@ define(['app', 'lodash', 'moment', 'jquery',
 
                 const [ ,locale, code] = /^\/(\w+)\/.*\/(\w+)$/.exec(url.pathname)
 
-                const res  = await fetch(`/api/unwebtv/${locale}/${code}`);
+                const res  = await fetch(`/unwebtv/${locale}/${code}`);
                 const meta = await res.json()
 
                 return meta;
