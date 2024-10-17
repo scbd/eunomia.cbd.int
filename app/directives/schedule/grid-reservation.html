@@ -36,7 +36,7 @@
 
   <div id="res-el-{{doc._id}}" ng-class="{'search-found':doc.searchFound}" class="grid-slot-dir text-left" ng-style="{'background-color': color}" data-toggle="popover" data-placement="top" >
     <span class="pull-right">
-      <span  ng-if="doc.videoUrl" ng-class="{'red-agenda':doc.video}" style="text-shadow: 1px 1px #888;"><i class="fa fa-television  small" style="cursor:pointer;"  aria-hidden="true" ng-click="popVid();$event.stopPropagation();"></i></span>
+      <span  ng-if="hasVideo()" ng-class="{'red-agenda':doc.video}" style="text-shadow: 1px 1px #888;"><i class="fa fa-television  small" style="cursor:pointer;"  aria-hidden="true" ng-click="popVid();$event.stopPropagation();"></i></span>
       <i class="fa fa-headphones" ng-if="interactioEvent.languages.length"></i>
       <img  ng-style="{ opacity: doc.linksTemplate ? 1 : 0.25 }"  ng-if="doc.interactioEventId" src="https://attachments.cbd.int/interactio.svg" style="max-width: 14px;"/>
       <i class="fa fa-repeat" aria-hidden="true" ng-if="doc.seriesId"></i>

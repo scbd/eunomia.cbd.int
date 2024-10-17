@@ -30,11 +30,18 @@ define(['app', 'lodash',
 
                 link: function($scope, $element) {
                         
-                        $scope.addLinkStore    = { name: '', url: '', locale: 'en' }
+                        $scope.addLinkStore    = { name: '', url: '', locale: '' }
                         $scope.validLink       = true
                         $scope.copyToClipboard = copyToClipboard
                         $scope.youtube         = { live : false, event : {}, languages : {} }
                         $scope.linksTemplates = [];
+
+                        $scope.canSave = function() {
+                          if($scope.addLinkStore.url!="") return false;
+
+                          return true;
+                        }
+
 
                         //============================================================
                         //
@@ -452,6 +459,7 @@ define(['app', 'lodash',
                                 dalObj.meta.status='deleted';
 
                                 return $scope.save(dalObj).then(function() {
+
                                     if($scope.doc.sideEvent)
                                       $http.get('/api/v2016/inde-side-events/',{params:{q:{'id':$scope.doc.sideEvent.id},f:{'id':1}}}).then(function(res2){
                                             var params = {};
@@ -811,6 +819,11 @@ define(['app', 'lodash',
                         //
                         //============================================================
                         $scope.save = function(obj) {
+
+                          try {
+
+                            if(!$scope.canSave ()) throw new Error('Reservation cannot be saved as the form contain error'); // throw to prevent saving
+
                             if ($scope.isSideEvent() && obj.sideEvent)  {
                                 obj.sideEvent.title = obj.title;
                                 obj.sideEvent.description = obj.description;
@@ -870,6 +883,11 @@ define(['app', 'lodash',
                                 console.log(error);
                                 $rootScope.$broadcast("showError", "There was an error saving your Reservation: '" + error.data.message + "' to the server.");
                             });
+                          }
+                          catch(e) {
+                            alert(e.message);
+                            throw e;
+                          }
                         }; //save
 
                         function copyToClipboard(text) {
