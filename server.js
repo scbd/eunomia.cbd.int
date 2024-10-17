@@ -25,7 +25,7 @@ app.use('/app',      require('serve-static')(__dirname + '/app', { setHeaders: s
 
 app.all('/app/*', function(req, res) { res.status(404).send(); } );
 
-app.get('/api/unwebtv/:locale/:code', getUnWebTvMetadata);
+app.get('/unwebtv/:locale/:code', getUnWebTvMetadata);
 
 app.get('/*',     function(req, res) { res.render('template', { gitVersion, accountsUrl, apiUrl }); });
 
