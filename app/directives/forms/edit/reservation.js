@@ -500,11 +500,11 @@ define(['app', 'lodash',
                         //============================================================
                         function initMaterial() {
                             const { timezone }   = $scope.conference
-                            const { start, end, startT } = $scope.doc
+                            const { start, end } = $scope.doc
                             const   format       = 'YYYY-MM-DD HH:mm'
 
                             $scope.doc.end   = $scope.doc.end? moment.tz(end  , timezone).format(format) : moment.tz($scope.startObj, timezone).add(30, 'minutes').format(format)
-                            $scope.doc.start = startT ? moment.tz(start, timezone).format(format) : $scope.startObj.format(format)
+                            $scope.doc.start = start ? moment.tz(start, timezone).format(format) : $scope.startObj.format(format)
 
                             whenElement('startT', $element)
                             .then(($el) => {
