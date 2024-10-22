@@ -60,6 +60,22 @@
 
 <body id="app">
 
+  <form v-if="!title" action="" method="get" class="m-5 p-5">
+    <label for="type">Type</label>
+    <input class="form-control" placeholder="eg: Side Event" name="type">
+
+    <label for="title">Title</label>
+    <input class="form-control" name="title">
+
+    <label for="code">Listener app code</label>
+    <input class="form-control" name="code">
+
+    <label for="sideEventId">SideEventId</label>
+    <input class="form-control"name="sideEventId">
+
+    <button type="submit">Go</button>
+  </form>
+
   <img class="m-5" style="height:150px;position: absolute;bottom:0px;left:0px"
     src="https://www.cbd.int/app/images/cop-16/cop-16-logo-200.png">
   <img class="m-5 print-no-margin" style="height:120px;position: absolute;bottom:0px;right:0px"
@@ -70,18 +86,18 @@
       <div class="col-lg-2"></div>
       <div class="col text-center">
 
-        <h1>
+        <h1 v-if="type">
           {{ type }}
           <span v-if="sideEventId">#{{sideEventId}}</span>
         </h1>
 
         <h2 class="mb-5">{{ title }}</h2>
 
-        <div class="mb-1">
+        <div  v-if="code" class="mb-1">
           <img :src="qrCodeUrl">
         </div>
 
-        <div class="mb-5">
+        <div v-if="code" class="mb-5">
           <img class="mb-2" style="height: 30px;" src="/app/images/interactio-full.svg"><br>
           Listener app code: <b>{{code}}</b>
         </div>
