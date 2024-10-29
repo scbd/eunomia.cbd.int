@@ -152,7 +152,9 @@
             <div class="well well-sm col-xs-11 col-xs-offset-1" style="position: relative" ng-show="item.showFiles">
               <section dragula='"agenda-item-files"' dragula-model="item.files">
                   <div class="col-xs-12 hand" ng-class="{'file-on':$index%2,'file-off':!($index%2)}" ng-repeat="file in item.files track by $index" meeting-code="{{item.meeting}}" item-id="{{item.item}}">
-                  <div class="col-xs-11 hand" style="white-space: nowrap;overflow: hidden;margin-top: 10px;padding-left: 0px"><small class="hand"><b>{{file.symbol}}</b></small> <small class="hand" style="white-space:no-wrap;overflow:hidden">{{file.title.en}}</small></div>
+                  <div class="col-xs-11 hand" style="white-space: nowrap;overflow: hidden;margin-top: 10px;padding-left: 0px">
+                    <small class="hand">{{file.display}}</small>
+                  </div>
                   <div class="col-xs-1 hand"><a href="javascript:void(0)" class="btn btn-raised btn-xs" ng-click="deleteFile(item,file)" ><i class="fa fa-trash"></i></a></div>
                   </div>
               </section>
