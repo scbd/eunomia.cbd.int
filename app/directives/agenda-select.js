@@ -87,11 +87,18 @@ define(['app', 'lodash',  'text!./agenda-select.html', 'css!https://cdn.jsdelivr
                             _.defaults(d.metadata, {
                                 printable: ['crp', 'limited', 'non-paper'].indexOf(d.nature)>=0
                             });
-                            //d.display = d.symbol + ' ' + d.title.en
 
                             if(d.metadata && d.metadata.superseded )
                               d.disabled =true
-                            d.display = (d.symbol || (d.title||{}).en) + ((d.metadata && d.metadata.superseded && ' - (Superseded by '+d.metadata.superseded+')')||'') ;
+
+                            const parts = [];
+
+                            parts.push((d.symbol || (d.title||{}).en));
+
+                            if((d.description||{}).en)                parts.push(d.description.en);
+                            if((d.metadata && d.metadata.superseded)) parts.push('(Superseded by '+d.metadata.superseded+')');
+
+                            d.display = parts.join(' - ');
                             d.sortKey = sortKey(d);
 
                             return d;
