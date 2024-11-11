@@ -367,7 +367,7 @@ define(['app', 'lodash', 'text!./conference-schedule.html', 'moment',
                             var colWidth = Number($scope.outerGridWidth) / Number(hours) ;
 
                             var posInterval = colWidth / 60;
-                            var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * (posInterval - .1);//jshint ignore:line
+                            var leftPosition = (((moment().hours() - $scope.startTimeObj.hours()) * 60) + moment().minutes()) * posInterval;//jshint ignore:line
 
                             return leftPosition;
 
