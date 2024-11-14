@@ -14,11 +14,11 @@ define(['app',
     app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$injector','mongoStorage', '$route', function($rootScope, toastr, $templateCache,$document, $injector,mongoStorage, $route) {
 
 
-        const hasInstitution    = localStorage.getItem('institution');
+        const lastInstitution    = localStorage.getItem('institution');
         const _ctrl             = this;
 
-        _ctrl.hasInstitution    = hasInstitution;
-        _ctrl.selectInstitution = hasInstitution? hasInstitution : 'CBD';
+        _ctrl.hasInstitution    = !!lastInstitution;
+        _ctrl.selectInstitution =  lastInstitution || 'CBD';
         _ctrl.eventGroupChange  = eventGroupChange;
         _ctrl.institutionChange = institutionChange;
 
