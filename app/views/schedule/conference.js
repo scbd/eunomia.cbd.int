@@ -7,7 +7,7 @@ define(['app','moment','text!../../directives/forms/edit/institution-dialog.html
         $scope.conf = conf;
         mongoStorage.loadOrgs();
 
-        const hasInstitution = localStorage.getItem('institution');
+        const hasInstitution = !!localStorage.getItem('institution');
         const { code, edit } = $route.current.params
 
         if(!hasInstitution )
