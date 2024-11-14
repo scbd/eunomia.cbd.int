@@ -26,11 +26,8 @@ define(['app', 'lodash',
               if($scope.prefs.institution)
                 $rootScope.institutionChange($scope.prefs.institution);
 
-
-              $timeout(()=>$window.location.path(`/`),1000);
-              $timeout(()=>$window.location.reload(true),2000);
-              $scope.closeThisDialog({ value: 'save' })
-              
+              $window.location.reload(true);
+              $scope.closeThisDialog({ value: 'save' });
 
             }
             $scope.save=save;
