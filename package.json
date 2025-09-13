@@ -40,6 +40,7 @@
     "jquery": "3.3.1"
   },
   "devDependencies": {
+    "vitepress": "^1.6.4",
     "vuepress": "^1.9.8"
   }
 }
