@@ -39,7 +39,7 @@
           </ul>
           
           <div class="navbar-nav">
-            <div class="nav-item dropdown" v-if="user">
+            <div v-if="user" class="nav-item dropdown">
               <a 
                 class="nav-link dropdown-toggle" 
                 href="#" 
@@ -54,7 +54,7 @@
                 <li><a class="dropdown-item" href="#" @click="logout">Logout</a></li>
               </ul>
             </div>
-            <div class="nav-item" v-else>
+            <div v-else class="nav-item">
               <a class="nav-link" href="#" @click="login">Login</a>
             </div>
           </div>
@@ -75,8 +75,13 @@
 </template>
 
 <script setup lang="ts">
-// Authentication composable (to be implemented)
+// Authentication composable
 const { user, login, logout } = useAuth()
+
+// Initialize authentication on client side
+onMounted(async () => {
+  // The useAuth composable will handle user loading
+})
 </script>
 
 <style>

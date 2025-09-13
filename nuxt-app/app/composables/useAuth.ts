@@ -13,25 +13,28 @@ export const useAuth = () => {
   const login = async () => {
     // Redirect to external accounts service
     const returnUrl = encodeURIComponent(window.location.href)
-    window.location.href = `${config.public.accountsUrl}/signin?returnUrl=${returnUrl}`
+    await navigateTo(`${config.public.accountsUrl}/signin?returnUrl=${returnUrl}`, {
+      external: true
+    })
   }
   
   const logout = async () => {
     // Clear user session
     user.value = null
     // Redirect to accounts service logout
-    window.location.href = `${config.public.accountsUrl}/signout`
+    await navigateTo(`${config.public.accountsUrl}/signout`, {
+      external: true
+    })
   }
   
   const getUser = async (): Promise<User | null> => {
-    // This would typically fetch from an API endpoint
-    // For now, return a mock user or null
+    // Fetch user from API if not already loaded
     if (!user.value) {
       try {
-        // Mock API call - replace with actual implementation
-        const { data } = await $fetch<{ user: User }>('/api/auth/user')
+        const { data } = await $fetch<{ success: boolean; user: User }>('/api/auth/user')
         user.value = data
       } catch (error) {
+        console.warn('Failed to fetch user:', error)
         user.value = null
       }
     }
@@ -47,7 +50,7 @@ export const useAuth = () => {
     return roles.some(role => hasRole(role))
   }
   
-  // Initialize user on mount
+  // Initialize user on mount (client-side only)
   onMounted(() => {
     getUser()
   })
