@@ -1,8 +1,26 @@
 <template>
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
+  <div class="container-fluid">
+    <!-- Loading state -->
+    <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading conference...</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div v-else-if="error" class="alert alert-danger" role="alert">
+      <h4 class="alert-heading">Error Loading Conference</h4>
+      <p>{{ error }}</p>
+      <button class="btn btn-outline-danger" @click="refreshConference">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Main content -->
+    <div v-else class="row">
+      <div class="col-12">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
               <li class="breadcrumb-item">
@@ -16,100 +34,39 @@
               </li>
             </ol>
           </nav>
-          <h1 class="card-title mt-2 mb-0">
-            Conference Schedule - {{ route.params.institution }} {{ route.params.code }}
-          </h1>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-info">
-            <h4 class="alert-heading">Dynamic Route Migration</h4>
-            <p>This page demonstrates the migrated dynamic routing from AngularJS:</p>
-            <ul>
-              <li><strong>Original Route</strong>: <code>/:institution/:code/schedule</code></li>
-              <li><strong>Nuxt 4 Route</strong>: <code>/[institution]/[code]/schedule.vue</code></li>
-              <li><strong>Institution</strong>: {{ route.params.institution }}</li>
-              <li><strong>Code</strong>: {{ route.params.code }}</li>
-            </ul>
-          </div>
           
-          <!-- Conference schedule content will go here -->
-          <div class="row">
-            <div class="col-md-8">
-              <div class="card">
-                <div class="card-header">
-                  <h5>Schedule Overview</h5>
-                </div>
-                <div class="card-body">
-                  <p class="text-muted">Conference schedule for {{ route.params.institution }} {{ route.params.code }} will be displayed here.</p>
-                  
-                  <!-- Example schedule items -->
-                  <div class="list-group">
-                    <div class="list-group-item">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1">Opening Session</h6>
-                        <small>09:00 - 10:30</small>
-                      </div>
-                      <p class="mb-1">Welcome remarks and keynote presentations</p>
-                      <small>Room: Main Hall</small>
-                    </div>
-                    <div class="list-group-item">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1">Technical Session 1</h6>
-                        <small>11:00 - 12:30</small>
-                      </div>
-                      <p class="mb-1">Technical presentations and discussions</p>
-                      <small>Room: Conference Room A</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-4">
-              <div class="card">
-                <div class="card-header">
-                  <h5>Event Information</h5>
-                </div>
-                <div class="card-body">
-                  <dl class="row">
-                    <dt class="col-sm-5">Institution:</dt>
-                    <dd class="col-sm-7">{{ route.params.institution }}</dd>
-                    
-                    <dt class="col-sm-5">Event Code:</dt>
-                    <dd class="col-sm-7">{{ route.params.code }}</dd>
-                    
-                    <dt class="col-sm-5">Type:</dt>
-                    <dd class="col-sm-7">Conference</dd>
-                    
-                    <dt class="col-sm-5">Status:</dt>
-                    <dd class="col-sm-7">
-                      <span class="badge bg-success">Active</span>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-              
-              <div class="card mt-3">
-                <div class="card-header">
-                  <h5>Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                  <button class="btn btn-primary w-100 mb-2" disabled>
-                    Export Schedule
-                  </button>
-                  <button class="btn btn-outline-secondary w-100 mb-2" disabled>
-                    Print Schedule
-                  </button>
-                  <NuxtLink 
-                    :to="`/reservations?event=${route.params.institution}-${route.params.code}`"
-                    class="btn btn-outline-info w-100"
-                  >
-                    View Reservations
-                  </NuxtLink>
-                </div>
-              </div>
-            </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary btn-sm" @click="refreshConference">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
           </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="h2 mb-0">
+            Conference Schedule - {{ conference?.name || `${route.params.institution} ${route.params.code}` }}
+          </h1>
+          <div v-if="conference" class="d-flex align-items-center gap-2">
+            <span 
+              class="badge" 
+              :class="{
+                'bg-success': conference.status === 'active',
+                'bg-warning': conference.status === 'draft',
+                'bg-secondary': conference.status === 'inactive'
+              }"
+            >
+              {{ conference.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Conference Schedule Component -->
+        <div class="schedule-wrapper">
+          <ConferenceSchedule 
+            v-if="conference"
+            :conference="conference" 
+            :search="searchQuery"
+          />
         </div>
       </div>
     </div>
@@ -117,6 +74,8 @@
 </template>
 
 <script setup lang="ts">
+import ConferenceSchedule from '~/components/schedule/ConferenceSchedule.vue'
+
 const route = useRoute()
 
 // Validate that required parameters exist
@@ -127,18 +86,75 @@ if (!route.params.institution || !route.params.code) {
   })
 }
 
+// Use the composable within the component setup
+const { loadConference, currentConference, isLoading, error } = useConference()
+
+// Reactive state
+const searchQuery = ref('')
+const conference = currentConference
+
+// Load conference data
+const refreshConference = async () => {
+  await loadConference(
+    route.params.institution as string, 
+    route.params.code as string
+  )
+}
+
+// Initialize page on mount
+onMounted(async () => {
+  await refreshConference()
+})
+
+// Set up SEO
 useHead({
-  title: `${route.params.institution} ${route.params.code} Schedule - Eunomia`,
+  title: computed(() => {
+    if (conference.value) {
+      return `${conference.value.name} Schedule - Eunomia`
+    }
+    return `${route.params.institution} ${route.params.code} Schedule - Eunomia`
+  }),
   meta: [
     { 
       name: 'description', 
-      content: `Conference schedule for ${route.params.institution} ${route.params.code}` 
+      content: computed(() => {
+        if (conference.value) {
+          return `Conference schedule for ${conference.value.name}`
+        }
+        return `Conference schedule for ${route.params.institution} ${route.params.code}`
+      })
     }
   ]
 })
 
 // Set up middleware for authentication if needed
 // definePageMeta({
-//   middleware: 'auth'
+//   middleware: ['auth']
 // })
 </script>
+
+<style scoped>
+.schedule-wrapper {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  overflow: hidden;
+  min-height: 600px;
+}
+
+.container-fluid {
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 1rem;
+  }
+  
+  .schedule-wrapper {
+    margin: -1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+</style>
