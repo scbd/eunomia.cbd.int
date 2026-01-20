@@ -13,12 +13,17 @@ define(['app',
 
     app.controller('TemplateController', [ '$rootScope', 'toastr','$templateCache','$document', '$injector','mongoStorage', '$route', function($rootScope, toastr, $templateCache,$document, $injector,mongoStorage, $route) {
 
-        var _ctrl = this;
-        _ctrl.selectInstitution = 'CBD';
+
+        const lastInstitution    = localStorage.getItem('institution');
+        const _ctrl             = this;
+
+        _ctrl.hasInstitution    = !!lastInstitution;
+        _ctrl.selectInstitution =  lastInstitution || 'CBD';
         _ctrl.eventGroupChange  = eventGroupChange;
         _ctrl.institutionChange = institutionChange;
 
-        $rootScope.eventGroup = initEventGroups();
+        $rootScope.eventGroup        = initEventGroups();
+        $rootScope.institutionChange = institutionChange;
 
         $templateCache.put("directives/toast/toast.html", toastTemplate);
 
@@ -40,6 +45,11 @@ define(['app',
 
                 return _.intersection($rootScope.user.roles, [ 'EunoAdministrator']).length > 0;
             };
+            $rootScope.user.isRootAdmin = function() {
+
+                return _.intersection($rootScope.user.roles, [ 'Administrator']).length > 0;
+            };
+
             _ctrl.isAdmin=$rootScope.user.isAdmin;
         });
 
@@ -128,8 +138,11 @@ define(['app',
         //==============================
         //
         //==============================
-        async function institutionChange(){
-            return initEventGroups(true)
+        async function institutionChange(institution){
+            if(!institution) return initEventGroups(true);
+            _ctrl.selectInstitution = institution;
+            localStorage.setItem('institution', institution);
+            return initEventGroups(true);
         }
 
         //==============================

@@ -100,7 +100,7 @@
             <li class="hidden-xs">
               <a>{{eventGroup.timezone}}</a>
             </li>
-            <li class="hidden-xs">
+            <li ng-show="!templateCtrl.hasInstitution || user.isRootAdmin()" class="hidden-xs">
               <a>
                 <select style="width:300px;color:inherit;background-color:inherit;border:none" ng-model="templateCtrl.selectInstitution" ng-options="o for o in templateCtrl.institutions track by o"  ng-change="templateCtrl.institutionChange(templateCtrl.selectInstitution)">
                 </select>

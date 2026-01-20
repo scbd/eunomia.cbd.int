@@ -1,12 +1,23 @@
-define(['app','moment', 'directives/schedule/conference-schedule','BM-date-picker',
-], function(app, moment) {
+define(['app','moment','text!../../directives/forms/edit/institution-dialog.html','directives/forms/edit/local-preferences','directives/schedule/conference-schedule','BM-date-picker',  'ngDialog',
+], function(app, moment, dialogTemplate) {
 
-  return ['mongoStorage','eventGroup','$scope','$route', '$location','$rootScope', function(mongoStorage,conf,$scope, $route, $location, $rootScope) {
+  return ['mongoStorage','eventGroup','$scope','$route', '$location','$rootScope','ngDialog', function(mongoStorage,conf,$scope, $route, $location, $rootScope, ngDialog) {
         $scope.hide = true
+        
         $scope.conf = conf;
         mongoStorage.loadOrgs();
 
+        const hasInstitution = !!localStorage.getItem('institution');
         const { code, edit } = $route.current.params
+
+        if(!hasInstitution )
+          ngDialog.open({
+            template: dialogTemplate,
+            className: 'ngdialog-theme-default',
+            closeByDocument: true,
+            plain: true,
+            scope: $scope
+          });
 
         if(edit) getRes(edit)
 
