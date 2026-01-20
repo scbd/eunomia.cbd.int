@@ -4,7 +4,7 @@
   "description": "Eunomia - room scheduling",
   "main": "server.js",
   "scripts": {
-    "dev": "node server",
+    "dev": "node server --watch && open -a \"Google Chrome\" \"http://localhost:2020\"",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "sh deploy-docs.sh",
