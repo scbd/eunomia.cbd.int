@@ -47,7 +47,7 @@ define(['app',
             };
             $rootScope.user.isInstitutionAdmin = function() {
 
-                return _.intersection($rootScope.user.roles, ['Administrator', 'EunoIntitutionSwitch']).length > 0
+                return _.intersection($rootScope.user.roles, ['Administrator', 'EunoInstitutionSwitch']).length > 0
             };
 
             _ctrl.isAdmin=$rootScope.user.isAdmin;
